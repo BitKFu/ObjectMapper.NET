@@ -1,0 +1,150 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{7B11430D-0729-4CB6-9BBB-567FF751D788}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>ObjectMapper.NUnits</RootNamespace>
+    <AssemblyName>ObjectMapper.NUnits</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="nunit.framework, Version=2.2.8.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>3dParty\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="BlobTest.cs" />
+    <Compile Include="BusinessEntities\Activity.cs" />
+    <Compile Include="BusinessEntities\Animal.cs" />
+    <Compile Include="BusinessEntities\BinaryByteBlob.cs" />
+    <Compile Include="BusinessEntities\BirthdayList.cs" />
+    <Compile Include="BusinessEntities\Buy.cs" />
+    <Compile Include="BusinessEntities\Company.cs" />
+    <Compile Include="BusinessEntities\Company_BoundIList_Contacts.cs" />
+    <Compile Include="BusinessEntities\Company_GeneralLink_Contacts.cs" />
+    <Compile Include="BusinessEntities\Company_GenericList_Contacts.cs" />
+    <Compile Include="BusinessEntities\Company_IList_Contacts.cs" />
+    <Compile Include="BusinessEntities\Company_With_Employees.cs" />
+    <Compile Include="BusinessEntities\Contact.cs" />
+    <Compile Include="BusinessEntities\BackLinkedEmployee.cs" />
+    <Compile Include="BusinessEntities\CharacterBlob.cs" />
+    <Compile Include="BusinessEntities\Core\BaseVO.cs" />
+    <Compile Include="BusinessEntities\Country.cs" />
+    <Compile Include="BusinessEntities\CountryRegion.cs" />
+    <Compile Include="BusinessEntities\CrazyChildPK.cs" />
+    <Compile Include="BusinessEntities\CrazyPK.cs" />
+    <Compile Include="BusinessEntities\DatabaseFunction.cs" />
+    <Compile Include="BusinessEntities\DefaultPrimaryType.cs" />
+    <Compile Include="BusinessEntities\DeliveryItem.cs" />
+    <Compile Include="BusinessEntities\Employee.cs" />
+    <Compile Include="BusinessEntities\FileStore.cs" />
+    <Compile Include="BusinessEntities\Friend.cs" />
+    <Compile Include="BusinessEntities\FullFeaturedCompany.cs" />
+    <Compile Include="BusinessEntities\IIrgendwas.cs" />
+    <Compile Include="BusinessEntities\ITreeNode.cs" />
+    <Compile Include="BusinessEntities\MemoryStreamBlob.cs" />
+    <Compile Include="BusinessEntities\MissingSetter.cs" />
+    <Compile Include="BusinessEntities\NoPrimaryKey.cs" />
+    <Compile Include="BusinessEntities\NullValue.cs" />
+    <Compile Include="BusinessEntities\IPerson.cs" />
+    <Compile Include="BusinessEntities\PhoneBookEntry.cs" />
+    <Compile Include="BusinessEntities\Product.cs" />
+    <Compile Include="BusinessEntities\TimeEntry.cs" />
+    <Compile Include="BusinessEntities\Translation.cs" />
+    <Compile Include="BusinessEntities\TreeNode.cs" />
+    <Compile Include="BusinessEntities\TypeMapping.cs" />
+    <Compile Include="BusinessEntities\UnicodeTestEntity.cs" />
+    <Compile Include="BusinessEntities\WrongType.cs" />
+    <Compile Include="Common.Tests\AggregateFunctionTest.cs" />
+    <Compile Include="Common.Tests\ExceptionTest.cs" />
+    <Compile Include="Common.Tests\PagingTest.cs" />
+    <Compile Include="DefaultPrimaryKeyTest.cs" />
+    <Compile Include="MultiThreadingTest.cs" />
+    <Compile Include="ObjectDumper.cs" />
+    <Compile Include="ProjectionTest.cs" />
+    <Compile Include="TypeMappingTest.cs" />
+    <Compile Include="BusinessKeys.cs" />
+    <Compile Include="BusinessEntities\Core\ConsoleTracer.cs" />
+    <Compile Include="BusinessEntities\Core\ObjectMapperTest.cs" />
+    <Compile Include="DbFunctionTest.cs" />
+    <Compile Include="DuplicateParameterTest.cs" />
+    <Compile Include="FlatSelectDeepSelectTest.cs" />
+    <Compile Include="InConditionTest.cs" />
+    <Compile Include="JoinTest.cs" />
+    <Compile Include="NestedObjectTest.cs" />
+    <Compile Include="NullValueTest.cs" />
+    <Compile Include="PrimaryKeyTest.cs" />
+    <Compile Include="Repository.cs" />
+    <Compile Include="ListBinding.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SerializeTest.cs" />
+    <Compile Include="SortedListTest.cs" />
+    <Compile Include="TreeTest.cs" />
+    <Compile Include="UnicodeTest.cs" />
+    <Compile Include="UniqueKeys.cs" />
+    <Compile Include="VirtualLinkTest.cs" />
+    <Compile Include="WildcardSearch.cs" />
+    <Compile Include="WithClauseTest.cs" />
+    <Compile Include="Xml.Entities\XmlLinkChild.cs" />
+    <Compile Include="Xml.Entities\XmlLinkParent.cs" />
+    <Compile Include="Xml.Tests\XmlTest.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Source\ObjectMapper 2005.csproj">
+      <Project>{35A18F34-D0D8-47CF-A9F6-EC9D84DD80B0}</Project>
+      <Name>ObjectMapper 2005</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Nunit.Oracle.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Nunit.Access.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Nunit.SqlServerCE.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Nunit.SqlServer.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="TestDb.mdb">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

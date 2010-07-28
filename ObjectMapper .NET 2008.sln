@@ -1,0 +1,28 @@
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NUnits 2008", "NUnits\NUnits 2008.csproj", "{7B11430D-0729-4CB6-9BBB-567FF751D788}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ObjectMapper 2008", "Source\ObjectMapper 2008.csproj", "{35A18F34-D0D8-47CF-A9F6-EC9D84DD80B0}"
+EndProject
+Global
+	GlobalSection(TestCaseManagementSettings) = postSolution
+		CategoryFile = Commerzbank.Isis.Common1.vsmdi
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7B11430D-0729-4CB6-9BBB-567FF751D788}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7B11430D-0729-4CB6-9BBB-567FF751D788}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7B11430D-0729-4CB6-9BBB-567FF751D788}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7B11430D-0729-4CB6-9BBB-567FF751D788}.Release|Any CPU.Build.0 = Release|Any CPU
+		{35A18F34-D0D8-47CF-A9F6-EC9D84DD80B0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{35A18F34-D0D8-47CF-A9F6-EC9D84DD80B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{35A18F34-D0D8-47CF-A9F6-EC9D84DD80B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{35A18F34-D0D8-47CF-A9F6-EC9D84DD80B0}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

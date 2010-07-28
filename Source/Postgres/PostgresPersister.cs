@@ -1,0 +1,377 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Data;
+using System.Diagnostics;
+using System.Linq;
+using System.Linq.Expressions;
+using AdFactum.Data.Interfaces;
+using AdFactum.Data.Internal;
+using AdFactum.Data.Linq.Translation;
+using AdFactum.Data.Queries;
+using Npgsql;
+using NpgsqlTypes;
+
+namespace AdFactum.Data.Postgres
+{
+    public class PostgresPersister : BasePersister
+    {
+        /// <summary>
+        /// Default Connection String
+        /// </summary>
+        public const string CONNECTION_STRING = "Server={0};Port={1};User Id={2};Password={3};Database={4};";
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        public PostgresPersister()
+        {
+            TypeMapper = new PostgresTypeMapper();
+        }
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="connectionString"></param>
+        public PostgresPersister(string connectionString)
+            :this()
+        {
+            Connect(connectionString);
+        }
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        public PostgresPersister(string server, string port, string userId, string password, string database)
+            :this()
+        {
+            Connect(server, port, userId, password, database);
+        }
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        public PostgresPersister(string server, string userId, string password, string database)
+            :this()
+        {
+            Connect(server, userId, password, database);
+        }
+
+        /// <summary>
+        /// Connect to the database by using the standard port 5432
+        /// </summary>
+        public void Connect(string server, string userId, string password, string database)
+        {
+            Connect(server, "5432", userId, password, database);
+        }
+
+        /// <summary>
+        /// Connect to the database with the given parameters
+        /// </summary>
+        public void Connect(string server, string port, string id, string password, string database)
+        {
+            string connectionString = string.Format(CONNECTION_STRING, server, port, id, password, database);
+            Connect(connectionString);
+        }
+
+        /// <summary>
+        /// Connect with the given connection string
+        /// </summary>
+        public void Connect(string connectionString)
+        {
+            Debug.Assert(Connection == null, "The Connection has already established");
+            Connection = new NpgsqlConnection (connectionString);
+            Connection.Open();
+
+            if (SqlTracer != null)
+                SqlTracer.OpenConnection(((NpgsqlConnection)Connection).ServerVersion, Connection.ConnectionString);
+        }
+
+        /// <summary>
+        /// Returns a list with value objects that matches the search criteria.
+        /// </summary>
+        /// <param name="tableName">Table Name</param>
+        /// <param name="selectSql">Complete select string which can be executed directly.</param>
+        /// <param name="selectParameter">Parameter used for the placeholders within the select string.
+        /// A placeholder always begins with an @ followed by a defined key.</param>
+        /// <param name="fieldTemplates">Field description.</param>
+        /// <returns>List of value objects</returns>
+        public override List<PersistentProperties> Select(string tableName, string selectSql, SortedList selectParameter, Dictionary<string, FieldDescription> fieldTemplates)
+        {
+            return base.Select(tableName, selectSql.Replace("@", ":"), selectParameter, fieldTemplates);
+        }
+
+        /// <summary>
+        /// Creates the command object.
+        /// </summary>
+        /// <param name="sql">The SQL.</param>
+        /// <returns></returns>
+        public override IDbCommand CreateCommand(string sql)
+        {
+            return new NpgsqlCommand(sql, Connection as NpgsqlConnection);
+        }
+
+        /// <summary>
+        /// Creates the data adapter.
+        /// </summary>
+        /// <returns></returns>
+        protected override IDbDataAdapter CreateDataAdapter()
+        {
+            return new NpgsqlDataAdapter();
+        }
+
+        /// <summary>
+        /// Return the last auto id
+        /// </summary>
+        /// <param name="tableName">Name of the table.</param>
+        /// <returns></returns>
+        protected override int SelectLastAutoId(string tableName)
+        {
+            int autoId = -1;
+            IDbCommand command = CreateCommand();
+            command.CommandText = string.Concat("SELECT CURRVAL('", TypeMapper.Quote(TypeMapper.DoCasing(tableName+ "_SEQ")) ,"')");
+
+            IDataReader reader = ExecuteReader(command);
+            if (reader.Read())
+            {
+                object lastId = reader.GetValue(0);
+                if (lastId != DBNull.Value)
+                    autoId = (int)ConvertSourceToTargetType(reader.GetValue(0), typeof(Int32));
+            }
+            reader.Close();
+
+            return autoId;
+        }
+
+        /// <summary> Returns the Schema Writer </summary>
+        public override ISchemaWriter Schema
+        {
+            get { return new PostgresSchemaWriter(TypeMapper, DatabaseSchema); }
+        }
+
+        /// <summary>
+        /// Returns the repository class
+        /// </summary>
+        public override IRepository Repository
+        {
+            get { return new PostgresRepository(SqlTracer);  }
+        }
+
+        /// <summary>
+        /// Returns the Integrity Checker
+        /// </summary>
+        public override IIntegrity Integrity
+        {
+            get { return new PostgresIntegrityChecker(this, TypeMapper, DatabaseSchema); }
+        }
+
+        /// <summary>
+        /// Gets the concatinator.
+        /// </summary>
+        /// <value>The concatinator.</value>
+        public override string Concatinator
+        {
+            get { return " || "; }
+        }
+
+        /// <summary>
+        /// Defines the join sytanx
+        /// </summary>
+        protected override JoinSyntaxEnum JoinSyntax
+        {
+            get { return JoinSyntaxEnum.FromClauseGlobalJoin; }
+        }
+
+        /// <summary>
+        /// Creates the command.
+        /// </summary>
+        /// <returns></returns>
+        public override IDbCommand CreateCommand()
+        {
+            var command = new NpgsqlCommand { Connection = Connection as NpgsqlConnection };
+            return command;
+        }
+
+        /// <summary>
+        /// Creates the parameter.
+        /// </summary>
+        public override IDbDataParameter AddParameter(IDataParameterCollection parameters, ref int numberOfParameter, Type type, object value, bool isUnicode)
+        {
+            var buffer = value as byte[];
+            object convertedValue = null;
+            var dbType = (NpgsqlDbType)TypeMapper.GetEnumForDatabase(type, isUnicode);
+
+            if (buffer == null)
+            {
+                /*
+                 * Extract the value to test
+                 */
+                object testValue = convertedValue = TypeMapper.ConvertValue(value);
+
+                /*
+                 * look if a parameter with the same value exists.
+                 */
+                IEnumerator parameterEnum = parameters.GetEnumerator();
+                while (parameterEnum.MoveNext())
+                {
+                    var current = (NpgsqlParameter)parameterEnum.Current;
+
+                    var secondAsByteArray = testValue as byte[];
+                    var firstAsByteArray = current.Value as byte[];
+
+                    if ((current.Value.Equals(testValue))
+                      || (secondAsByteArray != null && firstAsByteArray != null
+                       && firstAsByteArray.SequenceEqual(secondAsByteArray)))
+                    {
+                        IDbDataParameter copyParameter = new NpgsqlParameter(current.ParameterName, current.NpgsqlDbType);
+                        copyParameter.Value = current.Value;
+                        parameters.Add(copyParameter);
+                        return copyParameter;
+                    }
+                }
+            }
+            else
+                convertedValue = buffer;
+
+            var parameter = new NpgsqlParameter(":p" + numberOfParameter.ToString("00"), dbType)
+                                {
+                                    Value = convertedValue,
+                                    Direction = ParameterDirection.Input
+                                };
+            parameters.Add(parameter);
+            numberOfParameter++;
+
+            return parameter;
+        }
+
+
+        /// <summary>
+        /// Gets the parameter string.
+        /// </summary>
+        /// <param name="parameter">The parameter.</param>
+        /// <returns></returns>
+        public override string GetParameterString(IDbDataParameter parameter)
+        {
+            return parameter.ParameterName;
+        }
+
+        /// <summary>
+        /// Replaces the statics within a sql statement.
+        /// </summary>
+        /// <param name="sql">The SQL.</param>
+        /// <returns></returns>
+        public override string ReplaceStatics(string sql)
+        {
+            sql = base.ReplaceStatics(sql
+                      .Replace(Condition.TRIM, "TRIM")
+                      .Replace(Condition.UPPER, "UPPER"));
+
+            sql = sql.Trim();
+            if (sql.EndsWith(";") && !sql.ToUpper().EndsWith("END;"))
+                sql = sql.Substring(0, sql.Length - 1);
+
+            return sql;
+        }
+
+        /// <summary>
+        /// Creates the parameter from an existing parameter.
+        /// </summary>
+        public override IDbDataParameter CreateParameter(IDbDataParameter copyFrom, object value)
+        {
+            var op = (NpgsqlParameter)copyFrom;
+
+            string parameterName = copyFrom.ParameterName;
+            if (!parameterName.StartsWith(":"))
+                parameterName = string.Concat(":", parameterName);
+
+            var parameter = new NpgsqlParameter(parameterName, op.NpgsqlDbType)
+                                {
+                                    Value = TypeMapper.ConvertValue(value),
+                                    Direction = ParameterDirection.Input
+                                };
+
+            return parameter;
+        }
+
+        /// <summary>
+        /// Creates the parameter.
+        /// </summary>
+        public override IDbDataParameter CreateParameter(string parameterName, Type type, object value, bool isUnicode)
+        {
+            IDbDataParameter parameter = new NpgsqlParameter(":" + parameterName, (NpgsqlDbType)TypeMapper.GetEnumForDatabase(type, isUnicode))
+            {
+                Value = TypeMapper.ConvertValue(value),
+                Direction = ParameterDirection.Input
+            };
+
+            return parameter;
+        }
+
+        /// <summary>
+        /// Returns the Expression Writer
+        /// </summary>
+        public override Type LinqExpressionWriter
+        {
+            get
+            {
+                return typeof (PostgresExpressionWriter);
+            }
+        }
+
+        /// <summary>
+        /// Rewrites the LINQ Expressions
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <param name="dynamicCache"></param>
+        /// <param name="groupings"></param>
+        /// <param name="level"></param>
+        /// <returns></returns>
+        public override System.Linq.Expressions.Expression RewriteExpression(System.Linq.Expressions.Expression expression, AdFactum.Data.Util.Cache<Type, ProjectionClass> dynamicCache, out List<AdFactum.Data.Linq.Expressions.PropertyTupel> groupings, out int level)
+        {
+            var boundExp = PartialEvaluator.Eval(expression);
+            Dictionary<ParameterExpression, MappingStruct> mapping;
+
+            boundExp = QueryBinder.Evaluate(boundExp, out groupings, dynamicCache, TypeMapper, out level, out mapping);
+            boundExp = MemberBinder.Evaluate(boundExp, dynamicCache, TypeMapper, mapping);
+
+            // move aggregate computations so they occur in same select as group-by
+            boundExp = AggregateRewriter.Rewrite(boundExp, dynamicCache);
+
+            // Bind Relationships ( means to solve access to class members, that means to insert a join if necessary)
+            //boundExp = RelationshipBinder.Bind(boundExp, dynamicCache);
+
+            //// These bundle of Rewriters are all used to get paging mechism in place
+            //boundExp = AliasReWriter.Rewrite(boundExp);
+            //boundExp = RedundantSubqueryRemover.Rewrite(boundExp);
+            //boundExp = SkipToRowNumberRewriter.Rewrite(boundExp, dynamicCache);
+
+            // At last, the correct alias can be set.
+            boundExp = AliasReWriter.Rewrite(boundExp, dynamicCache);
+
+            // Now Check every OrderBy, and move them up into the sql stack, if necessary
+            // Ater that, remove all redundant subqueries now. This is necessary, 
+            // because some sub selects may become unused after the orderBy ist pushed a level higer.
+            boundExp = SqlOrderByRewriter.Rewrite(boundExp);
+            boundExp = RedundantSubqueryRemover.Remove(boundExp, dynamicCache);
+
+            // Now have a deep look to the Cross Apply Joins. Because perhaps they aren't valid anymore.
+            // This can be, due removal of selects and replacement with the native table expressions. A INNER JOIN / or CROSS JOIN
+            // is the result of that.
+            boundExp = CrossApplyRewriter.Rewrite(boundExp, dynamicCache);
+
+            // Attempt to rewrite cross joins as inner joins
+            boundExp = CrossJoinRewriter.Rewrite(boundExp);
+
+            /// Remove unused columns
+            boundExp = AliasReWriter.Rewrite(boundExp, dynamicCache);
+            boundExp = UnusedColumnRemover.Rewrite(boundExp, dynamicCache);
+
+            // Do Final
+            boundExp = RedundantSubqueryRemover.Remove(boundExp, dynamicCache);
+            boundExp = RedundantJoinRemover.Remove(boundExp);
+            boundExp = AliasReWriter.Rewrite(boundExp, dynamicCache);
+
+            return boundExp;
+        }
+    }
+}
