@@ -1,9 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
 using AdFactum.Data;
-using AdFactum.Data.Util;
-using ObjectMapper.NUnits.BusinessEntities.Core;
 
 namespace ObjectMapper.NUnits.BusinessEntities
 {

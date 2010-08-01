@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.IO;
 using AdFactum.Data;
+using AdFactum.Data.Access;
 using AdFactum.Data.Exceptions;
 using AdFactum.Data.Internal;
 using AdFactum.Data.Util;
@@ -102,6 +103,13 @@ namespace ObjectMapper.NUnits.Common.Tests
                                 {
                                     Console.WriteLine("FAILED: " + sql);
                                     doContinue = false;
+
+                                    // Continue when using Access and SQL is a DROP Statement
+                                    if (persister is AccessPersister)
+                                        if (sql.StartsWith("DROP"))
+                                            doContinue = true;
+                                        else
+                                            doContinue = false;
                                 });
             }
         }

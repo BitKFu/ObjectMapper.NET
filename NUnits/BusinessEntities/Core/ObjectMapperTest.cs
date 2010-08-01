@@ -1,12 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Diagnostics;
 using System.Linq;
 using AdFactum.Data;
-using AdFactum.Data.Internal;
 using AdFactum.Data.Repository;
 using AdFactum.Data.Util;
-using NUnit.Framework;
 
 namespace ObjectMapper.NUnits.Core
 {
@@ -18,16 +17,13 @@ namespace ObjectMapper.NUnits.Core
         private readonly DatabaseType whatToTest = DatabaseType.SqlServer;
         private readonly DatabaseConnection connection;
 
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ObjectMapperTest"/> class.
-        /// </summary>
-        protected ObjectMapperTest ()
+        protected ObjectMapperTest (string testPostfix)
         {
             /*
              * read Configuration file
              */
-            string databaseTypeSettings = ConfigurationManager.AppSettings["DatabaseType"] ?? string.Empty;
+            string databaseTypeSettings = ConfigurationManager.AppSettings["DatabaseType"];
+            NUnit.Framework.Assert.IsNotNull(databaseTypeSettings, "No Database Type has been selected.");
             
             if (databaseTypeSettings != string.Empty)
                 whatToTest = (DatabaseType) Enum.Parse(typeof(DatabaseType),databaseTypeSettings);
@@ -46,32 +42,41 @@ namespace ObjectMapper.NUnits.Core
             switch (whatToTest)
             {
                 case DatabaseType.Postgres:
-                    connection.DatabaseName = "objectmapper";
-                    connection.ServerName = "localhost";
-                    connection.UserName = "postgres";
-                    connection.Password = "admin";
+                    connection.DatabaseName = ConfigurationManager.AppSettings["DatabaseName" + testPostfix];
+                    connection.ServerName = ConfigurationManager.AppSettings["ServerName" + testPostfix];
+                    connection.UserName = ConfigurationManager.AppSettings["UserName" + testPostfix];
+                    connection.Password = ConfigurationManager.AppSettings["Password" + testPostfix];
                     break;
 
                 case DatabaseType.SqlServer:
-                    Connection.DatabaseName = "ObjectMapper";
-                    Connection.ServerName = @".";
-                    Connection.UserName = "sa";
-                    Connection.Password = "admin";
+                    Connection.DatabaseName = ConfigurationManager.AppSettings["DatabaseName" + testPostfix];
+                    Connection.ServerName = ConfigurationManager.AppSettings["ServerName" + testPostfix];
+                    Connection.UserName = ConfigurationManager.AppSettings["UserName" + testPostfix];
+                    Connection.Password = ConfigurationManager.AppSettings["Password" + testPostfix];
+                    connection.TrustedConnection = bool.Parse(ConfigurationManager.AppSettings["TrustedConnection" + testPostfix] ?? "false");
                     break;
 
                 case DatabaseType.Access:
-                    Connection.DatabaseFile = "TestDb.mdb";
+                    Connection.DatabaseFile = ConfigurationManager.AppSettings["DatabaseFile" + testPostfix];
                     break;
 
                 case DatabaseType.Oracle:
-                    Connection.UserName  = "system";
-                    Connection.Password  = "SzxU8D9gslXA";
-                    Connection.DbAlias   = "XE";
+                    Connection.UserName = ConfigurationManager.AppSettings["UserName" + testPostfix];
+                    Connection.Password = ConfigurationManager.AppSettings["Password" + testPostfix];
+                    Connection.DbAlias = ConfigurationManager.AppSettings["DbAlias" + testPostfix];
                     break;
 
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ObjectMapperTest"/> class.
+        /// </summary>
+        protected ObjectMapperTest ()
+            :this(string.Empty)
+        {
         }
 
 
