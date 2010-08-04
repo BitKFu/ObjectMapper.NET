@@ -41,12 +41,10 @@ namespace AdFactum.Data.Linq.Translation
             callStack.Pop();
 
             bool isOuterMostSelect = callStack.Count == 0;
-            var surrounding = callStack.Count > 0 ? callStack.Peek() : null;
 
-            bool saveIsOuterMostSelect = surrounding == Root;
             bool hasOrderBy = select.OrderBy != null && select.OrderBy.Count > 0;
             bool hasGroupBy = select.GroupBy != null && select.GroupBy.Count > 0;
-            bool canHaveOrderBy = saveIsOuterMostSelect || select.Take != null || select.Skip != null;
+            bool canHaveOrderBy = isOuterMostSelect || select.Skip == null; 
             bool canReceiveOrderings = canHaveOrderBy && !hasGroupBy && !select.IsDistinct && !AggregateChecker.HasAggregates(select);
 
             var orderByColumns = new List<OrderExpression>();
@@ -54,7 +52,7 @@ namespace AdFactum.Data.Linq.Translation
             if (select.IsReverse)
                 ReverseOrderings();
 
-            bool canPassOnOrderings = !isOuterMostSelect && !hasGroupBy && !select.IsDistinct;// && !surContainsRowNum;
+            bool canPassOnOrderings = !isOuterMostSelect && !hasGroupBy && !select.IsDistinct && select.Take == null;// && !surContainsRowNum;
 
             // maybe we already gathered some orderings, than append them now
             if (canReceiveOrderings && GatheredOrderings.Count > 0 && !canPassOnOrderings)

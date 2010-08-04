@@ -541,18 +541,29 @@ namespace AdFactum.Data.Linq
                     continue;
                 }
 
-                // count the amount of the same paramter within the sql
-                var startIndex = 0;
-                var count = 0;
-                while ((startIndex = newCommand.CommandText.IndexOf(oldParameter.ParameterName, startIndex)) > -1)
-                {
-                    count++;
-                    startIndex++;
-                }
+                bool duplicateParameter = mapper.Persister.TypeMapper.ParameterDuplication;
 
-                // add the parameter
-                for (int x = 0; x < count; x++)
+                if (duplicateParameter)
                 {
+                    // count the amount of the same paramter within the sql
+                    var startIndex = 0;
+                    var count = 0;
+                    while ((startIndex = newCommand.CommandText.IndexOf(oldParameter.ParameterName, startIndex)) > -1)
+                    {
+                        count++;
+                        startIndex++;
+                    }
+
+                    // add the parameter
+                    for (int x = 0; x < count; x++)
+                    {
+                        IDbDataParameter newParameter = persister.CreateParameter(oldParameter, args[argCounter]);
+                        newCommand.Parameters.Add(newParameter);
+                    }
+                }
+                else
+                {
+                    // Only add the Parameter once
                     IDbDataParameter newParameter = persister.CreateParameter(oldParameter, args[argCounter]);
                     newCommand.Parameters.Add(newParameter);
                 }

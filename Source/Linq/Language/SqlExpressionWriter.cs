@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Linq;
 using System.Linq.Expressions;
 using AdFactum.Data.Interfaces;
 using AdFactum.Data.Internal;
@@ -148,6 +150,51 @@ namespace AdFactum.Data.Linq.Language
                 }
             }
         }
+
+        /// <summary>
+        /// Visits the parameter.
+        /// </summary>
+        /// <param name="expression">The expression.</param>
+        /// <returns></returns>
+        protected override Expression VisitSqlParameterExpression(SqlParameterExpression expression)
+        {
+            var parameter = "@" + expression.Alias.Name;
+
+            if (!expression.Alias.Generated 
+                && new ListAdapter<IDbDataParameter>(Command.Parameters).Count(p => p.ParameterName == parameter) > 0)
+            {
+                WriteSql(parameter);    // Only output the duplicated parameter, but don't create an parameter objecdt for it!
+                return expression;
+            }
+
+            return base.VisitSqlParameterExpression(expression);
+        }
+
+        ///// <summary>
+        ///// Evaluates the expression and returns the database command object
+        ///// </summary>
+        ///// <param name="expression"></param>
+        ///// <returns></returns>
+        //protected override IDbCommand EvaluateCommand(Expression expression)
+        //{
+        //    var result = base.EvaluateCommand(expression);
+            
+        //    // Search for duplicated parameters
+        //    var duplicated = (from p in new ListAdapter<IDbDataParameter>(result.Parameters)
+        //                     group p by p.ParameterName
+        //                     into pGroups where pGroups.Count(s => s.ParameterName) > 1
+        //                     select pGroups).ToList();
+
+        //    // Remove all duplicated parameters
+        //    foreach (var dups in duplicated.Select(dup => dup.ToList()))
+        //    {
+        //        // begin from 1, because parameter 0 must stay untouched
+        //        for (int x = 1; x < dups.Count; x++)
+        //            result.Parameters.Remove(dups[x]);
+        //    }
+
+        //    return result;
+        //}
 
     }
 }

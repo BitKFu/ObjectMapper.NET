@@ -76,6 +76,12 @@ namespace AdFactum.Data
         SqlCasing SqlCasing { get; }
 
         /// <summary>
+        /// Gets a value indicating whether [parameter duplication].
+        /// </summary>
+        /// <value><c>true</c> if [parameter duplication]; otherwise, <c>false</c>.</value>
+	    bool ParameterDuplication { get; }
+
+	    /// <summary>
         /// Returns the correct cased string
         /// </summary>
 	    string DoCasing(string sql);

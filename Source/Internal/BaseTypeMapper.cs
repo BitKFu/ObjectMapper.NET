@@ -44,6 +44,12 @@ namespace AdFactum.Data.Internal
         public abstract SqlCasing SqlCasing { get; }
 
         /// <summary>
+        /// Gets a value indicating whether [parameter duplication].
+        /// </summary>
+        /// <value><c>true</c> if [parameter duplication]; otherwise, <c>false</c>.</value>
+        public abstract bool ParameterDuplication { get; }
+
+        /// <summary>
         /// Gets the SQL mapping table.
         /// </summary>
         /// <value>The SQL mapping table.</value>

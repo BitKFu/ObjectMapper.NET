@@ -61,6 +61,15 @@ namespace AdFactum.Data.SqlServer
         }
 
         /// <summary>
+        /// Gets a value indicating whether [parameter duplication].
+        /// </summary>
+        /// <value><c>true</c> if [parameter duplication]; otherwise, <c>false</c>.</value>
+        public override bool ParameterDuplication
+        {
+            get { return false;}
+        }
+
+        /// <summary>
         /// Gets the string for DDL.
         /// </summary>
         /// <param name="field">The field.</param>

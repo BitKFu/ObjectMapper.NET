@@ -238,6 +238,15 @@ namespace AdFactum.Data.Access
             get { return SqlCasing.Mixed; }
 	    }
 
+        /// <summary>
+        /// Gets a value indicating whether [parameter duplication].
+        /// </summary>
+        /// <value><c>true</c> if [parameter duplication]; otherwise, <c>false</c>.</value>
+	    public override bool ParameterDuplication
+	    {
+	        get { return true;}
+	    }
+
 	    #endregion
 	}
 
