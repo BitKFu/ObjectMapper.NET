@@ -109,41 +109,42 @@ namespace AdFactum.Data.Internal
             boundExp = MemberBinder.Evaluate(boundExp, dynamicCache, TypeMapper, mapping);
 
             //// move aggregate computations so they occur in same select as group-by
-            //boundExp = AggregateRewriter.Rewrite(boundExp, dynamicCache);
+            //!!! NOT NEEDED ANYMORE !!! boundExp = AggregateRewriter.Rewrite(boundExp, dynamicCache);
 
             //// Bind Relationships ( means to solve access to class members, that means to insert a join if necessary)
-            //boundExp = RelationshipBinder.Bind(boundExp, dynamicCache);
+            //!!! NOT NEEDED ANYMORE !!! boundExp = RelationshipBinder.Bind(boundExp, dynamicCache);
 
             //// These bundle of Rewriters are all used to get paging mechism in place
-            //boundExp = AliasReWriter.Rewrite(boundExp, dynamicCache);
-            //boundExp = RedundantSubqueryRemover.Remove(boundExp, dynamicCache);
-            //boundExp = SkipToRowNumberRewriter.Rewrite(boundExp, dynamicCache);
+            //!!! OBSOLETE HERE      !!! boundExp = AliasReWriter.Rewrite(boundExp, dynamicCache);
+            //!!! OBSOLETE HERE      !!! boundExp = RedundantSubqueryRemover.Remove(boundExp, dynamicCache);
+            boundExp = SkipToRowNumberRewriter.Rewrite(boundExp, dynamicCache);
 
             //// At last, the correct alias can be set.
-            //boundExp = AliasReWriter.Rewrite(boundExp, dynamicCache);
+            //!!! OBSOLETE HERE      !!! boundExp = AliasReWriter.Rewrite(boundExp, dynamicCache);
 
             //// Now Check every OrderBy, and move them up into the sql stack, if necessary
-            //// Ater that, remove all redundant subqueries now. This is necessary, 
-            //// because some sub selects may become unused after the orderBy ist pushed a level higer.
-            //boundExp = SqlOrderByRewriter.Rewrite(boundExp);
-            //boundExp = RedundantSubqueryRemover.Remove(boundExp, dynamicCache);
+            boundExp = SqlOrderByRewriter.Rewrite(boundExp);
 
             //// Now have a deep look to the Cross Apply Joins. Because perhaps they aren't valid anymore.
             //// This can be, due removal of selects and replacement with the native table expressions. A INNER JOIN / or CROSS JOIN
             //// is the result of that.
-            //boundExp = CrossApplyRewriter.Rewrite(boundExp, dynamicCache);
+            boundExp = CrossApplyRewriter.Rewrite(boundExp, dynamicCache);
 
             //// Attempt to rewrite cross joins as inner joins
-            //boundExp = CrossJoinRewriter.Rewrite(boundExp);
+            boundExp = RedundantSubqueryRemover.Remove(boundExp, dynamicCache);
+            boundExp = CrossJoinRewriter.Rewrite(boundExp);
 
             ///// Remove unused columns
-            //boundExp = AliasReWriter.Rewrite(boundExp, dynamicCache);
-            //boundExp = UnusedColumnRemover.Rewrite(boundExp, dynamicCache);
+            //!!! OBSOLETE HERE      !!! boundExp = AliasReWriter.Rewrite(boundExp, dynamicCache);
+            //!!! NOT NEEDED ANYMORE !!! boundExp = UnusedColumnRemover.Rewrite(boundExp, dynamicCache);
 
             //// Do Final
-            //boundExp = RedundantSubqueryRemover.Remove(boundExp, dynamicCache);
-            //boundExp = RedundantJoinRemover.Remove(boundExp);
+            //!!! OBSOLETE HERE      !!! boundExp = RedundantSubqueryRemover.Remove(boundExp, dynamicCache );
+            boundExp = RedundantSubqueryRemover.Remove(boundExp, dynamicCache);
+            boundExp = RedundantJoinRemover.Remove(boundExp);
             boundExp = AliasReWriter.Rewrite(boundExp, dynamicCache);
+
+            boundExp = UpdateProjection.Rebind(boundExp, dynamicCache);
 
             return boundExp;
         }

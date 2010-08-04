@@ -13,6 +13,16 @@ namespace AdFactum.Data.Linq.Translation
     /// </summary>
     public class OracleOrderByRewriter : OrderByRewriter
     {
+        readonly Stack<SelectExpression> callStack = new Stack<SelectExpression>();
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="OracleOrderByRewriter"/> class.
+        /// </summary>
+        /// <param name="expression">The expression.</param>
+        private OracleOrderByRewriter(Expression expression)
+            : base(expression)
+        {
+        }
 
         /// <summary>
         /// Evaluates the specified expression.
@@ -25,17 +35,6 @@ namespace AdFactum.Data.Linq.Translation
             return writer.Visit(expression);
         }
 
-        readonly Stack<SelectExpression> callStack = new Stack<SelectExpression>();
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="OracleOrderByRewriter"/> class.
-        /// </summary>
-        /// <param name="expression">The expression.</param>
-        private OracleOrderByRewriter(Expression expression) : base(expression)
-        {
-        }
-
-
         /// <summary>
         /// Visits the select expression.
         /// </summary>
@@ -47,9 +46,8 @@ namespace AdFactum.Data.Linq.Translation
             select = (SelectExpression)base.VisitSelectExpression(select);
             callStack.Pop();
 
-            bool isOuterMostSelect = callStack.Count == 0; // select == Root;
+            bool isOuterMostSelect = callStack.Count == 0; 
             var surrounding = callStack.Count > 0 ? callStack.Peek() : null;
-            //bool saveIsOuterMostSelect = surrounding == Root;
 
             var surContainsRowNum = surrounding != null
                                         ? (surrounding.Where != null && TypeChecker.Contains(DbExpressionType.RowNum, surrounding.Where))
@@ -77,7 +75,7 @@ namespace AdFactum.Data.Linq.Translation
                 if (hasOrderBy) orderByColumns.AddRange(select.OrderBy);
                 if (bindToSelection != null) orderByColumns.AddRange(bindToSelection);
 
-                // Reset gathering
+                // Return order
                 return new SelectExpression(select.Type, select.Projection, select.Alias, select.Columns, select.Selector, select.From, select.Where,
                                             orderByColumns.Count > 0 ? new ReadOnlyCollection<OrderExpression>(orderByColumns) : null,
                                             select.GroupBy, select.Skip, select.Take, select.IsDistinct, false, select.SelectResult, select.SqlId, select.Hint, select.DefaultIfEmpty);

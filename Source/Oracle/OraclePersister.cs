@@ -669,8 +669,6 @@ namespace AdFactum.Data.Oracle
             //!!! OBSOLETE HERE      !!! boundExp = AliasReWriter.Rewrite(boundExp, dynamicCache);
 
             //// Now Check every OrderBy, and move them up into the sql stack, if necessary
-            //// Ater that, remove all redundant subqueries now. This is necessary, 
-            //// because some sub selects may become unused after the orderBy ist pushed a level higer.
             boundExp = OracleOrderByRewriter.Rewrite(boundExp);
 
             //// Now have a deep look to the Cross Apply Joins. Because perhaps they aren't valid anymore.

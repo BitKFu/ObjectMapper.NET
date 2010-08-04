@@ -92,20 +92,8 @@ namespace AdFactum.Data.Linq.Language
         #region Set Methods
 
         /// <summary>
-        /// Visits the specified exp.
-        /// </summary>
-        /// <param name="exp"></param>
-        /// <returns></returns>
-        protected override Expression Visit(Expression exp)
-        {
-            return base.Visit(exp);
-        }
-
-        /// <summary>
         /// Unions the specified 
         /// </summary>
-        /// <param name="left">The left.</param>
-        /// <param name="right">The right.</param>
         protected virtual void Union(Expression left, Expression right, bool isAll)
         {
             Visit(left);
@@ -1393,7 +1381,7 @@ namespace AdFactum.Data.Linq.Language
         /// <param name="expression"></param>
         protected virtual void Explicit(Expression expression)
         {
-            SqlParameterExpression parameterExpression = expression as SqlParameterExpression;
+            var parameterExpression = expression as SqlParameterExpression;
             if (parameterExpression == null)
                 Visit(expression);
             else
@@ -1456,6 +1444,7 @@ namespace AdFactum.Data.Linq.Language
         /// Visits the binary expresssions.
         /// </summary>
         /// <param name="expr">The expr.</param>
+        /// <exception cref="NotImplementedException">Thrown when an unknown Binary Exception has been thrown</exception>
         /// <returns></returns>
         protected override Expression VisitBinary(BinaryExpression expr)
         {
@@ -1613,7 +1602,12 @@ namespace AdFactum.Data.Linq.Language
         protected override Expression VisitTableExpression(TableExpression expression)
         {
             ProjectionClass table = ReflectionHelper.GetProjection(expression.RevealedType, DynamicCache);
-            WriteSql(string.Concat(table.TableName, " ", expression.Alias.Name));
+
+            string schema = string.IsNullOrEmpty(LinqPersister.DatabaseSchema)
+                                ? string.Empty
+                                : string.Concat(LinqPersister.DatabaseSchema, ".");
+
+            WriteSql(string.Concat(schema, table.TableName, " "));
             return expression;
         }
 
@@ -1856,7 +1850,7 @@ namespace AdFactum.Data.Linq.Language
 
             Visit(select.From);
 
-            AliasedExpression aliasedFrom = select.From as AliasedExpression;
+            var aliasedFrom = select.From as AliasedExpression;
             if (aliasedFrom != null)
                 WriteSql(" " + aliasedFrom.Alias.Name);
 
@@ -2126,12 +2120,14 @@ namespace AdFactum.Data.Linq.Language
         protected override IEnumerable<ElementInit> VisitElementInitializerList(ReadOnlyCollection<ElementInit> original)
         {
             List<ElementInit> list = null;
-            for (int i = 0, n = original.Count; i < n; i++)
+            var n = original.Count;
+
+            for (int i = 0; i < n; i++)
             {
                 if (i > 0)
                     WriteSql(", ");
 
-                ElementInit init = VisitElementInitializer(original[i]);
+                var init = VisitElementInitializer(original[i]);
                 if (list != null)
                 {
                     list.Add(init);
@@ -2148,6 +2144,7 @@ namespace AdFactum.Data.Linq.Language
             }
             if (list != null)
                 return list;
+
             return original;
         }
     }

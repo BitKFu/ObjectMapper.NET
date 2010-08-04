@@ -49,7 +49,7 @@ namespace AdFactum.Data.Access
             "UNION","UNIQUE","UPDATE","USER",
             "VALUE","VALUES","VAR", "VARP","VARBINARY", "VARCHAR","VERSION",
             "WHERE","WITH","WORKSPACE",
-            "XOR","YEAR","YES","YESNO","GLOBAL","PRECISION","DAY","MONTH","YEAR","REFERENCE","WEEKDAY","REVERS"
+            "XOR","YEAR","YES","YESNO","GLOBAL","PRECISION","DAY","MONTH","YEAR","REFERENCE","WEEKDAY","REVERS","LOCALE"
         };
         #endregion
 

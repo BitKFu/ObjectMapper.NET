@@ -1,9 +1,6 @@
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
 using AdFactum.Data.Linq.Expressions;
 
 namespace AdFactum.Data.Linq.Translation
@@ -16,7 +13,8 @@ namespace AdFactum.Data.Linq.Translation
         /// Initializes a new instance of the <see cref="SqlOrderByRewriter"/> class.
         /// </summary>
         /// <param name="expression">The expression.</param>
-        private SqlOrderByRewriter(Expression expression) : base(expression)
+        private SqlOrderByRewriter(Expression expression) 
+            : base(expression)
         {
         }
 
@@ -42,7 +40,9 @@ namespace AdFactum.Data.Linq.Translation
             select = (SelectExpression)base.VisitSelectExpression(select);
             callStack.Pop();
 
+            bool isOuterMostSelect = callStack.Count == 0;
             var surrounding = callStack.Count > 0 ? callStack.Peek() : null;
+
             bool saveIsOuterMostSelect = surrounding == Root;
             bool hasOrderBy = select.OrderBy != null && select.OrderBy.Count > 0;
             bool hasGroupBy = select.GroupBy != null && select.GroupBy.Count > 0;
@@ -54,31 +54,41 @@ namespace AdFactum.Data.Linq.Translation
             if (select.IsReverse)
                 ReverseOrderings();
 
-            bool canPassOnOrderings = !saveIsOuterMostSelect && !hasGroupBy && !select.IsDistinct;
+            bool canPassOnOrderings = !isOuterMostSelect && !hasGroupBy && !select.IsDistinct;// && !surContainsRowNum;
 
             // maybe we already gathered some orderings, than append them now
-            if (canReceiveOrderings && GatheredOrderings.Count > 0)
+            if (canReceiveOrderings && GatheredOrderings.Count > 0 && !canPassOnOrderings)
             {
                 IEnumerable<OrderExpression> bindToSelection = BindToSelection(select, GatheredOrderings);
 
                 if (hasOrderBy) orderByColumns.AddRange(select.OrderBy);
                 if (bindToSelection != null) orderByColumns.AddRange(bindToSelection);
 
-                // Reset gathering
-                if (!canPassOnOrderings) GatheredOrderings = new List<OrderExpression>();
+                // Return order
                 return new SelectExpression(select.Type, select.Projection, select.Alias, select.Columns, select.Selector, select.From, select.Where,
-                                            new ReadOnlyCollection<OrderExpression>(orderByColumns), select.GroupBy, select.Skip, select.Take, select.IsDistinct, false, select.SelectResult, select.SqlId, select.Hint, select.DefaultIfEmpty);
+                                            orderByColumns.Count > 0 ? new ReadOnlyCollection<OrderExpression>(orderByColumns) : null,
+                                            select.GroupBy, select.Skip, select.Take, select.IsDistinct, false, select.SelectResult, select.SqlId, select.Hint, select.DefaultIfEmpty);
             }
 
-            // if the expression does not have an order by or can have an order by than return immidiatly
-            if (!hasOrderBy || canHaveOrderBy) return select.SetReverse(false);
+            // if we can't pass on the ordering, we something have to do with it
+            if (!canPassOnOrderings && canHaveOrderBy)
+            {
+                GatheredOrderings = new List<OrderExpression>();
+                return select.IsReverse ? select.SetReverse(false) : select;
+            }
 
             // if the current expression has an order by, than gather it
-            GatheredOrderings.AddRange(select.OrderBy);
+            if (select.OrderBy != null)
+            {
+                GatheredOrderings.AddRange(select.OrderBy);
 
-            // return without ordering
-            return new SelectExpression(select.Type, select.Projection, select.Alias, select.Columns, select.Selector, select.From, select.Where,
-                                        null, select.GroupBy, select.Skip, select.Take, select.IsDistinct, false, select.SelectResult, select.SqlId, select.Hint, select.DefaultIfEmpty);
+                // return without ordering
+                return new SelectExpression(select.Type, select.Projection, select.Alias, select.Columns, select.Selector, select.From,
+                                            select.Where, null, select.GroupBy, select.Skip, select.Take, select.IsDistinct, false,
+                                            select.SelectResult, select.SqlId, select.Hint, select.DefaultIfEmpty);
+            }
+
+            return select;
         }
 
 

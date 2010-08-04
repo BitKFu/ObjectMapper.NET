@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Linq.Expressions;
 using AdFactum.Data.Linq.Expressions;
 using AdFactum.Data.Queries;
@@ -15,7 +12,6 @@ namespace AdFactum.Data.Linq.Translation
     {
         protected List<OrderExpression> GatheredOrderings = new List<OrderExpression>();
         private Expression root;
-
 
         protected OrderByRewriter(Expression rootEx)
         {
@@ -39,17 +35,16 @@ namespace AdFactum.Data.Linq.Translation
         /// </summary>
         protected void ReverseOrderings()
         {
-            if (GatheredOrderings != null)
+            if (GatheredOrderings == null) return;
+
+            for (int i = 0, n = GatheredOrderings.Count; i < n; i++)
             {
-                for (int i = 0, n = GatheredOrderings.Count; i < n; i++)
-                {
-                    var ord = GatheredOrderings[i];
-                    GatheredOrderings[i] =
-                        new OrderExpression(
-                            ord.Ordering == Ordering.Asc ? Ordering.Desc : Ordering.Asc,
-                            ord.Expression
-                            );
-                }
+                var ord = GatheredOrderings[i];
+                GatheredOrderings[i] =
+                    new OrderExpression(
+                        ord.Ordering == Ordering.Asc ? Ordering.Desc : Ordering.Asc,
+                        ord.Expression
+                        );
             }
         }
 

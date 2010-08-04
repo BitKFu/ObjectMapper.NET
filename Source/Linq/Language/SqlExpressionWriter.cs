@@ -22,7 +22,7 @@ namespace AdFactum.Data.Linq.Language
             Command = nativePersister.CreateCommand();
         }
 
-        readonly Stack<SelectExpression> selectStack = new Stack<SelectExpression>();
+        readonly Stack<AliasedExpression> selectStack = new Stack<AliasedExpression>();
 
         /// <summary>
         /// Visits the select expression.
@@ -67,8 +67,7 @@ namespace AdFactum.Data.Linq.Language
                         var prop = col.Expression as PropertyExpression;
                         Visit(select.Columns[x].Expression);
 
-                        if (prop == null ||
-                            !string.Equals(prop.Name, col.Alias.Name, StringComparison.InvariantCultureIgnoreCase))
+                        if (prop == null || !string.Equals(prop.Name, col.Alias.Name, StringComparison.InvariantCultureIgnoreCase))
                         {
                             WriteSql(" as ");
                             WriteSql(TypeMapper.Quote(col.Alias.Name));
@@ -82,7 +81,7 @@ namespace AdFactum.Data.Linq.Language
                 if (select.From != null) WriteSql(" FROM ");
 
                 var subSelect = Visit(select.From);
-                var aliasedFrom = subSelect as SelectExpression ?? (AliasedExpression) (subSelect as UnionExpression);
+                var aliasedFrom = subSelect as IDbExpressionWithResult;
                 if (aliasedFrom != null)
                     WriteSql(aliasedFrom.Alias.Name);
 
@@ -126,5 +125,29 @@ namespace AdFactum.Data.Linq.Language
                 }
             }
         }
+
+        protected override Expression VisitScalarExpression(ScalarExpression select)
+        {
+            if (selectStack.Count > 0)
+            {
+                WriteSql("(");
+            }
+
+            selectStack.Push(select);
+            try
+            {
+                return base.VisitScalarExpression(select);
+            }
+            finally
+            {
+                selectStack.Pop();
+
+                if (selectStack.Count > 0)
+                {
+                    WriteSql(")");
+                }
+            }
+        }
+
     }
 }

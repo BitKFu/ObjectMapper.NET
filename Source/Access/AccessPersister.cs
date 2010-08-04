@@ -378,8 +378,7 @@ namespace AdFactum.Data.Access
                             tryAgain = (err.NativeError == UPDATED_RESTRICTED) && (trys++ < 10);
 
                             if (!tryAgain)
-                                throw new SqlCoreException(exc.Errors[0].Message, exc.Errors[0].NativeError,
-                                                           CreateSql(command));
+                                throw new SqlCoreException(exc.Errors[0].Message, exc.Errors[0].NativeError, CreateSql(command));
                         }
                         else
                             throw;
