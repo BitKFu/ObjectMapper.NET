@@ -1,7 +1,9 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using AdFactum.Data.Internal;
+using AdFactum.Data.Linq.Language;
 using AdFactum.Data.Queries;
 
 namespace AdFactum.Data.SqlServer
@@ -45,6 +47,13 @@ namespace AdFactum.Data.SqlServer
                    .Replace(Condition.UPPER, "UPPER"));
         }
 
+        /// <summary>
+        /// Returns the type of the used Linq Expression Writer
+        /// </summary>
+        public override Type LinqExpressionWriter
+        {
+            get { return typeof(SqlExpressionWriter); }
+        }
 
         #endregion
 

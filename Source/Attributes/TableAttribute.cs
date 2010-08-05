@@ -27,7 +27,7 @@ namespace AdFactum.Data
 		/// <param name="pName">Table Name</param>
 		public TableAttribute(String pName)
 		{
-			name = pName.ToUpper();
+			name = pName; //.ToUpper();
 		}
 
 		/// <summary>

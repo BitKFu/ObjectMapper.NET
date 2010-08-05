@@ -6,7 +6,7 @@ namespace ObjectMapper.NUnits.Northwind.Entities
     /// <summary>
     /// Order Details
     /// </summary>
-    [Table("ORDER_DETAILS")]
+    [Table("Order_Details")]
     public class OrderDetail : ValueObject
     {
         [PropertyName("OrderID")]

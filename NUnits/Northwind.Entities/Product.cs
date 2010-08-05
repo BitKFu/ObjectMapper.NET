@@ -15,7 +15,7 @@ namespace ObjectMapper.NUnits.Northwind.Entities
         /// Gets or sets the unique value object id.
         /// </summary>
         /// <value>The unique value object id.</value>
-        [PropertyName("ProductId")]
+        [PropertyName("ProductID")]
         [PrimaryKey]
         [PropertyLength(5)]
         public new int? Id

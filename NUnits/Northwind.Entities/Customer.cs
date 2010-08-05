@@ -61,7 +61,7 @@ namespace ObjectMapper.NUnits.Northwind
             }
         }
 
-        [PropertyName("CustomerId")]
+        [PropertyName("CustomerID")]
         [PrimaryKey]
         [PropertyLength(5)]
         public string CustomerID

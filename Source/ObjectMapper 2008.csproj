@@ -151,6 +151,7 @@
     <Compile Include="Linq\Expressions\TableExpression.cs" />
     <Compile Include="Linq\Language\AccessExpressionWriter.cs" />
     <Compile Include="Linq\Language\OracleExpressionWriter.cs" />
+    <Compile Include="Linq\Language\PostgresExpressionWriter.cs" />
     <Compile Include="Linq\QueryCompiler.cs" />
     <Compile Include="Linq\Translation\AggregateChecker.cs" />
     <Compile Include="Linq\Expressions\Alias.cs" />
@@ -203,7 +204,6 @@
     <Compile Include="Oracle\OracleRepository.cs" />
     <Compile Include="Oracle\OracleRepositorySchemaWriter.cs" />
     <Compile Include="Oracle\OracleSchemaWriter.cs" />
-    <Compile Include="Postgres\PostgresExpressionWriter.cs" />
     <Compile Include="Postgres\PostgresIntegrityChecker.cs" />
     <Compile Include="Postgres\PostgresPersister.cs" />
     <Compile Include="Postgres\PostgresRepository.cs" />

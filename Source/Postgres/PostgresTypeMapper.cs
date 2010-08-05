@@ -130,8 +130,9 @@ namespace AdFactum.Data.Postgres
                 string trim = parts[x].Trim();
 
                 bool isKeyWord = expression.IndexOfAny(new[] {' ', '#'}) >= 0;
+                bool containsUpperCase = expression.ToLowerInvariant() != expression;
 
-                result = string.Concat(result, (x > 0 ? "," : ""), isKeyWord ? string.Concat("\"", trim, "\"") : trim);
+                result = string.Concat(result, (x > 0 ? "," : ""), isKeyWord || containsUpperCase ? string.Concat("\"", trim, "\"") : trim);
             }
 
             return result;
@@ -142,7 +143,7 @@ namespace AdFactum.Data.Postgres
         /// </summary>
         public override SqlCasing SqlCasing
         {
-            get { return SqlCasing.LowerCase;  }
+            get { return SqlCasing.Mixed;  }
         }
 
         /// <summary>

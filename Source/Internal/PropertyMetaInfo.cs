@@ -216,7 +216,7 @@ namespace AdFactum.Data.Internal
             : this()
         {
             PropertyName = columnName;
-            ColumnName = columnName.ToUpper();
+            ColumnName = columnName; //.ToUpper();
             Type bindingType = InitializeFromType(type);
 
             LinkTarget = bindingType ?? (
@@ -504,7 +504,7 @@ namespace AdFactum.Data.Internal
             /*
              * Uppercase the property Name
              */
-            ColumnName = ColumnName.ToUpper();
+            //ColumnName = ColumnName.ToUpper();
         }
 
         /// <summary>

@@ -89,65 +89,20 @@ namespace AdFactum.Data.Internal
         #region ILinqPersister Members
 
         /// <summary>
-        /// Returns the type of the used Linq Expression Writer
+        /// Returns the type of the used linq expression writer
         /// </summary>
-        public virtual Type LinqExpressionWriter
-        {
-            get { return typeof(SqlExpressionWriter); }
-        }
+        /// <value></value>
+        public abstract Type LinqExpressionWriter { get; }
 
         /// <summary>
-        /// Rewrites the Linq Expression
+        /// Rewrites the expression
         /// </summary>
+        /// <param name="expression"></param>
+        /// <param name="dynamicCache"></param>
+        /// <param name="groupings"></param>
+        /// <param name="level"></param>
         /// <returns></returns>
-        public virtual Expression RewriteExpression(Expression expression, Cache<Type, ProjectionClass> dynamicCache, out List<PropertyTupel> groupings, out int level)
-        {
-            var boundExp = PartialEvaluator.Eval(expression);
-            Dictionary<ParameterExpression, MappingStruct> mapping;
-
-            boundExp = QueryBinder.Evaluate(boundExp, out groupings, dynamicCache, TypeMapper, out level, out mapping);
-            boundExp = MemberBinder.Evaluate(boundExp, dynamicCache, TypeMapper, mapping);
-
-            //// move aggregate computations so they occur in same select as group-by
-            //!!! NOT NEEDED ANYMORE !!! boundExp = AggregateRewriter.Rewrite(boundExp, dynamicCache);
-
-            //// Bind Relationships ( means to solve access to class members, that means to insert a join if necessary)
-            //!!! NOT NEEDED ANYMORE !!! boundExp = RelationshipBinder.Bind(boundExp, dynamicCache);
-
-            //// These bundle of Rewriters are all used to get paging mechism in place
-            //!!! OBSOLETE HERE      !!! boundExp = AliasReWriter.Rewrite(boundExp, dynamicCache);
-            //!!! OBSOLETE HERE      !!! boundExp = RedundantSubqueryRemover.Remove(boundExp, dynamicCache);
-            boundExp = SkipToRowNumberRewriter.Rewrite(boundExp, dynamicCache);
-
-            //// At last, the correct alias can be set.
-            //!!! OBSOLETE HERE      !!! boundExp = AliasReWriter.Rewrite(boundExp, dynamicCache);
-
-            //// Now Check every OrderBy, and move them up into the sql stack, if necessary
-            boundExp = SqlOrderByRewriter.Rewrite(boundExp);
-
-            //// Now have a deep look to the Cross Apply Joins. Because perhaps they aren't valid anymore.
-            //// This can be, due removal of selects and replacement with the native table expressions. A INNER JOIN / or CROSS JOIN
-            //// is the result of that.
-            boundExp = CrossApplyRewriter.Rewrite(boundExp, dynamicCache);
-
-            //// Attempt to rewrite cross joins as inner joins
-            boundExp = RedundantSubqueryRemover.Remove(boundExp, dynamicCache);
-            boundExp = CrossJoinRewriter.Rewrite(boundExp);
-
-            ///// Remove unused columns
-            //!!! OBSOLETE HERE      !!! boundExp = AliasReWriter.Rewrite(boundExp, dynamicCache);
-            //!!! NOT NEEDED ANYMORE !!! boundExp = UnusedColumnRemover.Rewrite(boundExp, dynamicCache);
-
-            //// Do Final
-            //!!! OBSOLETE HERE      !!! boundExp = RedundantSubqueryRemover.Remove(boundExp, dynamicCache );
-            boundExp = RedundantSubqueryRemover.Remove(boundExp, dynamicCache);
-            boundExp = RedundantJoinRemover.Remove(boundExp);
-            boundExp = AliasReWriter.Rewrite(boundExp, dynamicCache);
-
-            boundExp = UpdateProjection.Rebind(boundExp, dynamicCache);
-
-            return boundExp;
-        }
+        public abstract Expression RewriteExpression(Expression expression, Cache<Type, ProjectionClass> dynamicCache, out List<PropertyTupel> groupings, out int level);
 
         /// <summary> Type Mapping class </summary>
         public ITypeMapper TypeMapper { get; protected set; }
@@ -271,7 +226,7 @@ namespace AdFactum.Data.Internal
             IDictionary columns = new Dictionary<string,int>(fields);
             for (int counter = 0; counter < fields; counter++)
             {
-                string columnName = reader.GetName(counter).ToUpper();
+                string columnName = reader.GetName(counter);//.ToUpper();
                 if (!columns.Contains(columnName))
                     columns.Add(columnName, counter);
             }
@@ -1416,7 +1371,7 @@ namespace AdFactum.Data.Internal
 
                     for (index = 0; index < reader.FieldCount; index++)
                     {
-                        string column = reader.GetName(index).ToUpper();
+                        string column = reader.GetName(index);//.ToUpper();
                         if (resultFields.FieldProperties.Contains(column))
                             continue;
 

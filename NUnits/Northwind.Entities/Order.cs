@@ -20,7 +20,7 @@ namespace ObjectMapper.NUnits.Northwind.Entities
             }
         }
 
-        [PropertyName("OrderId")]
+        [PropertyName("OrderID")]
         [PrimaryKey]
         [PropertyLength(5)]
         public int? OrderID
@@ -29,13 +29,13 @@ namespace ObjectMapper.NUnits.Northwind.Entities
             set { Id = value; }
         }
 
-        [PropertyName("CustomerId")]
+        [PropertyName("CustomerID")]
         public string CustomerID { get; set; }
 
-        [PropertyName("CustomerId")]
+        [PropertyName("CustomerID")]
         public Customer Customer { get; set; }
 
-        [PropertyName("EmployeeId")]
+        [PropertyName("EmployeeID")]
         public Employee Employee { get; set; }
 
         [PropertyName("OrderDate")]

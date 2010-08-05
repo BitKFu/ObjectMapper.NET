@@ -893,7 +893,7 @@ namespace AdFactum.Data.Internal
                 /*
                  * Prüfen, ob das Property nicht mit einem neueren Property überschrieben werden muss
                  */
-                var propertyName = propertyCustomInfo.ColumnName.ToUpper();
+                var propertyName = propertyCustomInfo.ColumnName; //.ToUpper();
 
                 /*
                  * Handelt es sich um einen Virtuellen Link?

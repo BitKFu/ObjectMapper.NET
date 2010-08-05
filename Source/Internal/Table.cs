@@ -135,7 +135,7 @@ namespace AdFactum.Data.Internal
             }
 
             if (!string.IsNullOrEmpty(name))
-                name = name.Substring(name.LastIndexOf(".") + 1).ToUpper();
+                name = name.Substring(name.LastIndexOf(".") + 1); //.ToUpper();
 	    }
 
         /// <summary>

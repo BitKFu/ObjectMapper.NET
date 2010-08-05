@@ -15,7 +15,7 @@ namespace AdFactum.Data.Linq.Language
     /// </summary>
     public class AccessExpressionWriter : LinqMethodInspector
     {
-        readonly Stack<SelectExpression> selectStack = new Stack<SelectExpression>();
+        readonly Stack<AliasedExpression> selectStack = new Stack<AliasedExpression>();
 
         /// <summary>
         /// Constructor to create an expression writer for the access database
@@ -98,7 +98,7 @@ namespace AdFactum.Data.Linq.Language
                 if (select.From != null) WriteSql(" FROM ");
 
                 var subSelect = Visit(select.From);
-                var aliasedFrom = subSelect as SelectExpression ?? (AliasedExpression)(subSelect as UnionExpression);
+                var aliasedFrom = subSelect as IDbExpressionWithResult;
                 if (aliasedFrom != null)
                     WriteSql(aliasedFrom.Alias.Name);
 
@@ -131,6 +131,29 @@ namespace AdFactum.Data.Linq.Language
                 }
 
                 return select;
+            }
+            finally
+            {
+                selectStack.Pop();
+
+                if (selectStack.Count > 0)
+                {
+                    WriteSql(")");
+                }
+            }
+        }
+
+        protected override Expression VisitScalarExpression(ScalarExpression select)
+        {
+            if (selectStack.Count > 0)
+            {
+                WriteSql("(");
+            }
+
+            selectStack.Push(select);
+            try
+            {
+                return base.VisitScalarExpression(select);
             }
             finally
             {

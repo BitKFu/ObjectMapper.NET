@@ -1569,7 +1569,7 @@ namespace AdFactum.Data.Linq.Language
         /// </summary>
         protected override Expression VisitColumn(PropertyExpression expression)
         {
-            WriteSql(string.Concat(TypeMapper.Quote(expression.Alias.Name), ".", TypeMapper.Quote(expression.Name)));
+            WriteSql(string.Concat(expression.Alias.Name, ".", TypeMapper.Quote(expression.Name)));
             return expression;
         }
 
@@ -1607,7 +1607,7 @@ namespace AdFactum.Data.Linq.Language
                                 ? string.Empty
                                 : string.Concat(LinqPersister.DatabaseSchema, ".");
 
-            WriteSql(string.Concat(schema, table.TableName, " "));
+            WriteSql(string.Concat(schema, TypeMapper.Quote(table.TableName), " "));
             return expression;
         }
 

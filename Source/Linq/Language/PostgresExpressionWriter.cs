@@ -4,23 +4,25 @@ using System.Linq.Expressions;
 using AdFactum.Data.Interfaces;
 using AdFactum.Data.Internal;
 using AdFactum.Data.Linq.Expressions;
-using AdFactum.Data.Linq.Language;
 using AdFactum.Data.Util;
 
-namespace AdFactum.Data.Postgres
+namespace AdFactum.Data.Linq.Language
 {
+    /// <summary>
+    /// This class is used to generate SQL Statements out of the expression tree
+    /// </summary>
     public class PostgresExpressionWriter : LinqMethodInspector
     {
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the <see cref="SqlExpressionWriter"/> class.
         /// </summary>
-        public PostgresExpressionWriter(ILinqPersister persister, List<PropertyTupel> groupings, Cache<Type, ProjectionClass> cache) 
-            : base(persister, groupings, cache)
+        public PostgresExpressionWriter(ILinqPersister nativePersister, List<PropertyTupel> groupings, Cache<Type, ProjectionClass> cache)
+            : base(nativePersister, groupings, cache)
         {
-            Command = persister.CreateCommand();
+            Command = nativePersister.CreateCommand();
         }
 
-        readonly Stack<SelectExpression> selectStack = new Stack<SelectExpression>();
+        readonly Stack<AliasedExpression> selectStack = new Stack<AliasedExpression>();
 
         /// <summary>
         /// Visits the select expression.
@@ -29,7 +31,7 @@ namespace AdFactum.Data.Postgres
         /// <returns></returns>
         protected override Expression VisitSelectExpression(SelectExpression select)
         {
-            if (selectStack.Count > 0)
+            if (selectStack.Count>0)
             {
                 WriteSql("(");
             }
@@ -48,6 +50,13 @@ namespace AdFactum.Data.Postgres
                 if (select.IsDistinct)
                     WriteSql("DISTINCT ");
 
+                if (select.Take != null)
+                {
+                    WriteSql("TOP ");
+                    Visit(select.Take);
+                    WriteSql(" ");
+                }
+
                 if (select.Columns != null)
                 {
                     for (var x = 0; x < select.Columns.Count; x++)
@@ -58,8 +67,7 @@ namespace AdFactum.Data.Postgres
                         var prop = col.Expression as PropertyExpression;
                         Visit(select.Columns[x].Expression);
 
-                        if (prop == null ||
-                            !string.Equals(prop.Name, col.Alias.Name, StringComparison.InvariantCultureIgnoreCase))
+                        if (prop == null || !string.Equals(prop.Name, col.Alias.Name, StringComparison.InvariantCultureIgnoreCase))
                         {
                             WriteSql(" as ");
                             WriteSql(TypeMapper.Quote(col.Alias.Name));
@@ -73,7 +81,7 @@ namespace AdFactum.Data.Postgres
                 if (select.From != null) WriteSql(" FROM ");
 
                 var subSelect = Visit(select.From);
-                var aliasedFrom = subSelect as SelectExpression ?? (AliasedExpression)(subSelect as UnionExpression);
+                var aliasedFrom = subSelect as IDbExpressionWithResult;
                 if (aliasedFrom != null)
                     WriteSql(aliasedFrom.Alias.Name);
 
@@ -105,18 +113,6 @@ namespace AdFactum.Data.Postgres
                     }
                 }
 
-                if (select.Skip != null)
-                {
-                    WriteSql(" OFFSET ");
-                    Visit(select.Skip);
-                }
-
-                if (select.Take != null)
-                {
-                    WriteSql(" LIMIT ");
-                    Visit(select.Take);
-                }
-
                 return select;
             }
             finally
@@ -129,5 +125,52 @@ namespace AdFactum.Data.Postgres
                 }
             }
         }
+
+        protected override Expression VisitScalarExpression(ScalarExpression select)
+        {
+            if (selectStack.Count > 0)
+            {
+                WriteSql("(");
+            }
+
+            selectStack.Push(select);
+            try
+            {
+                return base.VisitScalarExpression(select);
+            }
+            finally
+            {
+                selectStack.Pop();
+
+                if (selectStack.Count > 0)
+                {
+                    WriteSql(")");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets the concatinator.
+        /// </summary>
+        /// <value>The concatinator.</value>
+        protected override string Concatinator
+        {
+            get
+            {
+                return "||";
+            }
+        }
+
+        /// <summary>
+        /// Return the length of a string
+        /// </summary>
+        /// <param name="expression"></param>
+        protected override void Length(Expression expression)
+        {
+            WriteSql(" LENGTH(");
+            Visit(expression);
+            WriteSql(")");
+        }
+
     }
 }

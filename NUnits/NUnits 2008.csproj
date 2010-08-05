@@ -170,7 +170,9 @@
     <None Include="Nunit.Oracle.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Nunit.Postgres.config" />
+    <None Include="Nunit.Postgres.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Nunit.SqlServer.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
