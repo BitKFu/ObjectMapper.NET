@@ -13,7 +13,7 @@ namespace AdFactum.Data.Repository
 		private string						tableName;
 		private Type						objectType;
 		private bool						tableExists		= true;
-		private IDictionary					fields			= null;
+        private Dictionary<string, FieldDescription> fields = null;
 
 		private List<FieldIntegrity>        mismatchedFields  = new List<FieldIntegrity>();   // Contains fields with wrong datatypes
 
@@ -22,7 +22,7 @@ namespace AdFactum.Data.Repository
 		/// </summary>
 		/// <param name="objectType">Type of the object.</param>
 		/// <param name="fields">The fields.</param>
-		public IntegrityInfo (Type objectType, IDictionary fields)
+        public IntegrityInfo(Type objectType, Dictionary<string, FieldDescription> fields)
 		{
             TableName = Table.GetTableInstance(objectType).Name;
 			ObjectType = objectType;
@@ -34,7 +34,7 @@ namespace AdFactum.Data.Repository
 		/// </summary>
 		/// <param name="tableName">Name of the table.</param>
 		/// <param name="fields">The fields.</param>
-		public IntegrityInfo (string tableName, IDictionary fields)
+        public IntegrityInfo(string tableName, Dictionary<string, FieldDescription> fields)
 		{
 			TableName = tableName;
 			Fields = fields;
@@ -89,7 +89,7 @@ namespace AdFactum.Data.Repository
 		/// Gets or sets the fields.
 		/// </summary>
 		/// <value>The fields.</value>
-		public IDictionary Fields
+        public Dictionary<string, FieldDescription> Fields
 		{
 			get { return fields; }
 			set { fields = value; }

@@ -109,19 +109,22 @@ namespace AdFactum.Data.Internal
             /*
 			 * Get all columns of the table
 			 */
-            IDictionary columns = NativePersister.GetColumns(reader);
+            Dictionary<string, int> fieldIndexDict;
+            Dictionary<int, string> indexFieldDict;
+            NativePersister.GetColumns(reader, info.Fields, out fieldIndexDict, out indexFieldDict);
+
             DataTable schemaTable = GetSchemaTable(reader);
 
-            IDictionary fields = info.Fields;
+            Dictionary<string, FieldDescription> fields = info.Fields;
             reader.Close();
 
             /*
 			 * Enumerate all fields of the object
 			 */
-            IDictionaryEnumerator fieldEnumerator = fields.GetEnumerator();
+            var fieldEnumerator = fields.GetEnumerator();
             while (fieldEnumerator.MoveNext())
             {
-                var fieldDescription = fieldEnumerator.Value as FieldDescription;
+                var fieldDescription = fieldEnumerator.Current.Value;
                 if (fieldDescription == null)
                     continue;
 
@@ -149,7 +152,7 @@ namespace AdFactum.Data.Internal
                     /*
                      * Check missing properties
                      */
-                    if (columns.Contains(fieldEnumerator.Key) == false)
+                    if (fieldIndexDict.ContainsKey(fieldEnumerator.Current.Key) == false)
                     {
                         info.MismatchedFields.Add(new FieldIntegrity(fieldDescription));
                         continue;
@@ -164,7 +167,7 @@ namespace AdFactum.Data.Internal
                     bool fieldIsShorter = false;
                     bool fieldIsLonger = false;
 
-                    DataRow[] row = schemaTable.Select(string.Concat("ColumnName='", fieldEnumerator.Key, "'"));
+                    DataRow[] row = schemaTable.Select(string.Concat("ColumnName='", fieldEnumerator.Current.Key, "'"));
                     if (row.Length == 0)
                         continue;
 
@@ -176,8 +179,8 @@ namespace AdFactum.Data.Internal
                          */
                     if (metaInfo.IsGeneralLinked)
                     {
-                        string typeField = string.Concat(fieldEnumerator.Key, DBConst.TypAddition);
-                        if (!columns.Contains(typeField))
+                        string typeField = string.Concat(fieldEnumerator.Current.Key, DBConst.TypAddition);
+                        if (!fieldIndexDict.ContainsKey(typeField))
                         {
                             var typeFieldDescription =
                                 new FieldDescription(typeField, fieldDescription.ParentType, typeof(string), false);
@@ -250,7 +253,7 @@ namespace AdFactum.Data.Internal
                 if (fieldDescription.FieldType.Equals(typeof(ListLink)))
                 {
                     string subTable = string.Concat(Table.GetTableInstance(info.ObjectType).Name, "_",
-                                                    fieldEnumerator.Key);
+                                                    fieldEnumerator.Current.Key);
                     Type linkedPrimaryKey = fieldDescription.CustomProperty.MetaInfo.LinkedPrimaryKeyType;
                     bool generalLinked = fieldDescription.CustomProperty.MetaInfo.IsGeneralLinked;
 
@@ -270,15 +273,15 @@ namespace AdFactum.Data.Internal
             /*
 			 * Enumerate all table columns
 			 */
-            IDictionaryEnumerator columnEnumerator = columns.GetEnumerator();
+            var columnEnumerator = fieldIndexDict.GetEnumerator();
             while (columnEnumerator.MoveNext())
             {
-                var column = (string)columnEnumerator.Key;
-                bool remove = !fields.Contains(column);
+                var column = columnEnumerator.Current.Key;
+                bool remove = !fields.ContainsKey(column);
 
                 if (!remove)
                 {
-                    var fieldDescription = (FieldDescription)fields[column];
+                    var fieldDescription = fields[column];
                     remove = fieldDescription.FieldType.Equals(typeof(ListLink));
                 }
                 else
@@ -289,7 +292,7 @@ namespace AdFactum.Data.Internal
                     if (column.EndsWith(DBConst.TypAddition))
                     {
                         string mainColumn = column.Substring(0, column.Length - DBConst.TypAddition.Length);
-                        var mainField = (FieldDescription)fields[mainColumn];
+                        var mainField = fields[mainColumn];
                         remove = !((mainField != null)
                                    && (mainField.CustomProperty != null)
                                    && (mainField.CustomProperty.MetaInfo.IsGeneralLinked));

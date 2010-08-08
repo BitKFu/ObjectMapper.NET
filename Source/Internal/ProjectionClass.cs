@@ -864,6 +864,12 @@ namespace AdFactum.Data.Internal
                 result = EvaluateFieldTemplates(ProjectedType, flat, counter);
             }
 
+            // Add Complex Column Mapping Templates
+            if (ComplexTypeColumnMapping != null)
+                foreach (ColumnDeclaration column in from columnDeclarations in ComplexTypeColumnMapping where columnDeclarations != null 
+                                                     from column in columnDeclarations select column)
+                    result.Add(column.Alias.Name, null);
+
             if (flat) flatTemplates = result;
                  else deepTemplates = result;
 

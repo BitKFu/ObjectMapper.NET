@@ -195,6 +195,7 @@ namespace AdFactum.Data.Oracle
                 SqlTracer.OpenConnection(((OracleConnection)Connection).ServerVersion, Connection.ConnectionString);
         }
 
+
 		#endregion
 
 		#region IPersister Member

@@ -217,21 +217,37 @@ namespace AdFactum.Data.Internal
         /// <summary>
         /// Returns the columns of a oracle table
         /// </summary>
-        /// <param name="reader"></param>
-        /// <returns></returns>
-        public virtual IDictionary GetColumns(IDataReader reader)
+        public virtual void GetColumns(
+            IDataReader reader, 
+            Dictionary<string, FieldDescription> fieldTemplates, 
+            
+            out Dictionary<string,int> fieldIndexDict, 
+            out Dictionary<int, string> indexFieldDict)
         {
             int fields = reader.FieldCount;
 
-            IDictionary columns = new Dictionary<string,int>(fields);
+            fieldIndexDict = new Dictionary<string, int>(fields);
+            indexFieldDict = new Dictionary<int, string>(fields);
+
             for (int counter = 0; counter < fields; counter++)
             {
-                string columnName = reader.GetName(counter);//.ToUpper();
-                if (!columns.Contains(columnName))
-                    columns.Add(columnName, counter);
-            }
+                string columnName = reader.GetName(counter);
 
-            return columns;
+                // Find the matching field
+                if (fieldTemplates != null && !fieldTemplates.ContainsKey(columnName))
+                {
+                    columnName =
+                        fieldTemplates.Keys.Where(
+                            key => key.Equals(columnName, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault() ??
+                        columnName;
+                }
+
+                // Add it to the result dictionary
+                if (!fieldIndexDict.ContainsKey(columnName))
+                    fieldIndexDict.Add(columnName, counter);
+
+                indexFieldDict.Add(counter, columnName);
+            }
         }
 
 
@@ -1339,7 +1355,7 @@ namespace AdFactum.Data.Internal
         /// <param name="startRow">The start row.</param>
         /// <param name="endRow">The end row.</param>
         /// <returns></returns>
-        protected List<PersistentProperties> PrivateSelect(IDbCommand command, IDictionary fieldTemplates, int startRow, int endRow)
+        protected List<PersistentProperties> PrivateSelect(IDbCommand command, Dictionary<string, FieldDescription> fieldTemplates, int startRow, int endRow)
         {
             var reader = ExecuteReader(command);
             var result = new List<PersistentProperties> ();
@@ -1350,7 +1366,9 @@ namespace AdFactum.Data.Internal
                 /*
                  * Zeilenhash aufbauen
                  */
-                IDictionary columns = GetColumns(reader);
+                Dictionary<string, int> fieldIndexDict;
+                Dictionary<int, string> indexFieldDict;
+                GetColumns(reader, fieldTemplates, out fieldIndexDict, out indexFieldDict);
 
                 /*
                  * Because Paging is available on every Database, we sometimes have to step forward to the first result
@@ -1371,13 +1389,13 @@ namespace AdFactum.Data.Internal
 
                     for (index = 0; index < reader.FieldCount; index++)
                     {
-                        string column = reader.GetName(index);//.ToUpper();
+                        string column = indexFieldDict[index];
                         if (resultFields.FieldProperties.Contains(column))
                             continue;
 
                         FieldDescription fieldDescription;
-                        if (fieldTemplates.Contains(column))
-                            fieldDescription = (FieldDescription)fieldTemplates[column];
+                        if (fieldTemplates.ContainsKey(column))
+                            fieldDescription = fieldTemplates[column];
                         else
                             fieldDescription = null;
 
@@ -1430,7 +1448,7 @@ namespace AdFactum.Data.Internal
                             {
                                 if (persistField == null)
                                     resultFields.FieldProperties = resultFields.FieldProperties.Add(column, new Link(fieldDescription));
-                                else if (columns.Contains(column + DBConst.TypAddition))
+                                else if (fieldIndexDict.ContainsKey(column + DBConst.TypAddition))
                                     resultFields.FieldProperties = resultFields.FieldProperties.Add(column,
                                                      new Link(fieldDescription,
                                                               ConvertSourceToTargetType(persistField, typeof(Guid)),
@@ -2106,7 +2124,9 @@ namespace AdFactum.Data.Internal
             * Add child listings
             */
             var resultHash = new SortedList();
-            IDictionary linkColumns = GetColumns(reader);
+            Dictionary<string, int> fieldIndexDict;
+            Dictionary<int, string> indexFieldDict;
+            GetColumns(reader, null, out fieldIndexDict, out indexFieldDict);
             while (reader.Read())
             {
                 object linkId = ConvertSourceToTargetType(reader.GetValue(0), linkIdType);
@@ -2115,15 +2135,15 @@ namespace AdFactum.Data.Internal
                                             linkId, parentType,
                                             Property.ConvertToType(parentPrimaryKeyType,
                                                                    reader.GetValue(
-                                                                       (int) linkColumns[DBConst.ParentObjectField])),
+                                                                       fieldIndexDict[DBConst.ParentObjectField])),
                                             // Parent Id
                                             Property.ConvertToType(linkedPrimaryKeyType,
                                                                    reader.GetValue(
-                                                                       (int) linkColumns[DBConst.PropertyField])),
+                                                                       fieldIndexDict[DBConst.PropertyField])),
                                             // Property
                                             (string)
                                             ConvertSourceToTargetType(
-                                                reader.GetValue((int) linkColumns[DBConst.LinkedToField]),
+                                                reader.GetValue(fieldIndexDict[DBConst.LinkedToField]),
                                                 typeof (string))); // Link To
 
                 resultHash.Add(linkId, listlink);
@@ -2173,22 +2193,24 @@ namespace AdFactum.Data.Internal
             * Add child listings
             */
             IList list = new ArrayList();
-            IDictionary linkColumns = GetColumns(reader);
+            Dictionary<string, int> fieldIndexDict;
+            Dictionary<int, string> indexFieldDict;
+            GetColumns(reader, null, out fieldIndexDict, out indexFieldDict);
             while (reader.Read())
             {
                 var listlink = new ListLink(null,
                                             (string)
                                             ConvertSourceToTargetType(
-                                                reader.GetValue((int) linkColumns[DBConst.LinkedToField]),
+                                                reader.GetValue(fieldIndexDict[DBConst.LinkedToField]),
                                                 typeof (string)), // Link To
                                             parentType,
                                             Property.ConvertToType(parentPrimaryKeyType,
                                                                    reader.GetValue(
-                                                                       (int) linkColumns[DBConst.ParentObjectField])),
+                                                                       fieldIndexDict[DBConst.ParentObjectField])),
                                             // Parent Id
                                             Property.ConvertToType(linkedPrimaryKeyType,
                                                                    reader.GetValue(
-                                                                       (int) linkColumns[DBConst.PropertyField]))
+                                                                       fieldIndexDict[DBConst.PropertyField]))
                     // Property
                     );
 

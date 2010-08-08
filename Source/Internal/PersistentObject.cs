@@ -795,15 +795,17 @@ namespace AdFactum.Data.Internal
             foreach (var template in templates)
             {
                 var columnName = template.Key;
-                Property propertyCustomInfo = template.Value.CustomProperty;
+                var fd = template.Value;
 
                 if (visitedProperties.ContainsKey(columnName))
                     continue;
 
+                Property propertyCustomInfo = fd != null ? fd.CustomProperty : null;
+
                 /*
 				 * Eventuell die Eigenschaft überlesen, wenn der Zugriff verweigert wird
 				 */
-                if (
+                if (propertyCustomInfo == null ||
                     (!propertyCustomInfo.MetaInfo.IsAccessible(((ITransactionContext) mapperObj).DatabaseMajorVersion,
                                                                ((ITransactionContext) mapperObj).DatabaseMinorVersion)))
                     continue;

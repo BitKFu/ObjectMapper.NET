@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Data;
 
 namespace AdFactum.Data
@@ -88,9 +89,14 @@ namespace AdFactum.Data
         /// <returns></returns>
 	    IDataReader ExecuteReader(IDbCommand command);
 
-        /// <summary>
-        /// Return the columns
-        /// </summary>
-	    IDictionary GetColumns(IDataReader reader);
+	    /// <summary>
+	    /// Return the columns
+	    /// </summary>
+	    void GetColumns(
+	        IDataReader reader,
+	        Dictionary<string, FieldDescription> fieldTemplates,
+
+	        out Dictionary<string, int> fieldIndexDict,
+	        out Dictionary<int, string> indexFieldDict);
 	}
 }
