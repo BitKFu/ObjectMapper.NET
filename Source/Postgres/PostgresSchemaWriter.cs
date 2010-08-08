@@ -56,7 +56,7 @@ namespace AdFactum.Data.Postgres
                         string tablename = Table.GetTableInstance(type).Name;
                         tables.Add(tablename);
 
-                        sql.Append(string.Concat("DROP SEQUENCE IF EXISTS ", TypeMapper.Quote(tablename), "_seq;\n"));
+                        sql.Append(string.Concat("DROP SEQUENCE IF EXISTS ", TypeMapper.Quote(tablename+ "_seq") + ";\n"));
                     }
                 }
                 catch(NoPrimaryKeyFoundException)
@@ -86,7 +86,7 @@ namespace AdFactum.Data.Postgres
         protected override string GetUniqueConstraintSqlStmt(string tableName, int constraintNumber, string uniqueConstraint)
         {
             string uniqueSql = string.Concat("ALTER TABLE ", TypeMapper.Quote(tableName)
-                                      , " ADD CONSTRAINT ", tableName, "_UK", constraintNumber.ToString("00")
+                                      , " ADD CONSTRAINT ", TypeMapper.Quote(tableName+ "_UK"+ constraintNumber.ToString("00"))
                                       , " UNIQUE (", uniqueConstraint, ");\n");
             return uniqueSql;
         }
@@ -100,7 +100,7 @@ namespace AdFactum.Data.Postgres
         /// <returns></returns>
         protected override string GetIndexSqlStmt(string tableName, string fieldName, int indexNumber)
         {
-            return string.Concat("CREATE INDEX ", tableName, "_FKI", indexNumber.ToString("00"), " ON ", tableName, " (", fieldName, ");\n\n");
+            return string.Concat("CREATE INDEX ", TypeMapper.Quote(tableName+ "_FKI"+ indexNumber.ToString("00")), " ON ", TypeMapper.Quote(tableName), " (", TypeMapper.Quote(fieldName), ");\n\n");
         }
 
         /// <summary>
@@ -141,7 +141,7 @@ namespace AdFactum.Data.Postgres
             /*
              * Evaluate the table script
              */
-            string tableSql = base.GetTableSql(tableName.ToLower(), parentType, fieldTemplates);
+            string tableSql = base.GetTableSql(tableName, parentType, fieldTemplates);
             tableSql = tableSql.Substring(0, tableSql.Length - 3);
 
             return createEnum+tableSql;
@@ -155,13 +155,11 @@ namespace AdFactum.Data.Postgres
         /// <param name="resultSql">The result SQL.</param>
         protected override void AddPrimaryKeyDefinitionToCreateTableSql(string tableName, List<FieldDescription> primaries, StringBuilder resultSql)
         {
-            tableName = tableName.ToLower();
-
             // Primarys hinzufügen
             if (primaries.Count > 0)
             {
                 IEnumerator primaryEnumerator = primaries.GetEnumerator();
-                resultSql.Append(string.Concat(", ", "CONSTRAINT " + tableName.ToLower() + "_pk PRIMARY KEY", "("));
+                resultSql.Append(string.Concat(", ", "CONSTRAINT " + TypeMapper.Quote(tableName + "_pk") +" PRIMARY KEY", "("));
                 bool first = true;
                 while (primaryEnumerator.MoveNext())
                 {
@@ -183,9 +181,9 @@ namespace AdFactum.Data.Postgres
                 FieldDescription primaryKey = primaries[0];
                 if (primaryKey.IsAutoIncrement)
                 {
-                    resultSql.Append(string.Concat("CREATE SEQUENCE ", tableName, "_seq INCREMENT BY 1 NO MAXVALUE START WITH 1;\n"));
+                    resultSql.Append(string.Concat("CREATE SEQUENCE ", TypeMapper.Quote(tableName+ "_seq")+ " INCREMENT BY 1 NO MAXVALUE START WITH 1;\n"));
                     resultSql.Append(
-                        string.Concat("ALTER TABLE ", tableName, " ALTER COLUMN ", primaryKey.Name, " SET DEFAULT NEXTVAL('",tableName,"_seq');\n"));
+                        string.Concat("ALTER TABLE ", TypeMapper.Quote(tableName), " ALTER COLUMN ", TypeMapper.Quote(primaryKey.Name), " SET DEFAULT NEXTVAL('",TypeMapper.Quote(tableName+"_seq")+"');\n"));
                 }
             }
         }
@@ -201,7 +199,7 @@ namespace AdFactum.Data.Postgres
             Debug.Assert(fieldIntegrity.RequiredFailure, "Only valid when RequiredFailure = true");
 
             sql.Append("ALTER TABLE ");
-            sql.Append(info.TableName);
+            sql.Append(TypeMapper.Quote(info.TableName));
             sql.Append(" MODIFY ");
             sql.Append(Condition.QUOTE_OPEN);
             sql.Append(fieldIntegrity.Name);
@@ -229,7 +227,7 @@ namespace AdFactum.Data.Postgres
             ddl = ddl.Replace("NOT NULL", "");		// remove NOT NULL
 
             sql.Append("ALTER TABLE ");
-            sql.Append(info.TableName);
+            sql.Append(TypeMapper.Quote(info.TableName));
             sql.Append(" MODIFY ");
             sql.Append(ddl);
             sql.Append(";\n");

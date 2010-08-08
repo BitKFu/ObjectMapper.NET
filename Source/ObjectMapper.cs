@@ -2186,7 +2186,7 @@ namespace AdFactum.Data
                         (fieldDesc.FieldType == typeof(Link)
                         || fieldDesc.FieldType == typeof(ListLink)
                         || fieldDesc.FieldType == typeof(SpecializedLink)
-                        ) && (dictEnum.Current.Key != propertyName.ToUpper()))
+                        ) && (dictEnum.Current.Key != propertyName))
                         removeKeys.Add(dictEnum.Current.Key);
                 }
 
@@ -2206,7 +2206,7 @@ namespace AdFactum.Data
                 {
                     int level = hierarchyLevel == int.MaxValue ? int.MaxValue : HierarchyLevel.Dependend1stLvl + hierarchyLevel;
                     object vo = po.CreateVO(this, objectFactory, tempHash, level, null);
-                    Property property = templates[propertyName.ToUpper()].CustomProperty;
+                    Property property = templates[propertyName].CustomProperty;
                     result = property.GetValue(vo);
                 }
             }
@@ -2299,7 +2299,7 @@ namespace AdFactum.Data
                             (fieldDesc.FieldType == typeof(Link) 
                             || fieldDesc.FieldType == typeof(ListLink) 
                             || fieldDesc.FieldType == typeof(SpecializedLink)
-                            ) && ((string)dictEnum.Entry.Key != propertyName.ToUpper()))
+                            ) && ((string)dictEnum.Entry.Key != propertyName))
                             removeKeys.Add(dictEnum.Key);
                     }
 
@@ -2320,7 +2320,7 @@ namespace AdFactum.Data
                         int level = hierarchyLevel == int.MaxValue ? int.MaxValue : HierarchyLevel.Dependend1stLvl + hierarchyLevel;
 
                         object vo = po.CreateVO(this, objectFactory, tempHash, level, null);
-                        Property property = templates[propertyName.ToUpper()].CustomProperty;
+                        Property property = templates[propertyName].CustomProperty;
                         result = (IList) property.GetValue(vo);
                     }
                 }

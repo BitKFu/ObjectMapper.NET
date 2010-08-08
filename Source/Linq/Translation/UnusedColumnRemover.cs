@@ -124,7 +124,7 @@ namespace AdFactum.Data.Linq.Translation
                         // Try to map the original property
                         if (original != null && original.ParentType == originalPc.ProjectedType)
                         {
-                            var upperedAlias = column.Alias.Name.ToUpper();
+                            var upperedAlias = column.Alias.Name; //.ToUpper();
                             FieldDescription field;
                             if (deepTemplates.TryGetValue(original.Name, out field))
                             {
@@ -149,22 +149,22 @@ namespace AdFactum.Data.Linq.Translation
                     // As a second step, try to fill all unmapped columns
                     foreach (var column in unmappedColumns)
                     {
-                        var upperedAlias = column.Alias.Name.ToUpper();
+                        var upperedAlias = column.Alias.Name; //.ToUpper();
                         if (usedTemplates.Contains(upperedAlias))
                             continue;
 
                         // Do a simple alias mapping, if the original property is not available or does not match
                         FieldDescription field;
-                        if (deepTemplates.TryGetValue(column.Alias.Name.ToUpper(), out field))
+                        if (deepTemplates.TryGetValue(column.Alias.Name, out field))
                         {
                             valueObjectProjections.Add(column.Alias.Name);
-                            newDeepTemplates.Add(column.Alias.Name.ToUpper(), new FieldDescription(column.Alias.Name, field.ParentType, field.FieldType, field.ContentType, field.CustomProperty, field.IsPrimary));
+                            newDeepTemplates.Add(column.Alias.Name, new FieldDescription(column.Alias.Name, field.ParentType, field.FieldType, field.ContentType, field.CustomProperty, field.IsPrimary));
                         }
 
-                        if (flatTemplates.TryGetValue(column.Alias.Name.ToUpper(), out field))
+                        if (flatTemplates.TryGetValue(column.Alias.Name, out field))
                         {
                             valueObjectProjections.Add(column.Alias.Name);
-                            newFlatTemplates.Add(column.Alias.Name.ToUpper(), new FieldDescription(column.Alias.Name, field.ParentType, field.FieldType, field.ContentType, field.CustomProperty, field.IsPrimary));
+                            newFlatTemplates.Add(column.Alias.Name, new FieldDescription(column.Alias.Name, field.ParentType, field.FieldType, field.ContentType, field.CustomProperty, field.IsPrimary));
                         }
                     }
 

@@ -147,7 +147,7 @@ namespace AdFactum.Data.Queries
 			{
 				StringBuilder result = new StringBuilder();
 
-				result.Append("SELECT " + ResultTable + "." + ResultRow);
+                result.Append("SELECT " + Condition.QUOTE_OPEN + ResultTable + Condition.QUOTE_CLOSE + "." + Condition.QUOTE_OPEN + ResultRow + Condition.QUOTE_CLOSE);
 				result.Append(" FROM " );
 
 				IEnumerator tableEnumerator = Tables.GetEnumerator();

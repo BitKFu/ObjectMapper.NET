@@ -130,7 +130,7 @@ namespace AdFactum.Data.Postgres
         {
             int autoId = -1;
             IDbCommand command = CreateCommand();
-            command.CommandText = string.Concat("SELECT CURRVAL('", TypeMapper.Quote(TypeMapper.DoCasing(tableName+ "_SEQ")) ,"')");
+            command.CommandText = string.Concat("SELECT CURRVAL('", TypeMapper.Quote(TypeMapper.DoCasing(tableName+ "_seq")) ,"')");
 
             IDataReader reader = ExecuteReader(command);
             if (reader.Read())

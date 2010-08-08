@@ -96,7 +96,7 @@ namespace AdFactum.Data.Repository
 		[PropertyName("TABLE_NAME")]
 		public string TableName
 		{
-			get { return tableName.ToUpper(); }
+			get { return tableName; }
 			set { tableName = value; }
 		}
 

@@ -2106,13 +2106,13 @@ namespace AdFactum.Data.Internal
 
             string linkFields = string.Concat(
                 TypeMapper.Quote(DBConst.LinkIdField), ",",
-                DBConst.ParentObjectField, ",",
-                DBConst.PropertyField, ",",
+                TypeMapper.Quote(DBConst.ParentObjectField), ",",
+                TypeMapper.Quote(DBConst.PropertyField), ",",
                 TypeMapper.Quote(DBConst.LinkedToField));
 
             string sql = string.Concat("SELECT ", linkFields, " FROM ", ConcatedSchema, TypeMapper.Quote(derivedTableName)
-                                       , " WHERE ", DBConst.ParentObjectField, " = ", GetParameterString(parameter),
-                                       " ORDER BY ", DBConst.LinkIdField);
+                                       , " WHERE ", TypeMapper.Quote(DBConst.ParentObjectField), " = ", GetParameterString(parameter),
+                                       " ORDER BY ", TypeMapper.Quote(DBConst.LinkIdField));
 
             command.CommandText = sql;
             IDataReader reader = ExecuteReader(command);
@@ -2176,12 +2176,12 @@ namespace AdFactum.Data.Internal
             command.Parameters.Add(parameter);
 
             string linkFields = string.Concat(
-                DBConst.ParentObjectField, ",",
-                DBConst.PropertyField, ",",
-                DBConst.LinkedToField);
+                 TypeMapper.Quote(DBConst.ParentObjectField), ",",
+                 TypeMapper.Quote(DBConst.PropertyField), ",",
+                 TypeMapper.Quote(DBConst.LinkedToField));
 
             string sql = string.Concat("SELECT ", linkFields, " FROM ", ConcatedSchema, TypeMapper.Quote(derivedTableName)
-                                       , " WHERE ", DBConst.ParentObjectField, " = ", GetParameterString(parameter));
+                                       , " WHERE ", TypeMapper.Quote(DBConst.ParentObjectField), " = ", GetParameterString(parameter));
 
             command.CommandText = sql;
             IDataReader reader = ExecuteReader(command);

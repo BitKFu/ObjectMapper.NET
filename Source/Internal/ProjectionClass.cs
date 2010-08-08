@@ -627,7 +627,7 @@ namespace AdFactum.Data.Internal
                         if (result.Length > 0) result += ", ";
                         result += string.Concat(Condition.SCHEMA_REPLACE, Condition.QUOTE_OPEN, projectionTable.Name,
                                                 Condition.QUOTE_CLOSE, ".",
-                                                projection.GetPrimaryKeyDescription().Name);
+                                                Condition.QUOTE_OPEN, projection.GetPrimaryKeyDescription().Name, Condition.QUOTE_CLOSE);
                     }
 
                     primaryKeyColumns = result;

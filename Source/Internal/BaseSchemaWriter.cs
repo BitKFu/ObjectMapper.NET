@@ -690,7 +690,7 @@ namespace AdFactum.Data.Internal
                                                       bool onDeleteCascade)
         {
             string sql = string.Concat("ALTER TABLE ", ConcatedSchema, TypeMapper.Quote(tableName)
-                                       , " ADD CONSTRAINT ", tableName + "_FK" + foreignKeyNumber.ToString("00")
+                                       , " ADD CONSTRAINT ", TypeMapper.Quote(tableName + "_FK" + foreignKeyNumber.ToString("00"))
                                        , " FOREIGN KEY (", TypeMapper.Quote(fieldName), ")"
                                        , " REFERENCES ", ConcatedSchema, TypeMapper.Quote(referencedTableName));
 

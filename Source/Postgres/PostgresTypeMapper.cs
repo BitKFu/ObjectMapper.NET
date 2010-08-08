@@ -70,7 +70,7 @@ namespace AdFactum.Data.Postgres
              * Enum Types are supported by Postgres, so why don't use it ;)
              */
             if (type.IsEnum)
-                return AddDefaultToDDL(field, type.Name.ToLower());
+                return AddDefaultToDDL(field, Quote(type.Name));
 
             result = base.GetStringForDDL(field, type, length) ?? result;
             return result;

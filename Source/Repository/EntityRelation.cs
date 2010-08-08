@@ -436,7 +436,7 @@ namespace AdFactum.Data.Repository
 		public string ParentTable
 		{
 			get { return parentTable; }
-			set { parentTable = value.ToUpper(); }
+			set { parentTable = value; }
 		}
 
 		/// <summary>
@@ -447,7 +447,7 @@ namespace AdFactum.Data.Repository
 		public string ChildTable
 		{
 			get { return childTable; }
-			set { childTable = value.ToUpper(); }
+			set { childTable = value; }
 		}
 
 
@@ -459,7 +459,7 @@ namespace AdFactum.Data.Repository
 		public string ChildColumn
 		{
 			get { return childColumn; }
-			set { childColumn = value.ToUpper(); }
+			set { childColumn = value; }
 		}
 
 		/// <summary>
@@ -470,7 +470,7 @@ namespace AdFactum.Data.Repository
 		public string ParentColumn
 		{
 			get { return parentColumn; }
-			set { parentColumn = value.ToUpper(); }
+			set { parentColumn = value; }
 		}
 
 		/// <summary>
@@ -530,7 +530,7 @@ namespace AdFactum.Data.Repository
 		{
 			get { return linkTable; }
 			set {
-			    linkTable = value != null ? value.ToUpper() : "";
+			    linkTable = value != null ? value : "";
 			}
 		}
 
@@ -563,7 +563,7 @@ namespace AdFactum.Data.Repository
 		{
 			get { return linkColumn; }
 			set {
-			    linkColumn = value != null ? value.ToUpper() : "";
+			    linkColumn = value != null ? value : "";
 			}
 		}
 
