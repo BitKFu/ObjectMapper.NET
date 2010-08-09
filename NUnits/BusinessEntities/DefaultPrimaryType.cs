@@ -8,6 +8,7 @@ namespace ObjectMapper.NUnits.BusinessEntities
     /// <summary>
     /// Test the default primary key type for interfaces
     /// </summary>
+    [Table("DefaultPk")]
     public class DefaultPrimaryType : ValueObject
     {
         private List<IIrgendwas> ignoreMe = new List<IIrgendwas>();

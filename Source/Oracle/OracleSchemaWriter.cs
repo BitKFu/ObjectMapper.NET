@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
+using AdFactum.Data.Exceptions;
+using AdFactum.Data.Fields;
 using AdFactum.Data.Internal;
 using AdFactum.Data.Queries;
 using AdFactum.Data.Repository;
@@ -69,14 +71,22 @@ namespace AdFactum.Data.Oracle
             {
                 var type = (Type)enumerator.Current;
                 var projection = ReflectionHelper.GetProjection(type, null);
-                FieldDescription primaryKey = projection.GetPrimaryKeyDescription();
 
-                if (primaryKey.IsAutoIncrement)
+                try
                 {
-                    string tablename = Table.GetTableInstance(type).Name;
-                    tables.Add(tablename);
+                    FieldDescription primaryKey = projection.GetPrimaryKeyDescription();
 
-                    sql.Append(string.Concat("DROP SEQUENCE ", tablename, "_SEQ;\n"));
+                    if (primaryKey.IsAutoIncrement)
+                    {
+                        string tablename = Table.GetTableInstance(type).Name;
+                        tables.Add(tablename);
+
+                        sql.Append(string.Concat("DROP SEQUENCE ", tablename, "_SEQ;\n"));
+                    }
+                }
+                catch(NoPrimaryKeyFoundException)
+                {
+                    // Do nothing. We can't drop a sequence, if no primary key could be found
                 }
             }
             sql.Append("\n");
@@ -90,6 +100,39 @@ namespace AdFactum.Data.Oracle
             base.WriteSchema(outputStream, persistentTypes);
         }
 
+        /// <summary>
+        /// Writes the Drop Table Statements
+        /// </summary>
+        /// <param name="sql"></param>
+        /// <param name="tables"></param>
+        /// <param name="persistentTypes"></param>
+        protected override void PrivateWriteDropTable(StringBuilder sql, List<string> tables, IEnumerable<Type> persistentTypes)
+        {
+            sql.Append("--------------------------------------------------------------------------\n");
+            sql.Append("--- DROP TABLE STATEMENTS\n");
+            sql.Append("--------------------------------------------------------------------------\n");
+            IEnumerator enumerator = persistentTypes.GetEnumerator();
+            while (enumerator.MoveNext())
+            {
+                var type = (Type)enumerator.Current;
+
+                string tablename = Table.GetTableInstance(type).Name;
+                tables.Add(tablename);
+
+                var projection = ReflectionHelper.GetProjection(type, null);
+                var fields = projection.GetFieldTemplates(false);
+                var fieldEnumerator = fields.GetEnumerator();
+                while (fieldEnumerator.MoveNext())
+                {
+                    var field = fieldEnumerator.Current.Value;
+
+                    if ((field != null) && (field.FieldType.Equals(typeof(ListLink))))
+                        sql.Append(string.Concat("DROP TABLE ", TypeMapper.Quote(CreateChildTableName(tablename, field.Name)), " CASCADE CONSTRAINTS;\n"));
+                }
+                sql.Append(string.Concat("DROP TABLE ", TypeMapper.Quote(tablename), " CASCADE CONSTRAINTS;\n"));
+            }
+            sql.Append("\n");
+        }
 
         /// <summary>
         /// Gets the unique uniqueConstraint SQL STMT.

@@ -236,9 +236,19 @@ namespace AdFactum.Data.Internal
                 // Find the matching field
                 if (fieldTemplates != null && !fieldTemplates.ContainsKey(columnName))
                 {
+                    string name = columnName;
+
                     columnName =
+
+                        // Find simple column
                         fieldTemplates.Keys.Where(
-                            key => key.Equals(columnName, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault() ??
+                            key => name.Equals(key, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault() ??
+
+                        // Find simple column + Type Addition
+                        fieldTemplates.Keys.Where(
+                            key => name.Equals(key+DBConst.TypAddition, StringComparison.InvariantCultureIgnoreCase)).Select(key => key + DBConst.TypAddition)
+                            .FirstOrDefault() ??
+
                         columnName;
                 }
 

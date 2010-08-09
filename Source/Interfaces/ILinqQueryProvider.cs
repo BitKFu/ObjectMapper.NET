@@ -50,5 +50,11 @@ namespace AdFactum.Data.Interfaces
         /// </summary>
         /// <value>The dynamic cache.</value>
         Cache<Type, ProjectionClass> DynamicCache { get; }
+
+        /// <summary>
+        /// Gets the hierarchy level.
+        /// </summary>
+        /// <value>The hierarchy level.</value>
+        int HierarchyLevel { get; }
     }
 }

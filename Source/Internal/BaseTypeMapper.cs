@@ -321,7 +321,7 @@ namespace AdFactum.Data.Internal
                 bool isKeyWord = expression.Contains(" ");
 
                 result = string.Concat(result, (x > 0 ? "," : ""),
-                                       isKeyWord || trim.Contains(" ") ? string.Concat("[", trim, "]") : trim);
+                                       isKeyWord || trim.Contains(" ") ? string.Concat("[-", trim, "-]") : trim);
             }
 
             return result;

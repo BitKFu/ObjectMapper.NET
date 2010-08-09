@@ -107,7 +107,11 @@ namespace AdFactum.Data.Linq
             return this;
         }
 
-
+        /// <summary>
+        /// Gets the hierarchy level.
+        /// </summary>
+        /// <value>The hierarchy level.</value>
+        public int HierarchyLevel {get{ return level;}}
 
         /// <summary>
         /// Returns the Linq persister

@@ -234,7 +234,12 @@ namespace AdFactum.Data.Internal
                     }
 
                     if (fieldDescription.ContentType.Equals(typeof(string)))
-                        fieldIsShorter = (metaInfo.Length < (int)columnDescription["ColumnSize"]);
+                    {
+                        if (!metaInfo.IsUnicode)
+                            fieldIsShorter = (metaInfo.Length < (int) columnDescription["ColumnSize"]);
+                        else
+                            fieldIsShorter = (metaInfo.Length < ((int)columnDescription["ColumnSize"])/2);
+                    }
 
                     if (fieldDescription.ContentType.Equals(typeof(string)))
                         fieldIsLonger = (metaInfo.Length > (int)columnDescription["ColumnSize"]);

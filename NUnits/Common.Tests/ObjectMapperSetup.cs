@@ -6,6 +6,7 @@ using AdFactum.Data;
 using AdFactum.Data.Access;
 using AdFactum.Data.Exceptions;
 using AdFactum.Data.Internal;
+using AdFactum.Data.Oracle;
 using AdFactum.Data.Util;
 using Npgsql;
 using NUnit.Framework;
@@ -105,7 +106,7 @@ namespace ObjectMapper.NUnits.Common.Tests
                                     doContinue = false;
 
                                     // Continue when using Access and SQL is a DROP Statement
-                                    if (persister is AccessPersister)
+                                    if (persister is AccessPersister || persister is OraclePersister)
                                         if (sql.StartsWith("DROP"))
                                             doContinue = true;
                                         else

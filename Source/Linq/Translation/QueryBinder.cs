@@ -1388,9 +1388,10 @@ namespace AdFactum.Data.Linq.Translation
         /// <summary> Visits the constant. </summary>
         protected override Expression VisitConstant(ConstantExpression c)
         {
-            ILinqQueryProvider provider = c.Value as ILinqQueryProvider;
+            var provider = c.Value as ILinqQueryProvider;
             if (provider != null && !(provider.Expression is ConstantExpression))
             {
+                Level = provider.HierarchyLevel;
                 return Visit(provider.Expression);
             }
 

@@ -358,9 +358,9 @@ namespace AdFactum.Data.Internal
                     var field = fieldEnumerator.Current.Value;
 
                     if ((field != null) && (field.FieldType.Equals(typeof(ListLink))))
-                        sql.Append(string.Concat("DROP TABLE ", CreateChildTableName(tablename, field.Name), ";\n"));
+                        sql.Append(string.Concat("DROP TABLE ",  TypeMapper.Quote(CreateChildTableName(tablename, field.Name)), ";\n"));
                 }
-                sql.Append(string.Concat("DROP TABLE ", tablename, ";\n"));
+                sql.Append(string.Concat("DROP TABLE ",  TypeMapper.Quote(tablename), ";\n"));
             }
             sql.Append("\n");
         }
