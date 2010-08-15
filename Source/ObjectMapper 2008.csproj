@@ -169,6 +169,7 @@
     <Compile Include="Linq\LinkBridge.cs" />
     <Compile Include="Linq\LinqExtensions.cs" />
     <Compile Include="Linq\Language\LinqMethodInspector.cs" />
+    <Compile Include="Linq\Translation\PostgresOrderByRewriter.cs" />
     <Compile Include="Linq\Translation\CrossApplyRewriter.cs" />
     <Compile Include="Linq\Translation\CrossJoinRewriter.cs" />
     <Compile Include="Linq\Translation\DeclaredAliasGatherer.cs" />

@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Data;
 using System.Diagnostics;
 using System.Linq;
@@ -344,13 +345,13 @@ namespace AdFactum.Data.Postgres
             //// These bundle of Rewriters are all used to get paging mechism in place
             //!!! OBSOLETE HERE      !!! boundExp = AliasReWriter.Rewrite(boundExp, dynamicCache);
             //!!! OBSOLETE HERE      !!! boundExp = RedundantSubqueryRemover.Remove(boundExp, dynamicCache);
-            boundExp = SkipToRowNumberRewriter.Rewrite(boundExp, dynamicCache);
+            //boundExp = SkipToRowNumberRewriter.Rewrite(boundExp, dynamicCache);
 
             //// At last, the correct alias can be set.
             //!!! OBSOLETE HERE      !!! boundExp = AliasReWriter.Rewrite(boundExp, dynamicCache);
 
             //// Now Check every OrderBy, and move them up into the sql stack, if necessary
-            boundExp = SqlOrderByRewriter.Rewrite(boundExp);
+            boundExp = PostgresOrderByRewriter.Rewrite(boundExp);
 
             //// Now have a deep look to the Cross Apply Joins. Because perhaps they aren't valid anymore.
             //// This can be, due removal of selects and replacement with the native table expressions. A INNER JOIN / or CROSS JOIN
@@ -375,5 +376,61 @@ namespace AdFactum.Data.Postgres
 
             return boundExp;
         }
+
+        /// <summary>
+        /// Pages the select.
+        /// </summary>
+        protected override List<PersistentProperties> PageSelect(ProjectionClass projection, string additionalColumns, ICondition whereClause,
+                                           OrderBy orderBy, int minLine, int maxLine,
+                                           Dictionary<string, FieldDescription> fieldTemplates,
+                                           IDictionary globalParameter, bool distinct)
+        {
+            IDbCommand command = CreateCommand();
+            IDictionary virtualAlias = new HybridDictionary();
+
+            int index = 1;
+            string withClause = PrivateWithClause(projection, whereClause, command.Parameters, null, null, virtualAlias,
+                                                  ref index);
+            string tables = PrivateFromClause(projection, whereClause, command.Parameters, fieldTemplates,
+                                              globalParameter, virtualAlias, ref index);
+
+            /*
+             * SQL Bauen
+             */
+            String query = string.Concat(withClause, distinct ? "SELECT DISTINCT " : "SELECT ",
+                                         projection.GetColumns(whereClause, additionalColumns), " "
+                                         , BuildVirtualFields(fieldTemplates, globalParameter, virtualAlias)
+                                         , BuildSelectFunctionFields(fieldTemplates, globalParameter)
+                                         , " FROM " + tables);
+
+            /*
+             * Query bauen
+             */
+            query += PrivateCompleteWhereClause(projection, fieldTemplates, whereClause, globalParameter, virtualAlias,
+                                                command.Parameters, ref index);
+
+            string grouping = projection.GetGrouping();
+            if (!string.IsNullOrEmpty(grouping))
+                query = string.Concat(query, " GROUP BY ", grouping);
+
+            query += PrivateCompleteHavingClause(projection, fieldTemplates, whereClause, globalParameter, virtualAlias,
+                                                 command.Parameters, ref index);
+            query += (orderBy != null ? " ORDER BY " + orderBy.Columns + " " + orderBy.Ordering : "");
+
+            if (minLine > 0)
+                query += " OFFSET " + (minLine-1);
+
+            if (maxLine<int.MaxValue)
+                query += " LIMIT " + (maxLine - minLine+1);
+
+            /*
+             * Die IDs selektieren und Objekt laden
+             */
+            command.CommandText = query;
+
+            List<PersistentProperties> result = PrivateSelect(command, fieldTemplates, 0, int.MaxValue);
+            return result;
+        }
+
     }
 }

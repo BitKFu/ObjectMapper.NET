@@ -107,7 +107,7 @@ namespace AdFactum.Data.Linq.Translation
                         return false;
                     }));
 
-                var newAlias = ((AliasedExpression)newSelect.From);
+                var newAlias = newSelect.From;
                 var rnCol = new PropertyExpression(newAlias, rownum);
                 Expression where;
                 if (select.Take != null)

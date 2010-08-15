@@ -50,13 +50,6 @@ namespace AdFactum.Data.Linq.Language
                 if (select.IsDistinct)
                     WriteSql("DISTINCT ");
 
-                if (select.Take != null)
-                {
-                    WriteSql("TOP ");
-                    Visit(select.Take);
-                    WriteSql(" ");
-                }
-
                 if (select.Columns != null)
                 {
                     for (var x = 0; x < select.Columns.Count; x++)
@@ -111,6 +104,20 @@ namespace AdFactum.Data.Linq.Language
                         WriteSql(" ");
                         Builder.Append(select.OrderBy[x].Ordering);
                     }
+                }
+
+                if (select.Skip != null)
+                {
+                    WriteSql(" OFFSET ");
+                    Visit(select.Skip);
+                    WriteSql(" ");
+                }
+
+                if (select.Take != null)
+                {
+                    WriteSql(" LIMIT ");
+                    Visit(select.Take);
+                    WriteSql(" ");
                 }
 
                 return select;

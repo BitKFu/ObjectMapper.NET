@@ -41,8 +41,8 @@ namespace AdFactum.Data.Postgres
             SqlMappingTable.Add(typeof(Int64), (int)NpgsqlDbType.Bigint);
             SqlMappingTable.Add(typeof(Single), (int)NpgsqlDbType.Real);
             SqlMappingTable.Add(typeof(String), (int)NpgsqlDbType.Varchar);
-            SqlMappingTable.Add(typeof(TimeSpan), (int)NpgsqlDbType.Date);
-            SqlMappingTable.Add(typeof(Enum), (int)NpgsqlDbType.Integer);
+            SqlMappingTable.Add(typeof(TimeSpan), (int)NpgsqlDbType.Interval);
+            SqlMappingTable.Add(typeof(Enum), (int)NpgsqlDbType.Varchar);
             SqlMappingTable.Add(typeof(Stream), (int)NpgsqlDbType.Bytea);
             SqlMappingTable.Add(typeof(Byte[]), (int)NpgsqlDbType.Bytea);
             SqlMappingTable.Add(typeof(Char), (int)NpgsqlDbType.Char);
@@ -170,6 +170,44 @@ namespace AdFactum.Data.Postgres
                 return parameterValue.ToString();
 
             return base.GetParamValueAsSQLString(parameterValue);
+        }
+
+        /// <summary>
+        /// Converts a type to the typed used from the current database implementation
+        /// </summary>
+        /// <param name="checkType">Type of the check.</param>
+        /// <returns></returns>
+        public override Type GetTypeForDatabase(Type checkType)
+        {
+            if (checkType == typeof(byte))
+                return typeof (Int16);
+
+            if (checkType == typeof(decimal))
+                return typeof(Single);
+
+            if (checkType == typeof(TimeSpan))
+                return typeof (NpgsqlInterval);
+
+            return base.GetTypeForDatabase(checkType);
+        }
+
+        /// <summary>
+        /// Converts the source to a database specific type and returns it.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <returns></returns>
+        public override object ConvertValue(object value)
+        {
+            if (value is TimeSpan)
+                return new NpgsqlInterval((TimeSpan)value);
+
+            if (value is DateTime)
+                return new NpgsqlDate((DateTime) value);
+
+            if (value is Enum) 
+                return value.ToString();
+
+            return base.ConvertValue(value);
         }
     }
 }
