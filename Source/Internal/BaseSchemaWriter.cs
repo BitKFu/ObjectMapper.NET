@@ -347,7 +347,7 @@ namespace AdFactum.Data.Internal
             {
                 var type = (Type)enumerator.Current;
 
-                string tablename = Table.GetTableInstance(type).Name;
+                string tablename = Table.GetTableInstance(type).DefaultName;
                 tables.Add(tablename);
 
                 var projection = ReflectionHelper.GetProjection(type, null);
@@ -383,7 +383,7 @@ namespace AdFactum.Data.Internal
             while (enumerator.MoveNext())
             {
                 var type = enumerator.Current;
-                string tablename = Table.GetTableInstance(type).Name;
+                string tablename = Table.GetTableInstance(type).DefaultName;
                 if (!persistentTables.Contains(tablename))
                     continue;
 
@@ -417,7 +417,7 @@ namespace AdFactum.Data.Internal
             {
                 Type type = enumerator.Current;
                 Table tableInstance = Table.GetTableInstance(type);
-                string tablename = tableInstance.Name;
+                string tablename = tableInstance.DefaultName;
                 if (!persistentTables.Contains(tablename))
                     continue;
 
@@ -516,7 +516,7 @@ namespace AdFactum.Data.Internal
                         relation.Initialize(versionInfo,
                                             defaultGroup.ForeignTable,
                                             defaultGroup.ForeignColumn,
-                                            Table.GetTableInstance(field.ParentType).Name,
+                                            Table.GetTableInstance(field.ParentType).DefaultName,
                                             constraint, EntityRelation.OrmType.Association
                             );
                         relations.Add(relation);
@@ -620,7 +620,7 @@ namespace AdFactum.Data.Internal
                     if (childType != null)
                     {
                         Table childTable = Table.GetTableInstance(childType);
-                        sql = GetForeignKeySqlStmt(tableName + "_" + field.Name, DBConst.PropertyField, childTable.Name,
+                        sql = GetForeignKeySqlStmt(tableName + "_" + field.Name, DBConst.PropertyField, childTable.DefaultName,
                                                    null,
                                                    foreignKeyNumber, field.ParentType != childType);
                         resultSql.Append(sql);
@@ -661,7 +661,7 @@ namespace AdFactum.Data.Internal
                                                : (int)freignKeyConstraints[tableName];
 
                     string sql = GetForeignKeySqlStmt(tableName, field.Name,
-                                                      Table.GetTableInstance(field.ContentType).Name, null,
+                                                      Table.GetTableInstance(field.ContentType).DefaultName, null,
                                                       foreignKeyNumber, false);
                     resultSql.Append(sql);
 
@@ -739,7 +739,7 @@ namespace AdFactum.Data.Internal
                 VirtualLinkAttribute virtualLink = ReflectionHelper.GetVirtualLinkInstance(info);
                 if ((virtualLink != null) && (virtualLink.JoinFieldForGlobalParameter != null))
                 {
-                    string tableName = Table.GetTableInstance(virtualLink.LinkedClass).Name;
+                    string tableName = Table.GetTableInstance(virtualLink.LinkedClass).DefaultName;
                     string fieldForGlobalParameter =
                         Property.GetPropertyInstance(
                             virtualLink.LinkedClass.GetPropertyInfo(virtualLink.JoinFieldForGlobalParameter)).MetaInfo.ColumnName;

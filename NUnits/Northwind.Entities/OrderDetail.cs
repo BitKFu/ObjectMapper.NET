@@ -1,5 +1,6 @@
 ﻿using System;
 using AdFactum.Data;
+using AdFactum.Data.Util;
 
 namespace ObjectMapper.NUnits.Northwind.Entities
 {
@@ -7,8 +8,22 @@ namespace ObjectMapper.NUnits.Northwind.Entities
     /// Order Details
     /// </summary>
     [Table("Order_Details")]
+    [Table("OrderDetails", DatabaseType.Postgres)]    
     public class OrderDetail : ValueObject
     {
+        [Ignore]
+        public override Guid Id
+        {
+            get
+            {
+                return base.Id;
+            }
+            set
+            {
+                base.Id = value;
+            }
+        }
+
         [PropertyName("OrderID")]
         [PropertyLength(5)]
         [ForeignKey(typeof(Order), "Id")]

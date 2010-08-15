@@ -1003,7 +1003,7 @@ namespace AdFactum.Data.Internal
                 if (propertyCustomInfo.PropertyType.IsListType())
                 {
                     object primaryKey = ((Field) properties.FieldProperties.Get(projection.GetPrimaryKeyDescription().Name)).Value;
-                    string linkTable = Table.GetTableInstance(ObjectType).Name + "_" + columnName;
+                    string linkTable = Table.GetTableInstance(ObjectType).DefaultName + "_" + columnName;
 
                     IList propertyValue = null;
                     if (created != null)
@@ -1123,7 +1123,7 @@ namespace AdFactum.Data.Internal
                 if (propertyCustomInfo.PropertyType.IsDictionaryType())
                 {
                     object primaryKey = ((Field) properties.FieldProperties.Get(projection.GetPrimaryKeyDescription().Name)).Value;
-                    string linkTable = Table.GetTableInstance(ObjectType).Name + "_" + columnName;
+                    string linkTable = Table.GetTableInstance(ObjectType).DefaultName + "_" + columnName;
 
                     IDictionary propertyValue = null;
                     if (created != null)

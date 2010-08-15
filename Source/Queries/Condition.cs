@@ -242,7 +242,7 @@ namespace AdFactum.Data.Queries
 			field = pField;
 			type = ConditionOperator.AND;
 			compareOperator = QueryOperator.Equals;
-            tableName = Table.GetTableInstance(field.FieldDescription).Name;
+            tableName = Table.GetTableInstance(field.FieldDescription).DefaultName;
 
 			AdjustCondition ();
 		}
@@ -258,7 +258,7 @@ namespace AdFactum.Data.Queries
 			type = pType;
 			field = pField;
 			compareOperator = QueryOperator.Equals;
-            tableName = Table.GetTableInstance(field.FieldDescription).Name;
+            tableName = Table.GetTableInstance(field.FieldDescription).DefaultName;
 
 			AdjustCondition ();
 		}
@@ -274,7 +274,7 @@ namespace AdFactum.Data.Queries
 			type = pType;
 			field = pField;
 			compareOperator = pCompareOperator;
-            tableName = Table.GetTableInstance(field.FieldDescription).Name;
+            tableName = Table.GetTableInstance(field.FieldDescription).DefaultName;
 
 			AdjustCondition ();
 		}
@@ -297,8 +297,8 @@ namespace AdFactum.Data.Queries
 			rightSideField = pRightField;
 			compareOperator = pCompareOperator;
 
-            tableName = Table.GetTableInstance(Field.FieldDescription).Name;
-            rightSideTableName = Table.GetTableInstance(RightSideField.FieldDescription).Name;
+            tableName = Table.GetTableInstance(Field.FieldDescription).DefaultName;
+            rightSideTableName = Table.GetTableInstance(RightSideField.FieldDescription).DefaultName;
 
 			AdjustCondition ();
 		}
@@ -412,7 +412,7 @@ namespace AdFactum.Data.Queries
 				if (Field.FieldDescription is VirtualFieldDescription)
 				{
 					VirtualFieldDescription vfd = (VirtualFieldDescription) Field.FieldDescription;
-                    return vfd.JoinTable.Name;
+                    return vfd.JoinTable.DefaultName;
 				}
 
 				return tableName;
@@ -434,7 +434,7 @@ namespace AdFactum.Data.Queries
                 if (Field.FieldDescription is VirtualFieldDescription)
 				{
 					VirtualFieldDescription vfd = (VirtualFieldDescription) Field.FieldDescription;
-                    columnName = vfd.JoinTable.Name + "." + vfd.ResultField.Name;
+                    columnName = vfd.JoinTable.DefaultName + "." + vfd.ResultField.Name;
 				}
 				else
 				{
@@ -462,7 +462,7 @@ namespace AdFactum.Data.Queries
 				if (RightSideField.FieldDescription is VirtualFieldDescription)
 				{
 					VirtualFieldDescription vfd = (VirtualFieldDescription) RightSideField.FieldDescription;
-                    return vfd.JoinTable.Name;
+                    return vfd.JoinTable.DefaultName;
 				}
 
 				return rightSideTableName;
@@ -485,7 +485,7 @@ namespace AdFactum.Data.Queries
 				if (RightSideField.FieldDescription is VirtualFieldDescription)
 				{
 					VirtualFieldDescription vfd = (VirtualFieldDescription) RightSideField.FieldDescription;
-                    columnName = vfd.JoinTable.Name + "." + vfd.ResultField.Name;
+                    columnName = vfd.JoinTable.DefaultName + "." + vfd.ResultField.Name;
 				}
 				else
 				{
@@ -517,13 +517,13 @@ namespace AdFactum.Data.Queries
 					if (Field.FieldDescription is VirtualFieldDescription)
 					{
 						VirtualFieldDescription vfd = (VirtualFieldDescription) Field.FieldDescription;
-                        string targetClassTypeName = vfd.JoinTable.Name;
+                        string targetClassTypeName = vfd.JoinTable.DefaultName;
 
 						/*
 						 * Add a join to the child table
 						 */
 						additionalConditions = new ICondition[(vfd.GlobalJoinField != null)?2:1];
-					    additionalConditions[0] = new Join(vfd.CurrentTable.Name, vfd.CurrentJoinField.Name, targetClassTypeName, vfd.TargetJoinField.Name);
+					    additionalConditions[0] = new Join(vfd.CurrentTable.DefaultName, vfd.CurrentJoinField.Name, targetClassTypeName, vfd.TargetJoinField.Name);
 
 						/*
 						 * Add a localization constraint

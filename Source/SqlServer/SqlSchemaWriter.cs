@@ -38,7 +38,7 @@ namespace AdFactum.Data.SqlServer
                 var type = (Type)enumerator.Current;
                 ProjectionClass projection = ReflectionHelper.GetProjection(type, null);
 
-                string tablename = Table.GetTableInstance(type).Name;
+                string tablename = Table.GetTableInstance(type).DefaultName;
                 tables.Add(tablename);
 
                 Dictionary<string, FieldDescription> fields = projection.GetFieldTemplates(false);

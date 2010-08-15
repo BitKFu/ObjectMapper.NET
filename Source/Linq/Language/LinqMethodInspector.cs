@@ -1596,20 +1596,6 @@ namespace AdFactum.Data.Linq.Language
             return expression;
         }
 
-        /// <summary>
-        /// Visits the table expression.
-        /// </summary>
-        protected override Expression VisitTableExpression(TableExpression expression)
-        {
-            ProjectionClass table = ReflectionHelper.GetProjection(expression.RevealedType, DynamicCache);
-
-            string schema = string.IsNullOrEmpty(LinqPersister.DatabaseSchema)
-                                ? string.Empty
-                                : string.Concat(LinqPersister.DatabaseSchema, ".");
-
-            WriteSql(string.Concat(schema, TypeMapper.Quote(table.TableName), " "));
-            return expression;
-        }
 
         /// <summary>
         /// Visits the expression list.

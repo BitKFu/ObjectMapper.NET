@@ -50,7 +50,7 @@ namespace AdFactum.Data.Queries
 		public SubSelect(Type selectionType, string resultRowParameter, params ICondition[] conditionsParameter)
 		{
 		    resultType = selectionType;
-            tableName = Table.GetTableInstance(selectionType).Name;
+            tableName = Table.GetTableInstance(selectionType).DefaultName;
 
             if (resultRowParameter != "*")
                 rowName = ReflectionHelper.GetStaticFieldTemplate(selectionType, resultRowParameter).Name;

@@ -385,7 +385,7 @@ namespace AdFactum.Data.Internal
                         continue;
 
                     Table currentTable = vfd.CurrentTable;
-                    if (!currentTable.Name.Equals(parentTableName))
+                    if (!currentTable.DefaultName.Equals(parentTableName))
                         continue;
 
                     /*
@@ -428,7 +428,7 @@ namespace AdFactum.Data.Internal
                     join1.Append(" ");
                     join1.Append(identifier);
                     join1.Append(" ON ");
-                    join1.Append(BuildJoinQualifier(virtualAlias, vfd.CurrentTable.Name, vfd.CurrentJoinField));
+                    join1.Append(BuildJoinQualifier(virtualAlias, vfd.CurrentTable.DefaultName, vfd.CurrentJoinField));
                     join1.Append(" = ");
                     join1.Append(BuildJoinQualifier(virtualAlias, identifier, vfd.TargetJoinField));
                 }
@@ -446,7 +446,7 @@ namespace AdFactum.Data.Internal
                     join2.Append(" ");
                     join2.Append(string.Concat(identifier, "lt"));
                     join2.Append(" ON ");
-                    join2.Append(BuildJoinQualifier(virtualAlias, vfd.CurrentTable.Name, vfd.CurrentJoinField));
+                    join2.Append(BuildJoinQualifier(virtualAlias, vfd.CurrentTable.DefaultName, vfd.CurrentJoinField));
                     join2.Append(" = ");
                     join2.Append(string.Concat(identifier, "lt.", DBConst.PropertyField));
 
@@ -2746,7 +2746,7 @@ namespace AdFactum.Data.Internal
                 VirtualLinkAttribute virtualLink = ReflectionHelper.GetVirtualLinkInstance(info);
                 if ((virtualLink != null) && (virtualLink.JoinFieldForGlobalParameter != null))
                 {
-                    string tableName = Table.GetTableInstance(virtualLink.LinkedClass).Name;
+                    string tableName = Table.GetTableInstance(virtualLink.LinkedClass).DefaultName;
                     string fieldForGlobalParameter =
                         Property.GetPropertyInstance(
                             virtualLink.LinkedClass.GetPropertyInfo(virtualLink.JoinFieldForGlobalParameter)).MetaInfo.ColumnName;

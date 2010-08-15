@@ -41,7 +41,7 @@ namespace AdFactum.Data.Linq.Language
         protected override Expression VisitTableExpression(TableExpression expression)
         {
             var table = expression.Projection;
-            WriteSql(string.Concat(LinqPersister.DatabaseSchema, ".", table.TableName));
+            WriteSql(string.Concat(LinqPersister.DatabaseSchema, ".", table.TableName(DatabaseType.Oracle)));
             return expression;
         }
 

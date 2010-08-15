@@ -41,13 +41,13 @@ namespace AdFactum.Data.Util
 		/// <param name="elementId">Unique identifier of the element within the collection</param>
 		public CollectionChildCondition(ConditionOperator conditionOperator, Type pTypeOfQueryObject, string collectionPropertyName, Type typeOfCollectionElement, Guid elementId)
 			: base(
-                Table.GetTableInstance(pTypeOfQueryObject).Name + "_" + ReflectionHelper.GetStaticFieldTemplate(pTypeOfQueryObject, collectionPropertyName).Name,
+                Table.GetTableInstance(pTypeOfQueryObject).DefaultName + "_" + ReflectionHelper.GetStaticFieldTemplate(pTypeOfQueryObject, collectionPropertyName).Name,
 				conditionOperator,
 				QueryOperator.Equals,
 				new Field(ListLink.GetListPropertyDescription(elementId.GetType()), elementId))
 		{
-            parentTable = Table.GetTableInstance(pTypeOfQueryObject).Name;
-            childTable = Table.GetTableInstance(typeOfCollectionElement).Name;
+            parentTable = Table.GetTableInstance(pTypeOfQueryObject).DefaultName;
+            childTable = Table.GetTableInstance(typeOfCollectionElement).DefaultName;
 
 			Add(new CollectionJoin(pTypeOfQueryObject, collectionPropertyName, typeOfCollectionElement));
 		}
@@ -61,13 +61,13 @@ namespace AdFactum.Data.Util
 		/// <param name="elementId">Unique identifier of the element within the collection</param>
 		public CollectionChildCondition(Type pTypeOfQueryObject, string collectionPropertyName, Type typeOfCollectionElement, Guid elementId)
 			: base(
-                Table.GetTableInstance(pTypeOfQueryObject).Name + "_" + ReflectionHelper.GetStaticFieldTemplate(pTypeOfQueryObject, collectionPropertyName).Name,
+                Table.GetTableInstance(pTypeOfQueryObject).DefaultName + "_" + ReflectionHelper.GetStaticFieldTemplate(pTypeOfQueryObject, collectionPropertyName).Name,
 				ConditionOperator.AND,
 				QueryOperator.Equals,
 				new Field(ListLink.GetListPropertyDescription(elementId.GetType()), elementId))
 		{
-            parentTable = Table.GetTableInstance(pTypeOfQueryObject).Name;
-            childTable = Table.GetTableInstance(typeOfCollectionElement).Name;
+            parentTable = Table.GetTableInstance(pTypeOfQueryObject).DefaultName;
+            childTable = Table.GetTableInstance(typeOfCollectionElement).DefaultName;
 
 			Add(new CollectionJoin(pTypeOfQueryObject, collectionPropertyName, typeOfCollectionElement));
 		}

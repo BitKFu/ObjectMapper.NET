@@ -330,9 +330,24 @@ namespace AdFactum.Data.Linq.Language
             var property = OriginPropertyFinder.Find(rowNumber.OrderBy[0].Expression);
             var projection = ReflectionHelper.GetProjection(property.ParentType, DynamicCache);
 
-            WriteSql(" DCOUNT(\"" + property.Name + "\", \"" + projection.TableName + "\", \"" + property.Name +
+            WriteSql(" DCOUNT(\"" + property.Name + "\", \"" + projection.TableName(DatabaseType.Access) + "\", \"" + property.Name +
                      " <= '\" & [" + property.Name + "] & \"'\")");
             return rowNumber;
+        }
+
+        /// <summary>
+        /// Visits the table expression.
+        /// </summary>
+        protected override Expression VisitTableExpression(TableExpression expression)
+        {
+            ProjectionClass table = ReflectionHelper.GetProjection(expression.RevealedType, DynamicCache);
+
+            string schema = string.IsNullOrEmpty(LinqPersister.DatabaseSchema)
+                                ? string.Empty
+                                : string.Concat(LinqPersister.DatabaseSchema, ".");
+
+            WriteSql(string.Concat(schema, TypeMapper.Quote(table.TableName(DatabaseType.Access)), " "));
+            return expression;
         }
 
         /// <summary>

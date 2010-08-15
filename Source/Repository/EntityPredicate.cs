@@ -136,11 +136,11 @@ namespace AdFactum.Data.Repository
 		{
 			VersionInfo = version;
 
-			LeftSideTableName = vfd.CurrentTable.Name;
+			LeftSideTableName = vfd.CurrentTable.DefaultName;
 			LeftSideColumn = vfd.CurrentJoinField.Name;
 
 		    Table targetClassInstance = vfd.JoinTable;
-		    RightSideTableName = targetClassInstance.Name;
+		    RightSideTableName = targetClassInstance.DefaultName;
 			RightSideColumn = vfd.TargetJoinField.Name;
 
 			WeakJoin = targetClassInstance.IsWeakReferenced;

@@ -9,7 +9,7 @@ namespace ObjectMapper.NUnits.Northwind.Entities
     [Table("Employees")]
     public class Employee : AutoIncValueObject
     {
-        [PropertyName("EmployeeId")]
+        [PropertyName("EmployeeID")]
         [PrimaryKey]
         public new int? Id
         {

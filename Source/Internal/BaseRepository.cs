@@ -228,7 +228,7 @@ namespace AdFactum.Data.Internal
                 var projection = ReflectionHelper.GetProjection(type, mapper.MirroredLinqProjectionCache);
                 IDictionary fields = projection.GetFieldTemplates(false);
                 List<EntityRelation> relations = GetForeignKeyForUserDefinedEntityRelations(versionInfo, mapper,
-                                                                                            tableInstance.Name, fields);
+                                                                                            tableInstance.DefaultName, fields);
                 foreach (EntityRelation relation in relations)
                 {
                     if (!definedRelations.ContainsKey(relation.UniqueIdentifierKey))
@@ -372,7 +372,7 @@ namespace AdFactum.Data.Internal
                         relation.Initialize(versionInfo,
                                             defaultGroup.ForeignTable,
                                             defaultGroup.ForeignColumn,
-                                            Table.GetTableInstance(field.ParentType).Name,
+                                            Table.GetTableInstance(field.ParentType).DefaultName,
                                             constraint, EntityRelation.OrmType.Association
                             );
                         relations.Add(relation);

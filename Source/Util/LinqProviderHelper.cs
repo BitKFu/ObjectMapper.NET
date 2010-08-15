@@ -128,7 +128,7 @@ namespace AdFactum.Data.Util
                 if (field.Value.FieldType != typeof (ListLink)) continue;
 
                 var linkTarget = field.Value.CustomProperty.MetaInfo.LinkTarget;
-                var tableName = Table.GetTableInstance(type).Name;
+                var tableName = Table.GetTableInstance(type).DefaultName;
 
                 plural = type.Name + field.Value.PropertyName;
                 counter = 0;

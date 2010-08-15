@@ -256,7 +256,7 @@ namespace AdFactum.Data.Internal
 				 */
                 if (fieldDescription.FieldType.Equals(typeof(ListLink)))
                 {
-                    string subTable = string.Concat(Table.GetTableInstance(info.ObjectType).Name, "_",
+                    string subTable = string.Concat(Table.GetTableInstance(info.ObjectType).DefaultName, "_",
                                                     fieldEnumerator.Current.Key);
                     Type linkedPrimaryKey = fieldDescription.CustomProperty.MetaInfo.LinkedPrimaryKeyType;
                     bool generalLinked = fieldDescription.CustomProperty.MetaInfo.IsGeneralLinked;

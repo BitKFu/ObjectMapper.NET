@@ -29,7 +29,7 @@ namespace AdFactum.Data.Queries
 		public OrderBy(Type objectType, string property, Ordering ordering)
 		{
 			this.objectType = objectType;
-			tableName = Table.GetTableInstance(this.objectType).Name;
+			tableName = Table.GetTableInstance(this.objectType).DefaultName;
 			this.property = property;
 			this.ordering = ordering;
 		}
@@ -43,7 +43,7 @@ namespace AdFactum.Data.Queries
 		public OrderBy(Type objectType, string property, string ordering)
 		{
 			this.objectType = objectType;
-            tableName = Table.GetTableInstance(this.objectType).Name;
+            tableName = Table.GetTableInstance(this.objectType).DefaultName;
 			this.property = property;
 			this.ordering = (Ordering) Enum.Parse(typeof (Ordering), ordering, true);
 		}

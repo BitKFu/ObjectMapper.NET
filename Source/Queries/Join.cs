@@ -40,10 +40,10 @@ namespace AdFactum.Data.Queries
 		{
             ConditionClause = ConditionClause.WhereClause;
             
-            childTable = Table.GetTableInstance(childType).Name;
+            childTable = Table.GetTableInstance(childType).DefaultName;
 			this.childField = ReflectionHelper.GetStaticFieldTemplate(childType, childField).Name;
 
-            parentTable = Table.GetTableInstance(parentType).Name;
+            parentTable = Table.GetTableInstance(parentType).DefaultName;
 			this.parentField = ReflectionHelper.GetStaticFieldTemplate(parentType, parentField).Name;
 		}
 
@@ -59,10 +59,10 @@ namespace AdFactum.Data.Queries
             ConditionClause = ConditionClause.WhereClause;
 
 		    var childProjection = ReflectionHelper.GetProjection(childType, null);
-            childTable = Table.GetTableInstance(childType).Name;
+            childTable = Table.GetTableInstance(childType).DefaultName;
             childField = childProjection.GetPrimaryKeyDescription().Name;
 
-            parentTable = Table.GetTableInstance(parentType).Name;
+            parentTable = Table.GetTableInstance(parentType).DefaultName;
 			this.parentField = ReflectionHelper.GetStaticFieldTemplate(parentType, parentField).Name;
 		}
 

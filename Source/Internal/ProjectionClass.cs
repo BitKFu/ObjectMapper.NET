@@ -119,7 +119,7 @@ namespace AdFactum.Data.Internal
         /// <value>The source table.</value>
         public string SourceTable
         {
-            get { return Table.GetTableInstance(projectedType).Name; }
+            get { return Table.GetTableInstance(projectedType).DefaultName; }
         }
 
         /// <summary>
@@ -509,8 +509,8 @@ namespace AdFactum.Data.Internal
                 var projectionTable = pair.Value;
                 if (projectionTable == null) continue;
                 Set.Tupel tableTupel = null;
-                if (whereClauseTables != null) tableTupel = whereClauseTables.GetTupel(projectionTable.Name);
-                if (tableTupel == null) tableTupel = Tables.GetTupel(projectionTable.Name);
+                if (whereClauseTables != null) tableTupel = whereClauseTables.GetTupel(projectionTable.DefaultName);
+                if (tableTupel == null) tableTupel = Tables.GetTupel(projectionTable.DefaultName);
 
                 if (result.Length > 0) result += ", ";
                 result += string.Concat(tableTupel.Table, ".*");
@@ -575,7 +575,7 @@ namespace AdFactum.Data.Internal
                     {
                         var projectionTable = pair.Value;
                         if (projectionTable != null)
-                            newTableSet.Add(projectionTable.Name);
+                            newTableSet.Add(projectionTable.DefaultName);
                     }
 
                     tables = newTableSet;
@@ -625,7 +625,7 @@ namespace AdFactum.Data.Internal
 
                         var projection = ReflectionHelper.GetProjection(projectionTable.ClassType, null);
                         if (result.Length > 0) result += ", ";
-                        result += string.Concat(Condition.SCHEMA_REPLACE, Condition.QUOTE_OPEN, projectionTable.Name,
+                        result += string.Concat(Condition.SCHEMA_REPLACE, Condition.QUOTE_OPEN, projectionTable.DefaultName,
                                                 Condition.QUOTE_CLOSE, ".",
                                                 Condition.QUOTE_OPEN, projection.GetPrimaryKeyDescription().Name, Condition.QUOTE_CLOSE);
                     }
@@ -738,9 +738,9 @@ namespace AdFactum.Data.Internal
         /// Gets the name of the table.
         /// </summary>
         /// <value>The name of the table.</value>
-        public string TableName
+        public string TableName(DatabaseType dbType)
         {
-            get { return TableNameOverwrite ?? Table.GetTableInstance(ProjectedType).Name; }
+            return TableNameOverwrite ?? Table.GetTableInstance(ProjectedType).GetName(dbType); 
         }
 
         /// <summary>

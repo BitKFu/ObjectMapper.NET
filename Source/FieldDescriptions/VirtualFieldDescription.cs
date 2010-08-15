@@ -79,7 +79,7 @@ namespace AdFactum.Data
 
 			if (this.targetJoinField.FieldType.Equals(typeof(ListLink)))
 			{
-                linkTable = string.Concat(joinTable.Name, "_", this.targetJoinField.Name);
+                linkTable = string.Concat(joinTable.DefaultName, "_", this.targetJoinField.Name);
 			}
 		}
 
@@ -95,7 +95,7 @@ namespace AdFactum.Data
                     return string.Concat("(",subSelect,")");
 
                 return string.Concat(Condition.SCHEMA_REPLACE, 
-                                     Condition.QUOTE_OPEN, JoinTable.Name, Condition.QUOTE_CLOSE);
+                                     Condition.QUOTE_OPEN, JoinTable.DefaultName, Condition.QUOTE_CLOSE);
 	        }
 	    }
 	    

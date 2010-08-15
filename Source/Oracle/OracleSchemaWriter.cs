@@ -78,7 +78,7 @@ namespace AdFactum.Data.Oracle
 
                     if (primaryKey.IsAutoIncrement)
                     {
-                        string tablename = Table.GetTableInstance(type).Name;
+                        string tablename = Table.GetTableInstance(type).DefaultName;
                         tables.Add(tablename);
 
                         sql.Append(string.Concat("DROP SEQUENCE ", tablename, "_SEQ;\n"));
@@ -116,7 +116,7 @@ namespace AdFactum.Data.Oracle
             {
                 var type = (Type)enumerator.Current;
 
-                string tablename = Table.GetTableInstance(type).Name;
+                string tablename = Table.GetTableInstance(type).DefaultName;
                 tables.Add(tablename);
 
                 var projection = ReflectionHelper.GetProjection(type, null);

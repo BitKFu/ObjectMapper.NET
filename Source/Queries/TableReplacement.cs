@@ -85,7 +85,7 @@ namespace AdFactum.Data.Queries
 		{
             ConditionClause = ConditionClause.FromClause;
             subCondition = _subSelect;
-            tableToReplace = Table.GetTableInstance(_tableToReplace).Name;
+            tableToReplace = Table.GetTableInstance(_tableToReplace).DefaultName;
 		}
 
 		/// <summary>
@@ -108,7 +108,7 @@ namespace AdFactum.Data.Queries
 		public TableReplacement(Type _tableToReplace, string _viewName)
 		{
             ConditionClause = ConditionClause.FromClause;
-            tableToReplace = Table.GetTableInstance(_tableToReplace).Name;
+            tableToReplace = Table.GetTableInstance(_tableToReplace).DefaultName;
 			subCondition = new ViewCondition(_viewName);
 		}
 

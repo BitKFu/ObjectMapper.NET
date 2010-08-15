@@ -41,7 +41,7 @@ namespace AdFactum.Data.Util
 		/// <param name="elementId">Unique identifier of the element within the collection</param>
 		public CollectionParentCondition(ConditionOperator conditionOperator, Type pTypeOfQueryObject, string collectionPropertyName, Type typeOfCollectionElement, Guid elementId)
 			: base(
-				Table.GetTableInstance(pTypeOfQueryObject).Name + "_" + ReflectionHelper.GetStaticFieldTemplate(pTypeOfQueryObject, collectionPropertyName).Name,
+				Table.GetTableInstance(pTypeOfQueryObject).DefaultName + "_" + ReflectionHelper.GetStaticFieldTemplate(pTypeOfQueryObject, collectionPropertyName).Name,
 				conditionOperator,
 				QueryOperator.Equals,
 				new Field(ListLink.GetParentObjectDescription(elementId.GetType()), elementId))
@@ -58,7 +58,7 @@ namespace AdFactum.Data.Util
 		/// <param name="elementId">Unique identifier of the element within the collection</param>
 		public CollectionParentCondition(Type pTypeOfQueryObject, string collectionPropertyName, Type typeOfCollectionElement, object elementId)
 			: base(
-                Table.GetTableInstance(pTypeOfQueryObject).Name + "_" + ReflectionHelper.GetStaticFieldTemplate(pTypeOfQueryObject, collectionPropertyName).Name,
+                Table.GetTableInstance(pTypeOfQueryObject).DefaultName + "_" + ReflectionHelper.GetStaticFieldTemplate(pTypeOfQueryObject, collectionPropertyName).Name,
 				ConditionOperator.AND,
 				QueryOperator.Equals,
 				new Field(ListLink.GetParentObjectDescription(elementId.GetType()), elementId))
@@ -74,8 +74,8 @@ namespace AdFactum.Data.Util
         /// <param name="typeOfCollectionElement">The type of collection element.</param>
         private void Initialize(string collectionPropertyName, Type pTypeOfQueryObject, Type typeOfCollectionElement)
         {
-            parentTable = Table.GetTableInstance(pTypeOfQueryObject).Name;
-            childTable = Table.GetTableInstance(typeOfCollectionElement).Name;
+            parentTable = Table.GetTableInstance(pTypeOfQueryObject).DefaultName;
+            childTable = Table.GetTableInstance(typeOfCollectionElement).DefaultName;
 
             var collectionProjection = ReflectionHelper.GetProjection(typeOfCollectionElement, null);
 

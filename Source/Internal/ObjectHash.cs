@@ -218,7 +218,7 @@ namespace AdFactum.Data.Internal
                 {
                     if (ivo != null) po.UpdateAutoincrementedIds(ivo);
                     fieldTemplates = projection.GetFieldTemplates(po.IsFlatLoaded); 
-                    persister.Delete(Table.GetTableInstance(po.ObjectType).Name, po.Id, fieldTemplates);
+                    persister.Delete(Table.GetTableInstance(po.ObjectType).DefaultName, po.Id, fieldTemplates);
                     continue;
                 }
 
@@ -231,7 +231,7 @@ namespace AdFactum.Data.Internal
                         po.UpdateAutoincrementedIds(ivo);
 
                     fieldTemplates = projection.GetFieldTemplates(po.IsFlatLoaded); 
-                    po.Id = persister.Insert(Table.GetTableInstance(po.ObjectType).Name, po.Properties, fieldTemplates);
+                    po.Id = persister.Insert(Table.GetTableInstance(po.ObjectType).DefaultName, po.Properties, fieldTemplates);
 
                     var hIvo = ((HashEntry) enumerator.Current).Vo as IValueObject;
                     if (hIvo != null)
@@ -245,7 +245,7 @@ namespace AdFactum.Data.Internal
                         po.UpdateAutoincrementedIds(ivo);
 
                     fieldTemplates = projection.GetFieldTemplates(po.IsFlatLoaded); 
-                    persister.Update(Table.GetTableInstance(po.ObjectType).Name, po.Properties, fieldTemplates);
+                    persister.Update(Table.GetTableInstance(po.ObjectType).DefaultName, po.Properties, fieldTemplates);
                     changed = true;
                 }
 

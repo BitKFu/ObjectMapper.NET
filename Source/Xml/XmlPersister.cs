@@ -1077,7 +1077,7 @@ namespace AdFactum.Data.Xml
             {
                 var type = (Type) enumerator.Current;
                 CreateTable(
-                    Table.GetTableInstance(type).Name, type,
+                    Table.GetTableInstance(type).DefaultName, type,
                     ReflectionHelper.GetProjection(type, null).GetFieldTemplates(false),
                     schemaSet);
             }

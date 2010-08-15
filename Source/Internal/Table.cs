@@ -174,7 +174,7 @@ namespace AdFactum.Data.Internal
 		/// Table Name
 		/// </summary>
 		/// <value>The name.</value>
-		public string Name
+		public string DefaultName
 		{
 			get
 			{
@@ -185,7 +185,21 @@ namespace AdFactum.Data.Internal
 			}
 		}
 
-		/// <summary>
+        /// <summary>
+        /// Gets the table name for a given database type
+        /// </summary>
+        /// <param name="dbType">Type of the db.</param>
+        /// <returns></returns>
+        public string GetName(DatabaseType dbType)
+        {
+            string specialName;
+            if (alternativeNames == null || alternativeNames.TryGetValue(dbType, out specialName) == false)
+                return DefaultName;
+
+            return specialName;
+        }
+
+	    /// <summary>
 		/// True, if the table contains static data
 		/// </summary>
 		public bool IsStatic

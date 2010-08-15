@@ -35,14 +35,16 @@ namespace ObjectMapper.NUnits.Northwind.Entities
         /// Gets or sets the supplier id.
         /// </summary>
         /// <value>The supplier id.</value>
-        public int SupplierId        { get; set ; }
+        [PropertyName("SupplierID")]
+        public int SupplierId { get; set; }
 
         /// <summary>
         /// Gets or sets the category id.
         /// </summary>
         /// <value>The category id.</value>
         [ForeignKey(typeof(Category), "Id")]
-        public int CategoryId        { get; set ; }
+        [PropertyName("CategoryID")]
+        public int CategoryId { get; set; }
 
         /// <summary>
         /// Gets or sets the quantity per unit.
@@ -73,7 +75,8 @@ namespace ObjectMapper.NUnits.Northwind.Entities
         /// Gets or sets the re order level.
         /// </summary>
         /// <value>The re order level.</value>
-        public int ReOrderLevel      { get; set ; }
+        [PropertyName("ReorderLevel")]
+        public int ReOrderLevel { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether this <see cref="Product"/> is discontinued.

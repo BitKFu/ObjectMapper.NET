@@ -25,14 +25,14 @@ namespace AdFactum.Data.Queries
 		public CollectionJoin(Type parentType, string parentField, Type childType) 
 		{
 		    ConditionClause = ConditionClause.WhereClause;
-		    string parentTable = Table.GetTableInstance(parentType).Name;
+		    string parentTable = Table.GetTableInstance(parentType).DefaultName;
 
 		    var childProjection = ReflectionHelper.GetProjection(childType, null);
 
 		    firstJoin = new Join(
                 parentTable + "_" + ReflectionHelper.GetStaticFieldTemplate(parentType, parentField).Name,
 				DBConst.PropertyField,
-                Table.GetTableInstance(childType).Name,
+                Table.GetTableInstance(childType).DefaultName,
                 childProjection.GetPrimaryKeyDescription().Name);
 
 			secondJoin = new Join(

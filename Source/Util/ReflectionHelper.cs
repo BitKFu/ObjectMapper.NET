@@ -336,8 +336,8 @@ namespace AdFactum.Data.Util
 		/// <returns>Name of the join field</returns>
 		public static string GetJoinField (Type parent, Type child)
 		{
-            string parentTable = Table.GetTableInstance(parent).Name;
-            string childTable = Table.GetTableInstance(child).Name;
+            string parentTable = Table.GetTableInstance(parent).DefaultName;
+            string childTable = Table.GetTableInstance(child).DefaultName;
 
 			return GetJoinField(parentTable, childTable);
 		}

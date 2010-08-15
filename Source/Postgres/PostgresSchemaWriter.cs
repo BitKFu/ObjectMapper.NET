@@ -53,7 +53,7 @@ namespace AdFactum.Data.Postgres
 
                     if (primaryKey.IsAutoIncrement)
                     {
-                        string tablename = Table.GetTableInstance(type).Name;
+                        string tablename = Table.GetTableInstance(type).DefaultName;
                         tables.Add(tablename);
 
                         sql.Append(string.Concat("DROP SEQUENCE IF EXISTS ", TypeMapper.Quote(tablename+ "_seq") + ";\n"));
@@ -249,7 +249,7 @@ namespace AdFactum.Data.Postgres
             {
                 var type = (Type)enumerator.Current;
 
-                string tablename = Table.GetTableInstance(type).Name;
+                string tablename = Table.GetTableInstance(type).DefaultName;
                 tables.Add(tablename);
 
                 var projection = ReflectionHelper.GetProjection(type, null);

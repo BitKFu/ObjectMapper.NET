@@ -141,7 +141,7 @@ namespace AdFactum.Data
             get
             {
                 if (foreignKeyTable == string.Empty)
-                    foreignKeyTable = Table.GetTableInstance(foreignKeyType).Name;
+                    foreignKeyTable = Table.GetTableInstance(foreignKeyType).DefaultName;
 
                 return foreignKeyTable;
             }  

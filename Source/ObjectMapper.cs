@@ -2628,7 +2628,7 @@ namespace AdFactum.Data
             var projection = ReflectionHelper.GetProjection(type, MirroredLinqProjectionCache);
 
             List<PersistentProperties> persistFields =
-                Persister.Select(Table.GetTableInstance(type).Name, selectSql, selectParameter,
+                Persister.Select(Table.GetTableInstance(type).DefaultName, selectSql, selectParameter,
                                  projection.GetFieldTemplates(HierarchyLevel.IsFlatLoaded(hierarchyLevel)));
             return PrivateCreatePOs(projection, persistFields, hash, hierarchyLevel, null);
         }
@@ -2646,7 +2646,7 @@ namespace AdFactum.Data
             var projection = ReflectionHelper.GetProjection(type, MirroredLinqProjectionCache);
 
             List<PersistentProperties> persistFields =
-                Persister.Select(Table.GetTableInstance(type).Name, command,
+                Persister.Select(Table.GetTableInstance(type).DefaultName, command,
                                  projection.GetFieldTemplates(HierarchyLevel.IsFlatLoaded(hierarchyLevel)));
             return PrivateCreatePOs(projection, persistFields, hash, hierarchyLevel, null);
         }

@@ -24,7 +24,7 @@ namespace AdFactum.Data.Repository
 		/// <param name="fields">The fields.</param>
         public IntegrityInfo(Type objectType, Dictionary<string, FieldDescription> fields)
 		{
-            TableName = Table.GetTableInstance(objectType).Name;
+            TableName = Table.GetTableInstance(objectType).DefaultName;
 			ObjectType = objectType;
 			Fields = fields;
 		}

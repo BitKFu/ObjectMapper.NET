@@ -55,7 +55,7 @@ namespace AdFactum.Data.Oracle
             {
                 var type = (Type) enumerator.Current;
                 ProjectionClass projection = ReflectionHelper.GetProjection(type, null);
-                tablename = Table.GetTableInstance(type).Name;
+                tablename = Table.GetTableInstance(type).DefaultName;
 
                 Dictionary<string, FieldDescription> fields = projection.GetFieldTemplates(false);
                 Dictionary<string, FieldDescription>.Enumerator fieldEnumerator = fields.GetEnumerator();
@@ -81,7 +81,7 @@ namespace AdFactum.Data.Oracle
             {
                 var type = (Type) enumerator.Current;
                 ProjectionClass projection = ReflectionHelper.GetProjection(type, null);
-                tablename = Table.GetTableInstance(type).Name;
+                tablename = Table.GetTableInstance(type).DefaultName;
 
 
                 if (!tables.ContainsKey(tablename))
@@ -109,9 +109,9 @@ namespace AdFactum.Data.Oracle
             {
                 var type = (Type) enumerator.Current;
                 ProjectionClass projection = ReflectionHelper.GetProjection(type, null);
-                tablename = Table.GetTableInstance(type).Name;
+                tablename = Table.GetTableInstance(type).DefaultName;
 
-                SetTablespaceForType(Table.GetTableInstance(type).Name);
+                SetTablespaceForType(Table.GetTableInstance(type).DefaultName);
                 tableSql = GetUniqueConstraintSql(
                     tablename,
                     projection.GetFieldTemplates(false), uniqueConstraintCount,
@@ -167,7 +167,7 @@ namespace AdFactum.Data.Oracle
                 VirtualLinkAttribute virtualLink = ReflectionHelper.GetVirtualLinkInstance(info);
                 if ((virtualLink != null) && (virtualLink.JoinFieldForGlobalParameter != null))
                 {
-                    string tableName = Table.GetTableInstance(virtualLink.LinkedClass).Name;
+                    string tableName = Table.GetTableInstance(virtualLink.LinkedClass).DefaultName;
                     int constraintNumber = (uniqueConstraintCount[tableName] == null)
                                                ? 1
                                                : (int) uniqueConstraintCount[tableName];
@@ -244,7 +244,7 @@ namespace AdFactum.Data.Oracle
                 var type = enumerator.Current;
                 ProjectionClass projection = ReflectionHelper.GetProjection(type, null);
 
-                string tablename = Table.GetTableInstance(type).Name;
+                string tablename = Table.GetTableInstance(type).DefaultName;
                 if (!persistentTables.Contains(tablename))
                     continue;
 

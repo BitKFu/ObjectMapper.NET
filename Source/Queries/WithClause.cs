@@ -23,7 +23,7 @@ namespace AdFactum.Data.Queries
         /// <param name="conditionsParameter">The condition parameter is used as a filter to decrease the results.</param>
         public WithClause(string withClauseName, Type selectionType, params ICondition[] conditionsParameter)
 		{
-            tableName = Table.GetTableInstance(selectionType).Name;
+            tableName = Table.GetTableInstance(selectionType).DefaultName;
             this.withClauseName = withClauseName;
 
             conditions = conditionsParameter;

@@ -206,10 +206,10 @@ namespace AdFactum.Data.Repository
 			OrmType ormType
 			)
 		{
-            ParentTable = Table.GetTableInstance(parentType).Name;
+            ParentTable = Table.GetTableInstance(parentType).DefaultName;
 			ChildColumn = childColumn;
 
-            ChildTable = Table.GetTableInstance(childType).Name;
+            ChildTable = Table.GetTableInstance(childType).DefaultName;
 			OrmRelation = ormType;
 
 		    var parentProjection = ReflectionHelper.GetProjection(parentType, null);
@@ -266,10 +266,10 @@ namespace AdFactum.Data.Repository
 			OrmType ormType
 			)
 		{
-            ParentTable = Table.GetTableInstance(parentType).Name;
+            ParentTable = Table.GetTableInstance(parentType).DefaultName;
 			ChildColumn = childColumn;
 
-            ChildTable = Table.GetTableInstance(childType).Name;
+            ChildTable = Table.GetTableInstance(childType).DefaultName;
 			OrmRelation = ormType;
 
 			ParentColumn = parentColumn;
@@ -290,10 +290,10 @@ namespace AdFactum.Data.Repository
 			OrmType ormType
 			)
 		{
-            ParentTable = field.JoinTable.Name;
+            ParentTable = field.JoinTable.DefaultName;
 			ParentColumn = field.TargetJoinField.Name;
 
-            ChildTable = field.CurrentTable.Name;
+            ChildTable = field.CurrentTable.DefaultName;
 			ChildColumn = field.CurrentJoinField.Name;
 
 			OrmRelation = ormType;
@@ -311,18 +311,18 @@ namespace AdFactum.Data.Repository
 		{
 			if (Table.GetTableInstance(field.ContentType).IsStatic)
 			{
-                ChildTable = Table.GetTableInstance(field.ParentType).Name;
+                ChildTable = Table.GetTableInstance(field.ParentType).DefaultName;
 				ChildColumn = field.Name;
 
-                ParentTable = Table.GetTableInstance(field.ContentType).Name;
+                ParentTable = Table.GetTableInstance(field.ContentType).DefaultName;
                 OrmRelation = field.CustomProperty.MetaInfo.RelationType ?? OrmType.Association;
 			}
 			else
 			{
-                ChildTable = Table.GetTableInstance(field.ParentType).Name;
+                ChildTable = Table.GetTableInstance(field.ParentType).DefaultName;
 				ChildColumn = field.Name;
 
-                ParentTable = Table.GetTableInstance(field.ContentType).Name;
+                ParentTable = Table.GetTableInstance(field.ContentType).DefaultName;
 				OrmRelation = field.CustomProperty.MetaInfo.RelationType ?? OrmType.AggregatedCascade;
 			}
 
@@ -352,18 +352,18 @@ namespace AdFactum.Data.Repository
 
             if (Table.GetTableInstance(field.ContentType).IsStatic)
             {
-                ChildTable = Table.GetTableInstance(field.ParentType).Name;
+                ChildTable = Table.GetTableInstance(field.ParentType).DefaultName;
                 ChildColumn = field.Name;
 
-                ParentTable = Table.GetTableInstance(field.ContentType).Name;
+                ParentTable = Table.GetTableInstance(field.ContentType).DefaultName;
                 OrmRelation = source.CustomProperty.MetaInfo.RelationType ?? OrmType.Association;
             }
             else
             {
-                ChildTable = Table.GetTableInstance(field.ParentType).Name;
+                ChildTable = Table.GetTableInstance(field.ParentType).DefaultName;
                 ChildColumn = field.Name;
 
-                ParentTable = Table.GetTableInstance(field.ContentType).Name;
+                ParentTable = Table.GetTableInstance(field.ContentType).DefaultName;
                 OrmRelation = source.CustomProperty.MetaInfo.RelationType ?? OrmType.ExclusiveReferencedCascade;
             }
 
@@ -381,7 +381,7 @@ namespace AdFactum.Data.Repository
 			ObjectMapper mapper,
 			FieldDescription field)
 		{
-            ChildTable = Table.GetTableInstance(field.ParentType).Name;
+            ChildTable = Table.GetTableInstance(field.ParentType).DefaultName;
 			LinkTable = ChildTable + "_" + field.Name;
 			ChildColumn = "PARENTOBJECT";
 			LinkColumn = "PROPERTY";
@@ -393,7 +393,7 @@ namespace AdFactum.Data.Repository
 
 		    Table tableInstance = Table.GetTableInstance(propertyTarget);
 		    OrmRelation = tableInstance.IsStatic ? OrmType.Linked : OrmType.LinkedCascade;
-            ParentTable = tableInstance.Name;
+            ParentTable = tableInstance.DefaultName;
 			ParentColumn = "ID";
 		}
 

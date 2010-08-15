@@ -43,7 +43,7 @@ namespace AdFactum.Data.Linq.Expressions
         public override string ToString()
         {
             var table = Table.GetTableInstance(RevealedType);
-            return string.Concat(table.Name, " ", Alias.Name);
+            return string.Concat(table.DefaultName, " ", Alias.Name);
         }
 
         /// <summary> Gets or sets the select columns. </summary>

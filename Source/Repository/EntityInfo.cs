@@ -53,7 +53,7 @@ namespace AdFactum.Data.Repository
 		{
 			VersionInfo = version;
 			EntityName = objectType.FullName;
-			TableName = Table.GetTableInstance(objectType).Name;
+			TableName = Table.GetTableInstance(objectType).DefaultName;
 			ObjectType = objectType;
 
 			ShortName = CreateShortName (currentShortNames);
@@ -71,7 +71,7 @@ namespace AdFactum.Data.Repository
 		{
 			VersionInfo = version;
 			EntityName = objectType.FullName;
-            TableName = Table.GetTableInstance(objectType).Name + "_" + columnName;
+            TableName = Table.GetTableInstance(objectType).DefaultName + "_" + columnName;
 			ObjectType = objectType;
 			
 			ShortName = CreateShortName (currentShortNames);
