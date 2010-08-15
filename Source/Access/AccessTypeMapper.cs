@@ -49,7 +49,7 @@ namespace AdFactum.Data.Access
             "UNION","UNIQUE","UPDATE","USER",
             "VALUE","VALUES","VAR", "VARP","VARBINARY", "VARCHAR","VERSION",
             "WHERE","WITH","WORKSPACE",
-            "XOR","YEAR","YES","YESNO","GLOBAL","PRECISION","DAY","MONTH","YEAR","REFERENCE","WEEKDAY","REVERS","LOCALE"
+            "XOR","YEAR","YES","YESNO","GLOBAL","PRECISION","DAY","MONTH","YEAR","REFERENCE","WEEKDAY","REVERS","TRANSLATION"
         };
         #endregion
 
@@ -102,7 +102,7 @@ namespace AdFactum.Data.Access
         /// <returns></returns>
         public override string GetStringForDDL(FieldDescription field)
 		{
-			const string result = "IMAGE";
+			string result = "IMAGE";
 
             Type type = PreTransformTypeForDDL(field);
             int length = field.CustomProperty.MetaInfo.Length;
@@ -113,7 +113,18 @@ namespace AdFactum.Data.Access
             if (type.Equals(typeof(string)) && length > 255)
                 return "MEMO";
 
-            return base.GetStringForDDL(field, type, length) ?? result;
+            result = base.GetStringForDDL(field, type, length) ?? result;
+
+            /*
+             * Place Unicode N in Front of the field type
+             */
+            if (field.CustomProperty.MetaInfo.IsUnicode)
+            {
+                if (result.StartsWith("CHAR") || result.StartsWith("VARCHAR"))
+                    result = string.Concat("N", result);
+            }
+
+            return result;
 		}
 
         /// <summary>
@@ -140,6 +151,23 @@ namespace AdFactum.Data.Access
 						return (OleDbType) dict.Value;
 				}
 			}
+
+            /*
+             * Switch to unicode
+             */
+            if (isUnicode)
+            {
+                switch (result)
+                {
+                    case OleDbType.Char:
+                        result = OleDbType.WChar;
+                        break;
+
+                    case OleDbType.VarChar:
+                        result = OleDbType.VarWChar;
+                        break;
+                }
+            }
 
 			return result;
 		}

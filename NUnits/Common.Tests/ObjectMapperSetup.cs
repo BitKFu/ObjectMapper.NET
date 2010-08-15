@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.OleDb;
 using System.Data.SqlClient;
 using System.IO;
 using AdFactum.Data;
@@ -48,6 +49,25 @@ namespace ObjectMapper.NUnits.Common.Tests
                     persister.Execute("if db_id('ObjectMapper') is not null\n drop database ObjectMapper;");
                     persister.Execute("create database ObjectMapper;");
                 }
+            }
+
+            /*
+             * Recopy the Access Database
+             */
+            if (Connection.DatabaseType == DatabaseType.Access)
+            {
+                OleDbConnection.ReleaseObjectPool();
+
+                var cat = new ADOX.CatalogClass();
+
+                string path = Path.Combine(Directory.GetCurrentDirectory(), Connection.DatabaseFile); 
+
+                if (File.Exists(path))
+                    File.Delete(path);
+
+                cat.Create(string.Format("Provider=Microsoft.Jet.OLEDB.4.0;" +
+                       "Data Source={0};" +
+                       "Jet OLEDB:Engine Type=5", path));
             }
 
             /*

@@ -233,16 +233,15 @@ namespace AdFactum.Data.Internal
                             typeFailure = false;
                     }
 
-                    if (fieldDescription.ContentType.Equals(typeof(string)))
-                    {
-                        if (!metaInfo.IsUnicode)
-                            fieldIsShorter = (metaInfo.Length < (int) columnDescription["ColumnSize"]);
-                        else
-                            fieldIsShorter = (metaInfo.Length < ((int)columnDescription["ColumnSize"])/2);
-                    }
+                    int size = metaInfo.IsUnicode
+                                   ? CalculateUnicodeSize((int) columnDescription["ColumnSize"])
+                                   : CalculateSize((int)columnDescription["ColumnSize"]);
 
                     if (fieldDescription.ContentType.Equals(typeof(string)))
-                        fieldIsLonger = (metaInfo.Length > (int)columnDescription["ColumnSize"]);
+                        fieldIsShorter = (metaInfo.Length < size);
+
+                    if (fieldDescription.ContentType.Equals(typeof(string)))
+                        fieldIsLonger = (metaInfo.Length > size);
 
                     if (uniqueFailure || requiredFailure || typeFailure || fieldIsShorter || fieldIsLonger)
                     {
@@ -312,6 +311,26 @@ namespace AdFactum.Data.Internal
             }
 
             return resultList;
+        }
+
+        /// <summary>
+        /// Calculates the size of the unicode.
+        /// </summary>
+        /// <param name="size">The size.</param>
+        /// <returns></returns>
+        protected virtual int CalculateUnicodeSize(int size)
+        {
+            return size;
+        }
+
+        /// <summary>
+        /// Calculates the size.
+        /// </summary>
+        /// <param name="size">The size.</param>
+        /// <returns></returns>
+        protected virtual int CalculateSize(int size)
+        {
+            return size;
         }
 
         #endregion

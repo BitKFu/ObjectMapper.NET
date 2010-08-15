@@ -31,10 +31,31 @@ namespace AdFactum.Data.Access
              */
             info.MismatchedFields.RemoveAll(field => field.RequiredFailure);
             info.MismatchedFields.RemoveAll(field => field.UniqueFailure);
-            info.MismatchedFields.RemoveAll(field => (field.FieldIsShorter &&
-                                                      field.Field.CustomProperty.MetaInfo.Length > 255));
+            //info.MismatchedFields.RemoveAll(field => (field.FieldIsShorter &&
+            //                                          field.Field.CustomProperty.MetaInfo.Length > 255));
             
             return infoCollection;
+        }
+
+        /// <summary>
+        /// Calculates the size of the unicode.
+        /// </summary>
+        /// <param name="size">The size.</param>
+        /// <returns></returns>
+        protected override int CalculateUnicodeSize(int size)
+        {
+            if (size == int.MaxValue / 4-1)
+                size = int.MaxValue/2;
+
+            return size;
+        }
+
+        protected override int CalculateSize(int size)
+        {
+            if (size == int.MaxValue / 4 - 1)
+                size = int.MaxValue ;
+
+            return size;
         }
     }
 }

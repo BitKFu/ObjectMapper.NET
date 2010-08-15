@@ -11,7 +11,6 @@ namespace ObjectMapper.NUnits.Common.Tests
     /// This test class tests the unicode functionality of the ObjectMapper .NET
     /// </summary>
     [TestFixture]
-    [Category("ExcludeForAccess")]
     public class UnicodeTest : ObjectMapperTest
     {
 
@@ -23,7 +22,7 @@ namespace ObjectMapper.NUnits.Common.Tests
         {
              using (AdFactum.Data.ObjectMapper mapper = OBM.CreateMapper(Connection))
              {
-                 UnicodeTestEntity ute = new UnicodeTestEntity();
+                 var ute = new UnicodeTestEntity();
                  ute.UnicodeChar = UnicodeTestEntity.constUnicodeChar;
                  ute.UnicodeString = UnicodeTestEntity.constUnicodeString;
                  ute.UnicodeMemo = UnicodeTestEntity.constUnicodeMemo;
@@ -32,7 +31,7 @@ namespace ObjectMapper.NUnits.Common.Tests
                  mapper.Save(ute);
                  OBM.Commit(mapper, nested);
 
-                 UnicodeTestEntity loaded = mapper.Load(typeof(UnicodeTestEntity), ute.Id) as UnicodeTestEntity;
+                 var loaded = mapper.Load(typeof(UnicodeTestEntity), ute.Id) as UnicodeTestEntity;
                  Assert.IsNotNull(loaded, "Could not load test entity");
                  Assert.AreEqual(ute.UnicodeChar, loaded.UnicodeChar, "Failed to compare unicode char");
                  Assert.AreEqual(ute.UnicodeString, loaded.UnicodeString, "Failed to compare unicode string");
