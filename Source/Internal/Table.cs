@@ -28,6 +28,11 @@ namespace AdFactum.Data.Internal
 		/// </summary>
         private readonly string name;
 
+        /// <summary>
+        /// Alternative Table Names
+        /// </summary>
+	    private readonly Dictionary<DatabaseType, string> alternativeNames;
+
 		/// <summary>
 		/// True, if the table contains static data
 		/// </summary>
@@ -72,14 +77,28 @@ namespace AdFactum.Data.Internal
                 var va = attributes[x] as ViewAttribute;
                 if (va != null)
                 {
-                    name = va.Name;
+                    if (va.DatabaseType == null)
+                        name = va.Name;
+                    else
+                    {
+                        if (alternativeNames == null) alternativeNames = new Dictionary<DatabaseType, string>();
+                        alternativeNames.Add(va.DatabaseType.Value, va.Name);
+                    }
+                        
+
                     isView = true;
                 }
 
                 var ta = attributes[x] as TableAttribute;
                 if (ta != null)
                 {
-                    name = ta.Name;
+                    if (ta.DatabaseType == null)
+                        name = ta.Name;
+                    else
+                    {
+                        if (alternativeNames == null) alternativeNames = new Dictionary<DatabaseType, string>();
+                        alternativeNames.Add(ta.DatabaseType.Value, ta.Name);
+                    }
                     continue;
                 }
 

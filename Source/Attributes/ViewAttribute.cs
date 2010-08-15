@@ -1,4 +1,5 @@
 using System;
+using AdFactum.Data.Util;
 
 namespace AdFactum.Data
 {
@@ -26,5 +27,14 @@ namespace AdFactum.Data
 		{
 		}
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TableAttribute"/> class.
+        /// </summary>
+        /// <param name="viewName">Name of the view.</param>
+        /// <param name="dbType">Type of the db.</param>
+        public ViewAttribute(string viewName, DatabaseType dbType)
+            : base(viewName, dbType)
+        {
+        }
     }
 }
