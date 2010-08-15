@@ -78,7 +78,7 @@ namespace AdFactum.Data.Internal
                 if (va != null)
                 {
                     if (va.DatabaseType == null)
-                        name = va.Name;
+                        name = name ?? va.Name;
                     else
                     {
                         if (alternativeNames == null) alternativeNames = new Dictionary<DatabaseType, string>();
@@ -93,7 +93,7 @@ namespace AdFactum.Data.Internal
                 if (ta != null)
                 {
                     if (ta.DatabaseType == null)
-                        name = ta.Name;
+                        name = name ?? ta.Name;
                     else
                     {
                         if (alternativeNames == null) alternativeNames = new Dictionary<DatabaseType, string>();
