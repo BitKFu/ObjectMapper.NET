@@ -34,7 +34,7 @@ namespace AdFactum.Data.Linq.Expressions
 
         public static ColumnDeclaration SetAlias(this ColumnDeclaration decl, Alias alias)
         {
-            if (decl.Alias == alias)
+            if (decl.Alias.Equals(alias))
                 return decl;
 
             return new ColumnDeclaration(decl.Expression, alias, decl.PropertyName);

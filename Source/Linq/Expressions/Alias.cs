@@ -29,7 +29,7 @@ namespace AdFactum.Data.Linq.Expressions
     /// <summary>
     /// Alias Definition
     /// </summary>
-    public sealed class Alias
+    public sealed class Alias 
     {
         private string nonGeneratedAlias;
         private readonly string pre;
@@ -108,6 +108,25 @@ namespace AdFactum.Data.Linq.Expressions
         private Alias(string realAlias)
         {
             nonGeneratedAlias = realAlias;
+        }
+
+        /// <summary>
+        /// Determines whether the specified <see cref="System.Object"/> is equal to this instance.
+        /// </summary>
+        /// <param name="obj">The <see cref="System.Object"/> to compare with this instance.</param>
+        /// <returns>
+        /// 	<c>true</c> if the specified <see cref="System.Object"/> is equal to this instance; otherwise, <c>false</c>.
+        /// </returns>
+        /// <exception cref="T:System.NullReferenceException">
+        /// The <paramref name="obj"/> parameter is null.
+        /// </exception>
+        public override bool Equals(object obj)
+        {
+            Alias other = obj as Alias;
+            if (other != null)
+                return Name == other.Name && Generated == other.Generated && pre == other.pre;
+
+            return base.Equals(obj);
         }
 
         /// <summary>
