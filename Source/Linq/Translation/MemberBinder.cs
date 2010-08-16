@@ -240,7 +240,7 @@ namespace AdFactum.Data.Linq.Translation
             var targetProperty = new PropertyExpression(GetProjection(linkTarget), newAlias, primaryKey);
 
             Expression exp = new TableExpression(linkTarget, GetProjection(linkTarget), newAlias);
-            var sourceProperty = FindSourceColumn(currentFrom, column, dynamicCache).Expression as PropertyExpression;
+            var sourceProperty = FindSourceColumn(currentFrom, column).Expression as PropertyExpression;
             var where = Expression.MakeBinary(ExpressionType.Equal,
                                               sourceProperty.SetType(primaryKey.PropertyType), //new PropertyExpression(linkTarget, currentFrom, column), 
                                               targetProperty.SetType(primaryKey.PropertyType));
@@ -304,7 +304,7 @@ namespace AdFactum.Data.Linq.Translation
                 {
                     var source = FindSourceColumn(currentFrom, property);
                     if (source != null)
-                        property = (exp = FindSourceColumn(currentFrom, source, dynamicCache).Expression) as PropertyExpression;
+                        property = (exp = FindSourceColumn(currentFrom, source).Expression) as PropertyExpression;
 
                     if (property != null)
                         exp = property.SetType(resultType);
@@ -568,7 +568,7 @@ namespace AdFactum.Data.Linq.Translation
                     || defaultIfEmpty != select.DefaultIfEmpty
                     )
                 {
-                    List<ColumnDeclaration> columns = GetColumns(currentFrom, select.Columns, selector, dynamicCache);
+                    List<ColumnDeclaration> columns = GetColumns(currentFrom, select.Columns, selector, select.Projection);
 
                     return new SelectExpression(select.Type, select.Projection, select.Alias, new ReadOnlyCollection<ColumnDeclaration>(columns), selector, currentFrom, where, orderBy, groupBy,
                                                 skip, take, select.IsDistinct, select.IsReverse, select.SelectResult, select.SqlId, select.Hint, defaultIfEmpty);
@@ -581,21 +581,21 @@ namespace AdFactum.Data.Linq.Translation
             }
         }
 
-        public static List<ColumnDeclaration> GetColumns(AliasedExpression currentFrom, ReadOnlyCollection<ColumnDeclaration> existingColumns, Expression selector, Cache<Type, ProjectionClass> dynamicCache)
+        public static List<ColumnDeclaration> GetColumns(AliasedExpression currentFrom, ReadOnlyCollection<ColumnDeclaration> existingColumns, Expression selector, ProjectionClass projection)
         {
             List<ColumnDeclaration> columns;
 
             if (selector == null)
-                columns = ColumnProjector.Evaluate(currentFrom, dynamicCache).ToList();
+                columns = ColumnProjector.Evaluate(currentFrom, projection).ToList();
             else
             {
                 columns = new List<ColumnDeclaration>();
-                var selectorColumns = ColumnProjector.Evaluate(selector, dynamicCache);
+                var selectorColumns = ColumnProjector.Evaluate(selector, projection);
 
                 for (int i = 0; i < selectorColumns.Count; i++)
                 {
                     ColumnDeclaration cd = selectorColumns[i];
-                    var declaration = FindSourceColumn(currentFrom, cd, dynamicCache);
+                    var declaration = FindSourceColumn(currentFrom, cd);
                     if (declaration == null)
                         continue;
                     //   throw new AmbiguousMatchException("Column " + cd + " could not be found in the current result set.\nThat is mostly because a variable has be used ambiguously, e.g. in a Union - two different subselects share the same variables.");

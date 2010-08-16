@@ -60,9 +60,23 @@ namespace AdFactum.Data.Linq.Translation
         {
             var projector = new ColumnProjector(cache);
 
-            //// Only visit the selector if one is there
-            //SelectExpression select = expression as SelectExpression;
-            //expression = select != null ? select.Selector ?? select : expression;
+            projector.Visit(expression);
+            return new ReadOnlyCollection<ColumnDeclaration>(projector.columns);
+        }
+
+        /// <summary>
+        /// Evaluates the specified expression.
+        /// </summary>
+        /// <param name="expression">The expression.</param>
+        /// <param name="projection">The projection.</param>
+        /// <returns></returns>
+        public static ReadOnlyCollection<ColumnDeclaration> Evaluate(Expression expression, ProjectionClass projection)
+        {
+            var cache = new Cache<Type, ProjectionClass>("ColumnProjector");
+            if (projection != null)
+                cache.Insert(projection.ProjectedType, projection);
+
+            var projector = new ColumnProjector(cache);
 
             projector.Visit(expression);
             return new ReadOnlyCollection<ColumnDeclaration>(projector.columns);

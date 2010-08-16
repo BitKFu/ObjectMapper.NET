@@ -508,14 +508,14 @@ namespace AdFactum.Data.Linq.Expressions
         /// <summary>
         /// Finds the source column within the current Selection, based on a nested property
         /// </summary>
-        protected static ColumnDeclaration FindSourceColumn(AliasedExpression from, PropertyExpression property, Cache<Type, ProjectionClass> dynamicCache)
+        protected static ColumnDeclaration FindSourceColumn(AliasedExpression from, PropertyExpression property)
         {
             property = OriginPropertyFinder.Find(property) ?? property;
-            var columns = ColumnProjector.Evaluate(from, dynamicCache);
+            var columns = ColumnProjector.Evaluate(from, from.Projection);
             return columns.Where(x => property.Equals(x.OriginalProperty)).FirstOrDefault();
         }
 
-        protected static ColumnDeclaration FindSourceColumn(AliasedExpression from, ColumnDeclaration declaration, Cache<Type, ProjectionClass> dynamicCache)
+        protected static ColumnDeclaration FindSourceColumn(AliasedExpression from, ColumnDeclaration declaration)
         {
             AliasedExpression aliased = declaration.Expression as AliasedExpression;
             if (from == null || (aliased != null && aliased.Alias == from.Alias))
@@ -525,7 +525,7 @@ namespace AdFactum.Data.Linq.Expressions
             if (pe == null)
                 return declaration;
 
-            var column = FindSourceColumn(from, pe, dynamicCache);
+            var column = FindSourceColumn(from, pe);
             if (column == null)
                 return column;
 

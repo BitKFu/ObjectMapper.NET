@@ -198,7 +198,6 @@
     <Compile Include="Linq\Translation\SubqueryRemover.cs" />
     <Compile Include="Linq\Translation\TableExpressionFinder.cs" />
     <Compile Include="Linq\Translation\TypeChecker.cs" />
-    <Compile Include="Linq\Translation\UnusedColumnRemover.cs" />
     <Compile Include="Linq\Translation\UpdateProjection.cs" />
     <Compile Include="Linq\Util\ScopedDictionary.cs" />
     <Compile Include="Oracle\OracleIntegrityChecker.cs" />
