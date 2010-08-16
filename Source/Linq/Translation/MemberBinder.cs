@@ -205,7 +205,7 @@ namespace AdFactum.Data.Linq.Translation
                             x.OriginalProperty.ParentType == member.Target).FirstOrDefault();
                     if (column != null)
                     {
-                        if (member.SourceType == m.Type && !member.SourceType.IsProjectedType(dynamicCache)) // Only if the type is mapping
+                        if (member.SourceType == m.Type && !member.SourceType.IsProjectedType(dynamicCache) && !member.SourceType.IsValueObjectType() ) // Only if the type is mapping
                             return MapPropertyToCurrentFromClause(currentFrom, new PropertyExpression((AliasedExpression)select, column), m.Type);
 
                         // Otherwise we have to create a join
@@ -218,7 +218,7 @@ namespace AdFactum.Data.Linq.Translation
                     column = select.Columns.Where(x => x.Alias.Name.Equals(columnName, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
                     if (column != null)
                     {
-                        if (member.SourceType == m.Type && !member.SourceType.IsProjectedType(dynamicCache)) // Only if the type is mapping
+                        if (member.SourceType == m.Type && !member.SourceType.IsProjectedType(dynamicCache) && !member.SourceType.IsValueObjectType()) // Only if the type is mapping
                             return MapPropertyToCurrentFromClause(currentFrom, new PropertyExpression((AliasedExpression)select, column), m.Type);
 
                         // Otherwise we have to create a join
@@ -610,7 +610,7 @@ namespace AdFactum.Data.Linq.Translation
 
             /*
              * Expand columns, if tried to access dependend objects
-             */
+             *
             var toExpand = columns.Where(c => c.OriginalProperty != null && c.OriginalProperty.Expandable).ToList();
             foreach (var expand in toExpand)
             {
@@ -628,7 +628,8 @@ namespace AdFactum.Data.Linq.Translation
                     columns.Remove(expand);
                     columns.AddRange(tableFrom.Columns);
                 }
-            }
+            }*/
+
             return columns;
         }
 

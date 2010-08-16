@@ -1381,8 +1381,9 @@ namespace AdFactum.Data.Linq.Translation
             Alias alias = Alias.Generate(AliasType.Select);
             Expression selector1 = Visit(selector.Body);
             ReadOnlyCollection<ColumnDeclaration> columns = ColumnProjector.Evaluate(selector1, DynamicCache);
+            ProjectionClass projection = ReflectionHelper.GetProjection(resultType.RevealType(), dynamicCache);
 
-            return new SelectExpression(resultType,  alias, columns, selector1, from, where);
+            return new SelectExpression(resultType,  projection, alias, columns, selector1, from, where, null, null, null, null, false, false, SelectResultType.Collection, null, null, null);
         }
 
         /// <summary> Visits the constant. </summary>

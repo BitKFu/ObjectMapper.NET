@@ -192,7 +192,7 @@ namespace AdFactum.Data.Linq.Expressions
         public ColumnDeclaration ReferringColumn { get; private set; }
 
         /// <summary> Gets or sets a value indicating whether this <see cref="PropertyExpression"/> is expandable. </summary>
-        public bool Expandable { get; set; }
+        public bool Expandable { get { return ContentType.IsValueObjectType(); } }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PropertyExpression"/> class.
