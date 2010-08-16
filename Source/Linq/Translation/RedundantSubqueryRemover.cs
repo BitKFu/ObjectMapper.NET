@@ -52,7 +52,7 @@ namespace AdFactum.Data.Linq.Translation
 
                 if (sqlId != null || hint != null)
                 {
-                    select = UpdateSelect(select, select.Selector, select.From, select.Where, select.OrderBy, select.GroupBy, select.Skip,
+                    select = UpdateSelect(select, select.Projection, select.Selector, select.From, select.Where, select.OrderBy, select.GroupBy, select.Skip,
                         select.Take, select.IsDistinct, select.IsReverse, select.Columns, sqlId ?? select.SqlId, hint ?? select.Hint, select.DefaultIfEmpty);
                 }
             }

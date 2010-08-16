@@ -37,6 +37,33 @@ namespace AdFactum.Data.Linq.Translation
         }
 
         /// <summary>
+        /// Finds the duplicated columns.
+        /// </summary>
+        /// <param name="columns">The columns.</param>
+        /// <returns></returns>
+        private List<ColumnDeclaration> FindDuplicatedColumns(ReadOnlyCollection<ColumnDeclaration> columns)
+        {
+            // Remove duplicated columns
+            var ignoreList = new HashSet<int>();
+            var newColumns = new List<ColumnDeclaration>();
+            for (int col = 0; col < columns.Count; col++)
+            {
+                if (ignoreList.Contains(col))
+                    continue;
+
+                for (int innerCol = col + 1; innerCol < columns.Count; innerCol++)
+                    if (ExpressionComparer.AreEqual(columns[col].Expression, columns[innerCol].Expression))
+                    {
+                        ignoreList.Add(innerCol);
+                    }
+
+                newColumns.Add(columns[col]);
+            }
+
+            return newColumns;
+        }
+
+        /// <summary>
         /// Updates the top level result.
         /// </summary>
         /// <param name="expression">The expression.</param>
@@ -50,12 +77,12 @@ namespace AdFactum.Data.Linq.Translation
             // Update Complex Members
             if (projection.ComplexTypeColumnMapping != null)
             {
-                for (int i= 0; i < projection.ComplexTypeColumnMapping.Length; i++)
+                for (int i = 0; i < projection.ComplexTypeColumnMapping.Length; i++)
                 {
                     var mapping = projection.ComplexTypeColumnMapping[i];
                     if (mapping == null)
                         continue;
-                    
+
                     List<ColumnDeclaration> newList = new List<ColumnDeclaration>();
                     foreach (var column in mapping)
                     {
@@ -65,6 +92,9 @@ namespace AdFactum.Data.Linq.Translation
 
                     projection.ComplexTypeColumnMapping[i] = new ReadOnlyCollection<ColumnDeclaration>(newList);
                 }
+
+                // Add the new projection into the cache
+                dynamicCache.Insert(projection.ProjectedType, projection);
             }
 
             return (Expression) expression;

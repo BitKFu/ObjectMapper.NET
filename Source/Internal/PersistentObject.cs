@@ -1271,7 +1271,7 @@ namespace AdFactum.Data.Internal
                         var nestedObject = new PersistentObject(ReflectionHelper.GetProjection(type.RevealType(),mapperObj.MirroredLinqProjectionCache),
                                                                 HierarchyLevel.IsFlatLoaded(hierarchyLevel),
                                                                 (PersistentProperties) properties.Clone(), null);
-                        nestedObject.UpdateProperties(mapperObj, projection.ComplexTypeColumnMapping[x]);
+                        nestedObject.UpdateProperties(projection.ComplexTypeColumnMapping[x]);
 
                         object vo = nestedObject.CreateVO(mapperObj, objectFactory, hash, hierarchyLevel,
                                                           globalParameter);
@@ -1309,7 +1309,7 @@ namespace AdFactum.Data.Internal
         /// <summary>
         /// Updates the properties.
         /// </summary>
-        private void UpdateProperties(ObjectMapper mapper, IEnumerable<ColumnDeclaration> columnMapping)
+        private void UpdateProperties(IEnumerable<ColumnDeclaration> columnMapping)
         {
             var templates = Projection.GetFieldTemplates(isFlatLoaded);
 
@@ -1330,26 +1330,39 @@ namespace AdFactum.Data.Internal
                 FieldDescription fd = template.Value;
                 
                 IModification unmatchedModification;
-                properties.FieldProperties.TryGetValue(template.Key, out unmatchedModification);
+                properties.FieldProperties.TryGetValue(key, out unmatchedModification);
+
+                object fieldValue = null;
+                
                 var unmatchedField = unmatchedModification as UnmatchedField;
-                if (unmatchedField == null) continue;
+                if (unmatchedField != null)
+                    fieldValue = unmatchedField.Fieldvalue;
+                else
+                {
+                    // In some cases, the field is re-used, and therefore not unmatched. 
+                    var matchedField = unmatchedModification as Field;
+                    if (matchedField != null) 
+                        fieldValue = matchedField.Value;
+                }
+
+                properties.FieldProperties.Remove(key);
 
                 // Try to convert unmatched field into fields
                 if (fd.FieldType == typeof (Field))
                 {
-                    var field = new Field(fd, unmatchedField.Fieldvalue);
+                    var field = new Field(fd, fieldValue);
                     if (unmatchedModification != null)
-                        properties.FieldProperties.Remove(key);
-                    properties.FieldProperties = properties.FieldProperties.Add(key, field);
+                        properties.FieldProperties.Remove(template.Key);
+                    properties.FieldProperties = properties.FieldProperties.Add(template.Key, field);
                     continue;
                 }
 
                 if (fd.FieldType == typeof (SpecializedLink))
                 {
-                    var specializedLink = new SpecializedLink(fd, unmatchedField.Fieldvalue);
+                    var specializedLink = new SpecializedLink(fd, fieldValue);
                     if (unmatchedModification != null)
-                        properties.FieldProperties.Remove(key);
-                    properties.FieldProperties = properties.FieldProperties.Add(key, specializedLink);
+                        properties.FieldProperties.Remove(template.Key);
+                    properties.FieldProperties = properties.FieldProperties.Add(template.Key, specializedLink);
                 }
             }
         }

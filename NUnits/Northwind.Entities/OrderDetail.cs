@@ -9,6 +9,7 @@ namespace ObjectMapper.NUnits.Northwind.Entities
     /// </summary>
     [Table("Order_Details")]
     [Table("OrderDetails", DatabaseType.Postgres)]    
+    [Table("Order Details", DatabaseType.SqlServer)]    
     public class OrderDetail : ValueObject
     {
         [Ignore]

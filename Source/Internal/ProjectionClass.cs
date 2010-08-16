@@ -184,7 +184,7 @@ namespace AdFactum.Data.Internal
         public ReadOnlyCollection<ColumnDeclaration>[] ComplexTypeColumnMapping
         {
             get; 
-            private set;
+            set;
         }
 
         /// <summary>
@@ -285,20 +285,24 @@ namespace AdFactum.Data.Internal
         /// <summary>
         /// Creates a new projection
         /// </summary>
-        public ProjectionClass(Expression expression, Dictionary<ParameterExpression, MappingStruct> parameterMapping) : this()
+        public ProjectionClass(Expression expression):this()//, Dictionary<ParameterExpression, MappingStruct> parameterMapping) : this()
         {
             Expression = expression;
             ProjectedType = expression.Type;
-            
-            Constructor = NewExpression.Constructor;
-            CreateFromAnonymousType(NewExpression.Arguments, parameterMapping);
+
+            var newExpression = NewExpression;
+            if (newExpression != null)
+            {
+                Constructor = newExpression.Constructor;
+                CreateFromAnonymousType(newExpression.Arguments); //, parameterMapping);
+            }
         }
 
         /// <summary>
         /// Creates the projection from an anoymous type
         /// </summary>
         /// <param name="constructorArguments">The arguments.</param>
-        private void CreateFromAnonymousType(ReadOnlyCollection<Expression> constructorArguments, Dictionary<ParameterExpression, MappingStruct> parameterMapping)
+        private void CreateFromAnonymousType(ReadOnlyCollection<Expression> constructorArguments) //, Dictionary<ParameterExpression, MappingStruct> parameterMapping)
         {
             var parameters = Constructor.GetParameters();
             constructorParameters = new object[constructorArguments.Count];
@@ -309,13 +313,13 @@ namespace AdFactum.Data.Internal
                 var argument = x < constructorArguments.Count ? constructorArguments[x] : null;
                 constructorParameters[x] = new Property(parameters[x]);
 
-                var pe = argument as ParameterExpression;
-                if (pe != null)
-                {
-                    MappingStruct mapping;
-                    parameterMapping.TryGetValue(pe, out mapping);
-                    argument = mapping.Expression;
-                }
+                //var pe = argument as ParameterExpression;
+                //if (pe != null)
+                //{
+                //    MappingStruct mapping;
+                //    parameterMapping.TryGetValue(pe, out mapping);
+                //    argument = mapping.Expression;
+                //}
 
                 /*
                  * Evaluate Method call expressions
@@ -837,8 +841,8 @@ namespace AdFactum.Data.Internal
         /// </summary>
         /// <param name="expression">The expression.</param>
         /// <param name="complexMappings">The declarations.</param>
-        public ProjectionClass(Expression expression, ReadOnlyCollection<ColumnDeclaration>[] complexMappings, Dictionary<ParameterExpression, MappingStruct> parameterMapping)
-            : this(expression, parameterMapping)
+        public ProjectionClass(Expression expression, ReadOnlyCollection<ColumnDeclaration>[] complexMappings)//, Dictionary<ParameterExpression, MappingStruct> parameterMapping)
+            : this(expression)//, parameterMapping)
         {
             ComplexTypeColumnMapping = complexMappings ?? ComplexTypeColumnMapping;
         }
@@ -868,7 +872,8 @@ namespace AdFactum.Data.Internal
             if (ComplexTypeColumnMapping != null)
                 foreach (ColumnDeclaration column in from columnDeclarations in ComplexTypeColumnMapping where columnDeclarations != null 
                                                      from column in columnDeclarations select column)
-                    result.Add(column.Alias.Name, null);
+                    if (!result.ContainsKey(column.Alias.Name))
+                        result.Add(column.Alias.Name, null);
 
             if (flat) flatTemplates = result;
                  else deepTemplates = result;

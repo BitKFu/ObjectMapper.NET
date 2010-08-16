@@ -746,7 +746,7 @@ namespace AdFactum.Data.Linq.Translation
             ProjectionClass sourceProjection = GetProjection(source.Type.RevealType());
             
             var resultColumns = Visit(resultSelector.Body);
-            ProjectionClass projection = new ProjectionClass(resultColumns, sourceProjection.ComplexTypeColumnMapping, fromClauseMapping);
+            ProjectionClass projection = new ProjectionClass(resultColumns, sourceProjection.ComplexTypeColumnMapping); //, fromClauseMapping);
             projection.ProjectedType = resultType.RevealType();
             DynamicCache.Insert(resultType.RevealType(), projection);
 
@@ -1040,7 +1040,7 @@ namespace AdFactum.Data.Linq.Translation
                 // Evaluate New Expression
                 nex = base.VisitNew(nex);
 
-                var projection = new ProjectionClass(nex, fromClauseMapping);
+                var projection = new ProjectionClass(nex); //, fromClauseMapping);
                 DynamicCache.Insert(key, projection);
 
                 return nex;
@@ -1067,7 +1067,7 @@ namespace AdFactum.Data.Linq.Translation
                 cachedProjection.Expression = init;
             else
             {
-                var projection = new ProjectionClass(init, fromClauseMapping);
+                var projection = new ProjectionClass(init); //, fromClauseMapping);
                 DynamicCache.Insert(key, projection);
             }
 

@@ -53,7 +53,7 @@ namespace AdFactum.Data.Linq.Translation
             {
                 List<ColumnDeclaration> columns = MemberBinder.GetColumns(from, select.Columns, selector, select.Projection);
 
-                return UpdateSelect(select, selector, from, where, orderBy, groupBy, skip, take, select.IsDistinct,
+                return UpdateSelect(select, select.Projection, selector, from, where, orderBy, groupBy, skip, take, select.IsDistinct,
                                     select.IsReverse, new ReadOnlyCollection<ColumnDeclaration>(columns), select.SqlId, select.Hint, select.DefaultIfEmpty);
             }
 

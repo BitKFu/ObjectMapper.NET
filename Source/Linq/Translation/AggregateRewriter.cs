@@ -48,7 +48,7 @@ namespace AdFactum.Data.Linq.Translation
                 columns = ColumnProjector.Evaluate(selector, dynamicCache);
             }
 
-            select = UpdateSelect(select, selector, from, where, orderBy, groupBy, skip, take, select.IsDistinct,
+            select = UpdateSelect(select, select.Projection, selector, from, where, orderBy, groupBy, skip, take, select.IsDistinct,
                                   select.IsReverse, columns, select.SqlId, select.Hint, defaultIfEmpty);
 
             if (lookup.Contains(select.Alias))

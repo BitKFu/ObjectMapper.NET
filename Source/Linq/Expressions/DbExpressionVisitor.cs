@@ -340,24 +340,28 @@ namespace AdFactum.Data.Linq.Expressions
             var skip = Visit(select.Skip);
             var take = Visit(select.Take);
             var columns = VisitColumnDeclarations(select.Columns);
-            var selector = select.Selector;
+            var selector = Visit(select.Selector);
             var defaultIfEmpty = Visit(select.DefaultIfEmpty);
 
-            return UpdateSelect(select, selector, from, where, orderBy, groupBy, skip, take, select.IsDistinct, select.IsReverse, columns, select.SqlId, select.Hint, defaultIfEmpty);
+            var projection = selector != null
+                                 ? new ProjectionClass(selector)
+                                 : select.Projection;
+
+            return UpdateSelect(select, projection, selector, from, where, orderBy, groupBy, skip, take, select.IsDistinct, select.IsReverse, columns, select.SqlId, select.Hint, defaultIfEmpty);
         }
 
-        protected SelectExpression UpdateSelect(SelectExpression select, Expression selector, 
+        protected SelectExpression UpdateSelect(SelectExpression select, ProjectionClass projection, Expression selector, 
             AliasedExpression from, Expression where, ReadOnlyCollection<OrderExpression> orderBy, 
             ReadOnlyCollection<Expression> groupBy, Expression skip, Expression take, bool isDistinct, 
             bool isReverse, ReadOnlyCollection<ColumnDeclaration> columns, string sqlId, string hint, Expression defaultIfEmpty)
         {
-            return from != select.From || where != select.Where || orderBy != select.OrderBy || selector != select.Selector
+            return from != select.From || projection != select.Projection || where != select.Where || orderBy != select.OrderBy || selector != select.Selector
                    || groupBy != select.GroupBy || take != select.Take || skip != select.Skip
                    || isDistinct != select.IsDistinct || columns != select.Columns || isReverse != select.IsReverse
                    || sqlId != select.SqlId || hint != select.Hint || defaultIfEmpty != select.DefaultIfEmpty
                        
                        ? new SelectExpression(
-                             select.Type, select.Projection, select.Alias, columns, selector, from, where, orderBy,
+                             select.Type, projection, select.Alias, columns, selector, from, where, orderBy,
                              groupBy, skip, take, isDistinct, isReverse, select.SelectResult, sqlId, hint, defaultIfEmpty)
 
                        : select;

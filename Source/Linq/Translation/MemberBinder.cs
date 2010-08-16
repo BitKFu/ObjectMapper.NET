@@ -557,6 +557,9 @@ namespace AdFactum.Data.Linq.Translation
                 var take = Visit(select.Take);
                 var selector = Visit(select.Selector);
                 var defaultIfEmpty = Visit(select.DefaultIfEmpty);
+                var projection = selector != null
+                                     ? new ProjectionClass(selector)
+                                     : select.Projection;
 
                 if (currentFrom != select.From
                     || where != select.Where
@@ -568,9 +571,10 @@ namespace AdFactum.Data.Linq.Translation
                     || defaultIfEmpty != select.DefaultIfEmpty
                     )
                 {
-                    List<ColumnDeclaration> columns = GetColumns(currentFrom, select.Columns, selector, select.Projection);
+                    List<ColumnDeclaration> columns = GetColumns(currentFrom, select.Columns, selector, projection);
+                    var readOnlyCollection = new ReadOnlyCollection<ColumnDeclaration>(columns);
 
-                    return new SelectExpression(select.Type, select.Projection, select.Alias, new ReadOnlyCollection<ColumnDeclaration>(columns), selector, currentFrom, where, orderBy, groupBy,
+                    return new SelectExpression(select.Type, projection, select.Alias, readOnlyCollection, selector, currentFrom, where, orderBy, groupBy,
                                                 skip, take, select.IsDistinct, select.IsReverse, select.SelectResult, select.SqlId, select.Hint, defaultIfEmpty);
                 }
                 return select;
@@ -592,20 +596,7 @@ namespace AdFactum.Data.Linq.Translation
                 columns = new List<ColumnDeclaration>();
                 var selectorColumns = ColumnProjector.Evaluate(selector, projection);
 
-                for (int i = 0; i < selectorColumns.Count; i++)
-                {
-                    ColumnDeclaration cd = selectorColumns[i];
-                    var declaration = FindSourceColumn(currentFrom, cd);
-                    if (declaration == null)
-                        continue;
-                    //   throw new AmbiguousMatchException("Column " + cd + " could not be found in the current result set.\nThat is mostly because a variable has be used ambiguously, e.g. in a Union - two different subselects share the same variables.");
-
-                    // If the alias has been generated, than use the pre-existing one
-                    if (declaration.Alias.Generated && selectorColumns.Count == existingColumns.Count)
-                        declaration.Alias = existingColumns[i].Alias;
-
-                    columns.Add(declaration);
-                }
+                columns.AddRange(MapColumnsToCurrentFrom(currentFrom, selectorColumns, existingColumns));
             }
 
             /*
@@ -629,6 +620,27 @@ namespace AdFactum.Data.Linq.Translation
                     columns.AddRange(tableFrom.Columns);
                 }
             }*/
+
+            return columns;
+        }
+
+        private static List<ColumnDeclaration> MapColumnsToCurrentFrom(AliasedExpression currentFrom, ReadOnlyCollection<ColumnDeclaration> selectorColumns, ReadOnlyCollection<ColumnDeclaration> existingColumns)
+        {
+            var columns = new List<ColumnDeclaration>();
+            for (int i = 0; i < selectorColumns.Count; i++)
+            {
+                ColumnDeclaration cd = selectorColumns[i];
+                var declaration = FindSourceColumn(currentFrom, cd);
+                if (declaration == null)
+                    continue;
+                //   throw new AmbiguousMatchException("Column " + cd + " could not be found in the current result set.\nThat is mostly because a variable has be used ambiguously, e.g. in a Union - two different subselects share the same variables.");
+
+                // If the alias has been generated, than use the pre-existing one
+                if (declaration.Alias.Generated && selectorColumns.Count == existingColumns.Count)
+                    declaration.Alias = existingColumns[i].Alias;
+
+                columns.Add(declaration);
+            }
 
             return columns;
         }

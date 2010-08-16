@@ -10,16 +10,24 @@ namespace AdFactum.Data.Linq.Translation
     /// </summary>
     public class RedundantJoinRemover : DbExpressionVisitor
     {
-        Dictionary<Alias, Alias> map;
+        Dictionary<Alias, AliasedExpression> map;
 
         private RedundantJoinRemover()
         {
-            this.map = new Dictionary<Alias, Alias>();
+            this.map = new Dictionary<Alias, AliasedExpression>();
         }
 
         public static Expression Remove(Expression expression)
         {
             return new RedundantJoinRemover().Visit(expression);
+        }
+
+        protected override Expression VisitTableExpression(TableExpression expression)
+        {
+            AliasedExpression similarTable;
+            if (map.TryGetValue(expression.Alias, out similarTable))
+                return similarTable;
+            return expression;
         }
 
         protected override Expression VisitJoinExpression(JoinExpression join)
@@ -34,7 +42,7 @@ namespace AdFactum.Data.Linq.Translation
                     var similarRight = (AliasedExpression)FindSimilarRight(join.Left as JoinExpression, join);
                     if (similarRight != null)
                     {
-                        map.Add(right.Alias, similarRight.Alias);
+                        map.Add(right.Alias, similarRight);
                         return join.Left;
                     }
                 }
@@ -68,9 +76,9 @@ namespace AdFactum.Data.Linq.Translation
 
         protected override Expression VisitColumn(PropertyExpression column)
         {
-            Alias mapped;
+            AliasedExpression mapped;
             if (map.TryGetValue(column.Alias, out mapped))
-                return new PropertyExpression(column.Type, column.Projection, mapped, column);
+                return new PropertyExpression(column.Type, column.Projection, mapped.Alias, column);
 
             return column;
         }
