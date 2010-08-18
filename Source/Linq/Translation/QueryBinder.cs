@@ -1590,15 +1590,14 @@ namespace AdFactum.Data.Linq.Translation
         private Expression StripExpression (Expression bound)
         {
             // If it's a select expression, only take the selector
-            SelectExpression select = bound as SelectExpression;
-            bound = select != null ? select.Selector ?? bound : bound;
+            var select = bound as SelectExpression;
 
             // Maybe, it's only one column, than use that
             if (select != null && select.Selector != null && select.Columns.Count == 1)
                 return new PropertyExpression(select, select.Columns.First());
 
             // If it's a lambda expression, only take the body
-            LambdaExpression lambda = bound as LambdaExpression;
+            var lambda = bound as LambdaExpression;
             bound = lambda != null ? lambda.Body ?? bound : bound;
 
             return bound;

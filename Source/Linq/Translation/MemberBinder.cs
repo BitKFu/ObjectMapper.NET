@@ -91,6 +91,32 @@ namespace AdFactum.Data.Linq.Translation
 
         }
 
+        protected override ReadOnlyCollection<OrderExpression> VisitOrderBy(ReadOnlyCollection<OrderExpression> expressions)
+        {
+            if (expressions == null)
+                return null;
+
+            var newOrders = new List<OrderExpression>();
+
+            for (int index = 0; index < expressions.Count; index++)
+            {
+                OrderExpression expr = expressions[index];
+                var e = Visit(expr) as OrderExpression;
+
+                // Maybe we have to sort an result set
+                var resultSet = e != null ? e.Expression as IDbExpressionWithResult : null;
+                if (resultSet != null)
+                {
+                    newOrders.AddRange(resultSet.Columns.Select(cd => new OrderExpression(expr.Ordering, FindSourceColumn(currentFrom, cd).Expression)));
+                    continue;
+                }
+
+                newOrders.Add(e);
+            }
+
+            return new ReadOnlyCollection<OrderExpression>(newOrders);
+        }
+
         /// <summary>
         /// Visits the member access.
         /// </summary>
