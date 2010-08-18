@@ -172,7 +172,10 @@ namespace ObjectMapper.NUnits.Northwind.Tests
             ExpressionOverride.Replacements.Insert(sqlId, new SelectReplacement() { SqlId = sqlId, OverrideHint = "FIRST_ROWS"});
             Assert.AreEqual(1, fn(db.Mapper, "ANATR"));
 
-            ExpressionOverride.Replacements.Insert(sqlId, new SelectReplacement() { SqlId = sqlId, OverrideSql = "SELECT count(*) from Customers where CustomerId='ANATR';" });
+            var tableName = db.Mapper.Persister.TypeMapper.Quote("Customers");
+            var column = db.Mapper.Persister.TypeMapper.Quote("CustomerID");
+
+            ExpressionOverride.Replacements.Insert(sqlId, new SelectReplacement() { SqlId = sqlId, OverrideSql = "SELECT count(*) from " + tableName + " where "+column+"='ANATR';" });
             Assert.AreEqual(1, fn(db.Mapper, "ANATR"));
 
             string storedSqlCommand = ((CompiledQuery) fn.Target).StoredSqlCommand;

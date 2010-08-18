@@ -111,7 +111,7 @@ namespace AdFactum.Data.Internal
         {
             object defaultValue = field.CustomProperty.MetaInfo.DefaultValue;
             if (defaultValue != null)
-                result = string.Concat(result, " DEFAULT ", GetParamValueAsSQLString(ConvertValue(defaultValue)));
+                result = string.Concat(result, " DEFAULT ", GetParamValueAsSQLString(ConvertValueToDbType(defaultValue)));
 
             if (field.CustomProperty.MetaInfo.IsRequiered)
                 result = string.Concat(result, " NOT NULL");
@@ -156,7 +156,7 @@ namespace AdFactum.Data.Internal
         /// </summary>
         /// <param name="value">The value.</param>
         /// <returns></returns>
-        public virtual object ConvertValue(object value)
+        public virtual object ConvertValueToDbType(object value)
         {
             if (IsDbNull(value))
                 return DBNull.Value;
@@ -184,6 +184,101 @@ namespace AdFactum.Data.Internal
             }
 
             return value;
+        }
+
+        /// <summary>
+        /// Convert the given value to the specific type.
+        /// </summary>
+        /// <param name="returnType">Type of the return.</param>
+        /// <param name="value">The value.</param>
+        /// <returns></returns>
+        public virtual object ConvertToType(Type returnType, object value)
+        {
+            if (value == DBNull.Value)
+                value = null;
+
+            object result = value;
+
+            /*
+             * If value is null, get the default values
+             */
+            if (value == null)
+            {
+                if (returnType.BaseType.Equals(typeof(Enum)))
+                    result = Enum.Parse(returnType, "0", true);
+
+                else if (returnType.IsDerivedFrom(typeof(Stream)))
+                    result = new MemoryStream();
+
+                else if (returnType.Equals(typeof(DateTime)))
+                    result = DateTime.MinValue;
+
+                else if (returnType.Equals(typeof(char)))
+                    result = '\0';
+
+                else if (returnType.Equals(typeof(Guid)))
+                    result = Guid.Empty;
+
+                else if (returnType.Equals(typeof(Boolean)))
+                    result = false;
+
+                else if (returnType.Name.Equals("Nullable`1"))
+                    result = null;
+
+                else if ((returnType.IsPrimitive) || (returnType.IsClass == false))
+                    result = Convert.ChangeType(0, returnType, null);
+            }
+            /*
+             * If the value is NOT null, try to convert the value into the other type
+             */
+            else
+            {
+                if (returnType.Name.Equals("Nullable`1"))
+                    returnType = Nullable.GetUnderlyingType(returnType);
+
+                /*
+                 * Perhapos we don't have to convert.
+                 */
+                if (returnType.Equals(value.GetType()))
+                    result = value;
+
+                /*
+                 * Perhaps we have some special types, like ENUM, STREAM, GUID or TIMESPANS
+                 */
+                else if (returnType.BaseType.Equals(typeof(Enum)))
+                    result = Enum.Parse(returnType, value.ToString(), true);
+
+                else if (returnType.IsDerivedFrom(typeof(Stream)))
+                    result = new MemoryStream((Byte[])value);
+
+                else if ((returnType.Equals(typeof(Guid))) && (value is Byte[]))
+                    result = new Guid((byte[])value);
+
+                else if ((returnType.Equals(typeof(Guid))) && (value is string))
+                    result = new Guid((string)value);
+
+                else if ((returnType.Equals(typeof(char))) && (value is string))
+                    return ((string)value).Length >= 1 ? ((string)value)[0] : char.MinValue;
+
+                else if ((returnType.Equals(typeof(TimeSpan))) && (value is DateTime))
+                {
+                    var time = (DateTime)value;
+
+                    result = time >= DBConst.AccessNullDate
+                        ? time.Subtract(DBConst.AccessNullDate)
+                        : new TimeSpan(time.Ticks);
+                }
+                else if ((returnType.Equals(typeof(TimeSpan))) && (value is long))
+                    result = TimeSpan.FromTicks((long)value);
+                else if ((returnType.Equals(typeof(long))) && (value is TimeSpan))
+                    result = ((TimeSpan)value).Ticks;
+                else
+                    /*
+                     * If not, take standard convertion
+                     */
+                    result = Convert.ChangeType(value, returnType, null);
+            }
+            return result;
         }
 
         /// <summary>

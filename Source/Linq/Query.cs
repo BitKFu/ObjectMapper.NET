@@ -404,7 +404,7 @@ namespace AdFactum.Data.Linq
                 else
                 {
                     foreach (object row in resultSet)
-                        genericList.Add((T) Property.ConvertToType(typeof (T), row));
+                        genericList.Add((T) Persister.TypeMapper.ConvertToType(typeof (T), row));
                 }
 
                 return genericList;

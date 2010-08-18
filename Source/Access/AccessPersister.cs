@@ -418,7 +418,7 @@ namespace AdFactum.Data.Access
                 "p" + numberOfParameter.ToString("00"), 
                 (OleDbType) TypeMapper.GetEnumForDatabase(type, isUnicode))
                                              {
-                                                 Value = TypeMapper.ConvertValue(value)
+                                                 Value = TypeMapper.ConvertValueToDbType(value)
                                              };
             parameters.Add(parameter);
 
@@ -433,7 +433,7 @@ namespace AdFactum.Data.Access
         {
             IDbDataParameter parameter = new OleDbParameter(parameterName,
                                                             (OleDbType) TypeMapper.GetEnumForDatabase(type, isUnicode))
-                                             {Value = TypeMapper.ConvertValue(value)};
+                                             {Value = TypeMapper.ConvertValueToDbType(value)};
 
             return parameter;
         }
@@ -443,7 +443,7 @@ namespace AdFactum.Data.Access
             var copy = (OleDbParameter) copyFrom;
 
             IDbDataParameter parameter = new OleDbParameter(copyFrom.ParameterName, copy.OleDbType)
-                                             {Value = TypeMapper.ConvertValue(value)};
+                                             {Value = TypeMapper.ConvertValueToDbType(value)};
 
             return parameter;
         }

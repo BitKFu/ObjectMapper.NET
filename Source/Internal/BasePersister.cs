@@ -500,7 +500,7 @@ namespace AdFactum.Data.Internal
                         join1.Append(" AND ");
 
                         object curValue = globalParameter[vfd.GlobalParameter];
-                        if (TypeMapper.ConvertValue(curValue) != DBNull.Value)
+                        if (TypeMapper.ConvertValueToDbType(curValue) != DBNull.Value)
                         {
                             IDbDataParameter parameter = AddParameter(parameterCollection, ref index, curValue,
                                                                       vfd.GlobalJoinField.CustomProperty.MetaInfo.
@@ -591,7 +591,7 @@ namespace AdFactum.Data.Internal
                             if (!first) result.Append(" AND ");
 
                             object curValue = globalParameter[vfd.GlobalParameter];
-                            if (TypeMapper.ConvertValue(curValue) != DBNull.Value)
+                            if (TypeMapper.ConvertValueToDbType(curValue) != DBNull.Value)
                             {
                                 if (vfd.JoinTable.IsWeakReferenced)
                                 {
@@ -951,7 +951,7 @@ namespace AdFactum.Data.Internal
                                 conditionString = conditionString.ReplaceFirst(Condition.ParameterValue,
                                                         prefix +
                                                         TypeMapper.GetParamValueAsSQLString(
-                                                            TypeMapper.ConvertValue(curValue)));
+                                                            TypeMapper.ConvertValueToDbType(curValue)));
                         }
                     }
                 }
@@ -970,7 +970,7 @@ namespace AdFactum.Data.Internal
                     }
                     else
                         conditionString = conditionString.ReplaceFirst(Condition.GlobalJoin,
-                                                TypeMapper.GetParamValueAsSQLString(TypeMapper.ConvertValue(curValue)));
+                                                TypeMapper.GetParamValueAsSQLString(TypeMapper.ConvertValueToDbType(curValue)));
                 }
 
                 var inCondition = condition as InCondition;
@@ -1582,13 +1582,21 @@ namespace AdFactum.Data.Internal
 
             if (targetType.IsEnum)
             {
-                if (source is Decimal)
-                    source = Convert.ToInt32(source);
-
+                // Try to convert a string "3" to an integer
                 int result;
                 if (source is string && int.TryParse((string)source, out result))
+                {
                     source = result;
+                    return Enum.ToObject(targetType, source);
+                }
 
+                // If the source stays a string, than try to interpret it's value
+                var valueString = source as string;
+                if (valueString != null)
+                    return Enum.Parse(targetType, valueString);
+
+                // Try to convert it to an integer
+                source = Convert.ToInt32(source);
                 return Enum.ToObject(targetType, source);
             }
 
@@ -2143,11 +2151,11 @@ namespace AdFactum.Data.Internal
 
                 var listlink = new ListLink(null,
                                             linkId, parentType,
-                                            Property.ConvertToType(parentPrimaryKeyType,
+                                            TypeMapper.ConvertToType(parentPrimaryKeyType,
                                                                    reader.GetValue(
                                                                        fieldIndexDict[DBConst.ParentObjectField])),
                                             // Parent Id
-                                            Property.ConvertToType(linkedPrimaryKeyType,
+                                            TypeMapper.ConvertToType(linkedPrimaryKeyType,
                                                                    reader.GetValue(
                                                                        fieldIndexDict[DBConst.PropertyField])),
                                             // Property
@@ -2214,11 +2222,11 @@ namespace AdFactum.Data.Internal
                                                 reader.GetValue(fieldIndexDict[DBConst.LinkedToField]),
                                                 typeof (string)), // Link To
                                             parentType,
-                                            Property.ConvertToType(parentPrimaryKeyType,
+                                            TypeMapper.ConvertToType(parentPrimaryKeyType,
                                                                    reader.GetValue(
                                                                        fieldIndexDict[DBConst.ParentObjectField])),
                                             // Parent Id
-                                            Property.ConvertToType(linkedPrimaryKeyType,
+                                            TypeMapper.ConvertToType(linkedPrimaryKeyType,
                                                                    reader.GetValue(
                                                                        fieldIndexDict[DBConst.PropertyField]))
                     // Property

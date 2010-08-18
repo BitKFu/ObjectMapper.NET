@@ -306,110 +306,6 @@ namespace AdFactum.Data.Internal
             return result;
         }
 
-        /// <summary>
-        /// Converts the value into the current property type.
-        /// </summary>
-        /// <param name="value">The value.</param>
-        /// <returns>Converted value</returns>
-        public object ConvertToType(object value)
-	    {
-            return ConvertToType(PropertyType, value);
-        }
-
-        /// <summary>
-        /// Converts to type.
-        /// </summary>
-        /// <param name="propertyType">Type of the property.</param>
-        /// <param name="value">The value.</param>
-        /// <returns></returns>
-	    public static object ConvertToType(Type propertyType, object value)
-	    {
-            if (value == DBNull.Value)
-                value = null;
-
-            object result = value;
-
-            /*
-             * If value is null, get the default values
-             */
-            if (value == null) 
-            {
-                if (propertyType.BaseType.Equals(typeof(Enum)))
-                    result = Enum.Parse(propertyType, "0", true);
-
-                else if (propertyType.IsDerivedFrom(typeof(Stream)))
-                    result = new MemoryStream();
-
-                else if (propertyType.Equals(typeof(DateTime)))
-                    result = DateTime.MinValue;
-
-                else if (propertyType.Equals(typeof(char)))
-                    result = '\0';
-
-                else if (propertyType.Equals(typeof(Guid)))
-                    result = Guid.Empty;
-
-                else if (propertyType.Equals(typeof(Boolean)))
-                    result = false;
-                
-                else if (propertyType.Name.Equals("Nullable`1"))
-                    result = null;
-                
-                else if ((propertyType.IsPrimitive) || (propertyType.IsClass == false))
-                    result = Convert.ChangeType(0, propertyType, null);
-            }
-            /*
-             * If the value is NOT null, try to convert the value into the other type
-             */
-            else
-            {
-                if (propertyType.Name.Equals("Nullable`1"))
-                    propertyType = Nullable.GetUnderlyingType(propertyType);
-
-                /*
-                 * Perhapos we don't have to convert.
-                 */
-                if (propertyType.Equals(value.GetType()))
-                    result = value;
-
-                /*
-                 * Perhaps we have some special types, like ENUM, STREAM, GUID or TIMESPANS
-                 */
-                else if (propertyType.BaseType.Equals(typeof(Enum)))
-                    result = Enum.Parse(propertyType, value.ToString(), true);
-
-                else if (propertyType.IsDerivedFrom(typeof(Stream)))
-                    result = new MemoryStream((Byte[])value);
-
-                else if ((propertyType.Equals(typeof(Guid))) && (value is Byte[]))
-                    result = new Guid((byte[])value);
-
-                else if ((propertyType.Equals(typeof(Guid))) && (value is string))
-                    result = new Guid((string)value);
-
-                else if ((propertyType.Equals(typeof(char))) && (value is string))
-                    return ((string)value).Length >= 1 ? ((string)value)[0] : char.MinValue;
-
-                else if ((propertyType.Equals(typeof(TimeSpan))) && (value is DateTime))
-                {
-                    var time = (DateTime)value;
-
-                    result = time >= DBConst.AccessNullDate 
-                        ? time.Subtract(DBConst.AccessNullDate) 
-                        : new TimeSpan(time.Ticks);
-                }
-                else if ((propertyType.Equals(typeof(TimeSpan))) && (value is long))
-                    result = TimeSpan.FromTicks((long)value);
-                else if ((propertyType.Equals(typeof(long))) && (value is TimeSpan))
-                    result = ((TimeSpan) value).Ticks;
-                else
-                    /*
-                     * If not, take standard convertion
-                     */
-                    result = Convert.ChangeType(value, propertyType, null);
-            }
-            return result;
-        }
 
         ///<summary>
         ///When overridden in a derived class, returns whether resetting an object changes its value.
@@ -432,7 +328,7 @@ namespace AdFactum.Data.Internal
         ///<param name="component">The component with the property value that is to be reset to the default value. </param>
         public override void ResetValue(object component)
         {
-            SetValue(component, ConvertToType(MetaInfo.DefaultValue));
+            SetValue(component, MetaInfo.DefaultValue);
         }
 
         ///<summary>

@@ -818,9 +818,9 @@ namespace AdFactum.Data.Internal
                     if (field != null)
                     {
                         if (created == null)
-                            visitedProperties.Add(columnName, propertyCustomInfo.ConvertToType(field.Value));
+                            visitedProperties.Add(columnName, mapperObj.Persister.TypeMapper.ConvertToType(propertyCustomInfo.PropertyType, field.Value));
                         else
-                            propertyCustomInfo.SetValue(created, propertyCustomInfo.ConvertToType(field.Value));
+                            propertyCustomInfo.SetValue(created, mapperObj.Persister.TypeMapper.ConvertToType(propertyCustomInfo.PropertyType, field.Value));
                         continue;
                     }
 
@@ -828,9 +828,9 @@ namespace AdFactum.Data.Internal
                     if (virtualField != null)
                     {
                         if (created == null)
-                            visitedProperties.Add(columnName, propertyCustomInfo.ConvertToType(virtualField.Value));
+                            visitedProperties.Add(columnName, mapperObj.Persister.TypeMapper.ConvertToType(propertyCustomInfo.PropertyType, virtualField.Value));
                         else
-                            propertyCustomInfo.SetValue(created, propertyCustomInfo.ConvertToType(virtualField.Value));
+                            propertyCustomInfo.SetValue(created, mapperObj.Persister.TypeMapper.ConvertToType(propertyCustomInfo.PropertyType, virtualField.Value));
                         continue;
                     }
 

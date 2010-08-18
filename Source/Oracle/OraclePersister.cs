@@ -347,7 +347,7 @@ namespace AdFactum.Data.Oracle
                 /*
                  * Extract the value to test
                  */
-                object testValue = convertedValue = TypeMapper.ConvertValue(value);
+                object testValue = convertedValue = TypeMapper.ConvertValueToDbType(value);
 
                 /*
                  * look if a parameter with the same value exists.
@@ -416,7 +416,7 @@ namespace AdFactum.Data.Oracle
             if (op.CollectionType == OracleCollectionType.None)
             {
                 parameter = new OracleParameter(parameterName, op.OracleDbType);
-                parameter.Value = TypeMapper.ConvertValue(value);
+                parameter.Value = TypeMapper.ConvertValueToDbType(value);
                 parameter.Direction = ParameterDirection.Input;
             }
             else
@@ -441,7 +441,7 @@ namespace AdFactum.Data.Oracle
                 }
                
                 for (int x = 0; x < source.Length; x++)
-                    target[x] = TypeMapper.ConvertValue(source[x]);
+                    target[x] = TypeMapper.ConvertValueToDbType(source[x]);
 
                 /*
                  * Special handling for arrays
@@ -465,7 +465,7 @@ namespace AdFactum.Data.Oracle
             {
                 IDbDataParameter parameter = new OracleParameter(":" + parameterName, (OracleDbType)TypeMapper.GetEnumForDatabase(type, isUnicode))
                                                  {
-                                                     Value = TypeMapper.ConvertValue(value),
+                                                     Value = TypeMapper.ConvertValueToDbType(value),
                                                      Direction = ParameterDirection.Input
                                                  };
 

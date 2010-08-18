@@ -196,18 +196,38 @@ namespace AdFactum.Data.Postgres
         /// </summary>
         /// <param name="value">The value.</param>
         /// <returns></returns>
-        public override object ConvertValue(object value)
+        public override object ConvertValueToDbType(object value)
         {
             if (value is TimeSpan)
                 return new NpgsqlInterval((TimeSpan)value);
 
             if (value is DateTime)
-                return new NpgsqlDate((DateTime) value);
+            {
+                var dt = (DateTime)value;
+                return new NpgsqlTimeStamp(dt.Year, dt.Month, dt.Day, dt.Hour, dt.Minute, dt.Second);
+            }
 
             if (value is Enum) 
-                return value.ToString();
+                return value;
 
-            return base.ConvertValue(value);
+            return base.ConvertValueToDbType(value);
+        }
+
+        /// <summary>
+        /// Convert the given value to the specific type.
+        /// </summary>
+        /// <param name="returnType">Type of the return.</param>
+        /// <param name="value">The value.</param>
+        /// <returns></returns>
+        public override object ConvertToType(Type returnType, object value)
+        {
+            if (returnType.Equals(typeof(TimeSpan)))
+            {
+                if (value is NpgsqlInterval)
+                    return ((NpgsqlInterval)value).Time;
+            }                
+
+            return base.ConvertToType(returnType, value);
         }
     }
 }

@@ -354,7 +354,7 @@ namespace AdFactum.Data.SqlServer
         /// <returns></returns>
         public override IDbDataParameter AddParameter(IDataParameterCollection parameters, ref int numberOfParameter, Type type, object value, bool isUnicode)
         {
-            object convertedValue = TypeMapper.ConvertValue(value);
+            object convertedValue = TypeMapper.ConvertValueToDbType(value);
             var dbType = (SqlDbType)TypeMapper.GetEnumForDatabase(type, isUnicode);
 		    
             /*
@@ -384,7 +384,7 @@ namespace AdFactum.Data.SqlServer
                 parameterName = string.Concat("@", parameterName);
 
             IDbDataParameter parameter = new SqlParameter(parameterName, (SqlDbType)TypeMapper.GetEnumForDatabase(type, isUnicode))
-                                             {Value = TypeMapper.ConvertValue(value)};
+                                             {Value = TypeMapper.ConvertValueToDbType(value)};
 
             return parameter;
         }
@@ -401,7 +401,7 @@ namespace AdFactum.Data.SqlServer
                 parameterName = string.Concat("@", parameterName);
 
             IDbDataParameter parameter = new SqlParameter(parameterName, copy.SqlDbType)
-                                             {Value = TypeMapper.ConvertValue(value)};
+                                             {Value = TypeMapper.ConvertValueToDbType(value)};
 
             return parameter;
         }

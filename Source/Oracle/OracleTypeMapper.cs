@@ -227,9 +227,9 @@ namespace AdFactum.Data.Oracle
 		/// </summary>
 		/// <param name="value">The value.</param>
 		/// <returns></returns>
-        public override object ConvertValue(object value)
+        public override object ConvertValueToDbType(object value)
 		{
-            object result = base.ConvertValue(value);
+            object result = base.ConvertValueToDbType(value);
 
             if (result is Guid)
                 result = ((Guid)result).ToByteArray();

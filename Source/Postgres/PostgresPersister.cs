@@ -208,7 +208,7 @@ namespace AdFactum.Data.Postgres
                 /*
                  * Extract the value to test
                  */
-                object testValue = convertedValue = TypeMapper.ConvertValue(value);
+                object testValue = convertedValue = TypeMapper.ConvertValueToDbType(value);
 
                 /*
                  * look if a parameter with the same value exists.
@@ -254,7 +254,17 @@ namespace AdFactum.Data.Postgres
         /// <returns></returns>
         public override string GetParameterString(IDbDataParameter parameter)
         {
-            return parameter.ParameterName;
+            if (parameter.Value != null && parameter.Value.GetType().IsEnum)
+            {
+                string ps = "CAST(" + parameter.ParameterName + " AS " +
+                            TypeMapper.Quote(parameter.Value.GetType().Name) + ")";
+
+                // Convert enum to a string
+                parameter.Value = parameter.Value.ToString();
+                return ps;
+            }
+            else
+                return parameter.ParameterName;
         }
 
         /// <summary>
@@ -288,7 +298,7 @@ namespace AdFactum.Data.Postgres
 
             var parameter = new NpgsqlParameter(parameterName, op.NpgsqlDbType)
                                 {
-                                    Value = TypeMapper.ConvertValue(value),
+                                    Value = TypeMapper.ConvertValueToDbType(value),
                                     Direction = ParameterDirection.Input
                                 };
 
@@ -302,7 +312,7 @@ namespace AdFactum.Data.Postgres
         {
             IDbDataParameter parameter = new NpgsqlParameter(":" + parameterName, (NpgsqlDbType)TypeMapper.GetEnumForDatabase(type, isUnicode))
             {
-                Value = TypeMapper.ConvertValue(value),
+                Value = TypeMapper.ConvertValueToDbType(value),
                 Direction = ParameterDirection.Input
             };
 

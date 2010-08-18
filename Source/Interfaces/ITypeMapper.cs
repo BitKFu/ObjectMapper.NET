@@ -29,7 +29,15 @@ namespace AdFactum.Data
 		/// </summary>
 		/// <param name="value">The value.</param>
 		/// <returns></returns>
-		object ConvertValue	(object value);
+		object ConvertValueToDbType	(object value);
+
+        /// <summary>
+        /// Convert the given value to the specific type.
+        /// </summary>
+        /// <param name="returnType">Type of the return.</param>
+        /// <param name="value">The value.</param>
+        /// <returns></returns>
+	    object ConvertToType(Type returnType, object value);
 
 		/// <summary>
 		/// Converts a type to the typed used from the current database implementation

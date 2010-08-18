@@ -307,12 +307,12 @@ namespace AdFactum.Data.SqlServer
         /// </summary>
         /// <param name="value">The value.</param>
         /// <returns></returns>
-        public override object ConvertValue(object value)
+        public override object ConvertValueToDbType(object value)
         {
             if (value is TimeSpan)
                 return ((TimeSpan)value).Ticks;
 
-            return base.ConvertValue(value);
+            return base.ConvertValueToDbType(value);
         }
 
         /// <summary>

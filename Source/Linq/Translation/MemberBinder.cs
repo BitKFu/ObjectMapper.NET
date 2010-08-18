@@ -234,8 +234,10 @@ namespace AdFactum.Data.Linq.Translation
                         if (member.SourceType == m.Type && !member.SourceType.IsProjectedType(dynamicCache) && !member.SourceType.IsValueObjectType() ) // Only if the type is mapping
                             return MapPropertyToCurrentFromClause(currentFrom, new PropertyExpression((AliasedExpression)select, column), m.Type);
 
+
                         // Otherwise we have to create a join
-                        exp = CreateInnerJoin(m.Type, column);
+                        var target = Property.GetPropertyInstance((PropertyInfo)member.Source).MetaInfo.LinkTarget;
+                        exp = CreateInnerJoin(target, column);
                         again = true;
                         continue;
                     }
@@ -248,7 +250,8 @@ namespace AdFactum.Data.Linq.Translation
                             return MapPropertyToCurrentFromClause(currentFrom, new PropertyExpression((AliasedExpression)select, column), m.Type);
 
                         // Otherwise we have to create a join
-                        exp = CreateInnerJoin(m.Type, column);
+                        var target = Property.GetPropertyInstance((PropertyInfo)member.Source).MetaInfo.LinkTarget;
+                        exp = CreateInnerJoin(target, column);
                         again = true;
                         continue;
                     }
