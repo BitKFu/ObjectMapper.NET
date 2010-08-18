@@ -171,6 +171,17 @@ namespace AdFactum.Data.Linq.Language
         }
 
         /// <summary>
+        /// Does the string convert.
+        /// </summary>
+        /// <param name="expression">The expression.</param>
+        protected override void ToStringConvert(Expression expression)
+        {
+            WriteSql(" STR(");
+            Visit(expression);
+            WriteSql(")");
+        }
+
+        /// <summary>
         /// Visits the table expression.
         /// </summary>
         protected override Expression VisitTableExpression(TableExpression expression)
