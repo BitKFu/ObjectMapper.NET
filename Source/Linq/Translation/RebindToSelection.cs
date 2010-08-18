@@ -62,8 +62,15 @@ namespace AdFactum.Data.Linq.Translation
         {
             if (AliasesToReplace == null || AliasesToReplace.Contains(expression.Alias))
             {
-                var accordingFromClause = FromExpressionFinder.Find(currentFrom, expression);
-                return new PropertyExpression(Selection, FindSourceColumn(accordingFromClause, expression)).SetType(expression.Type);
+                var expWithResult = FromExpressionFinder.Find(currentFrom, expression) as IDbExpressionWithResult;
+                if (expWithResult == null)
+                    return expression;
+
+                var sourceColumn = expWithResult.Columns.Where(c => c.Expression.Equals(expression)).First();
+
+                return string.IsNullOrEmpty(Selection.Alias.Name)
+                           ? new PropertyExpression(expWithResult as AliasedExpression, sourceColumn).SetType(expression.Type)
+                           : new PropertyExpression(Selection, sourceColumn).SetType(expression.Type);
             }
             else
                 return expression;

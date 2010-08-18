@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Linq.Expressions;
 using AdFactum.Data.Linq.Expressions;
 
@@ -62,7 +63,7 @@ namespace AdFactum.Data.Linq.Translation
                 if (hasOrderBy) orderByColumns.AddRange(select.OrderBy);
                 if (bindToSelection != null) orderByColumns.AddRange(bindToSelection);
 
-                // Return order
+                // Return order)
                 return new SelectExpression(select.Type, select.Projection, select.Alias, select.Columns, select.Selector, select.From, select.Where,
                                             orderByColumns.Count > 0 ? new ReadOnlyCollection<OrderExpression>(orderByColumns) : null,
                                             select.GroupBy, select.Skip, select.Take, select.IsDistinct, false, select.SelectResult, select.SqlId, select.Hint, select.DefaultIfEmpty);
@@ -78,7 +79,9 @@ namespace AdFactum.Data.Linq.Translation
             // if the current expression has an order by, than gather it
             if (select.OrderBy != null)
             {
-                GatheredOrderings.AddRange(select.OrderBy);
+                // Check if the current ordering, does not exisit in the list
+                if (!GatheredOrderings.Any(x=>select.OrderBy.Any(o=>DbExpressionComparer.AreEqual(o.Expression , x.Expression))))
+                    GatheredOrderings.AddRange(select.OrderBy);
 
                 // return without ordering
                 return new SelectExpression(select.Type, select.Projection, select.Alias, select.Columns, select.Selector, select.From,

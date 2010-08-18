@@ -91,7 +91,9 @@ namespace AdFactum.Data.Linq.Translation
             // if the current expression has an order by, than gather it
             if (select.OrderBy != null)
             {
-                GatheredOrderings.AddRange(select.OrderBy);
+                // Check if the current ordering, does not exisit in the list
+                if (!GatheredOrderings.Any(x => select.OrderBy.Any(o => DbExpressionComparer.AreEqual(o.Expression, x.Expression))))
+                    GatheredOrderings.AddRange(select.OrderBy);
 
                 // return without ordering
                 return new SelectExpression(select.Type, select.Projection, select.Alias, select.Columns, select.Selector, select.From,

@@ -484,28 +484,20 @@ namespace AdFactum.Data.Linq.Translation
             return exp;
         }
 
-        ///// <summary>
-        ///// Visits the order expression.
-        ///// </summary>
-        ///// <param name="orderExpression">The order expression.</param>
-        ///// <returns></returns>
-        //protected override Expression VisitOrderExpression(OrderExpression orderExpression)
-        //{
-        //    OrderExpression exp = (OrderExpression) base.VisitOrderExpression(orderExpression);
-        //    PropertyExpression propertyExpression = exp.Expression as PropertyExpression;
-        //    if (propertyExpression != null)
-        //        return new OrderExpression(orderExpression.Ordering,
-        //                                   new PropertyExpression(currentFrom, propertyExpression));
-
-        //    return exp;
-        //}
-
-
+        /// <summary>
+        /// Visits the aggregate expression
+        /// </summary>
+        /// <param name="aggregate"></param>
+        /// <returns></returns>
         protected override Expression VisitAggregateExpression(AggregateExpression aggregate)
         {
             var arg = Visit(aggregate.Argument);
 
-            PropertyExpression prop = arg as PropertyExpression;
+            var select = arg as SelectExpression;
+            if (select != null)
+                arg = new PropertyExpression(currentFrom, ((IDbExpressionWithResult)currentFrom).Columns.First());
+
+            var prop = arg as PropertyExpression;
             if (prop != null && currentFrom != null && prop.Alias != currentFrom.Alias)
                 arg = RebindToSelection.Rebind(currentFrom, currentFrom, prop);
 

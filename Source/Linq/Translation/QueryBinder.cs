@@ -833,7 +833,7 @@ namespace AdFactum.Data.Linq.Translation
             }
             else if (!hasPredicateArg || useAlternateArg)
             {
-                argExpr = new PropertyExpression(projection, ((IDbExpressionWithResult) projection).Columns.First());
+                argExpr = projection; //new PropertyExpression(projection, ((IDbExpressionWithResult) projection).Columns.First());
             }
 
             var alias = Alias.Generate(AliasType.Select);

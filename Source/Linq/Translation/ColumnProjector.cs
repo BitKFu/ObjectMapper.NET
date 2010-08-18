@@ -361,9 +361,15 @@ namespace AdFactum.Data.Linq.Translation
         protected override Expression VisitSelectExpression(SelectExpression select)
         {
             AddSelectColumns(select, select.Columns);
-            
+
             if (select.DefaultIfEmpty != null)
+            {
+                var lambda = (LambdaExpression) select.DefaultIfEmpty;
+
+                inJoinCondition.Push(new JoinStruct(){joinType = JoinType.LeftOuter, name = lambda.Parameters[0].Name});
                 Visit(select.DefaultIfEmpty);
+                inJoinCondition.Pop();
+            }
 
             return select;
         }
