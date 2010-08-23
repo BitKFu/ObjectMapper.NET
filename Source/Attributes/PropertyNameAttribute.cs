@@ -1,4 +1,5 @@
 using System;
+using AdFactum.Data.Util;
 
 namespace AdFactum.Data
 {
@@ -33,7 +34,7 @@ namespace AdFactum.Data
 		/// </summary>
 		public string Name
 		{
-			get { return name; }
+			get { return DBConst.DoGlobalCasing(name); }
 		}
 	}
 }

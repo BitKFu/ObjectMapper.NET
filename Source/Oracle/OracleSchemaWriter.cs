@@ -78,7 +78,7 @@ namespace AdFactum.Data.Oracle
 
                     if (primaryKey.IsAutoIncrement)
                     {
-                        string tablename = Table.GetTableInstance(type).DefaultName;
+                        string tablename = TypeMapper.DoCasing(Table.GetTableInstance(type).DefaultName);
                         tables.Add(tablename);
 
                         sql.Append(string.Concat("DROP SEQUENCE ", tablename, "_SEQ;\n"));
@@ -116,7 +116,7 @@ namespace AdFactum.Data.Oracle
             {
                 var type = (Type)enumerator.Current;
 
-                string tablename = Table.GetTableInstance(type).DefaultName;
+                string tablename = TypeMapper.DoCasing(Table.GetTableInstance(type).DefaultName);
                 tables.Add(tablename);
 
                 var projection = ReflectionHelper.GetProjection(type, null);
@@ -189,7 +189,7 @@ namespace AdFactum.Data.Oracle
             if (primaries.Count > 0)
             {
                 IEnumerator primaryEnumerator = primaries.GetEnumerator();
-                resultSql.Append(string.Concat(", ", "CONSTRAINT " + tableName.ToUpper() + "_PK PRIMARY KEY", "("));
+                resultSql.Append(string.Concat(", ", "CONSTRAINT " + TypeMapper.DoCasing(tableName) + "_PK PRIMARY KEY", "("));
                 bool first = true;
                 while (primaryEnumerator.MoveNext())
                 {

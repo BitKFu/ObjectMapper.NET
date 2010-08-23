@@ -773,8 +773,17 @@ namespace AdFactum.Data.Internal
                 first = false;
             }
 
-            result.Append(" ");
-            return result.ToString();
+            // Special Handling for Oracle / postgres, if the Casing is lower or uppercase
+            if (TypeMapper.SqlCasing != SqlCasing.Mixed)
+            {
+                var distinct = string.Join(", ", TypeMapper.DoCasing(result.ToString()).Split(',').ToList().Select(x => x.Trim()).Distinct().ToArray());
+                return distinct + " ";
+            }
+            else
+            {
+                result.Append(" ");
+                return result.ToString();
+            }
         }
 
         /// <summary>

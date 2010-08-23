@@ -181,7 +181,7 @@ namespace AdFactum.Data.Internal
                 if (name == null)
                     throw new InvalidOperationException("This object hasn't been initialized or is defect for type: " + classType);
 
-			    return name;
+                return DBConst.DoGlobalCasing(name);
 			}
 		}
 
@@ -196,7 +196,7 @@ namespace AdFactum.Data.Internal
             if (alternativeNames == null || alternativeNames.TryGetValue(dbType, out specialName) == false)
                 return DefaultName;
 
-            return specialName;
+            return DBConst.DoGlobalCasing(specialName);
         }
 
 	    /// <summary>

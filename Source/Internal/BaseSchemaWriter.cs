@@ -126,7 +126,7 @@ namespace AdFactum.Data.Internal
             {
                 var info = (IntegrityInfo)enumerator.Current;
                 if (!info.TableExists)
-                    tables.Add(info.TableName);
+                    tables.Add(TypeMapper.DoCasing(info.TableName));
             }
             PrivateWriteConstraints(sql, tables, persistentTypes);
 
@@ -155,7 +155,7 @@ namespace AdFactum.Data.Internal
                 if (info.TableExists)
                     continue;
 
-                string tableSql = GetTableSql(info.TableName, info.ObjectType, info.Fields);
+                string tableSql = GetTableSql(TypeMapper.DoCasing(info.TableName), info.ObjectType, info.Fields);
                 sql.Append(tableSql);
             }
             sql.Append("\n");
@@ -216,7 +216,7 @@ namespace AdFactum.Data.Internal
             Debug.Assert(fieldIntegrity.UniqueFailure, "Only valid when UniqueFailure = true");
 
             sql.Append("ALTER TABLE ");
-            sql.Append(info.TableName);
+            sql.Append(TypeMapper.DoCasing(info.TableName));
 
             if (fieldIntegrity.Field.CustomProperty.MetaInfo.IsUnique)
                 sql.Append(" ADD ");
@@ -286,7 +286,7 @@ namespace AdFactum.Data.Internal
             ddl = ddl.Replace("NOT NULL", ""); // remove NOT NULL
 
             sql.Append("ALTER TABLE ");
-            sql.Append(info.TableName);
+            sql.Append(TypeMapper.DoCasing(info.TableName));
             sql.Append(" ALTER COLUMN ");
             sql.Append(ddl);
             if (required)
@@ -306,7 +306,7 @@ namespace AdFactum.Data.Internal
         {
             Debug.Assert(fieldIntegrity.UnmatchedField, "Only valid when UnmatchedField = true");
             sql.Append("ALTER TABLE ");
-            sql.Append(info.TableName);
+            sql.Append(TypeMapper.DoCasing(info.TableName));
             sql.Append(" DROP COLUMN ");
             sql.Append(Condition.QUOTE_OPEN);
             sql.Append(fieldIntegrity.Name);
@@ -325,7 +325,7 @@ namespace AdFactum.Data.Internal
         {
             Debug.Assert(fieldIntegrity.MissingField, "Only valid when MissingField = true");
             sql.Append("ALTER TABLE ");
-            sql.Append(info.TableName);
+            sql.Append(TypeMapper.DoCasing(info.TableName));
             sql.Append(" ADD ");
             sql.Append(GetFieldDescriptionForDDL(fieldIntegrity.Field));
             sql.Append(";\n");
@@ -347,7 +347,7 @@ namespace AdFactum.Data.Internal
             {
                 var type = (Type)enumerator.Current;
 
-                string tablename = Table.GetTableInstance(type).DefaultName;
+                string tablename = TypeMapper.DoCasing(Table.GetTableInstance(type).DefaultName);
                 tables.Add(tablename);
 
                 var projection = ReflectionHelper.GetProjection(type, null);
@@ -383,7 +383,7 @@ namespace AdFactum.Data.Internal
             while (enumerator.MoveNext())
             {
                 var type = enumerator.Current;
-                string tablename = Table.GetTableInstance(type).DefaultName;
+                string tablename = TypeMapper.DoCasing(Table.GetTableInstance(type).DefaultName);
                 if (!persistentTables.Contains(tablename))
                     continue;
 
@@ -417,7 +417,7 @@ namespace AdFactum.Data.Internal
             {
                 Type type = enumerator.Current;
                 Table tableInstance = Table.GetTableInstance(type);
-                string tablename = tableInstance.DefaultName;
+                string tablename = TypeMapper.DoCasing(tableInstance.DefaultName);
                 if (!persistentTables.Contains(tablename))
                     continue;
 
@@ -714,7 +714,7 @@ namespace AdFactum.Data.Internal
         /// <returns></returns>
         protected virtual string GetIndexSqlStmt(string tableName, string fieldName, int indexNumber)
         {
-            return string.Concat("CREATE INDEX ", tableName, "_FKI", indexNumber.ToString("00"), " ON ", tableName, " (",
+            return string.Concat("CREATE INDEX ", TypeMapper.DoCasing(tableName), "_FKI", indexNumber.ToString("00"), " ON ", TypeMapper.DoCasing(tableName), " (",
                                  fieldName, ");\n");
         }
 
@@ -739,7 +739,7 @@ namespace AdFactum.Data.Internal
                 VirtualLinkAttribute virtualLink = ReflectionHelper.GetVirtualLinkInstance(info);
                 if ((virtualLink != null) && (virtualLink.JoinFieldForGlobalParameter != null))
                 {
-                    string tableName = Table.GetTableInstance(virtualLink.LinkedClass).DefaultName;
+                    string tableName = TypeMapper.DoCasing(Table.GetTableInstance(virtualLink.LinkedClass).DefaultName);
                     string fieldForGlobalParameter =
                         Property.GetPropertyInstance(
                             virtualLink.LinkedClass.GetPropertyInfo(virtualLink.JoinFieldForGlobalParameter)).MetaInfo.ColumnName;
@@ -1066,9 +1066,9 @@ namespace AdFactum.Data.Internal
         /// <summary>
         /// Creates the name of the child table.
         /// </summary>
-        protected static string CreateChildTableName(string tableName, string child)
+        protected string CreateChildTableName(string tableName, string child)
         {
-            return string.Concat(tableName, "_", child);
+            return TypeMapper.DoCasing(string.Concat(tableName, "_", child));
         }
     }
 }

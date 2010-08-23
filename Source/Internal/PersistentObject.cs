@@ -206,6 +206,7 @@ namespace AdFactum.Data.Internal
             bool postUpdate
             )
         {
+            //string columnName = mapper.Persister.TypeMapper.DoCasing(propertyCustomInfo.MetaInfo.ColumnName);
             string columnName = propertyCustomInfo.MetaInfo.ColumnName;
 
             /*

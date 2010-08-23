@@ -202,7 +202,7 @@ namespace AdFactum.Data.Internal
             )
             : this()
         {
-            ColumnName = columnName;
+            ColumnName = DBConst.DoGlobalCasing(columnName);
             PropertyName = propertyName;
             IsPrimaryKey = primaryKey;
         }
@@ -216,7 +216,7 @@ namespace AdFactum.Data.Internal
             : this()
         {
             PropertyName = columnName;
-            ColumnName = columnName; //.ToUpper();
+            ColumnName = DBConst.DoGlobalCasing(columnName);
             Type bindingType = InitializeFromType(type);
 
             LinkTarget = bindingType ?? (
@@ -241,7 +241,8 @@ namespace AdFactum.Data.Internal
             /*
              * Set the property name
              */
-            PropertyName = ColumnName = propertyInfo.Name;
+            PropertyName = propertyInfo.Name;
+            ColumnName = DBConst.DoGlobalCasing(propertyInfo.Name);
 
             /*
              * Check the generic type binding in VS 2005
