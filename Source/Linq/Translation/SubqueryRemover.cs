@@ -132,7 +132,9 @@ namespace AdFactum.Data.Linq.Translation
                 if (from == null)
                     throw new Exception("This is really weired. Wait until I'm back from holiday.");
                 PropertyExpression aliased = result.Expression as PropertyExpression;
-                return aliased != null ? new PropertyExpression(from, aliased).SetType(property.Type) : result.Expression;
+                return aliased != null 
+                    ? new PropertyExpression(from, aliased).SetType(property.Type) 
+                    : new PropertyExpression(from, new ColumnDeclaration(result.Expression, result));
             }
 
             return property;
