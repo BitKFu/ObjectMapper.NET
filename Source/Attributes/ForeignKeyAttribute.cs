@@ -128,7 +128,7 @@ namespace AdFactum.Data
                         Property.GetPropertyInstance(foreignKeyType.GetPropertyInfo(foreignKeyProperty)).MetaInfo.
                             ColumnName;
 
-                return foreignKeyColumn;
+                return DBConst.DoGlobalCasing(foreignKeyColumn);
             }
         }
 
@@ -143,7 +143,7 @@ namespace AdFactum.Data
                 if (foreignKeyTable == string.Empty)
                     foreignKeyTable = Table.GetTableInstance(foreignKeyType).DefaultName;
 
-                return foreignKeyTable;
+                return DBConst.DoGlobalCasing(foreignKeyTable);
             }  
         }
 

@@ -194,6 +194,7 @@
     <Compile Include="Linq\Language\SqlExpressionWriter.cs" />
     <Compile Include="Linq\Translation\ReferencedAliasGatherer.cs" />
     <Compile Include="Linq\Translation\SkipToRowNumberRewriter.cs" />
+    <Compile Include="Linq\Translation\SqlIdRewriter.cs" />
     <Compile Include="Linq\Translation\SqlOrderByRewriter.cs" />
     <Compile Include="Linq\Translation\SubqueryRemover.cs" />
     <Compile Include="Linq\Translation\TableExpressionFinder.cs" />

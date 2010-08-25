@@ -689,6 +689,7 @@ namespace AdFactum.Data.Oracle
             //!!! OBSOLETE HERE      !!! boundExp = RedundantSubqueryRemover.Remove(boundExp, dynamicCache );
             boundExp = RedundantSubqueryRemover.Remove(boundExp, dynamicCache);
             boundExp = RedundantJoinRemover.Remove(boundExp);
+            boundExp = SqlIdRewriter.Rewrite(boundExp);
             boundExp = AliasReWriter.Rewrite(boundExp, dynamicCache);
 
             boundExp = UpdateProjection.Rebind(boundExp, dynamicCache);
