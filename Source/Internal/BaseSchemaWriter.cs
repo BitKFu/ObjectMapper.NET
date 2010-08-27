@@ -690,7 +690,7 @@ namespace AdFactum.Data.Internal
                                                       bool onDeleteCascade)
         {
             string sql = string.Concat("ALTER TABLE ", ConcatedSchema, TypeMapper.Quote(tableName)
-                                       , " ADD CONSTRAINT ", TypeMapper.Quote(tableName + "_FK" + foreignKeyNumber.ToString("00"))
+                                       , " ADD CONSTRAINT ", TypeMapper.Quote(TypeMapper.DoCasing(tableName + "_FK" + foreignKeyNumber.ToString("00")))
                                        , " FOREIGN KEY (", TypeMapper.Quote(fieldName), ")"
                                        , " REFERENCES ", ConcatedSchema, TypeMapper.Quote(referencedTableName));
 
@@ -714,8 +714,8 @@ namespace AdFactum.Data.Internal
         /// <returns></returns>
         protected virtual string GetIndexSqlStmt(string tableName, string fieldName, int indexNumber)
         {
-            return string.Concat("CREATE INDEX ", TypeMapper.DoCasing(tableName), "_FKI", indexNumber.ToString("00"), " ON ", TypeMapper.DoCasing(tableName), " (",
-                                 fieldName, ");\n");
+            return string.Concat("CREATE INDEX ", TypeMapper.Quote(TypeMapper.DoCasing(tableName+ "_FKI" +  indexNumber.ToString("00")))
+                , " ON ", TypeMapper.Quote(TypeMapper.DoCasing(tableName)), " (", TypeMapper.Quote(fieldName), ");\n");
         }
 
         /// <summary>
@@ -886,7 +886,7 @@ namespace AdFactum.Data.Internal
                                                             string uniqueConstraint)
         {
             string uniqueSql = string.Concat("ALTER TABLE ", ConcatedSchema, TypeMapper.Quote(tableName)
-                                             , " ADD CONSTRAINT ", tableName, "_UK", constraintNumber.ToString("00")
+                                             , " ADD CONSTRAINT ", TypeMapper.Quote(TypeMapper.DoCasing(tableName+ "_UK"+ constraintNumber.ToString("00")))
                                              , " UNIQUE (", uniqueConstraint, ");\n");
             return uniqueSql;
         }

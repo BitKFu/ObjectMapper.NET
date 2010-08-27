@@ -86,7 +86,7 @@ namespace AdFactum.Data.Postgres
         protected override string GetUniqueConstraintSqlStmt(string tableName, int constraintNumber, string uniqueConstraint)
         {
             string uniqueSql = string.Concat("ALTER TABLE ", TypeMapper.Quote(tableName)
-                                      , " ADD CONSTRAINT ", TypeMapper.Quote(tableName+ "_UK"+ constraintNumber.ToString("00"))
+                                      , " ADD CONSTRAINT ", TypeMapper.Quote(TypeMapper.DoCasing(tableName+ "_UK"+ constraintNumber.ToString("00")))
                                       , " UNIQUE (", uniqueConstraint, ");\n");
             return uniqueSql;
         }
@@ -100,7 +100,8 @@ namespace AdFactum.Data.Postgres
         /// <returns></returns>
         protected override string GetIndexSqlStmt(string tableName, string fieldName, int indexNumber)
         {
-            return string.Concat("CREATE INDEX ", TypeMapper.Quote(tableName+ "_FKI"+ indexNumber.ToString("00")), " ON ", TypeMapper.Quote(tableName), " (", TypeMapper.Quote(fieldName), ");\n\n");
+            return string.Concat("CREATE INDEX ", TypeMapper.Quote(TypeMapper.DoCasing(tableName+ "_FKI"+ indexNumber.ToString("00"))), " ON ", 
+                TypeMapper.Quote(tableName), " (", TypeMapper.Quote(fieldName), ");\n\n");
         }
 
         /// <summary>

@@ -90,6 +90,21 @@ namespace AdFactum.Data.Postgres
         }
 
         /// <summary>
+        /// Gets or sets the SQL casing.
+        /// </summary>
+        /// <value>The SQL casing.</value>
+        public SqlCasing SqlCasing
+        {
+            get { return TypeMapper.SqlCasing; }
+            set
+            {
+                var ptm = TypeMapper as PostgresTypeMapper;
+                if (ptm != null)
+                    ptm.SetSqlCasing( value );
+            }
+        }
+
+        /// <summary>
         /// Returns a list with value objects that matches the search criteria.
         /// </summary>
         /// <param name="tableName">Table Name</param>
