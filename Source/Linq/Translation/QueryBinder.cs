@@ -1390,11 +1390,11 @@ namespace AdFactum.Data.Linq.Translation
         protected override Expression VisitConstant(ConstantExpression c)
         {
             var provider = c.Value as ILinqQueryProvider;
-            if (provider != null && !(provider.Expression is ConstantExpression))
-            {
+            if (provider != null)
                 Level = provider.HierarchyLevel;
+
+            if (provider != null && !(provider.Expression is ConstantExpression))
                 return Visit(provider.Expression);
-            }
 
             // That means that the constant expression is the root of an expression, called TableExpression
             if (c.Value is IQueryProvider)

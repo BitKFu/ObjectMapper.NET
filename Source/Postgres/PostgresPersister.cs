@@ -289,6 +289,7 @@ namespace AdFactum.Data.Postgres
         /// <returns></returns>
         public override string ReplaceStatics(string sql)
         {
+            sql = sql.Replace(TypeMapper.DoCasing(Condition.SCHEMA_REPLACE), ConcatedSchema);
             sql = base.ReplaceStatics(sql
                       .Replace(Condition.TRIM, "TRIM")
                       .Replace(Condition.UPPER, "UPPER"));
