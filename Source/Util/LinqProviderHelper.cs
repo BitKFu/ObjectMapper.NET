@@ -48,20 +48,20 @@ namespace AdFactum.Data.Util
         private static void WriteHeader(TextWriter writer, string lqNamespace)
         {
             writer.WriteLine("using System;");
+            writer.WriteLine("using System.Linq;");
             writer.WriteLine("using AdFactum.Data;");
-            writer.WriteLine("using AdFactum.Data.Linq;");
             writer.WriteLine("using AdFactum.Data.Util;");
             writer.WriteLine("");
             writer.WriteLine("namespace " + lqNamespace);
             writer.WriteLine("{");
             writer.WriteLine("    public partial class LinqProvider : IDisposable");
             writer.WriteLine("    {");
-            writer.WriteLine("        private ObjectMapper mapper;");
+            writer.WriteLine("        protected ObjectMapper mapper;");
             writer.WriteLine("");
             writer.WriteLine("        /// <summary>");
             writer.WriteLine("        /// Creates an instance of the ObjectMapper .NET");
             writer.WriteLine("        /// </summary>");
-            writer.WriteLine("        public ObjectMapper Mapper");
+            writer.WriteLine("        public virtual ObjectMapper Mapper");
             writer.WriteLine("        {");
             writer.WriteLine("            get { return mapper ?? (mapper = OBM.CreateMapper(Connection)); }");
             writer.WriteLine("        }");
@@ -118,7 +118,7 @@ namespace AdFactum.Data.Util
             names.Add(plural);
 
             writer.WriteLine("        ///<summary>Gain access to " + type.FullName + "</summary>");
-            writer.WriteLine("        public Query<" + type.FullName + "> " + plural + " { get { return Mapper.Query<" + type.FullName + ">(); } }");
+            writer.WriteLine("        public IQueryable<" + type.FullName + "> " + plural + " { get { return Mapper.Query<" + type.FullName + ">(); } }");
             writer.WriteLine("");
 
             var projection = ReflectionHelper.GetProjection(type, mapper.MirroredLinqProjectionCache);
@@ -137,7 +137,7 @@ namespace AdFactum.Data.Util
                 names.Add(plural);
 
                 writer.WriteLine("        ///<summary>Gain access to " + type.FullName + " -> " + linkTarget + "</summary>");
-                writer.WriteLine("        public Query<LinkBridge<" + type.FullName + "," + linkTarget.FullName + ">> " + plural + " { get { return Mapper.Query<LinkBridge<" + type.FullName + "," + linkTarget.FullName + ">>(\"" + tableName + "_" + field.Value.Name + "\"); } }");
+                writer.WriteLine("        public IQueryable<LinkBridge<" + type.FullName + "," + linkTarget.FullName + ">> " + plural + " { get { return Mapper.Query<LinkBridge<" + type.FullName + "," + linkTarget.FullName + ">>(\"" + tableName + "_" + field.Value.Name + "\"); } }");
                 writer.WriteLine("");
             }
         }
