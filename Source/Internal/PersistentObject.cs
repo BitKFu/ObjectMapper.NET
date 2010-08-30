@@ -272,7 +272,14 @@ namespace AdFactum.Data.Internal
                                 Property joinProperty = Property.GetPropertyInstance(
                                     propertyCustomInfo.MetaInfo.LinkTarget.GetPropertyInfo(propertyCustomInfo.MetaInfo.LinkedTargetProperty));
 
-                                var joinField = (Field) po.Properties.FieldProperties.Get(joinProperty.MetaInfo.ColumnName);
+                                var joinField = po.Properties.FieldProperties.Get(joinProperty.MetaInfo.ColumnName) as Field;
+                                if (joinField == null)
+                                {
+                                    // Maybe we have a deepload in cache
+                                    var joinLink = po.Properties.FieldProperties.Get(joinProperty.MetaInfo.ColumnName) as SpecializedLink;
+                                    if (joinLink != null)
+                                        joinField = joinLink.Property;
+                                }
 
                                 /*
                                  * Einen neuen anlegen und einfügen

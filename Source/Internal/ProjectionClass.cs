@@ -927,7 +927,7 @@ namespace AdFactum.Data.Internal
                     bool maybeRemoveIt = false;
                     if (result.ContainsKey(propertyName))
                     {
-                        if (propertyInfo.DeclaringType.Equals(type))
+                        if (propertyInfo.ReflectedType.Equals(type) || propertyInfo.DeclaringType.Equals(type))
                             maybeRemoveIt = true;  // Only Remove, if it's a flat type
                         else
                             continue;

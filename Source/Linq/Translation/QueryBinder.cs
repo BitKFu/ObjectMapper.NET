@@ -1390,7 +1390,7 @@ namespace AdFactum.Data.Linq.Translation
         protected override Expression VisitConstant(ConstantExpression c)
         {
             var provider = c.Value as ILinqQueryProvider;
-            if (provider != null)
+            if (provider != null && Level == 0)
                 Level = provider.HierarchyLevel;
 
             if (provider != null && !(provider.Expression is ConstantExpression))
