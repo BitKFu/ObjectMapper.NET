@@ -1254,6 +1254,7 @@ namespace AdFactum.Data.Internal
         {
             if (SqlTracer != null) SqlTracer.Commit();
             Transaction.Commit();
+            Transaction.Dispose();
             Transaction = null;
         }
 
@@ -1264,6 +1265,7 @@ namespace AdFactum.Data.Internal
         {
             if (SqlTracer != null) SqlTracer.Rollback();
             Transaction.Rollback();
+            Transaction.Dispose();
             Transaction = null;
         }
 
@@ -3045,7 +3047,6 @@ namespace AdFactum.Data.Internal
                                   " could not be deleted (table: ", tableName, ")"), "BasePersister");
             }
         }
-
 
     }
 }
