@@ -23,6 +23,8 @@ namespace AdFactum.Data.Postgres
         /// </summary>
         public const string CONNECTION_STRING = "Server={0};Port={1};User Id={2};Password={3};Database={4};";
 
+        private Queue<IDbCommand> commandsToDispose = new Queue<IDbCommand>();
+
         /// <summary>
         /// Constructor
         /// </summary>
@@ -125,7 +127,7 @@ namespace AdFactum.Data.Postgres
         /// <returns></returns>
         public override IDbCommand CreateCommand(string sql)
         {
-            return new NpgsqlCommand(sql, Connection as NpgsqlConnection);
+            return new NpgsqlCommand(sql, (NpgsqlConnection) Connection, (NpgsqlTransaction) Transaction);
         }
 
         /// <summary>
@@ -205,7 +207,11 @@ namespace AdFactum.Data.Postgres
         /// <returns></returns>
         public override IDbCommand CreateCommand()
         {
-            var command = new NpgsqlCommand { Connection = Connection as NpgsqlConnection };
+            var command = new NpgsqlCommand
+                              {
+                                  Connection = (NpgsqlConnection) Connection,
+                                  Transaction = (NpgsqlTransaction) Transaction 
+                              };
             return command;
         }
 
@@ -459,5 +465,36 @@ namespace AdFactum.Data.Postgres
             return result;
         }
 
+        protected override object ExecuteSecureDbCall(IDbCommand command, bool nonQuery)
+        {
+            DontDisposeCommand = true;
+            commandsToDispose.Enqueue(command);
+
+            var result = base.ExecuteSecureDbCall(command, nonQuery);
+            return result;
+        }
+
+        /// <summary>
+        /// Commits a transaction
+        /// </summary>
+        public override void Commit()
+        {
+            while (commandsToDispose.Count>0)
+                commandsToDispose.Dequeue().Dispose();
+
+            base.Commit();
+        }
+
+        /// <summary>
+        /// Rollback the changes, if no commit has been done.
+        /// </summary>
+        public override void Rollback()
+        {
+            while (commandsToDispose.Count > 0)
+                commandsToDispose.Dequeue().Dispose();
+
+            base.Rollback();
+        }
+        
     }
 }
