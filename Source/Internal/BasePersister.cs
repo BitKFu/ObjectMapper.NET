@@ -1613,19 +1613,19 @@ namespace AdFactum.Data.Internal
 
 
             if (targetType == typeof(Int32) && source is Decimal)
-                source = Decimal.Floor((Decimal)source);
+                source = source != DBNull.Value ? Decimal.Floor((Decimal)source) : 0;
 
             if (targetType == typeof(Int32))
-                return Convert.ToInt32(source);
+                return source != DBNull.Value ? Convert.ToInt32(source) : 0;
 
             if (targetType == typeof(Int64))
-                return Convert.ToInt64(source);
+                return source != DBNull.Value ? Convert.ToInt64(source) : (Int64)0;
 
             if (targetType == typeof (Double))
-                return Convert.ToDouble(source);
+                return source != DBNull.Value ? Convert.ToDouble(source) : 0.0;
 
             if (targetType == typeof(Decimal))
-                return Convert.ToDecimal(source);
+                return source != DBNull.Value ? Convert.ToDecimal(source) : (Decimal)0;
 
             if ((targetType == typeof (Guid)) && (source is byte[]))
                 return new Guid((byte[]) source);
