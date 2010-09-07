@@ -834,6 +834,19 @@ namespace ObjectMapper.NUnits.Northwind.Tests
         }
 
         [Test]
+        public void TestCreateVOWithComplexMembers()
+        {
+            var customer = db.Orders.Select(c =>
+                new
+                    {
+                        CustomerID = c.Customer.CustomerID,
+                        FirstName = c.Employee.FirstName,
+                    }).First();
+
+            Assert.IsNotNull(customer);
+        }
+
+        [Test]
         public void TestGroupBySumMinMaxAvgNewObject1()
         {
 
@@ -2364,6 +2377,21 @@ namespace ObjectMapper.NUnits.Northwind.Tests
             }
 
             Console.ReadLine();
+        }
+
+        [Test]
+        public void TestThreeTableJoin()
+        {
+            var q = (from c in db.Customers
+                    join o in db.Orders on c.CustomerID equals o.CustomerID
+                    join d in db.OrderDetails on o.OrderID equals d.OrderID
+                    select d).ToList();
+
+            foreach (var i in q)
+            {
+                Console.WriteLine("OrderID: {0}  ProductID: {1}",
+                    i.OrderID, i.ProductID);
+            }
         }
 
         /// <summary>

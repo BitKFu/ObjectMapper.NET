@@ -259,7 +259,7 @@ namespace AdFactum.Data.Internal
 
                             var tempVo = (IValueObject)enumerator.Current;
                             PersistentObject po = mapper.PrivateSave(tempVo, hash,
-                                                                     HierarchyLevel.DecLevel(hierarchyLevel),
+                                                                     Math.Max(HierarchyLevel.DecLevel(hierarchyLevel), 0),
                                                                      globalParameter, recursionTest,
                                                                      ref secondStepUpdate);
 
@@ -284,13 +284,14 @@ namespace AdFactum.Data.Internal
                                 /*
                                  * Einen neuen anlegen und einfügen
                                  */
-                                var dictionaryLink = new OneToManyLink(new FieldDescription(columnName, ObjectType, property.PropertyType, false), joinField);
+                                var dictionaryLink = new OneToManyLink( new FieldDescription(columnName, ObjectType, property.PropertyType, false), joinField);
+                                dictionaryLink.SetLinkedObject(po, hash, mapper);
                                 propertyList.Add(key, dictionaryLink);
                             }
                             else
                             {
-                                ((OneToManyLink)propertyList[key]).IsDeleted =
-                                    ((OneToManyLink)propertyList[key]).IsModified = false;
+                                ((OneToManyLink)propertyList[key]).IsDeleted = false;
+                                ((OneToManyLink)propertyList[key]).IsModified = false;
                             }
                         }
 
@@ -452,8 +453,8 @@ namespace AdFactum.Data.Internal
                             }
                             else
                             {
-                                ((ListLink) propertyList[key]).IsDeleted =
-                                    ((ListLink) propertyList[key]).IsModified = false;
+                                ((ListLink)propertyList[key]).IsDeleted = false;
+                                ((ListLink) propertyList[key]).IsModified = false;
                             }
                         }
 
@@ -1310,6 +1311,8 @@ namespace AdFactum.Data.Internal
                     binding.SetValue(created, visitedProperties[binding.MetaInfo.ColumnName]);
                 }
             }
+            else
+                temporaryCreated = created;
 
             return created;
         }

@@ -64,5 +64,6 @@ namespace AdFactum.Data.Interfaces
         /// <summary> Returns the database schema </summary>
         string DatabaseSchema { get; }
 
+
     }
 }

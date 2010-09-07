@@ -206,16 +206,21 @@ namespace AdFactum.Data.Linq.Translation
                     var targetProjection = GetProjection(m.Expression.Type);
                     if (targetProjection.NewExpression != null)
                     {
-                        var subParameter = (ParameterExpression)targetProjection.NewExpression.Arguments
-                                                                     .Where(
-                                                                     arg =>
-                                                                     arg is ParameterExpression &&
-                                                                     ((ParameterExpression)arg).Name == propertyName).
-                                                                     FirstOrDefault();
+                        var subParameter = targetProjection.NewExpression.Arguments
+                                           .Where(arg =>
+                                               {
+                                                   var pe = arg as ParameterExpression;
+                                                   if (pe != null) return pe.Name == propertyName;
+
+                                                   var me = arg as MemberExpression;
+                                                   if (me != null) return me.Member.Name == propertyName;
+
+                                                   return false;
+                                               }).FirstOrDefault();
 
                         if (subParameter != null)
                         {
-                            var from = fromClauseMapping[subParameter].Expression;
+                            var from = Visit(subParameter); //fromClauseMapping[subParameter].Expression;
                             from = from is SelectExpression
                                        ? ((SelectExpression)from).SetDefaultIfEmpty(select.DefaultIfEmpty)
                                        : from;

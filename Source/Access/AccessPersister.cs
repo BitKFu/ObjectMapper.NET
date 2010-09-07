@@ -417,7 +417,7 @@ namespace AdFactum.Data.Access
                                                       Type type, object value, bool isUnicode)
         {
             IDbDataParameter parameter = new OleDbParameter(
-                "p" + numberOfParameter.ToString("00"), 
+                "?p" + numberOfParameter.ToString("00"), 
                 (OleDbType) TypeMapper.GetEnumForDatabase(type, isUnicode))
                                              {
                                                  Value = TypeMapper.ConvertValueToDbType(value)
@@ -433,7 +433,7 @@ namespace AdFactum.Data.Access
         /// </summary>
         public override IDbDataParameter CreateParameter(string parameterName, Type type, object value, bool isUnicode)
         {
-            IDbDataParameter parameter = new OleDbParameter(parameterName,
+            IDbDataParameter parameter = new OleDbParameter("?" + parameterName,
                                                             (OleDbType) TypeMapper.GetEnumForDatabase(type, isUnicode))
                                              {Value = TypeMapper.ConvertValueToDbType(value)};
 
@@ -510,8 +510,8 @@ namespace AdFactum.Data.Access
 
             //// Attempt to rewrite cross joins as inner joins
             boundExp = RedundantSubqueryRemover.Remove(boundExp, dynamicCache);
-            boundExp = SortAccessJoins.Sort(boundExp);
             boundExp = CrossJoinRewriter.Rewrite(boundExp);
+            boundExp = SortAccessJoins.Sort(boundExp);
 
             ///// Remove unused columns
             //!!! OBSOLETE HERE      !!! boundExp = AliasReWriter.Rewrite(boundExp, dynamicCache);

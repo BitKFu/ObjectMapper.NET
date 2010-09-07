@@ -88,8 +88,24 @@ namespace AdFactum.Data.Linq
         public Query(ObjectMapper mapper, string tableName)
             : this(mapper)
         {
+            if (DynamicCache == null) // If we don't have a dynamic cache, we need one to store the overwritten table name
+                DynamicCache = new Cache<Type, ProjectionClass>("Linq Dynamic Cache");
+
             ProjectionClass projection = ReflectionHelper.GetProjection(typeof (T), DynamicCache);
-            projection.TableNameOverwrite = tableName;
+
+            // If it's not a LinkBridge, than don't insert it into the global cache
+            Type genericTypeDefinition = null;
+            if (typeof(T).IsGenericType)
+                genericTypeDefinition = typeof (T).GetGenericTypeDefinition();
+
+            if (genericTypeDefinition == null || !typeof(LinkBridge<,>).IsAssignableFrom(genericTypeDefinition))
+            {
+                projection = (ProjectionClass) projection.Clone();
+                projection.TableNameOverwrite = tableName;
+                DynamicCache.Insert(typeof(T), projection);
+            }
+            else
+                projection.TableNameOverwrite = tableName;
         }
 
         /// <summary>
@@ -159,6 +175,8 @@ namespace AdFactum.Data.Linq
         public TResult Execute<TResult>(Expression expression)
         {
             IDbCommand command = PreCompile(expression);
+            ReplaceSqlParamter(command);
+
             return ExecuteCommand<TResult>(command);
         }
 
@@ -168,7 +186,8 @@ namespace AdFactum.Data.Linq
         /// <returns></returns>
         public IDbCommand PreCompile(Expression expression)
         {
-            DynamicCache = new Cache<Type, ProjectionClass>("Linq Dynamic Cache");
+            if (DynamicCache == null)
+                DynamicCache = new Cache<Type, ProjectionClass>("Linq Dynamic Cache");
 
             ILinqPersister linqPersister = Persister;
             int i;
@@ -480,6 +499,24 @@ namespace AdFactum.Data.Linq
         }
 
         /// <summary>
+        /// Replaces the Sql Parameter in the string to convert them into valid sql parameters
+        /// </summary>
+        private void ReplaceSqlParamter(IDbCommand command)
+        {
+            foreach (IDbDataParameter parameter in command.Parameters)
+            {
+                // count the amount of the same paramter within the sql
+                var startIndex = 0;
+                while ((startIndex = command.CommandText.IndexOf(parameter.ParameterName, startIndex)) > -1)
+                {
+                    var replaceWith = Persister.GetParameterString(parameter);
+                    startIndex += replaceWith.Length;
+                    command.CommandText = command.CommandText.ReplaceFirst(parameter.ParameterName, replaceWith);
+                }
+            }
+        }
+
+        /// <summary>
         /// Rebinds the statement
         /// </summary>
         internal Query<T> RebindStatement(ObjectMapper mapper, object[] args, out IDbCommand command)
@@ -547,27 +584,26 @@ namespace AdFactum.Data.Linq
 
                 bool duplicateParameter = mapper.Persister.TypeMapper.ParameterDuplication;
 
-                if (duplicateParameter)
+                // count the amount of the same paramter within the sql
+                var startIndex = 0;
+                var count = 0;
+                while ((startIndex = newCommand.CommandText.IndexOf(oldParameter.ParameterName, startIndex)) > -1)
                 {
-                    // count the amount of the same paramter within the sql
-                    var startIndex = 0;
-                    var count = 0;
-                    while ((startIndex = newCommand.CommandText.IndexOf(oldParameter.ParameterName, startIndex)) > -1)
-                    {
-                        count++;
-                        startIndex++;
-                    }
+                    count++;
 
-                    // add the parameter
-                    for (int x = 0; x < count; x++)
-                    {
-                        IDbDataParameter newParameter = persister.CreateParameter(oldParameter, args[argCounter]);
-                        newCommand.Parameters.Add(newParameter);
-                    }
+                    var replaceWith = persister.GetParameterString(oldParameter);
+                    startIndex += replaceWith.Length;
+
+                    newCommand.CommandText = newCommand.CommandText.ReplaceFirst(oldParameter.ParameterName, replaceWith);
                 }
-                else
+    
+                // Only duplicate parameter, if that is allowed
+                if (!duplicateParameter && count > 1)
+                    count = 1;
+
+                // add the parameter
+                for (int x = 0; x < count; x++)
                 {
-                    // Only add the Parameter once
                     IDbDataParameter newParameter = persister.CreateParameter(oldParameter, args[argCounter]);
                     newCommand.Parameters.Add(newParameter);
                 }
@@ -587,7 +623,8 @@ namespace AdFactum.Data.Linq
         /// <returns></returns>
         private string GetPlainParameterName(string name)
         {
-            if (name.StartsWith(":") || name.StartsWith("@"))
+            char firstChar = name[0];
+            if (firstChar == ':' || firstChar == '@' || firstChar == '?')
                 return name.Substring(1);
 
             return name;

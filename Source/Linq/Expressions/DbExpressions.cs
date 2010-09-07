@@ -294,8 +294,11 @@ namespace AdFactum.Data.Linq.Expressions
             IDbExpressionWithResult result = table as IDbExpressionWithResult;
             if (result != null)
             {
-                var original = OriginPropertyFinder.Find(copy) ?? copy;
-                ReferringColumn = result.Columns.FirstOrDefault(x => original.Equals(x.OriginalProperty) );
+                var original = OriginPropertyFinder.Find(copy);
+                if (original != null)
+                    ReferringColumn = result.Columns.First(x => original.Equals(x.OriginalProperty) );
+                else
+                    ReferringColumn = result.Columns.First(x => DbExpressionComparer.AreEqual(x.Expression, copy));
             }
         }
 

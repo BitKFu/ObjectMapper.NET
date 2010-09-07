@@ -14,7 +14,7 @@ namespace AdFactum.Data
 		/// <returns>
 		/// Returns true, if the value object is stored within the object cache.
 		/// </returns>
-		bool Contains(object vo);
+		bool Contains(object vo, int hierarchyLevel);
 
         /// <summary>
         /// Returns the value object with the primary key given by the paramter ID.

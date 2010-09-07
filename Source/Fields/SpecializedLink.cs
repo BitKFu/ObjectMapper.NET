@@ -75,7 +75,10 @@ namespace AdFactum.Data.Fields
 			SpecializedLink source
 			)
 		{
-			property = (Field) source.property.Clone();
+		    ICloneable cloneable = source.property;
+            if (cloneable != null)
+                property = cloneable.Clone() as Field;
+
 			IsNew = source.IsNew;
 			IsDeleted = source.IsDeleted;
 		}

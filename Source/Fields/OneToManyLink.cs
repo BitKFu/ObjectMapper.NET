@@ -50,7 +50,8 @@ namespace AdFactum.Data.Fields
         public OneToManyLink(OneToManyLink copy)
             :base(copy)
         {
-            JoinField = new Field(copy.JoinField);
+            if (copy != null && copy.JoinField != null)
+                JoinField = new Field(copy.JoinField);
         }
 
         /// <summary>

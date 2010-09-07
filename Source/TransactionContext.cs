@@ -219,11 +219,11 @@ namespace AdFactum.Data
                 secondStepUpdateHash.Persist(persister, this);
             }
 
-		    persister.Commit();
 			updateHash = new ObjectHash();
 			secondStepUpdateHash = new ObjectHash();
-			rollbackList = new ArrayList();
-
+            persister.Commit();
+            
+            rollbackList = new ArrayList();
 			transactionMutex.ReleaseMutex();
 			isTransaction = false;
 		}

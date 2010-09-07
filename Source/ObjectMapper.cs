@@ -1034,7 +1034,7 @@ namespace AdFactum.Data
 			 */
             PersistentObject virtualPO = null;
             object virtualLoaded = null;
-            if (tempHash.Contains(type, parentObjectId))
+            if (tempHash.Contains(type, parentObjectId, HierarchyLevel.Dependend1stLvl))
             {
                 virtualPO = tempHash.Get(type, parentObjectId);
                 virtualLoaded = tempHash.GetVO(type, parentObjectId);
@@ -1110,7 +1110,7 @@ namespace AdFactum.Data
 			 */
             PersistentObject virtualPO = null;
             object virtualLoaded = null;
-            if (tempHash.Contains(type, parentObjectId))
+            if (tempHash.Contains(type, parentObjectId, HierarchyLevel.Dependend1stLvl))
             {
                 virtualPO = tempHash.Get(type, parentObjectId);
                 virtualLoaded = tempHash.GetVO(type, parentObjectId);
@@ -1201,7 +1201,7 @@ namespace AdFactum.Data
 			 * Neues PO mit Parent Guid anlegen
 			 */
             PersistentObject virtualPO;
-            if (tempHash.Contains(type, parentObjectId))
+            if (tempHash.Contains(type, parentObjectId, HierarchyLevel.Dependend1stLvl))
                 virtualPO = tempHash.Get(type, parentObjectId);
             else
             {
@@ -1295,7 +1295,7 @@ namespace AdFactum.Data
 			 * Neues PO mit Parent Guid anlegen
 			 */
             PersistentObject virtualPO = null;
-            if (tempHash.Contains(type, parentObjectId))
+            if (tempHash.Contains(type, parentObjectId, HierarchyLevel.Dependend1stLvl))
                 virtualPO = tempHash.Get(type, parentObjectId);
 
             if ((virtualPO == null) || (virtualPO.IsFlatLoaded))
@@ -1488,7 +1488,7 @@ namespace AdFactum.Data
 
             Type voType = vo.GetType();
 
-            if (tempHash.Contains(vo))
+            if (tempHash.Contains(vo, hierarchyLevel))
                 po = tempHash.Get(vo);
 
             /*
@@ -1544,7 +1544,7 @@ namespace AdFactum.Data
             ObjectHash tempHash = UpdateHash();
 
             PersistentObject po = null;
-            if (tempHash.Contains(typeToDelete, primaryKey))
+            if (tempHash.Contains(typeToDelete, primaryKey, hierarchyLevel))
                 po = tempHash.Get(typeToDelete, primaryKey);
 
             /*
@@ -1632,7 +1632,7 @@ namespace AdFactum.Data
                 object id = idEnumerator.Current;
                 PersistentObject po = null;
 
-                if (tempHash.Contains(typeToDelete, id))
+                if (tempHash.Contains(typeToDelete, id, hierarchyLevel))
                     po = tempHash.Get(typeToDelete, id);
 
                 /*
@@ -2358,7 +2358,7 @@ namespace AdFactum.Data
 			 * Neues PO mit Parent Guid anlegen
 			 */
             PersistentObject virtualPO;
-            if (tempHash.Contains(type, objectId))
+            if (tempHash.Contains(type, objectId, HierarchyLevel.FlatObject))
                 virtualPO = tempHash.Get(type, objectId);
             else
             {
@@ -2498,7 +2498,7 @@ namespace AdFactum.Data
                 /*
 				 * Existiert noch kein neues Persistenzobjekt im Hash ?
 				 */ 
-                if (!hash.Contains(vo))
+                if (!hash.Contains(vo, hierarchyLevel))
                 {
                     /*
                      * If we are only interessted in updating links, we can create an empty dummy object
@@ -2698,7 +2698,7 @@ namespace AdFactum.Data
                     po = new PersistentObject(projection, HierarchyLevel.IsFlatLoaded(hierarchyLevel), entry, null);
                     po.CreateVO(this, objectFactory, hash, hierarchyLevel, globalParameter);
                 }
-                else if (hash.Contains(type, id))
+                else if (hash.Contains(type, id, hierarchyLevel))
                 {
                     po = hash.Get(type, id);
                     if (hash.GetVO(type, id) == null)
@@ -2753,7 +2753,7 @@ namespace AdFactum.Data
             /*
 			 * Ist das Objekt bereits im Temporären Hash ?
 			 */
-            if (hash.Contains(type, id))
+            if (hash.Contains(type, id, hierarchyLevel))
             {
                 object resultVO = hash.GetVO(type, id);
                 if (resultVO != null)

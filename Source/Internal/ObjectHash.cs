@@ -78,12 +78,18 @@ namespace AdFactum.Data.Internal
         /// <returns>
         /// 	<c>true</c> if [contains] [the specified type]; otherwise, <c>false</c>.
         /// </returns>
-        public bool Contains(object vo)
+        public bool Contains(object vo, int hierarchyLevel)
         {
             if (objectHash.Contains(vo))
             {
                 HashEntry hashEntry = objectHash[ConstraintSaveList.CalculateKey(vo)];
-                if (hashEntry.Po != null)
+                if (hashEntry.Po != null && // The Object must be in the objecthash
+
+                        // if it's in hash and we want to get a flat version, we take what we get, even if it's deeploaded in it
+                     ( HierarchyLevel.IsFlatLoaded(hierarchyLevel)  
+
+                        // if it's in hash and we want to get a deep loaded version, we must ensure, that this is really a deeploaded version
+                  || ( !HierarchyLevel.IsFlatLoaded(hierarchyLevel) && !hashEntry.Po.IsFlatLoaded) ))
                     return true;
             }
 
@@ -300,10 +306,16 @@ namespace AdFactum.Data.Internal
         /// </summary>
         /// <param name="type">The type.</param>
         /// <param name="id">The id.</param>
-        public bool Contains(Type type, object id)
+        public bool Contains(Type type, object id, int hierarchyLevel)
         {
             bool contains = objectHash.Contains(type, id);
-            return contains;
+            if (contains)
+            {
+                HashEntry entry = objectHash[ConstraintSaveList.CalculateKey(type, id)];
+                return entry.Po.IsFlatLoaded == HierarchyLevel.IsFlatLoaded(hierarchyLevel);
+            }
+
+            return false;
         }
 
         /// <summary>

@@ -1399,8 +1399,10 @@ namespace AdFactum.Data.Linq.Translation
             // That means that the constant expression is the root of an expression, called TableExpression
             if (c.Value is IQueryProvider)
             {
+                var projection = ReflectionHelper.GetProjection(c.Type.RevealType(), provider != null ? provider.DynamicCache : null);
+
                 Alias tableAlias = Alias.Generate(AliasType.Table);
-                var tableExpression = new TableExpression(c.Type, GetProjection(c.Type), tableAlias);
+                var tableExpression = new TableExpression(c.Type, projection, tableAlias);
                 return tableExpression;
             }
 
@@ -1470,7 +1472,7 @@ namespace AdFactum.Data.Linq.Translation
         /// <returns></returns>
         private ProjectionClass GetProjection(Type type)
         {
-            return ReflectionHelper.GetProjection(type.RevealType(), null /* dynamicCache */);
+            return ReflectionHelper.GetProjection(type.RevealType(), dynamicCache );
         }
 
         protected override Expression VisitComparison(BinaryExpression b, QueryOperator queryOperator)

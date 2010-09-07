@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Linq.Expressions;
 using AdFactum.Data.Interfaces;
@@ -34,10 +35,17 @@ namespace AdFactum.Data.Linq.Language
         protected override Expression VisitSqlParameterExpression(SqlParameterExpression expression)
         {
             int counter = NumberOfParameters;
-            LinqPersister.AddParameter(Command.Parameters, ref counter, expression.Type, expression.Value, false);
+            IDbDataParameter param;
+            if (!expression.Alias.Generated)
+            {
+                param = LinqPersister.CreateParameter(expression.Alias.Name, expression.Type, expression.Value, false);
+                Command.Parameters.Add(param);
+            }
+            else
+                param = LinqPersister.AddParameter(Command.Parameters, ref counter, expression.Type, expression.Value, false);
 
             NumberOfParameters = counter;
-            WriteSql("?");
+            WriteSql(param.ParameterName);
             return expression;
         }
 
@@ -209,6 +217,11 @@ namespace AdFactum.Data.Linq.Language
 
         protected override Expression VisitJoinExpression(JoinExpression join)
         {
+            if (join.Join != JoinType.CrossJoin)
+            {
+                WriteSql("(");
+            }
+
             VisitJoinLeft(join.Left);
             switch (join.Join)
             {
@@ -216,17 +229,17 @@ namespace AdFactum.Data.Linq.Language
                     WriteSql(", ");
                     break;
                 case JoinType.InnerJoin:
-                    WriteSql(" INNER JOIN ");
+                    WriteSql(") INNER JOIN ");
                     break;
                 case JoinType.CrossApply:
-                    WriteSql(" CROSS APPLY ");
+                    WriteSql(") CROSS APPLY ");
                     break;
                 case JoinType.OuterApply:
-                    WriteSql(" OUTER APPLY ");
+                    WriteSql(") OUTER APPLY ");
                     break;
                 case JoinType.LeftOuter:
                 case JoinType.SingletonLeftOuter:
-                    WriteSql(" LEFT OUTER JOIN ");
+                    WriteSql(") LEFT OUTER JOIN ");
                     break;
             }
             var rightSelect = join.Right as SelectExpression;
