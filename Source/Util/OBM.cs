@@ -55,6 +55,10 @@ namespace AdFactum.Data.Util
 		public static IPersister GetPersister(DatabaseConnection connection, ISqlTracer tracer)
 		{
 			IPersister persister ;
+
+            // Set the global SQL Casing
+            DBConst.GlobalCasing = connection.SqlCasing;
+
 			switch (connection.DatabaseType)
 			{
 			    case DatabaseType.SqlServer:

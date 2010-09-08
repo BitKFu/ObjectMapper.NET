@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Reflection;
@@ -9,6 +10,32 @@ using AdFactum.Data.Util;
 
 namespace AdFactum.Data.Internal
 {
+    /// <summary>
+    /// Defines the Type of the Association
+    /// </summary>
+    public enum AssociationType
+    {
+        /// <summary>
+        /// No Association, only a field
+        /// </summary>
+        None,
+
+        /// <summary>
+        /// One To One Association
+        /// </summary>
+        OneToOne,
+
+        /// <summary>
+        /// One To Many Association
+        /// </summary>
+        OneToMany,
+
+        /// <summary>
+        /// Many To Many
+        /// </summary>
+        ManyToMany
+    }
+
     /// <summary>
     /// Key Group 
     /// </summary>
@@ -140,7 +167,7 @@ namespace AdFactum.Data.Internal
         /// <summary>
         /// True, if the association is one to many
         /// </summary>
-        public bool IsOneToManyAssociation { get; set; }
+        public AssociationType Association { get; set; }
 
         /// <summary>
         /// Specifies the default value for that property
@@ -183,6 +210,17 @@ namespace AdFactum.Data.Internal
         public EntityRelation.OrmType? RelationType { get; set; }
 
         /// <summary>
+        /// Gets a value indicating whether this instance is one to many association.
+        /// </summary>
+        /// <value>
+        /// 	<c>true</c> if this instance is one to many association; otherwise, <c>false</c>.
+        /// </value>
+        public bool IsOneToManyAssociation
+        {
+            get { return Association == AssociationType.OneToMany; }
+        }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="PropertyMetaInfo"/> class.
         /// </summary>
         internal PropertyMetaInfo()
@@ -190,6 +228,7 @@ namespace AdFactum.Data.Internal
             Length = 255;
             MajorVersion = 1;
             Validator = ValidatorType.AlwaysValid;
+            Association = AssociationType.None;
         }
 
         /// <summary>
@@ -205,6 +244,7 @@ namespace AdFactum.Data.Internal
             ColumnName = DBConst.DoGlobalCasing(columnName);
             PropertyName = propertyName;
             IsPrimaryKey = primaryKey;
+            Association = AssociationType.None;
         }
 
         /// <summary>
@@ -224,6 +264,8 @@ namespace AdFactum.Data.Internal
               && (type.IsClass)
               && (type.IsValueObjectType()))
             ? LinkTarget = type : null);
+
+            InitializeAssociation(type);
         }
 
         /// <summary>
@@ -372,7 +414,7 @@ namespace AdFactum.Data.Internal
                 {
                     bindingType = oneToMany.JoinedType;
                     LinkedTargetProperty = oneToMany.JoinedProperty;
-                    IsOneToManyAssociation = true;
+                    Association = AssociationType.OneToMany;
                     RelationType = oneToMany.RelationType;
                     continue;
                 }
@@ -502,10 +544,34 @@ namespace AdFactum.Data.Internal
                 IsGeneralLinked = true;
             }
 
+            InitializeAssociation(linkedType);
+
             /*
              * Uppercase the property Name
              */
             //ColumnName = ColumnName.ToUpper();
+        }
+
+        /// <summary>
+        /// Initializes the association.
+        /// </summary>
+        /// <param name="linkedType">Type of the linked.</param>
+        private void InitializeAssociation(Type linkedType)
+        {
+            // Maybe it's already initialized
+            if (Association != AssociationType.None)
+                return;
+
+            /*
+             * Set Association Type
+             */
+            if (linkedType.IsListType())
+                Association = AssociationType.ManyToMany;
+            else
+            {
+                if (LinkTarget != null)
+                    Association = AssociationType.OneToOne;
+            }
         }
 
         /// <summary>

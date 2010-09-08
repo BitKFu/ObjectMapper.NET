@@ -1,4 +1,5 @@
 using System;
+using AdFactum.Data.Internal;
 
 namespace AdFactum.Data.Util
 {
@@ -22,7 +23,7 @@ namespace AdFactum.Data.Util
 		/*
 		 * SQL Server Types
 		 */
-		private bool trustedConnection  = false;
+		private bool trustedConnection;
         private string serverName       = string.Empty;
         private string databaseName     = string.Empty;
         private string dsnName          = string.Empty;
@@ -55,6 +56,11 @@ namespace AdFactum.Data.Util
 		/// </summary>
 		private double physicalDatabaseVersion;
 
+	    /// <summary>
+	    /// Defines the SQL Casing for this connection
+	    /// </summary>
+	    private SqlCasing sqlCasing = SqlCasing.Mixed;
+
 		#endregion
 
 		#region Öffentliche Zugriffsmethoden
@@ -64,7 +70,7 @@ namespace AdFactum.Data.Util
 		/// </summary>
 		/// <value>The type of the database.</value>
         [PropertyName("DatabaseType")]
-        public DatabaseType DatabaseType
+        public virtual DatabaseType DatabaseType
 		{
 			get { return databaseType; }
 			set { databaseType = value; }
@@ -74,7 +80,7 @@ namespace AdFactum.Data.Util
 		/// Gets or sets the name of the server.
 		/// </summary>
 		/// <value>The name of the server.</value>
-		public string ServerName
+        public virtual string ServerName
 		{
 			get { return serverName; }
 			set { serverName = value; }
@@ -84,7 +90,7 @@ namespace AdFactum.Data.Util
 		/// Gets or sets the name of the database.
 		/// </summary>
 		/// <value>The name of the database.</value>
-		public string DatabaseName
+		public virtual string DatabaseName
 		{
 			get { return databaseName; }
 			set { databaseName = value; }
@@ -94,7 +100,7 @@ namespace AdFactum.Data.Util
 		/// Gets or sets the database file.
 		/// </summary>
 		/// <value>The database file.</value>
-		public string DatabaseFile
+        public virtual string DatabaseFile
 		{
 			get { return databaseFile; }
 			set { databaseFile = value; }
@@ -104,7 +110,7 @@ namespace AdFactum.Data.Util
 		/// Gets or sets the name of the user.
 		/// </summary>
 		/// <value>The name of the user.</value>
-		public string UserName
+        public virtual string UserName
 		{
 			get { return userName; }
 			set { userName = value; }
@@ -114,7 +120,7 @@ namespace AdFactum.Data.Util
 		/// Gets or sets the name of the DSN.
 		/// </summary>
 		/// <value>The name of the DSN.</value>
-		public string DsnName
+        public virtual string DsnName
 		{
 			get { return dsnName; }
 			set { dsnName = value; }
@@ -124,7 +130,7 @@ namespace AdFactum.Data.Util
 		/// Gets or sets the password.
 		/// </summary>
 		/// <value>The password.</value>
-		public string Password
+        public virtual string Password
 		{
 			get { return password; }
 			set { password = value; }
@@ -134,7 +140,7 @@ namespace AdFactum.Data.Util
 		/// Gets or sets a value indicating whether the connection is a trusted connection.
 		/// </summary>
 		/// <value><c>true</c> if the connection is a trusted connection; otherwise, <c>false</c>.</value>
-		public bool TrustedConnection
+        public virtual bool TrustedConnection
 		{
 			get { return trustedConnection; }
 			set { trustedConnection = value; }
@@ -144,7 +150,7 @@ namespace AdFactum.Data.Util
 		/// Gets or sets the db alias.
 		/// </summary>
 		/// <value>The db alias.</value>
-		public string DbAlias
+        public virtual string DbAlias
 		{
 			get { return dbAlias; }
 			set { dbAlias = value; }
@@ -154,7 +160,7 @@ namespace AdFactum.Data.Util
 		/// Gets or sets the database version.
 		/// </summary>
 		/// <value>The database version.</value>
-		public double DatabaseVersion
+        public virtual double DatabaseVersion
 		{
 			get { return databaseVersion; }
 			set { databaseVersion = value; }
@@ -164,7 +170,7 @@ namespace AdFactum.Data.Util
 		/// Gets or sets the physical database version.
 		/// </summary>
 		/// <value>The physical database version.</value>
-		public double PhysicalDatabaseVersion
+        public virtual double PhysicalDatabaseVersion
 		{
 			get { return physicalDatabaseVersion; }
 			set { physicalDatabaseVersion = value; }
@@ -174,7 +180,7 @@ namespace AdFactum.Data.Util
         /// Gets or sets the data set.
         /// </summary>
         /// <value>The data set.</value>
-	    public string DataSet
+        public virtual string DataSet
 	    {
 	        get { return dataSet; }
 	        set { dataSet = value; }
@@ -184,7 +190,7 @@ namespace AdFactum.Data.Util
         /// Gets or sets the XML file.
         /// </summary>
         /// <value>The XML file.</value>
-	    public string XmlFile
+        public virtual string XmlFile
 	    {
 	        get { return xmlFile; }
 	        set { xmlFile = value; }
@@ -194,10 +200,19 @@ namespace AdFactum.Data.Util
         /// Gets or sets the XSD file.
         /// </summary>
         /// <value>The XSD file.</value>
-	    public string XsdFile
+        public virtual string XsdFile
 	    {
 	        get { return xsdFile; }
 	        set { xsdFile = value; }
+	    }
+
+	    /// <summary>
+	    /// Defines the SQL Casing for this connection
+	    /// </summary>
+	    public virtual SqlCasing SqlCasing
+	    {
+	        get { return sqlCasing; }
+	        set { sqlCasing = value; }
 	    }
 
 	    #endregion

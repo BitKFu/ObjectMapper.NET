@@ -36,7 +36,7 @@ namespace ObjectMapper.NUnits.BusinessEntities
         /// Gets or sets the employees.
         /// </summary>
         /// <value>The employees.</value>
-        public List<BackLinkedEmployee> Employees
+        public new List<BackLinkedEmployee> Employees
         {
             get { return employees; }
             set { employees = value; }
