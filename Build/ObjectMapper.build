@@ -103,9 +103,13 @@
     <property name="DatabaseType" value="SqlServer"/>
     <call target="testMapperForDatabaseType"/>
 
-    <!-- Run the Oracle Tests
+    <!-- Run the Oracle Tests -->
     <property name="DatabaseType" value="Oracle"/>
-    <call target="testMapperForDatabaseType"/> -->
+    <call target="testMapperForDatabaseType"/> 
+
+    <!-- Run the Postgres Tests -->
+    <property name="DatabaseType" value="Postgres"/>
+    <call target="testMapperForDatabaseType"/> 
 
     <!-- Make Report -->
     <exec
@@ -145,7 +149,14 @@
 
     <echo message = "Test ObjectMapper .NET for ${DatabaseType}"/>
 
-    <copy tofile="${nunit.bin.config}" file="${nunit.bin.dir}\Nunit.${DatabaseType}.config" overwrite="true"/>
+    <loadfile file="${build.dir.build}\App.config" property="appConfig">
+      <filterchain>
+        <replacetokens>
+          <token key="DATABASE" value="${DatabaseType}"/>
+        </replacetokens>
+      </filterchain>
+    </loadfile>
+    <echo file="${nunit.bin.config}" message="${appConfig}"/>
 
     <exec program="${ncover.exe}" failonerror="false">
       <arg value="//x &quot;${ncover.out}.${DatabaseType}.xml&quot;"/>
