@@ -63,30 +63,53 @@ namespace AdFactum.Data.Linq.Translation
                     orderExpressions = new List<OrderExpression>(select.OrderBy);
                 else
                 {
-                    var fromAlias = select.From;
-                    var selectionType = fromAlias.Type.RevealType();
-                    var selectionProjection = ReflectionHelper.GetProjection(selectionType, dynamicCache);
+                    orderExpressions = new List<OrderExpression>();
 
-                    if (selectionProjection != null)
+                    var fromAlias = select.From as SelectExpression;
+                    if (fromAlias != null && fromAlias.OrderBy != null)
                     {
-                        var primaryKey = selectionProjection.GetPrimaryKeyDescription();
-                        var orderExpression = new PropertyExpression(fromAlias, primaryKey.CustomProperty.PropertyInfo);
-                        
-                        // Find the original column, because thus have referenced columsn info set
-                        var column = select.Columns.FirstOrDefault(x => x.Expression.Equals(orderExpression));
-
-                        orderExpressions = new List<OrderExpression>{
-                            new OrderExpression(
-                                Ordering.Asc,
-                                column.Expression)}; //selectionType
+                        foreach (var orderBy in fromAlias.OrderBy)
+                        {
+                            // Find the original column, because thus have referenced columsn info set
+                            var column = FindSourceColumn(select, orderBy);
+                            orderExpressions.Add(new OrderExpression(
+                                                     Ordering.Asc,
+                                                     column.Expression));
+                        }
                     }
                     else
                     {
+                        // Order By the First Column
                         orderExpressions = new List<OrderExpression>{
                             new OrderExpression(
                                 Ordering.Asc,
                                 newSelect.Columns.First().Expression)};
                     }
+
+
+                    //var selectionType = fromAlias.Type.RevealType();
+                    //var selectionProjection = ReflectionHelper.GetProjection(selectionType, dynamicCache);
+
+                    //if (selectionProjection != null)
+                    //{
+                    //    var primaryKey = selectionProjection.GetPrimaryKeyDescription();
+                    //    var orderExpression = new PropertyExpression(fromAlias, primaryKey.CustomProperty.PropertyInfo);
+                        
+                    //    // Find the original column, because thus have referenced columsn info set
+                    //    var column = select.Columns.FirstOrDefault(x => x.Expression.Equals(orderExpression));
+
+                    //    orderExpressions = new List<OrderExpression>{
+                    //        new OrderExpression(
+                    //            Ordering.Asc,
+                    //            column.Expression)}; //selectionType
+                    //}
+                    //else
+                    //{
+                    //    orderExpressions = new List<OrderExpression>{
+                    //        new OrderExpression(
+                    //            Ordering.Asc,
+                    //            newSelect.Columns.First().Expression)};
+                    //}
                 }
 
                 var newBoundOrderings = OrderByRewriter.BindToSelection(newSelect, orderExpressions);

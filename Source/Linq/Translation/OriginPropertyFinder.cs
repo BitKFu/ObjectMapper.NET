@@ -19,7 +19,10 @@ namespace AdFactum.Data.Linq.Translation
             if (FoundProperty != null)
                 return exp;
 
-            if (exp is MemberExpression || exp is PropertyExpression || exp is AggregateExpression)
+            if (exp is MemberExpression || 
+                exp is PropertyExpression || 
+                exp is AggregateExpression || 
+                exp is OrderExpression)
                 return base.Visit(exp);
 
             return exp;
