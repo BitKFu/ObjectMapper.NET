@@ -4,9 +4,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NUnits 2008", "NUnits\NUnit
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ObjectMapper 2008", "Source\ObjectMapper 2008.csproj", "{35A18F34-D0D8-47CF-A9F6-EC9D84DD80B0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ObjectMapper2LinqPad", "ObjectMapper2LinqPad\ObjectMapper2LinqPad.csproj", "{9E2B9062-0B94-43BD-9B5E-32BFA61A6B96}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ObjectMapper2LinqPad", "LinqPad\ObjectMapper2LinqPad.csproj", "{9E2B9062-0B94-43BD-9B5E-32BFA61A6B96}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ObjectMapper2LinqPadDeployment", "ObjectMapper2LinqPadDeployment\ObjectMapper2LinqPadDeployment.csproj", "{35D9A499-9E21-49D4-AA94-C540B45F0793}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ObjectMapper2LinqPadDeployment", "LinqPadDeployment\ObjectMapper2LinqPadDeployment.csproj", "{35D9A499-9E21-49D4-AA94-C540B45F0793}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

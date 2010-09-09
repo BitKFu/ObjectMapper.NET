@@ -35,8 +35,7 @@
   <ItemGroup>
     <Reference Include="LINQPad, Version=1.0.0.0, Culture=neutral, PublicKeyToken=21353812cd2a2db5, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <ExecutableExtension>.exe</ExecutableExtension>
-      <HintPath>C:\Program Files (x86)\LinqPad\LINQPad.exe</HintPath>
+      <HintPath>C:\Program Files\LinqPad\LINQPad.exe</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
