@@ -99,10 +99,6 @@
     <property name="DatabaseType" value="Access"/>
     <call target="testMapperForDatabaseType"/>
 
-    <!-- Run the SqlServer CE Tests -->
-    <property name="DatabaseType" value="SqlServerCE"/>
-    <call target="testMapperForDatabaseType"/>
-
     <!-- Run the SqlServer Tests -->
     <property name="DatabaseType" value="SqlServer"/>
     <call target="testMapperForDatabaseType"/>
