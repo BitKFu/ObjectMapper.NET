@@ -27,6 +27,7 @@ namespace ObjectMapper2LinqPad
             txtUserName.Text = connection.UserName;
             txtPassword.Text = connection.Password;
             txtDatabaseAlias.Text = connection.DbAlias;
+            txtDatabaseSchema.Text = connection.DatabaseSchema;
         }
 
         public void ValidateAndApplySettings(LinqPadConnection connection)
@@ -36,6 +37,7 @@ namespace ObjectMapper2LinqPad
             connection.UserName  =txtUserName.Text;
             connection.Password = txtPassword.Text;
             connection.DbAlias = txtDatabaseAlias.Text;
+            connection.DatabaseSchema = txtDatabaseSchema.Text;
             connection.SqlCasing = SqlCasing.UpperCase;
 
             using (OBM.CreateMapper(connection))

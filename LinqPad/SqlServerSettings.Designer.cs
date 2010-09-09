@@ -29,15 +29,15 @@
         private void InitializeComponent()
         {
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.txtDatabase = new System.Windows.Forms.TextBox();
+            this.lblDatabase = new System.Windows.Forms.Label();
+            this.txtServer = new System.Windows.Forms.TextBox();
             this.lblUserName = new System.Windows.Forms.Label();
             this.txtUserName = new System.Windows.Forms.TextBox();
             this.lblPassword = new System.Windows.Forms.Label();
             this.txtPassword = new System.Windows.Forms.TextBox();
             this.chkTrustedConnection = new System.Windows.Forms.CheckBox();
             this.lblServerName = new System.Windows.Forms.Label();
-            this.txtServer = new System.Windows.Forms.TextBox();
-            this.lblDatabase = new System.Windows.Forms.Label();
-            this.txtDatabase = new System.Windows.Forms.TextBox();
             this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -67,6 +67,32 @@
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.Size = new System.Drawing.Size(382, 150);
             this.tableLayoutPanel1.TabIndex = 0;
+            // 
+            // txtDatabase
+            // 
+            this.txtDatabase.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.txtDatabase.Location = new System.Drawing.Point(123, 29);
+            this.txtDatabase.Name = "txtDatabase";
+            this.txtDatabase.Size = new System.Drawing.Size(256, 20);
+            this.txtDatabase.TabIndex = 1;
+            // 
+            // lblDatabase
+            // 
+            this.lblDatabase.AutoSize = true;
+            this.lblDatabase.Location = new System.Drawing.Point(3, 26);
+            this.lblDatabase.Name = "lblDatabase";
+            this.lblDatabase.Padding = new System.Windows.Forms.Padding(0, 4, 0, 0);
+            this.lblDatabase.Size = new System.Drawing.Size(53, 17);
+            this.lblDatabase.TabIndex = 7;
+            this.lblDatabase.Text = "Database";
+            // 
+            // txtServer
+            // 
+            this.txtServer.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.txtServer.Location = new System.Drawing.Point(123, 3);
+            this.txtServer.Name = "txtServer";
+            this.txtServer.Size = new System.Drawing.Size(256, 20);
+            this.txtServer.TabIndex = 0;
             // 
             // lblUserName
             // 
@@ -101,8 +127,10 @@
             this.txtPassword.Dock = System.Windows.Forms.DockStyle.Fill;
             this.txtPassword.Location = new System.Drawing.Point(123, 124);
             this.txtPassword.Name = "txtPassword";
+            this.txtPassword.PasswordChar = '*';
             this.txtPassword.Size = new System.Drawing.Size(256, 20);
             this.txtPassword.TabIndex = 4;
+            this.txtPassword.UseSystemPasswordChar = true;
             // 
             // chkTrustedConnection
             // 
@@ -124,32 +152,6 @@
             this.lblServerName.Size = new System.Drawing.Size(38, 17);
             this.lblServerName.TabIndex = 5;
             this.lblServerName.Text = "Server";
-            // 
-            // txtServer
-            // 
-            this.txtServer.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtServer.Location = new System.Drawing.Point(123, 3);
-            this.txtServer.Name = "txtServer";
-            this.txtServer.Size = new System.Drawing.Size(256, 20);
-            this.txtServer.TabIndex = 0;
-            // 
-            // lblDatabase
-            // 
-            this.lblDatabase.AutoSize = true;
-            this.lblDatabase.Location = new System.Drawing.Point(3, 26);
-            this.lblDatabase.Name = "lblDatabase";
-            this.lblDatabase.Padding = new System.Windows.Forms.Padding(0, 4, 0, 0);
-            this.lblDatabase.Size = new System.Drawing.Size(53, 17);
-            this.lblDatabase.TabIndex = 7;
-            this.lblDatabase.Text = "Database";
-            // 
-            // txtDatabase
-            // 
-            this.txtDatabase.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtDatabase.Location = new System.Drawing.Point(123, 29);
-            this.txtDatabase.Name = "txtDatabase";
-            this.txtDatabase.Size = new System.Drawing.Size(256, 20);
-            this.txtDatabase.TabIndex = 1;
             // 
             // SqlServerSettings
             // 

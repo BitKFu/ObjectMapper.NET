@@ -149,6 +149,8 @@ namespace AdFactum.Data.Util
 		{
 			var oracleDb = new OraclePersister {SqlTracer = tracer};
 		    oracleDb.Connect(connection.UserName, connection.Password, connection.DbAlias);
+            if (!string.IsNullOrEmpty(connection.DatabaseSchema))
+                oracleDb.DatabaseSchema = connection.DatabaseSchema;
 			return oracleDb;
 		}
 

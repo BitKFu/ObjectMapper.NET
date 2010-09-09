@@ -137,6 +137,13 @@ namespace ObjectMapper2LinqPad
             set { driverData.SetElementValue("SqlCasing", value); }
         }
 
+        /// <summary> Gets or sets the Database Schema </summary>
+        public override string DatabaseSchema
+        {
+            get { return (string)driverData.Element("DatabaseSchema") ?? string.Empty; }
+            set { driverData.SetElementValue("DatabaseSchema", value); }
+        }
+
         /// <summary>
         /// Gets the cx info.
         /// </summary>

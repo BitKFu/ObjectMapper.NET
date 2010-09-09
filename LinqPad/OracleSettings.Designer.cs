@@ -35,6 +35,8 @@
             this.lblDatabaseAlias = new System.Windows.Forms.Label();
             this.lblUserName = new System.Windows.Forms.Label();
             this.lblPassword = new System.Windows.Forms.Label();
+            this.lblDatabaseSchema = new System.Windows.Forms.Label();
+            this.txtDatabaseSchema = new System.Windows.Forms.TextBox();
             this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -43,6 +45,8 @@
             this.tableLayoutPanel1.ColumnCount = 2;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 120F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel1.Controls.Add(this.txtDatabaseSchema, 1, 3);
+            this.tableLayoutPanel1.Controls.Add(this.lblDatabaseSchema, 0, 3);
             this.tableLayoutPanel1.Controls.Add(this.txtDatabaseAlias, 1, 2);
             this.tableLayoutPanel1.Controls.Add(this.txtPassword, 1, 1);
             this.tableLayoutPanel1.Controls.Add(this.txtUserName, 1, 0);
@@ -52,10 +56,11 @@
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 3;
+            this.tableLayoutPanel1.RowCount = 4;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel1.Size = new System.Drawing.Size(319, 159);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
@@ -72,8 +77,10 @@
             this.txtPassword.Dock = System.Windows.Forms.DockStyle.Fill;
             this.txtPassword.Location = new System.Drawing.Point(123, 29);
             this.txtPassword.Name = "txtPassword";
+            this.txtPassword.PasswordChar = '*';
             this.txtPassword.Size = new System.Drawing.Size(193, 20);
             this.txtPassword.TabIndex = 12;
+            this.txtPassword.UseSystemPasswordChar = true;
             // 
             // txtUserName
             // 
@@ -113,6 +120,24 @@
             this.lblPassword.TabIndex = 3;
             this.lblPassword.Text = "Password";
             // 
+            // lblDatabaseSchema
+            // 
+            this.lblDatabaseSchema.AutoSize = true;
+            this.lblDatabaseSchema.Location = new System.Drawing.Point(3, 78);
+            this.lblDatabaseSchema.Name = "lblDatabaseSchema";
+            this.lblDatabaseSchema.Padding = new System.Windows.Forms.Padding(0, 4, 0, 0);
+            this.lblDatabaseSchema.Size = new System.Drawing.Size(95, 17);
+            this.lblDatabaseSchema.TabIndex = 14;
+            this.lblDatabaseSchema.Text = "Database Schema";
+            // 
+            // txtDatabaseSchema
+            // 
+            this.txtDatabaseSchema.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.txtDatabaseSchema.Location = new System.Drawing.Point(123, 81);
+            this.txtDatabaseSchema.Name = "txtDatabaseSchema";
+            this.txtDatabaseSchema.Size = new System.Drawing.Size(193, 20);
+            this.txtDatabaseSchema.TabIndex = 15;
+            // 
             // OracleSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -136,5 +161,7 @@
         private System.Windows.Forms.TextBox txtUserName;
         private System.Windows.Forms.TextBox txtPassword;
         private System.Windows.Forms.TextBox txtDatabaseAlias;
+        private System.Windows.Forms.TextBox txtDatabaseSchema;
+        private System.Windows.Forms.Label lblDatabaseSchema;
     }
 }

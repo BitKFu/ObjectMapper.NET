@@ -13,7 +13,8 @@ namespace ObjectMapper2LinqPadDeployment
         private static readonly string[] Files = new[]
                                                      {
                                                          "ObjectMapper2LinqPad.dll", "ObjectMapper2LinqPad.pdb",
-                                                         "ObjectMapper.dll", "ObjectMapper.pdb"
+                                                         "ObjectMapper.dll", "ObjectMapper.pdb",
+                                                         "Oracle.DataAccess.dll", "Npgsql.dll"
                                                      };
 
     //
@@ -39,7 +40,8 @@ namespace ObjectMapper2LinqPadDeployment
                 if (File.Exists(deploymentPath + file))
                     File.Delete(deploymentPath + file);
 
-                File.Copy(file, deploymentPath + file);
+                if (File.Exists(file))
+                    File.Copy(file, deploymentPath + file);
             }
         }
 

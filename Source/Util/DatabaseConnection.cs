@@ -37,6 +37,7 @@ namespace AdFactum.Data.Util
 		 * Oracle Types
 		 */
         private string dbAlias = string.Empty;
+	    private string databaseSchema = string.Empty;
 
         /*
          * Xml Types
@@ -215,6 +216,15 @@ namespace AdFactum.Data.Util
 	        set { sqlCasing = value; }
 	    }
 
+        /// <summary>
+        /// Used to store the Database Schema
+        /// </summary>
+	    public virtual string DatabaseSchema
+	    {
+	        get { return databaseSchema; }
+	        set { databaseSchema = value; }
+	    }
+
 	    #endregion
 
 
@@ -229,6 +239,7 @@ namespace AdFactum.Data.Util
 			DatabaseConnection newConnection = new DatabaseConnection();
 
 			newConnection.DatabaseType = DatabaseType;
+		    newConnection.sqlCasing = SqlCasing;
 
 			newConnection.UserName = UserName;
 			newConnection.Password = Password;
@@ -250,6 +261,7 @@ namespace AdFactum.Data.Util
 			* Oracle Types
 			*/
 			newConnection.DbAlias = DbAlias;
+		    newConnection.DatabaseSchema = DatabaseSchema;
 
             /*
              * Xml Types

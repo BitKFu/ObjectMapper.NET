@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using AdFactum.Data;
 using AdFactum.Data.Internal;
+using AdFactum.Data.Linq;
 using AdFactum.Data.Util;
 using LINQPad.Extensibility.DataContext;
 
@@ -19,8 +21,27 @@ namespace ObjectMapper2LinqPad
         /// </summary>
         public override string GetConnectionDescription(IConnectionInfo cxInfo)
         {
-            // For static drivers, we can use the description of the custom type & its assembly:
-            return cxInfo.CustomTypeInfo.GetCustomTypeDescription();
+            var connection = new LinqPadConnection(cxInfo);
+            switch (connection.DatabaseType)
+            {
+                case DatabaseType.Oracle:
+                    return connection.UserName + "@" + connection.DbAlias;
+
+                case DatabaseType.SqlServer2000:
+                case DatabaseType.SqlServer:
+                    return connection.UserName + "@" + connection.DatabaseName + " (" + connection.ServerName + ")";
+
+                case DatabaseType.Postgres:
+                    return connection.UserName + "@" + connection.DatabaseName + " (" + connection.ServerName + ")";
+
+                case DatabaseType.Access:
+                    return connection.DatabaseFile;
+
+                // For static drivers, we can use the description of the custom type & its assembly:
+                default:
+                    return cxInfo.CustomTypeInfo.GetCustomTypeDescription();
+            }
+
         }
 
         /// <summary>
@@ -33,7 +54,16 @@ namespace ObjectMapper2LinqPad
 
             using (var cd = new ConnectionDialog(cxInfo))
             {
-                Application.Run(cd);
+                try
+                {
+                    Application.Run(cd);
+                }
+                catch(InvalidOperationException)
+                {
+                    cd.ShowDialog();
+                }
+
+                Application.Exit();
                 return cd.DialogResult == DialogResult.OK;
             }
         }
@@ -43,7 +73,26 @@ namespace ObjectMapper2LinqPad
         /// </summary>
         public override void InitializeContext(IConnectionInfo cxInfo, object context, QueryExecutionManager executionManager)
         {
-            OBM.CurrentSqlTracer = new LinqPadWriter(executionManager.SqlTranslationWriter);
+            var sqlTracer = new LinqPadWriter(executionManager.SqlTranslationWriter);
+            OBM.CurrentSqlTracer = sqlTracer;
+
+            // If there's already a transaction, than set the SQL Tracer into that transaction
+            var transaction = OBM.CurrentTransaction;
+            var tcontext = transaction != null ? transaction.TransactionContext : null;
+            var persister = tcontext != null ? tcontext.Persister : null;
+
+            if (persister != null)
+                persister.SqlTracer = sqlTracer;
+        }
+
+        public override IEnumerable<string> GetNamespacesToAdd()
+        {
+            return new[] {"AdFactum.Data.Linq"};
+        }
+
+        public override IEnumerable<string> GetAssembliesToAdd()
+        {
+            return new[] {"ObjectMapper.dll"};
         }
 
         /// <summary>
@@ -71,13 +120,22 @@ namespace ObjectMapper2LinqPad
         {
             var valueTypes = customType.GetProperties().Where(
                 property => property.PropertyType.IsQueryable()
-                ).Select(queryable => new { queryable.Name, Selector = queryable.PropertyType.GetGenericArguments().First() });
+                ).OrderBy(queryable => queryable.Name)
+                .Select(queryable => new { queryable.Name, Selector = queryable.PropertyType.GetGenericArguments().First() });
 
             var result = new List<ExplorerItem>();
             foreach (var valueType in valueTypes)
             {
-                var valueTypeItem = new ExplorerItem(valueType.Name, ExplorerItemKind.QueryableObject, ExplorerIcon.Table);
-                valueTypeItem.Children = EvaluateValueObject(valueType.Selector);
+                ExplorerIcon icon = valueType.Selector.GetCustomAttributes(typeof (ViewAttribute), false).Length > 0
+                                        ? ExplorerIcon.View
+                                        : valueType.Selector.IsValueObjectType() || 
+                                        ( valueType.Selector.IsGenericType && valueType.Selector.GetGenericTypeDefinition() == typeof(LinkBridge<,>) )
+                                              ? ExplorerIcon.Table
+                                              : ExplorerIcon.View;
+
+                var valueTypeItem = new ExplorerItem(valueType.Name, ExplorerItemKind.QueryableObject, icon);
+
+                valueTypeItem.Children = EvaluateValueObject(valueType.Selector, new HashSet<Type>());
                 result.Add(valueTypeItem);
             }
             return result;
@@ -88,8 +146,10 @@ namespace ObjectMapper2LinqPad
         /// </summary>
         /// <param name="customType">Type of the custom.</param>
         /// <returns></returns>
-        private List<ExplorerItem> EvaluateValueObject(Type customType)
+        private List<ExplorerItem> EvaluateValueObject(Type customType, HashSet<Type> evaluatedTypes)
         {
+            evaluatedTypes.Add(customType);
+
             var properties = new List<ExplorerItem>();
             foreach (var pmi in ReflectionHelper.GetPropertyMetaInfos(customType)
                 .Where(pmi => !pmi.IsIgnore && !pmi.IsVirtualLink).OrderBy(pmi=>pmi.PropertyName))
@@ -116,11 +176,11 @@ namespace ObjectMapper2LinqPad
                 properties.Add(explorerItem);
 
                 // Perhaps we can go more deeper
-                if (pmi.Association == AssociationType.OneToOne)
-                    explorerItem.Children = EvaluateValueObject(pmi.LinkTarget);
+                if (pmi.Association == AssociationType.OneToOne && !evaluatedTypes.Contains(pmi.LinkTarget))
+                    explorerItem.Children = EvaluateValueObject(pmi.LinkTarget, evaluatedTypes);
 
             }
-
+            evaluatedTypes.Remove(customType);
             return properties;
         }
 
