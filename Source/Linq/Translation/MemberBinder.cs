@@ -583,9 +583,20 @@ namespace AdFactum.Data.Linq.Translation
                 var take = Visit(select.Take);
                 var selector = Visit(select.Selector);
                 var defaultIfEmpty = Visit(select.DefaultIfEmpty);
-                var projection = selector != null
-                                     ? new ProjectionClass(selector)
-                                     : select.Projection;
+                ProjectionClass projection;
+
+                if (selector != null)
+                {
+                    projection = new ProjectionClass(selector);
+                }
+                else
+                {
+                    projection = select.Projection;
+
+                    // If the new projection equals the old projection, than take the old one, because it is enriched with more infos
+                    if (projection == null || projection.ProjectedType == currentFrom.Projection.ProjectedType)
+                        projection = currentFrom.Projection;
+                }
 
                 if (currentFrom != select.From
                     || where != select.Where

@@ -152,8 +152,14 @@ namespace AdFactum.Data.Linq.Translation
                         return base.VisitLambda(lambda);
                 }
 
-            // In all other cases, do normal lambda processing
-            var result = (LambdaExpression) base.VisitLambda(lambda);
+
+            // Maybe we have to correct the result of the Lambda Expression in case of !!! Employees.Where(e=>e.Disabled) !!!
+            var corrected = CorrectComparisonWithoutOperator(lambda.Body);
+            if (lambda.Body != corrected)
+                lambda = UpdateLambda(lambda, lambda.Type, corrected, lambda.Parameters);
+
+            // Now do normal lambda processing
+            var result = (LambdaExpression)base.VisitLambda(lambda);
             return result;
         }
 
@@ -1509,18 +1515,11 @@ namespace AdFactum.Data.Linq.Translation
         /// <returns></returns>
         protected override Expression VisitBinary(BinaryExpression b)
         {
-            var unaryLeft = b.Left as UnaryExpression;
-            var unaryRight = b.Right as UnaryExpression;
 
             // Perhaps we have on the left or right side, a single boolean expression
             // If that's the case we implicit have to add a EQUAL Compare
-            var newLeft = b.Left;
-            if ((b.Left is MemberExpression || (unaryLeft != null && unaryLeft.Operand is MemberExpression)) && b.Left.Type == typeof(bool))
-                newLeft = Expression.MakeBinary(ExpressionType.Equal, b.Left, Expression.Constant(true));
-
-            var newRight = b.Right;
-            if ((b.Right is MemberExpression || (unaryRight != null && unaryRight.Operand is MemberExpression)) && b.Right.Type == typeof(bool))
-                newRight = Expression.MakeBinary(ExpressionType.Equal, b.Right, Expression.Constant(true));
+            Expression newLeft = CorrectComparisonWithoutOperator(b.Left);
+            Expression newRight = CorrectComparisonWithoutOperator(b.Right);
 
             if (newLeft != b.Left || newRight != b.Right)
             {
@@ -1530,6 +1529,20 @@ namespace AdFactum.Data.Linq.Translation
 
             // if everything is normal, than continue the binary way
             return base.VisitBinary(b);
+        }
+
+        /// <summary>
+        /// This method corrects a comparison, if that is necessary
+        /// </summary>
+        /// <param name="ex"></param>
+        /// <returns></returns>
+        private static Expression CorrectComparisonWithoutOperator(Expression ex)
+        {
+            var unaryLeft = ex as UnaryExpression;
+            var newLeft = ex;
+            if ((ex is MemberExpression || (unaryLeft != null && unaryLeft.Operand is MemberExpression)) && ex.Type == typeof(bool))
+                newLeft = Expression.MakeBinary(ExpressionType.Equal, ex, Expression.Constant(true));
+            return newLeft;
         }
 
         /// <summary>

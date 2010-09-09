@@ -991,7 +991,7 @@ namespace AdFactum.Data.Internal
             if (ProjectedType.IsReadOnlyType())
                 return null;
 
-            primaryKeyDescription = GetFieldTemplates(false).FirstOrDefault(primary => primary.Value.IsPrimary).Value;
+            primaryKeyDescription = GetFieldTemplates(false).FirstOrDefault(primary => primary.Value != null && primary.Value.IsPrimary).Value;
             if (primaryKeyDescription == null)
                 throw new NoPrimaryKeyFoundException(ProjectedType);
 
