@@ -808,7 +808,7 @@ namespace AdFactum.Data.Internal
 
                 if (field.Value.FieldType.Equals(typeof(SpecializedLink)))
                 {
-                    var memberAccess = new PropertyExpression(field.Value.ContentType, this, tableAlias, field.Value);
+                    var memberAccess = new PropertyExpression(field.Value.CustomProperty.MetaInfo.LinkedPrimaryKeyType, this, tableAlias, field.Value);
                     columns.Add(new ColumnDeclaration(memberAccess, field.Value));
                 }
             }

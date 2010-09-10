@@ -50,22 +50,22 @@ namespace AdFactum.Data.Linq.Translation
         protected override Expression VisitSelectExpression(SelectExpression expression)
         {
             var result = base.VisitSelectExpression(expression);
-            SelectExpression select = result as SelectExpression;
+            var select = result as SelectExpression;
             if (select == null || select.From == null)
                 return result;
 
-            IDbExpressionWithResult from = select.From as IDbExpressionWithResult;
+            var from = select.From as IDbExpressionWithResult;
             if (from == null)
                 return result;
 
             foreach (var column in select.Columns)
             {
-                PropertyExpression property = column.Expression as PropertyExpression;
+                var property = column.Expression as PropertyExpression;
                 if (property == null || property.ReferringColumn == null)
                     continue;
 
                 var refColumn = property.ReferringColumn;
-                if (!from.Columns.Any(fc => fc.Equals(refColumn)))
+                if (!from.Columns.Any(fc => DbExpressionComparer.AreEqual(fc.Expression, refColumn.Expression)))
                     throw new NoValidReferingColumnFound(refColumn, from);
             }
 

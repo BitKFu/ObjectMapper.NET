@@ -75,7 +75,11 @@ namespace AdFactum.Data.Linq.Expressions
 
         /// <summary> Defines a systime expression </summary>
         SysTime,
+
+        /// <summary> Defines a Scalar Expression, which returns one value </summary>
         ScalarExpression,
+
+        /// <summary> The Late Binding is used for some Select Expressions where the Physical Select Statement can't be evaluated at parse time </summary>
         LateBinding
     }
 
@@ -319,15 +323,15 @@ namespace AdFactum.Data.Linq.Expressions
             ReferringColumn = copy.ReferringColumn;
         }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="PropertyExpression"/> class.
-        /// </summary>
-        /// <param name="fromAlias">From alias.</param>
-        /// <param name="column">The column.</param>
-        public PropertyExpression(AliasedExpression fromAlias, PropertyInfo column) 
-            :this(fromAlias.Projection, fromAlias.Alias, column)
-        {
-        }
+        ///// <summary>
+        ///// Initializes a new instance of the <see cref="PropertyExpression"/> class.
+        ///// </summary>
+        ///// <param name="fromAlias">From alias.</param>
+        ///// <param name="column">The column.</param>
+        //public PropertyExpression(AliasedExpression fromAlias, PropertyInfo column) 
+        //    :this(fromAlias.Projection, fromAlias.Alias, column)
+        //{
+        //}
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PropertyExpression"/> class.

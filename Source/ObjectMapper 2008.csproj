@@ -198,7 +198,9 @@
     <Compile Include="Linq\Translation\SortAccessJoins.cs" />
     <Compile Include="Linq\Translation\SqlIdRewriter.cs" />
     <Compile Include="Linq\Translation\SqlOrderByRewriter.cs" />
-    <Compile Include="Linq\Translation\SubqueryRemover.cs" />
+    <Compile Include="Linq\Translation\SubqueryRemover.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Linq\Translation\TableExpressionFinder.cs" />
     <Compile Include="Linq\Translation\TypeChecker.cs" />
     <Compile Include="Linq\Translation\UpdateProjection.cs" />

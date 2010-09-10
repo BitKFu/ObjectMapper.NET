@@ -47,7 +47,7 @@ namespace AdFactum.Data.Linq.Translation
             List<SelectExpression> redundant = RedundantSubqueryGatherer.Gather(select.From, dynamicCache);
             if (redundant != null)
             {
-                select = SubqueryRemover.Remove(select, redundant, dynamicCache);
+                select = (SelectExpression) SubqueryRemover.Remove(select, dynamicCache, redundant);
 
                 // Add this removement in order to adjust the columns
                 SelectExpression removedWith = select;
@@ -199,17 +199,13 @@ namespace AdFactum.Data.Linq.Translation
                 return result;
             }
 
-            //protected override Expression VisitSubquery(SubqueryExpression subquery)
-            //{
-            //    // don't gather inside scalar & exists
-            //    return subquery;
-            //}
         }
 
         class SubqueryMerger : DbExpressionVisitor
         {
-            Cache<Type, ProjectionClass> dynamicCache;
             private AliasedExpression currentFrom;
+            private readonly Cache<Type, ProjectionClass> dynamicCache;
+            private readonly Dictionary<Alias, IDbExpressionWithResult> redundantSelect = new Dictionary<Alias, IDbExpressionWithResult>();
 
             private SubqueryMerger(Cache<Type, ProjectionClass> dynamicCache)
             {
@@ -280,6 +276,10 @@ namespace AdFactum.Data.Linq.Translation
                                 select.From, where, orderBy, groupBy, skip, take, isDistinct, select.IsReverse, select.SelectResult,
                                 select.SqlId ?? fromSelect.SqlId, select.Hint ?? fromSelect.Hint, select.DefaultIfEmpty);
                         }
+
+                        // Add the select that can be removed
+                        if (!redundantSelect.ContainsKey(fromSelect.Alias))
+                            redundantSelect.Add(fromSelect.Alias, select);
                     }
 
                     return select;
@@ -306,26 +306,6 @@ namespace AdFactum.Data.Linq.Translation
                 }
             }
 
-            ///// <summary>
-            ///// Visits the column expression
-            ///// </summary>
-            ///// <param name="expression"></param>
-            ///// <returns></returns>
-            //protected override Expression VisitColumn(PropertyExpression expression)
-            //{
-            //    IDbExpressionWithResult resultFrom = ((IDbExpressionWithResult)currentFrom);
-
-            //    var originalProperty = OriginPropertyFinder.Find(expression);
-            //    if (originalProperty == null || resultFrom == null || resultFrom.FromExpression == null)
-            //        return base.VisitColumn(expression);
-
-            //    // return the column of the current select expression
-            //    var columns = resultFrom.FromExpression.Columns;
-            //    var result = columns.Where(x => x.OriginalProperty == originalProperty).FirstOrDefault();
-
-            //    return new PropertyExpression(resultFrom.FromExpression as AliasedExpression, result).SetType(expression.Type);
-            //}
-
             private static SelectExpression GetLeftMostSelect(Expression source)
             {
                 var select = source as SelectExpression;
@@ -345,6 +325,31 @@ namespace AdFactum.Data.Linq.Translation
                         return false;
                 }
                 return true;
+            }
+
+            /// <summary>
+            /// Check the property expressions
+            /// </summary>
+            /// <param name="expression"></param>
+            /// <returns></returns>
+            protected override Expression VisitColumn(PropertyExpression expression)
+            {
+                var refColumn = expression.ReferringColumn;
+                if (refColumn == null)
+                    return base.VisitColumn(expression);
+
+                var refProperty = refColumn.Expression as PropertyExpression;
+                if (refProperty == null)
+                    return base.VisitColumn(expression);
+
+                IDbExpressionWithResult newFromSelection;
+                if (redundantSelect.TryGetValue(refProperty.Alias, out newFromSelection))
+                {
+                    // Now shortcut the ReferringColumn
+                    expression.ReferringColumn = refProperty.ReferringColumn;
+                }
+
+                return base.VisitColumn(expression);
             }
 
             private static bool CanMergeWithFrom(SelectExpression select, bool isTopLevel)
