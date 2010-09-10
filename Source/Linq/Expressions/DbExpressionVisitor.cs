@@ -344,10 +344,31 @@ namespace AdFactum.Data.Linq.Expressions
             var defaultIfEmpty = Visit(select.DefaultIfEmpty);
 
             var projection = selector != null
+                // If we have a new selector, than create the projection based on that selector
                                  ? new ProjectionClass(selector)
-                                 : select.Projection;
+                // If we have no selector, than visit the current projection and see, if something has to be amendet.   
+                                 : VisitProjection(select.Projection);  
 
             return UpdateSelect(select, projection, selector, from, where, orderBy, groupBy, skip, take, select.IsDistinct, select.IsReverse, columns, select.SqlId, select.Hint, defaultIfEmpty);
+        }
+
+        /// <summary>
+        /// Visits the projection and update the complex column mappings
+        /// </summary>
+        /// <param name="projection"></param>
+        /// <returns></returns>
+        private ProjectionClass VisitProjection(ProjectionClass projection)
+        {
+            if (projection == null)
+                return null;
+
+            if (projection.ComplexTypeColumnMapping != null)
+                for (int x = 0; x < projection.ComplexTypeColumnMapping.Length; x++)
+                    projection.ComplexTypeColumnMapping[x] = projection.ComplexTypeColumnMapping[x] != null
+                        ? VisitColumnDeclarations(projection.ComplexTypeColumnMapping[x])
+                        : null;
+
+            return projection;
         }
 
         protected SelectExpression UpdateSelect(SelectExpression select, ProjectionClass projection, Expression selector, 

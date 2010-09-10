@@ -189,7 +189,7 @@ namespace AdFactum.Data.Linq.Expressions
         public Type ParentType { get; private set; }
 
         /// <summary> Is set, if the property referes to an other alias member </summary>
-        public ColumnDeclaration ReferringColumn { get; private set; }
+        public ColumnDeclaration ReferringColumn { get; set; }
 
         /// <summary> Gets or sets a value indicating whether this <see cref="PropertyExpression"/> is expandable. </summary>
         public bool Expandable { get { return ContentType.IsValueObjectType(); } }
