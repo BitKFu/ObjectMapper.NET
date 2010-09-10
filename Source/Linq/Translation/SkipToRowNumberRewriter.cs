@@ -15,6 +15,7 @@ namespace AdFactum.Data.Linq.Translation
     public class SkipToRowNumberRewriter : DbExpressionVisitor
     {
         private readonly Cache<Type, ProjectionClass> dynamicCache;
+        private readonly Dictionary<Alias, IDbExpressionWithResult> redundantSelect = new Dictionary<Alias, IDbExpressionWithResult>();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SkipToRowNumberRewriter"/> class.
@@ -85,31 +86,6 @@ namespace AdFactum.Data.Linq.Translation
                                 Ordering.Asc,
                                 newSelect.Columns.First().Expression)};
                     }
-
-
-                    //var selectionType = fromAlias.Type.RevealType();
-                    //var selectionProjection = ReflectionHelper.GetProjection(selectionType, dynamicCache);
-
-                    //if (selectionProjection != null)
-                    //{
-                    //    var primaryKey = selectionProjection.GetPrimaryKeyDescription();
-                    //    var orderExpression = new PropertyExpression(fromAlias, primaryKey.CustomProperty.PropertyInfo);
-                        
-                    //    // Find the original column, because thus have referenced columsn info set
-                    //    var column = select.Columns.FirstOrDefault(x => x.Expression.Equals(orderExpression));
-
-                    //    orderExpressions = new List<OrderExpression>{
-                    //        new OrderExpression(
-                    //            Ordering.Asc,
-                    //            column.Expression)}; //selectionType
-                    //}
-                    //else
-                    //{
-                    //    orderExpressions = new List<OrderExpression>{
-                    //        new OrderExpression(
-                    //            Ordering.Asc,
-                    //            newSelect.Columns.First().Expression)};
-                    //}
                 }
 
                 var newBoundOrderings = OrderByRewriter.BindToSelection(newSelect, orderExpressions);
@@ -147,9 +123,38 @@ namespace AdFactum.Data.Linq.Translation
                 }
                 newSelect = newSelect.SetWhere(where);
 
+                redundantSelect.Add(select.Alias, newSelect);
                 select = newSelect;
             }
             return select;
         }
+
+        /// <summary>
+        /// Check the property expressions
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <returns></returns>
+        protected override Expression VisitColumn(PropertyExpression expression)
+        {
+            IDbExpressionWithResult newFromSelection;
+            if (redundantSelect.TryGetValue(expression.Alias, out newFromSelection))
+            {
+                // Now shortcut the ReferringColumn
+                expression.ReferringColumn = FindSourceColumn(newFromSelection as AliasedExpression, expression.ReferringColumn);
+
+                var refColumn = expression.ReferringColumn;
+                if (refColumn == null)
+                    return base.VisitColumn(expression);
+
+                var refProperty = refColumn.Expression as PropertyExpression;
+                if (refProperty == null)
+                    return base.VisitColumn(expression);
+
+                expression.ReferringColumn = refProperty.ReferringColumn;
+            }
+
+            return base.VisitColumn(expression);
+        }
+
     }
 }

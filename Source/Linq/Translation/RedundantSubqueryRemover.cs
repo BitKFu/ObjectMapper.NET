@@ -14,7 +14,8 @@ namespace AdFactum.Data.Linq.Translation
     /// </summary>
     public class RedundantSubqueryRemover : DbExpressionVisitor
     {
-        private Cache<Type, ProjectionClass> dynamicCache;
+        private readonly Cache<Type, ProjectionClass> dynamicCache;
+        private readonly Dictionary<Alias, IDbExpressionWithResult> redundantSelect = new Dictionary<Alias, IDbExpressionWithResult>();
 
         private RedundantSubqueryRemover(Cache<Type, ProjectionClass> dynamicCache) 
         {
@@ -32,6 +33,8 @@ namespace AdFactum.Data.Linq.Translation
         public static Expression Remove(Expression expression, Cache<Type, ProjectionClass> dynamicCache) 
         {
             expression = new RedundantSubqueryRemover(dynamicCache).Visit(expression);
+            ReferingColumnChecker.Validate(expression);
+
             expression = SubqueryMerger.Merge(expression, dynamicCache);
             return expression;
         }
@@ -46,6 +49,14 @@ namespace AdFactum.Data.Linq.Translation
             {
                 select = SubqueryRemover.Remove(select, redundant, dynamicCache);
 
+                // Add this removement in order to adjust the columns
+                SelectExpression removedWith = select;
+                redundant.ForEach(removedSelection =>
+                                      {
+                                          if (!redundantSelect.ContainsKey(removedSelection.Alias))
+                                              redundantSelect.Add(removedSelection.Alias, removedWith);
+                                      });
+
                 // Gather the SQL Id and first hint
                 var sqlId = redundant.Where(selection => !string.IsNullOrEmpty(selection.SqlId)).Select(selection=>selection.SqlId).FirstOrDefault();
                 var hint = redundant.Where(selection => !string.IsNullOrEmpty(selection.Hint)).Select(selection=>selection.Hint).FirstOrDefault();
@@ -57,6 +68,31 @@ namespace AdFactum.Data.Linq.Translation
                 }
             }
             return select;
+        }
+
+        /// <summary>
+        /// Check the property expressions
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <returns></returns>
+        protected override Expression VisitColumn(PropertyExpression expression)
+        {
+            var refColumn = expression.ReferringColumn;
+            if (refColumn == null)
+                return base.VisitColumn(expression);
+
+            var refProperty = refColumn.Expression as PropertyExpression;
+            if (refProperty == null)
+                return base.VisitColumn(expression);
+
+            IDbExpressionWithResult newFromSelection;
+            if (redundantSelect.TryGetValue(refProperty.Alias, out newFromSelection))
+            {
+                // Now shortcut the ReferringColumn
+                expression.ReferringColumn = refProperty.ReferringColumn;
+            }
+
+            return base.VisitColumn(expression);
         }
 
         internal static bool IsSimpleProjection(SelectExpression select)
@@ -239,27 +275,6 @@ namespace AdFactum.Data.Linq.Translation
                         {
                             var selector = select.Selector;
                             var readonlyColumns = select.Columns;
-
-                            //ReadOnlyCollection<ColumnDeclaration> readonlyColumns;
-                            //Expression selector = null;
-
-                            //if (select.Selector != null)
-                            //{
-                            //    selector = select.Selector;
-                            //    readonlyColumns = select.Columns;
-                            //}
-                            //else
-                            //    if (fromSelect.Selector != null)
-                            //    {
-                            //        selector = fromSelect.Selector;
-                            //        readonlyColumns = fromSelect.Columns;
-                            //    }
-
-                            //    else
-                            //    {
-                            //        var columns = ColumnProjector.Evaluate(select.From, dynamicCache).ToList();
-                            //        readonlyColumns = new ReadOnlyCollection<ColumnDeclaration>(columns);
-                            //    }
 
                             select = new SelectExpression(select.Type, select.Projection, select.Alias, readonlyColumns, selector, 
                                 select.From, where, orderBy, groupBy, skip, take, isDistinct, select.IsReverse, select.SelectResult,

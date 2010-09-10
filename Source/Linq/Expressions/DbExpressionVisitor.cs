@@ -349,7 +349,14 @@ namespace AdFactum.Data.Linq.Expressions
                 // If we have no selector, than visit the current projection and see, if something has to be amendet.   
                                  : VisitProjection(select.Projection);  
 
-            return UpdateSelect(select, projection, selector, from, where, orderBy, groupBy, skip, take, select.IsDistinct, select.IsReverse, columns, select.SqlId, select.Hint, defaultIfEmpty);
+            var result = UpdateSelect(select, projection, selector, from, where, orderBy, groupBy, skip, take, select.IsDistinct, select.IsReverse, columns, select.SqlId, select.Hint, defaultIfEmpty);
+
+#if DEBUG
+            // Check, if ater the SelectExpression the columns are valid
+            if (!(this is ReferingColumnChecker))
+                ReferingColumnChecker.Validate(result); 
+#endif
+            return result;
         }
 
         /// <summary>
