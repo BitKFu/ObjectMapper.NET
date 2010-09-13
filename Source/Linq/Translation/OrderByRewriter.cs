@@ -55,7 +55,7 @@ namespace AdFactum.Data.Linq.Translation
         /// <param name="select">The select.</param>
         /// <param name="orderings">The orderings.</param>
         /// <returns></returns>
-        public static IList<OrderExpression> BindToSelection(SelectExpression select, List<OrderExpression> orderings)
+        public static List<OrderExpression> BindToSelection(SelectExpression select, List<OrderExpression> orderings)
         {
             var newOrderings = new List<OrderExpression>();
             foreach (var oe in orderings)
