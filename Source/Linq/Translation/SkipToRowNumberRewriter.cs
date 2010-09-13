@@ -12,16 +12,17 @@ namespace AdFactum.Data.Linq.Translation
     /// <summary>
     /// Rewrites take & skip expressions into uses of TSQL row_number function
     /// </summary>
-    public class SkipToRowNumberRewriter : DbExpressionVisitor
+    public class SkipToRowNumberRewriter : RedundanceRemover
     {
         private readonly Cache<Type, ProjectionClass> dynamicCache;
-        private readonly Dictionary<Alias, IDbExpressionWithResult> redundantSelect = new Dictionary<Alias, IDbExpressionWithResult>();
+        //private readonly Dictionary<Alias, IDbExpressionWithResult> redundantSelect = new Dictionary<Alias, IDbExpressionWithResult>();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SkipToRowNumberRewriter"/> class.
         /// </summary>
         /// <param name="cache">The cache.</param>
         private SkipToRowNumberRewriter(Cache<Type, ProjectionClass> cache)
+            :base(ReferenceDirection.Forward)
         {
             dynamicCache = cache;
 
@@ -123,38 +124,38 @@ namespace AdFactum.Data.Linq.Translation
                 }
                 newSelect = newSelect.SetWhere(where);
 
-                redundantSelect.Add(select.Alias, newSelect);
+                RedundantSelect.Add(select.Alias, newSelect);
                 select = newSelect;
             }
             return select;
         }
 
-        /// <summary>
-        /// Check the property expressions
-        /// </summary>
-        /// <param name="expression"></param>
-        /// <returns></returns>
-        protected override Expression VisitColumn(PropertyExpression expression)
-        {
-            IDbExpressionWithResult newFromSelection;
-            if (redundantSelect.TryGetValue(expression.Alias, out newFromSelection))
-            {
-                // Now shortcut the ReferringColumn
-                expression.ReferringColumn = FindSourceColumn(newFromSelection as AliasedExpression, expression.ReferringColumn);
+        ///// <summary>
+        ///// Check the property expressions
+        ///// </summary>
+        ///// <param name="expression"></param>
+        ///// <returns></returns>
+        //protected override Expression VisitColumn(PropertyExpression expression)
+        //{
+            //IDbExpressionWithResult newFromSelection;
+            //if (RedundantSelect.TryGetValue(expression.Alias, out newFromSelection))
+            //{
+            //    // Now shortcut the ReferringColumn
+            //    expression.ReferringColumn = FindSourceColumn(newFromSelection as AliasedExpression, expression.ReferringColumn);
 
-                var refColumn = expression.ReferringColumn;
-                if (refColumn == null)
-                    return base.VisitColumn(expression);
+            //    var refColumn = expression.ReferringColumn;
+            //    if (refColumn == null)
+            //        return base.VisitColumn(expression);
 
-                var refProperty = refColumn.Expression as PropertyExpression;
-                if (refProperty == null)
-                    return base.VisitColumn(expression);
+            //    var refProperty = refColumn.Expression as PropertyExpression;
+            //    if (refProperty == null)
+            //        return base.VisitColumn(expression);
 
-                expression.ReferringColumn = refProperty.ReferringColumn;
-            }
+            //    expression.ReferringColumn = refProperty.ReferringColumn;
+            //}
 
-            return base.VisitColumn(expression);
-        }
+            //return base.VisitColumn(expression);
+        //}
 
     }
 }

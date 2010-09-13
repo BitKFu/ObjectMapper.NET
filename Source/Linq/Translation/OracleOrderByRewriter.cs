@@ -70,10 +70,10 @@ namespace AdFactum.Data.Linq.Translation
             // maybe we already gathered some orderings, than append them now
             if (canReceiveOrderings && GatheredOrderings.Count > 0 && !canPassOnOrderings)
             {
-                IEnumerable<OrderExpression> bindToSelection = BindToSelection(select, GatheredOrderings);
+                GatheredOrderings = BindToSelection(select, GatheredOrderings);
 
                 if (hasOrderBy) orderByColumns.AddRange(select.OrderBy);
-                if (bindToSelection != null) orderByColumns.AddRange(bindToSelection);
+                if (GatheredOrderings != null) orderByColumns.AddRange(GatheredOrderings);
 
                 // Return order
                 return new SelectExpression(select.Type, select.Projection, select.Alias, select.Columns, select.Selector, select.From, select.Where,
@@ -93,12 +93,24 @@ namespace AdFactum.Data.Linq.Translation
             {
                 // Check if the current ordering, does not exisit in the list
                 if (!GatheredOrderings.Any(x => select.OrderBy.Any(o => DbExpressionComparer.AreEqual(o.Expression, x.Expression))))
+                {
                     GatheredOrderings.AddRange(select.OrderBy);
+
+                    // Try to update all gatheredOrderings to the current selection
+                    GatheredOrderings = BindToSelection(select, GatheredOrderings);
+                }
 
                 // return without ordering
                 return new SelectExpression(select.Type, select.Projection, select.Alias, select.Columns, select.Selector, select.From,
                                             select.Where,null, select.GroupBy, select.Skip, select.Take, select.IsDistinct, false,
                                             select.SelectResult, select.SqlId, select.Hint, select.DefaultIfEmpty);
+            }
+
+            // Maybe we have to rebind the orderings
+            if (GatheredOrderings.Count>0)
+            {
+                // Try to update all gatheredOrderings to the current selection
+                GatheredOrderings = BindToSelection(select, GatheredOrderings);
             }
 
             return select;

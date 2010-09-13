@@ -130,7 +130,7 @@ namespace AdFactum.Data.Linq.Translation
         /// <returns></returns>
         protected override Expression VisitColumn(PropertyExpression expression)
         {
-            columns.Add(new ColumnDeclaration(expression, Alias.Generate(AliasType.Column)));
+            columns.Add(new ColumnDeclaration(expression, Alias.Generate(expression.Name))); //.Generate(AliasType.Column)));
             return expression;
         }
 

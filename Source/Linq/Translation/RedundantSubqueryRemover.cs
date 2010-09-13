@@ -15,9 +15,10 @@ namespace AdFactum.Data.Linq.Translation
     public class RedundantSubqueryRemover : DbExpressionVisitor
     {
         private readonly Cache<Type, ProjectionClass> dynamicCache;
-        private readonly Dictionary<Alias, IDbExpressionWithResult> redundantSelect = new Dictionary<Alias, IDbExpressionWithResult>();
+        private readonly Dictionary<Alias, IDbExpressionWithResult> RedundantSelect = new Dictionary<Alias, IDbExpressionWithResult>();
 
         private RedundantSubqueryRemover(Cache<Type, ProjectionClass> dynamicCache) 
+            //:base(ReferenceDirection.Forward)
         {
             this.dynamicCache = dynamicCache;
 #if TRACE
@@ -53,8 +54,8 @@ namespace AdFactum.Data.Linq.Translation
                 SelectExpression removedWith = select;
                 redundant.ForEach(removedSelection =>
                                       {
-                                          if (!redundantSelect.ContainsKey(removedSelection.Alias))
-                                              redundantSelect.Add(removedSelection.Alias, removedWith);
+                                          if (!RedundantSelect.ContainsKey(removedSelection.Alias))
+                                              RedundantSelect.Add(removedSelection.Alias, removedWith);
                                       });
 
                 // Gather the SQL Id and first hint
@@ -86,7 +87,7 @@ namespace AdFactum.Data.Linq.Translation
                 return base.VisitColumn(expression);
 
             IDbExpressionWithResult newFromSelection;
-            if (redundantSelect.TryGetValue(refProperty.Alias, out newFromSelection))
+            if (RedundantSelect.TryGetValue(refProperty.Alias, out newFromSelection))
             {
                 // Now shortcut the ReferringColumn
                 expression.ReferringColumn = refProperty.ReferringColumn;
@@ -201,13 +202,14 @@ namespace AdFactum.Data.Linq.Translation
 
         }
 
-        class SubqueryMerger : DbExpressionVisitor
+        class SubqueryMerger : RedundanceRemover
         {
             private AliasedExpression currentFrom;
             private readonly Cache<Type, ProjectionClass> dynamicCache;
-            private readonly Dictionary<Alias, IDbExpressionWithResult> redundantSelect = new Dictionary<Alias, IDbExpressionWithResult>();
+            //private readonly Dictionary<Alias, IDbExpressionWithResult> redundantSelect = new Dictionary<Alias, IDbExpressionWithResult>();
 
             private SubqueryMerger(Cache<Type, ProjectionClass> dynamicCache)
+                : base(ReferenceDirection.Backward)
             {
                 this.dynamicCache = dynamicCache;
 #if TRACE
@@ -278,8 +280,8 @@ namespace AdFactum.Data.Linq.Translation
                         }
 
                         // Add the select that can be removed
-                        if (!redundantSelect.ContainsKey(fromSelect.Alias))
-                            redundantSelect.Add(fromSelect.Alias, select);
+                        if (!RedundantSelect.ContainsKey(fromSelect.Alias))
+                            RedundantSelect.Add(fromSelect.Alias, select);
                     }
 
                     return select;
@@ -327,30 +329,36 @@ namespace AdFactum.Data.Linq.Translation
                 return true;
             }
 
-            /// <summary>
-            /// Check the property expressions
-            /// </summary>
-            /// <param name="expression"></param>
-            /// <returns></returns>
-            protected override Expression VisitColumn(PropertyExpression expression)
-            {
-                var refColumn = expression.ReferringColumn;
-                if (refColumn == null)
-                    return base.VisitColumn(expression);
+            ///// <summary>
+            ///// Check the property expressions
+            ///// </summary>
+            ///// <param name="expression"></param>
+            ///// <returns></returns>
+            //protected override Expression VisitColumn(PropertyExpression expression)
+            //{
+            //    // Maybe the expression itself is wrong.
+            //    IDbExpressionWithResult newFromSelection;
+            //    if (expression.ReferringColumn != null && redundantSelect.TryGetValue(expression.Alias, out newFromSelection))
+            //    {
+            //        // Now shortcut the ReferringColumn
+            //        var shortCut = expression.ReferringColumn.Expression;
 
-                var refProperty = refColumn.Expression as PropertyExpression;
-                if (refProperty == null)
-                    return base.VisitColumn(expression);
+            //        // Maybe we have to adjust the type
+            //        var aliasedExpression = shortCut as AliasedExpression;
+            //        if (aliasedExpression != null)
+            //            shortCut = aliasedExpression.SetType(expression.Type);
 
-                IDbExpressionWithResult newFromSelection;
-                if (redundantSelect.TryGetValue(refProperty.Alias, out newFromSelection))
-                {
-                    // Now shortcut the ReferringColumn
-                    expression.ReferringColumn = refProperty.ReferringColumn;
-                }
+            //        return shortCut;
+            //    }
 
-                return base.VisitColumn(expression);
-            }
+            //    // If we have a referring column, than visit it
+            //    if (expression.ReferringColumn != null)
+            //        expression.ReferringColumn = new ColumnDeclaration(
+            //            Visit(expression.ReferringColumn.Expression), 
+            //            expression.ReferringColumn.Alias);
+
+            //    return base.VisitColumn(expression);
+            //}
 
             private static bool CanMergeWithFrom(SelectExpression select, bool isTopLevel)
             {

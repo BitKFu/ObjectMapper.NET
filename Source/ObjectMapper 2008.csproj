@@ -147,6 +147,7 @@
     <Compile Include="Internal\PersistentProperties.cs" />
     <Compile Include="Linq\Expressions\DbExpressionComparer.cs" />
     <Compile Include="Linq\Expressions\DbExpressionExtensions.cs" />
+    <Compile Include="Linq\Expressions\DbExpressionFinder.cs" />
     <Compile Include="Linq\Expressions\ExpressionComparer.cs" />
     <Compile Include="Linq\Expressions\TableExpression.cs" />
     <Compile Include="Linq\Language\AccessExpressionWriter.cs" />
@@ -188,6 +189,7 @@
     <Compile Include="Linq\Translation\QueryBinder.cs" />
     <Compile Include="Linq\Translation\QueryProviderFinder.cs" />
     <Compile Include="Linq\Translation\RebindToSelection.cs" />
+    <Compile Include="Linq\Translation\RedundanceRemover.cs" />
     <Compile Include="Linq\Translation\RedundantJoinRemover.cs" />
     <Compile Include="Linq\Translation\RedundantSubqueryRemover.cs" />
     <Compile Include="Linq\Expressions\Retriever.cs" />

@@ -12,16 +12,17 @@ namespace AdFactum.Data.Linq.Translation
     /// <summary>
     /// This class Removes a subquery from the expression tree
     /// </summary>
-    public class SubqueryRemover : DbExpressionVisitor
+    public class SubqueryRemover : RedundanceRemover
     {
         private List<SelectExpression> Redundant { get; set; }
-        private readonly Dictionary<Alias, IDbExpressionWithResult> redundantSelect = new Dictionary<Alias, IDbExpressionWithResult>();
+        //private readonly Dictionary<Alias, IDbExpressionWithResult> redundantSelect = new Dictionary<Alias, IDbExpressionWithResult>();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SubqueryRemover"/> class.
         /// </summary>
         /// <param name="redundant">The redundant.</param>
         private SubqueryRemover(List<SelectExpression> redundant)
+            :base(ReferenceDirection.Backward)
         {
             Redundant = redundant;
         }
@@ -52,38 +53,38 @@ namespace AdFactum.Data.Linq.Translation
             if (Redundant.Contains(select))
             {
                 var result = Visit(select.From);
-                redundantSelect.Add(select.Alias, (IDbExpressionWithResult) result);
+                RedundantSelect.Add(select.Alias, (IDbExpressionWithResult) result);
                 return result;
             }
 
             return base.VisitSelectExpression(select);
         }
 
-        /// <summary>
-        /// Check the property expressions
-        /// </summary>
-        /// <param name="expression"></param>
-        /// <returns></returns>
-        protected override Expression VisitColumn(PropertyExpression expression)
-        {
-            IDbExpressionWithResult newFromSelection;
-            if (redundantSelect.TryGetValue(expression.Alias, out newFromSelection))
-            {
-                // Shortcut the expression.
-                var shortCut = expression.ReferringColumn.Expression;
-                if (shortCut.Type != expression.Type)
-                {
-                    // Maybe we have to adjust the type
-                    var aliasedExpression = shortCut as AliasedExpression;
-                    if (aliasedExpression != null)
-                        shortCut = aliasedExpression.SetType(expression.Type);
-                }
+        ///// <summary>
+        ///// Check the property expressions
+        ///// </summary>
+        ///// <param name="expression"></param>
+        ///// <returns></returns>
+        //protected override Expression VisitColumn(PropertyExpression expression)
+        //{
+        //    IDbExpressionWithResult newFromSelection;
+        //    if (redundantSelect.TryGetValue(expression.Alias, out newFromSelection))
+        //    {
+        //        // Shortcut the expression.
+        //        var shortCut = expression.ReferringColumn.Expression;
+        //        if (shortCut.Type != expression.Type)
+        //        {
+        //            // Maybe we have to adjust the type
+        //            var aliasedExpression = shortCut as AliasedExpression;
+        //            if (aliasedExpression != null)
+        //                shortCut = aliasedExpression.SetType(expression.Type);
+        //        }
 
-                return Visit(shortCut);
-            }
+        //        return Visit(shortCut);
+        //    }
 
-            return base.VisitColumn(expression);
-        }
+        //    return base.VisitColumn(expression);
+        //}
 
     }
 }

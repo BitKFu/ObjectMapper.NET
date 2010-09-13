@@ -58,7 +58,8 @@ namespace AdFactum.Data.Linq.Expressions
                 return false;
             if (a.NodeType != b.NodeType)
                 return false;
-            if (a.Type != b.Type)
+
+            if (ExactMatch && a.Type != b.Type)
                 return false;
 
             switch ((DbExpressionType)a.NodeType)

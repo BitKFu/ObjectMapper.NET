@@ -65,7 +65,8 @@ namespace AdFactum.Data.Linq.Translation
                     continue;
 
                 var refColumn = property.ReferringColumn;
-                if (!from.Columns.Any(fc => DbExpressionComparer.AreEqual(fc.Expression, refColumn.Expression)))
+                if (!from.Columns.Any(fc => fc.Equals(refColumn) ||  // First, use a fast equal
+                                            DbExpressionComparer.AreEqual(fc.Expression, refColumn.Expression, false))) // sometimes, that's not enough
                     throw new NoValidReferingColumnFound(refColumn, from);
             }
 
@@ -80,7 +81,8 @@ namespace AdFactum.Data.Linq.Translation
                     continue;
 
                 var refColumn = property.ReferringColumn;
-                if (!from.Columns.Any(fc => DbExpressionComparer.AreEqual(fc.Expression, refColumn.Expression)))
+                if (!from.Columns.Any(fc => fc.Equals(refColumn) ||  // First, use a fast equal
+                                            DbExpressionComparer.AreEqual(fc.Expression, refColumn.Expression, false))) // sometimes, that's not enough
                     throw new NoValidReferingColumnFound(refColumn, from);
             }
 
