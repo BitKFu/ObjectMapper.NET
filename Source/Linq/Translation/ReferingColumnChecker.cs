@@ -69,6 +69,21 @@ namespace AdFactum.Data.Linq.Translation
                     throw new NoValidReferingColumnFound(refColumn, from);
             }
 
+            // If we don't have an order by - everything is ok
+            if (select.OrderBy == null)
+                return result;
+
+            foreach (var orderBy in select.OrderBy)
+            {
+                var property = orderBy.Expression as PropertyExpression;
+                if (property == null || property.ReferringColumn == null)
+                    continue;
+
+                var refColumn = property.ReferringColumn;
+                if (!from.Columns.Any(fc => DbExpressionComparer.AreEqual(fc.Expression, refColumn.Expression)))
+                    throw new NoValidReferingColumnFound(refColumn, from);
+            }
+
             return result;
         }
     }
