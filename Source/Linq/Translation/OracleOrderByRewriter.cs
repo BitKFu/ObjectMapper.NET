@@ -91,14 +91,12 @@ namespace AdFactum.Data.Linq.Translation
             // if the current expression has an order by, than gather it
             if (select.OrderBy != null)
             {
+                // Try to update all gatheredOrderings to the current selection
+                GatheredOrderings = BindToSelection(select, GatheredOrderings);
+
                 // Check if the current ordering, does not exisit in the list
                 if (!GatheredOrderings.Any(x => select.OrderBy.Any(o => DbExpressionComparer.AreEqual(o.Expression, x.Expression))))
-                {
                     GatheredOrderings.AddRange(select.OrderBy);
-
-                    // Try to update all gatheredOrderings to the current selection
-                    GatheredOrderings = BindToSelection(select, GatheredOrderings);
-                }
 
                 // return without ordering
                 return new SelectExpression(select.Type, select.Projection, select.Alias, select.Columns, select.Selector, select.From,

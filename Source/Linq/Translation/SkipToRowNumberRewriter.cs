@@ -74,18 +74,29 @@ namespace AdFactum.Data.Linq.Translation
                         {
                             // Find the original column, because thus have referenced columsn info set
                             var column = FindSourceColumn(select, orderBy);
+
+                            // Copy the expression
+                            PropertyExpression prop = column.Expression as PropertyExpression;
+                            Expression copy = (Expression) (prop != null ? prop.Clone() : column.Expression);
+
                             orderExpressions.Add(new OrderExpression(
                                                      Ordering.Asc,
-                                                     column.Expression));
+                                                     copy));
                         }
                     }
                     else
                     {
+                        var column = newSelect.Columns.First();
+
+                        // Copy the expression
+                        PropertyExpression prop = column.Expression as PropertyExpression;
+                        Expression copy = (Expression) (prop != null ? prop.Clone() : column.Expression);
+
                         // Order By the First Column
                         orderExpressions = new List<OrderExpression>{
                             new OrderExpression(
                                 Ordering.Asc,
-                                newSelect.Columns.First().Expression)};
+                                copy)};
                     }
                 }
 

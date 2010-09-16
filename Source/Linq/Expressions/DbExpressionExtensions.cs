@@ -47,7 +47,7 @@ namespace AdFactum.Data.Linq.Expressions
 
             var table = exp as TableExpression;
             if (table != null)
-                return new TableExpression(exp, alias);
+                return new TableExpression(table.Type, table.Projection, alias, table.Columns);
 
             var prop = exp as PropertyExpression;
             if (prop != null)
@@ -70,7 +70,7 @@ namespace AdFactum.Data.Linq.Expressions
 
             var table = exp as TableExpression;
             if (table != null)
-                return new TableExpression(exp, Alias.Generate(alias));
+                return new TableExpression(table.Type, table.Projection, Alias.Generate(alias), table.Columns);
 
             var prop = exp as PropertyExpression;
             if (prop != null)
@@ -104,7 +104,7 @@ namespace AdFactum.Data.Linq.Expressions
 
             var table = exp as TableExpression;
             if (table != null)
-                return new TableExpression(type, exp.Projection, exp.Alias);
+                return new TableExpression(type, table.Projection, table.Alias, table.Columns);
 
             var prop = exp as PropertyExpression;
             if (prop != null)
@@ -116,6 +116,10 @@ namespace AdFactum.Data.Linq.Expressions
                                             select.Where, select.OrderBy, select.GroupBy, select.Skip, select.Take,
                                             select.IsDistinct, select.IsReverse, select.SelectResult, select.SqlId, select.Hint, select.DefaultIfEmpty);
 
+            var join = exp as JoinExpression;
+            if (join != null)
+                return new JoinExpression(type, join.Projection, join.Join, join.Left, join.Right, join.Condition,join.Alias.Name);
+
             return exp;
         }
 
@@ -126,7 +130,7 @@ namespace AdFactum.Data.Linq.Expressions
 
             var table = exp as TableExpression;
             if (table != null)
-                return new TableExpression(exp.Type, projection, exp.Alias);
+                return new TableExpression(table.Type, projection, table.Alias, table.Columns);
 
             var prop = exp as PropertyExpression;
             if (prop != null)
@@ -206,26 +210,6 @@ namespace AdFactum.Data.Linq.Expressions
                                         select.SelectResult, select.SqlId, hint, select.DefaultIfEmpty);
         }
 
-        //public static SelectExpression AddOrderExpression(this SelectExpression select, OrderExpression ordering)
-        //{
-        //    var orderby = new List<OrderExpression>();
-        //    if (select.OrderBy != null)
-        //        orderby.AddRange(select.OrderBy);
-        //    orderby.Add(ordering);
-        //    return select.SetOrderBy(orderby);
-        //}
-
-        //public static SelectExpression RemoveOrderExpression(this SelectExpression select, OrderExpression ordering)
-        //{
-        //    if (select.OrderBy != null && select.OrderBy.Count > 0)
-        //    {
-        //        var orderby = new List<OrderExpression>(select.OrderBy);
-        //        orderby.Remove(ordering);
-        //        return select.SetOrderBy(orderby);
-        //    }
-        //    return select;
-        //}
-
         public static SelectExpression SetGroupBy(this SelectExpression select, IList<Expression> groupBy)
         {
             return new SelectExpression(select.Type, select.Projection, select.Alias, select.Columns, select.Selector, select.From,
@@ -241,26 +225,6 @@ namespace AdFactum.Data.Linq.Expressions
                                         select.Skip, select.Take, select.IsDistinct, select.IsReverse,
                                         select.SelectResult, select.SqlId, select.Hint, select.DefaultIfEmpty);
         }
-
-        //public static SelectExpression AddGroupExpression(this SelectExpression select, Expression expression)
-        //{
-        //    var groupby = new List<Expression>();
-        //    if (select.GroupBy != null)
-        //        groupby.AddRange(select.GroupBy);
-        //    groupby.Add(expression);
-        //    return select.SetGroupBy(groupby);
-        //}
-
-        //public static SelectExpression RemoveGroupExpression(this SelectExpression select, Expression expression)
-        //{
-        //    if (select.GroupBy != null && select.GroupBy.Count > 0)
-        //    {
-        //        var groupby = new List<Expression>(select.GroupBy);
-        //        groupby.Remove(expression);
-        //        return select.SetGroupBy(groupby);
-        //    }
-        //    return select;
-        //}
 
         public static SelectExpression SetSkip(this SelectExpression select, Expression skip)
         {
@@ -300,25 +264,5 @@ namespace AdFactum.Data.Linq.Expressions
                                         null, newFrom, null, null, null, null, null, false, false, select.SelectResult, select.SqlId, select.Hint, select.DefaultIfEmpty);
         }
 
-        //public static SelectExpression RemoveRedundantFrom(this SelectExpression select)
-        //{
-        //    var fromSelect = select.From as SelectExpression;
-        //    if (fromSelect != null)
-        //    {
-        //        return SubqueryRemover.Remove(select, fromSelect);
-        //    }
-        //    return select;
-        //}
-
-        //public static SelectExpression SetFrom(this SelectExpression select, Expression from)
-        //{
-        //    if (select.From != from)
-        //    {
-        //        return new SelectExpression(select.Type, select.Alias, select.Columns, select.Selector, from,
-        //                                    select.Where, select.OrderBy, select.GroupBy, select.Skip, select.Take,
-        //                                    select.IsDistinct, select.IsReverse, select.SelectResult);
-        //    }
-        //    return select;
-        //}
     }
 }

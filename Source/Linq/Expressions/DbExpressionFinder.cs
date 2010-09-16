@@ -46,7 +46,7 @@ namespace AdFactum.Data.Linq.Expressions
         protected override Expression VisitColumn(PropertyExpression expression)
         {
             if (expression.ReferringColumn != null)
-                expression.ReferringColumn = new ColumnDeclaration(Visit(expression.ReferringColumn.Expression), expression.ReferringColumn.Alias);   
+                expression.ReferringColumn.Expression = Visit(expression.ReferringColumn.Expression);   
 
             return base.VisitColumn(expression);
         }

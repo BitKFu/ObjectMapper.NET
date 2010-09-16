@@ -15,14 +15,13 @@ namespace AdFactum.Data.Linq.Translation
     public class SubqueryRemover : RedundanceRemover
     {
         private List<SelectExpression> Redundant { get; set; }
-        //private readonly Dictionary<Alias, IDbExpressionWithResult> redundantSelect = new Dictionary<Alias, IDbExpressionWithResult>();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SubqueryRemover"/> class.
         /// </summary>
         /// <param name="redundant">The redundant.</param>
         private SubqueryRemover(List<SelectExpression> redundant)
-            :base(ReferenceDirection.Backward)
+            :base(ReferenceDirection.Referrer)
         {
             Redundant = redundant;
         }
@@ -32,15 +31,17 @@ namespace AdFactum.Data.Linq.Translation
         /// </summary>
         public static SelectExpression Remove(SelectExpression select, Cache<Type, ProjectionClass> dynamicCache, List<SelectExpression> redundant)
         {
-            return (SelectExpression) new SubqueryRemover(redundant).Visit(select);
-        }
+            var result= (SelectExpression) new SubqueryRemover(redundant).Visit(select);
+            return result;
+        }   
 
         /// <summary>
         /// Removes the specified select.
         /// </summary>
         public static SelectExpression Remove(SelectExpression select, Cache<Type, ProjectionClass> dynamicCache, params SelectExpression[] redundant)
         {
-            return (SelectExpression) new SubqueryRemover(redundant.ToList()).Visit(select);
+            var result = (SelectExpression) new SubqueryRemover(redundant.ToList()).Visit(select);
+            return result;
         }
 
         /// <summary>
@@ -53,38 +54,18 @@ namespace AdFactum.Data.Linq.Translation
             if (Redundant.Contains(select))
             {
                 var result = Visit(select.From);
-                RedundantSelect.Add(select.Alias, (IDbExpressionWithResult) result);
+                RedundantSelect.Add(select.Alias, (IDbExpressionWithResult)result);
                 return result;
             }
 
-            return base.VisitSelectExpression(select);
+            var resultEx = (AliasedExpression)base.VisitSelectExpression(select);
+            return resultEx;
         }
 
-        ///// <summary>
-        ///// Check the property expressions
-        ///// </summary>
-        ///// <param name="expression"></param>
-        ///// <returns></returns>
-        //protected override Expression VisitColumn(PropertyExpression expression)
-        //{
-        //    IDbExpressionWithResult newFromSelection;
-        //    if (redundantSelect.TryGetValue(expression.Alias, out newFromSelection))
-        //    {
-        //        // Shortcut the expression.
-        //        var shortCut = expression.ReferringColumn.Expression;
-        //        if (shortCut.Type != expression.Type)
-        //        {
-        //            // Maybe we have to adjust the type
-        //            var aliasedExpression = shortCut as AliasedExpression;
-        //            if (aliasedExpression != null)
-        //                shortCut = aliasedExpression.SetType(expression.Type);
-        //        }
-
-        //        return Visit(shortCut);
-        //    }
-
-        //    return base.VisitColumn(expression);
-        //}
-
+        protected override Expression VisitColumn(PropertyExpression expression)
+        {
+            var result= base.VisitColumn(expression);
+            return result;
+        }
     }
 }

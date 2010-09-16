@@ -36,7 +36,7 @@
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
     <ConfigurationOverrideFile>
     </ConfigurationOverrideFile>
-    <DefineConstants>DEBUG;DEBUG, VS2005, VS2008</DefineConstants>
+    <DefineConstants>DEBUG;VS2005, VS2008</DefineConstants>
     <DocumentationFile>ObjectMapper.xml</DocumentationFile>
     <DebugSymbols>true</DebugSymbols>
     <FileAlignment>4096</FileAlignment>
@@ -191,6 +191,7 @@
     <Compile Include="Linq\Translation\RebindToSelection.cs" />
     <Compile Include="Linq\Translation\RedundanceRemover.cs" />
     <Compile Include="Linq\Translation\RedundantJoinRemover.cs" />
+    <Compile Include="Linq\Translation\RedundantSubqueryGatherer.cs" />
     <Compile Include="Linq\Translation\RedundantSubqueryRemover.cs" />
     <Compile Include="Linq\Expressions\Retriever.cs" />
     <Compile Include="Linq\Language\SqlExpressionWriter.cs" />
@@ -200,6 +201,7 @@
     <Compile Include="Linq\Translation\SortAccessJoins.cs" />
     <Compile Include="Linq\Translation\SqlIdRewriter.cs" />
     <Compile Include="Linq\Translation\SqlOrderByRewriter.cs" />
+    <Compile Include="Linq\Translation\SubqueryMerger.cs" />
     <Compile Include="Linq\Translation\SubqueryRemover.cs">
       <SubType>Code</SubType>
     </Compile>

@@ -163,12 +163,13 @@ namespace AdFactum.Data.Linq.Expressions
     /// <summary>
     /// This class represents a column, which is always mapped to a property
     /// </summary>
-    public class PropertyExpression : AliasedExpression
+    public class PropertyExpression : AliasedExpression,ICloneable
     {
         /// <summary> Gets or sets the name of the property. </summary>
         public string PropertyName { get; private set; }
 
         private string name;
+        private ColumnDeclaration referringColumn;
 
         /// <summary>
         /// Gets or sets the expression.
@@ -193,7 +194,13 @@ namespace AdFactum.Data.Linq.Expressions
         public Type ParentType { get; private set; }
 
         /// <summary> Is set, if the property referes to an other alias member </summary>
-        public ColumnDeclaration ReferringColumn { get; set; }
+        public ColumnDeclaration ReferringColumn
+        {
+            get { return referringColumn; }
+            set { 
+                referringColumn = value;
+            }
+        }
 
         /// <summary> Gets or sets a value indicating whether this <see cref="PropertyExpression"/> is expandable. </summary>
         public bool Expandable { get { return ContentType.IsValueObjectType(); } }
@@ -216,9 +223,9 @@ namespace AdFactum.Data.Linq.Expressions
         {
             PropertyName = expression.PropertyName;
             Name = expression.Name;
-            ReferringColumn = expression.ReferringColumn;
             ContentType = expression.ContentType;
             ParentType = expression.ParentType;
+            ReferringColumn = expression.ReferringColumn;
         }
 
         /// <summary>
@@ -257,7 +264,6 @@ namespace AdFactum.Data.Linq.Expressions
             : base(DbExpressionType.PropertyExpression, referringColumn.Type, tableAlias, projection)
         {
             Name = null;
-            ReferringColumn = referringColumn;
             ContentType = typeof(void);
             ParentType = RevealedType;
             PropertyName = referringColumn.PropertyName;
@@ -269,6 +275,7 @@ namespace AdFactum.Data.Linq.Expressions
                 ContentType = referringProperty.ContentType;
                 ParentType = referringProperty.ParentType;
             }
+            ReferringColumn = referringColumn;
         }
 
         /// <summary>
@@ -378,6 +385,18 @@ namespace AdFactum.Data.Linq.Expressions
         public override int GetHashCode()
         {
             return ToString().GetHashCode();
+        }
+
+        /// <summary>
+        /// Creates a new object that is a copy of the current instance.
+        /// </summary>
+        /// <returns>
+        /// A new object that is a copy of this instance.
+        /// </returns>
+        /// <filterpriority>2</filterpriority>
+        public object Clone()
+        {
+            return new PropertyExpression(this);
         }
     }
 
@@ -595,7 +614,7 @@ namespace AdFactum.Data.Linq.Expressions
     public class ColumnDeclaration 
     {
         /// <summary> Gets or sets the expression. </summary>
-        public Expression Expression { get; private set; }
+        public Expression Expression { get; set; }
 
         /// <summary> Gets or sets the alias. </summary>
         public Alias Alias { get; internal set; }
@@ -613,10 +632,9 @@ namespace AdFactum.Data.Linq.Expressions
             Expression = expression;
             Alias = alias;
 
-            if (parameter != null)
-                propertyName = parameter.Name;
-            else
-                propertyName = string.Empty;
+            propertyName = parameter != null 
+                ? parameter.Name 
+                : string.Empty;
         }
 
         /// <summary>
@@ -732,19 +750,19 @@ namespace AdFactum.Data.Linq.Expressions
             return string.Concat(Expression.ToString(), " as ", Alias.Name);
         }
 
-        public override bool Equals(object obj)
-        {
-            ColumnDeclaration toCompare = obj as ColumnDeclaration;
-            if (toCompare != null)
-                return Expression.Equals(toCompare.Expression);
+        //public override bool Equals(object obj)
+        //{
+        //    ColumnDeclaration toCompare = obj as ColumnDeclaration;
+        //    if (toCompare != null)
+        //        return DbExpressionComparer.AreEqual(Expression,toCompare.Expression);
 
-            return base.Equals(obj);
-        }
+        //    return base.Equals(obj);
+        //}
 
-        public override int GetHashCode()
-        {
-            return Expression.GetHashCode();
-        }
+        //public override int GetHashCode()
+        //{
+        //    return Expression.GetHashCode();
+        //}
     }
 
     /// <summary>
@@ -873,7 +891,7 @@ namespace AdFactum.Data.Linq.Expressions
         ProjectionClass Projection { get; }
 
         /// <summary> Gets from. </summary>
-        IDbExpressionWithResult FromExpression { get;}
+        IDbExpressionWithResult[] FromExpression { get;}
 
         /// <summary> Gets the default if empty. </summary>
         Expression DefaultIfEmpty { get; }
@@ -904,9 +922,9 @@ namespace AdFactum.Data.Linq.Expressions
         public ReadOnlyCollection<ColumnDeclaration> Columns { get; private set;}
 
         /// <summary> Gets from. </summary>
-        public IDbExpressionWithResult FromExpression
+        public IDbExpressionWithResult[] FromExpression
         {
-            get { return From as IDbExpressionWithResult; }
+            get { return new []{From as IDbExpressionWithResult}; }
         }
 
         /// <summary> Gets the default if empty. </summary>
@@ -1091,9 +1109,9 @@ namespace AdFactum.Data.Linq.Expressions
         public SelectResultType SelectResult { get; private set; }
 
         /// <summary> Gets from. </summary>
-        public IDbExpressionWithResult FromExpression
+        public IDbExpressionWithResult[] FromExpression
         {
-            get { return From as IDbExpressionWithResult; }
+            get { return new []{From as IDbExpressionWithResult}; }
         }
 
         /// <summary> Returns an abstract query text </summary>
@@ -1265,9 +1283,9 @@ namespace AdFactum.Data.Linq.Expressions
         public ReadOnlyCollection<ColumnDeclaration> Columns { get; private set; }
 
         /// <summary> Gets from. </summary>
-        public IDbExpressionWithResult FromExpression
+        public IDbExpressionWithResult[] FromExpression
         {
-            get { return null; }
+            get { return new [] { First as IDbExpressionWithResult, Second as IDbExpressionWithResult }; }
         }
 
         /// <summary> Gets the default if empty. </summary>
@@ -1370,9 +1388,9 @@ namespace AdFactum.Data.Linq.Expressions
         }
 
         /// <summary> Gets from. </summary>
-        public IDbExpressionWithResult FromExpression
+        public IDbExpressionWithResult[] FromExpression
         {
-            get { return null; }
+            get { return new []{Left as IDbExpressionWithResult,Right as IDbExpressionWithResult}; }
         }
 
         /// <summary> Gets the default if empty. </summary>
@@ -1385,6 +1403,12 @@ namespace AdFactum.Data.Linq.Expressions
         public Expression Selector
         {
             get { return null;}
+        }
+
+        /// <summary> Evaluates the From Expression </summary>
+        public IDbExpressionWithResult From
+        {
+            get { return null; }
         }
 
         #region Implementation of IDbExpressionWithResult

@@ -20,12 +20,14 @@ namespace AdFactum.Data.Linq.Expressions
         protected List<PropertyTupel> Groupings { get { return groupings; } }
         private readonly List<PropertyTupel> groupings = new List<PropertyTupel>();
 
+        // FIX!!!! MUST BE CHANGED; BECAUSE IT'S UNSAFE!!!!
+        private static Dictionary<ColumnDeclaration,ColumnDeclaration> exchangeCd = new Dictionary<ColumnDeclaration, ColumnDeclaration>();
+
         /// <summary>
         /// Visits the specified exp.
         /// </summary>
         /// <param name="exp">The exp.</param>
         /// <returns></returns>
-        [DebuggerStepThrough]
         protected override Expression Visit(Expression exp)
         {
             if (exp == null) return null;
@@ -302,9 +304,15 @@ namespace AdFactum.Data.Linq.Expressions
 
                 if (alternate == null && e != column.Expression)
                     alternate = columns.Take(i).ToList();
-                
+
                 if (alternate != null)
-                    alternate.Add(new ColumnDeclaration(e, column));
+                {
+                    var newCd = new ColumnDeclaration(e, column);
+                    if (exchangeCd.ContainsKey(column))
+                        exchangeCd.Remove(column);
+                    exchangeCd.Add(column, newCd);
+                    alternate.Add(newCd);
+                }
             }
             
             return alternate != null ? alternate.AsReadOnly() : columns;
@@ -340,7 +348,15 @@ namespace AdFactum.Data.Linq.Expressions
             var skip = Visit(select.Skip);
             var take = Visit(select.Take);
             var columns = VisitColumnDeclarations(select.Columns);
-            var selector = Visit(select.Selector);
+
+            // If the selector equals the from, than take this one
+            Expression selector;
+            if (DbExpressionComparer.AreEqual(select.From, select.Selector))
+                selector = from;
+            else
+                selector = Visit(select.Selector);
+
+
             var defaultIfEmpty = Visit(select.DefaultIfEmpty);
 
             var projection = selector != null
@@ -410,6 +426,18 @@ namespace AdFactum.Data.Linq.Expressions
         /// <summary> Visits the column expression </summary>
         protected virtual Expression VisitColumn(PropertyExpression expression)
         {
+            // Maybe we must exchange a referring column
+            if (expression.ReferringColumn != null)
+            {
+                ColumnDeclaration exchangedCd;
+                if (exchangeCd.TryGetValue(expression.ReferringColumn, out exchangedCd))
+                    expression.ReferringColumn = exchangedCd;
+            }
+
+            //// Perhaps we have a referring column that needs to be vistited
+            //if (expression.ReferringColumn != null)
+            //    expression.ReferringColumn.Expression = Visit(expression.ReferringColumn.Expression);
+
             return expression;
         }
 

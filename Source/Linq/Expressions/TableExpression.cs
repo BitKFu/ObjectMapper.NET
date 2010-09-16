@@ -17,18 +17,18 @@ namespace AdFactum.Data.Linq.Expressions
         /// <summary>
         /// Initializes a new instance of the <see cref="TableExpression"/> class.
         /// </summary>
-        /// <param name="aliasedExpression">The aliased expression.</param>
-        /// <param name="alias">The alias.</param>
-        public TableExpression(AliasedExpression aliasedExpression, Alias alias)
-            :this(aliasedExpression.Type, aliasedExpression.Projection, alias)
-        {}
+        public TableExpression(Type type, ProjectionClass projection, Alias alias, ReadOnlyCollection<ColumnDeclaration> columns)
+            : base(DbExpressionType.TableExpression, type, alias, projection)
+        {
+            Cache<Type, ProjectionClass> cache = new Cache<Type, ProjectionClass>("Temp TableExpression");
+            cache.Insert(type, projection);
+
+            Columns = columns;
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TableExpression"/> class.
         /// </summary>
-        /// <param name="type">The type.</param>
-        /// <param name="alias">The alias.</param>
-        /// <param name="projection">The projection.</param>
         public TableExpression(Type type, ProjectionClass projection, Alias alias) 
             : base(DbExpressionType.TableExpression, type, alias, projection)
         {
@@ -50,7 +50,7 @@ namespace AdFactum.Data.Linq.Expressions
         public ReadOnlyCollection<ColumnDeclaration> Columns { get; private set; }
 
         /// <summary> Gets from. </summary>
-        public IDbExpressionWithResult FromExpression
+        public IDbExpressionWithResult[] FromExpression
         {
             get { return null;}
         }

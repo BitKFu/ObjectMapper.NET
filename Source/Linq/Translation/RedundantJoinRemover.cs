@@ -100,8 +100,8 @@ namespace AdFactum.Data.Linq.Translation
             if (column.ReferringColumn != null &&
                 followUpProperties.TryGetValue(column.ReferringColumn.Expression, out followUpProperty))
             {
-                var result = new PropertyExpression(column.Projection, column.Alias,
-                    new ColumnDeclaration(followUpProperty, Alias.Generate(followUpProperty.Name)));
+                var result = new PropertyExpression(column.Projection, column.Alias, column.ReferringColumn);
+//                    new ColumnDeclaration(followUpProperty, Alias.Generate(followUpProperty.Name)));
                 followUpProperties.Add(column, result); // Place the result as a follow Up Property 
                 return result;
             }

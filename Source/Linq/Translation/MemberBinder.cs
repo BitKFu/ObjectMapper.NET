@@ -533,6 +533,11 @@ namespace AdFactum.Data.Linq.Translation
             }
         }
 
+        protected override Expression VisitColumn(PropertyExpression expression)
+        {
+            return base.VisitColumn(expression);
+        }
+
         protected override Expression VisitJoinExpression(JoinExpression join)
         {
             var saveCurrentFrom = currentFrom;
@@ -581,7 +586,23 @@ namespace AdFactum.Data.Linq.Translation
                 var groupBy = VisitExpressionList(select.GroupBy);
                 var skip = Visit(select.Skip);
                 var take = Visit(select.Take);
+
+                if (select.Selector != null)
+                {
+                    LambdaExpression lambda = select.Selector as LambdaExpression;
+                    ParameterExpression p = lambda != null
+                                                ? lambda.Parameters.FirstOrDefault() as ParameterExpression
+                                                : null;
+                    if (p != null)
+                    {
+                        if (visitedParameterMappings.ContainsKey(p))
+                            visitedParameterMappings.Remove(p);
+                        visitedParameterMappings.Add(p, currentFrom);
+                    }
+                }
+
                 var selector = Visit(select.Selector);
+
                 var defaultIfEmpty = Visit(select.DefaultIfEmpty);
                 ProjectionClass projection;
 
@@ -611,13 +632,18 @@ namespace AdFactum.Data.Linq.Translation
                     List<ColumnDeclaration> columns = GetColumns(currentFrom, select.Columns, selector, projection);
                     var readOnlyCollection = new ReadOnlyCollection<ColumnDeclaration>(columns);
 
-                    return new SelectExpression(select.Type, projection, select.Alias, readOnlyCollection, selector, currentFrom, where, orderBy, groupBy,
+                    select = new SelectExpression(select.Type, projection, select.Alias, readOnlyCollection, selector, currentFrom, where, orderBy, groupBy,
                                                 skip, take, select.IsDistinct, select.IsReverse, select.SelectResult, select.SqlId, select.Hint, defaultIfEmpty);
                 }
                 return select;
             }
             finally
             {
+#if DEBUG
+                // Check, if ater the SelectExpression the columns are valid
+                ReferingColumnChecker.Validate(select);
+#endif
+
                 currentFrom = saveCurrentFrom;
             }
         }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using AdFactum.Data.Internal;
 using AdFactum.Data.Linq.Expressions;
 using AdFactum.Data.Queries;
 
@@ -53,37 +54,60 @@ namespace AdFactum.Data.Linq.Translation
         /// <summary>
         /// Binds to selection.
         /// </summary>
-        /// <param name="select">The select.</param>
         /// <param name="orderings">The orderings.</param>
         /// <returns></returns>
-        public static List<OrderExpression> BindToSelection(Expression bindTo, List<OrderExpression> orderings)
+        public static List<OrderExpression> BindToSelection(AliasedExpression bindTo, List<OrderExpression> orderings)
         {
             var newOrderings = new List<OrderExpression>();
 
-            SelectExpression select = bindTo as SelectExpression;       // Check if the current expression is a SelectExpression
-            if (select == null) return orderings;
+            IDbExpressionWithResult result = bindTo as IDbExpressionWithResult;       // Check if the current expression is a SelectExpression
+            if (result == null) 
+                return orderings;
 
-            select = select.From as SelectExpression;                   // Resolve the From Clause
-            if (select == null) return orderings;
+            var fromSelects = result.FromExpression;                                  // Resolve the From Clause
+            if (fromSelects == null)
+                return orderings;
 
             foreach (var oe in orderings)
             {
-                // If the alias is the same like the select alias, than the ordering depends on the current select, 
-                // which means that we can take it as it is.
-                var ae = oe.Expression as AliasedExpression;
-                if (ae != null && ae.Alias.Equals(select.Alias))
-                {
-                    newOrderings.Add(oe);
-                    continue;
-                }
-
                 // Search for the first matching expression
-                OrderExpression orderBy = oe;
-                var dependentFrom = select.Columns.Where(col => DbExpressionComparer.AreEqual(col.Expression, orderBy.Expression)).FirstOrDefault();
-                newOrderings.Add(new OrderExpression(oe.Ordering, new PropertyExpression(select, dependentFrom).SetType(orderBy.Type)));
+                foreach (var select in fromSelects)
+                {
+                    var aliased = oe.Expression as AliasedExpression;
+                    if (aliased != null && select.Alias.Equals(aliased.Alias))
+                    {
+                        //PropertyExpression prop = aliased as PropertyExpression;
+                        //if (prop != null)
+                        //{
+                        //    var refColumn = select.Columns.Where(col => DbExpressionComparer.AreEqual(col.Expression, prop.ReferringColumn.Expression)).FirstOrDefault();
+                        //    prop = (PropertyExpression) prop.Clone();
+                        //    prop.ReferringColumn = refColumn;
+                        //    var newOe = new OrderExpression(oe.Ordering, prop);
+                        //    newOrderings.Add(newOe);
+                        //}
+                        //else
+                            newOrderings.Add(oe);
+                        continue;
+                    }
+
+                    OrderExpression orderBy = oe;
+                    var dependentFrom = select.Columns.Where(col => DbExpressionComparer.AreEqual(col.Expression, orderBy.Expression)).FirstOrDefault();
+                    if (dependentFrom == null)
+                    {
+                        dependentFrom = select.Columns.Where(col => DbExpressionFinder.Contains(col.Expression, orderBy.Expression)).FirstOrDefault();
+                        if (dependentFrom == null)
+                            continue;
+                    }
+
+                    if (string.IsNullOrEmpty(select.Alias.Name))
+                        newOrderings.Add(new OrderExpression(oe.Ordering, dependentFrom.Expression)); // .SetType(orderBy.Type)));
+                    else
+                        newOrderings.Add(new OrderExpression(oe.Ordering, new PropertyExpression((AliasedExpression)select, dependentFrom).SetType(orderBy.Type)));
+                }
             }
 
             return newOrderings;
         }
+
     }
 }
