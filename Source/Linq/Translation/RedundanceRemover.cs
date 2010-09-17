@@ -47,6 +47,7 @@ namespace AdFactum.Data.Linq.Translation
         /// <returns></returns>
         protected override Expression VisitColumn(PropertyExpression expression)
         {
+            expression = (PropertyExpression) base.VisitColumn(expression);
             if (expression.ReferringColumn == null)
                 return expression;
 
@@ -64,7 +65,13 @@ namespace AdFactum.Data.Linq.Translation
                             DbExpressionComparer.AreEqual(x.OriginalProperty, expression.ReferringColumn.OriginalProperty))
                 ??
                     newFromSelection.Columns.FirstOrDefault(
-                        x => expression.PropertyName == x.PropertyName);
+                        x => expression.Name == x.Alias.Name);
+
+                if (referer != null && string.IsNullOrEmpty(newFromSelection.Alias.Name))
+                {
+                    // Select the From Clause in which the column is contained
+                    newFromSelection = newFromSelection.FromExpression.Where(from => from.Columns.Contains(referer)).First();
+                }
 
                 if (referer != null && !string.IsNullOrEmpty(newFromSelection.Alias.Name)
                     && !DbExpressionComparer.AreEqual(expression.ReferringColumn.Expression, referer.Expression)
@@ -72,15 +79,15 @@ namespace AdFactum.Data.Linq.Translation
                 {
                     expression.ReferringColumn = referer;
                     var shortCut = expression.SetAlias(newFromSelection.Alias);
-                    return shortCut;
+                    return Visit(shortCut);
                 }
                 else if (referer != null)
                 {
                     var shortCut = referer.Expression;
                     var shortCutAliased = shortCut as AliasedExpression;
-                    return shortCutAliased != null
+                    return Visit(shortCutAliased != null
                         ? shortCutAliased.SetType(expression.Type)
-                        : referer.Expression;
+                        : referer.Expression);
                 }
             }
 
@@ -108,17 +115,17 @@ namespace AdFactum.Data.Linq.Translation
                                 DbExpressionComparer.AreEqual(x.OriginalProperty, expression.ReferringColumn.OriginalProperty))
                     ??
                         newFromSelection.Columns.FirstOrDefault(
-                            x => expression.PropertyName == x.PropertyName);
+                            x => expression.Name == x.Alias.Name);
 
                     // Now shortcut the ReferringColumn
                     if (referer != null)
                         expression.ReferringColumn = referer;
                 }
 
-                return expression;
+                return base.VisitColumn(expression);
             }
 
-            return base.VisitColumn(expression);
+            return expression;
         }
 
     }

@@ -148,10 +148,10 @@ namespace AdFactum.Data.Linq.Translation
                         {
                             exp = nex.Arguments[i];
                             if (exp is AliasedExpression)
-                                return MapPropertyToCurrentFromClause(currentFrom, exp, m.Type);
+                                return MapPropertyToCurrentFromClause(m, currentFrom, exp, m.Type);
 
                             var result = new PropertyExpression(currentFrom, new ColumnDeclaration(exp, Alias.Generate(columnName), propertyName));
-                            return MapPropertyToCurrentFromClause(currentFrom, result, m.Type);
+                            return MapPropertyToCurrentFromClause(m, currentFrom, result, m.Type);
                         }
                 }
 
@@ -161,10 +161,10 @@ namespace AdFactum.Data.Linq.Translation
                     {
                         exp = nex.Arguments[0];
                         if (exp is AliasedExpression)
-                            return MapPropertyToCurrentFromClause(currentFrom, exp, m.Type);
+                            return MapPropertyToCurrentFromClause(m, currentFrom, exp, m.Type);
 
                         var result = new PropertyExpression(currentFrom, new ColumnDeclaration(exp, Alias.Generate(columnName), propertyName));
-                        return MapPropertyToCurrentFromClause(currentFrom, result, m.Type);
+                        return MapPropertyToCurrentFromClause(m, currentFrom, result, m.Type);
                     }
                 }
             }
@@ -181,7 +181,7 @@ namespace AdFactum.Data.Linq.Translation
             do
             {
                 if (exp.Type == m.Type)
-                    return MapPropertyToCurrentFromClause(currentFrom, exp, m.Type);
+                    return MapPropertyToCurrentFromClause(m, currentFrom, exp, m.Type);
 
                 TableExpression table = exp as TableExpression;
                 if (table != null)
@@ -191,12 +191,12 @@ namespace AdFactum.Data.Linq.Translation
                         table.Columns.Where(x => x.OriginalProperty != null && x.OriginalProperty.PropertyName == propertyName).
                             FirstOrDefault();
                     if (column != null)
-                        return MapPropertyToCurrentFromClause(currentFrom, column.Expression, m.Type);
+                        return MapPropertyToCurrentFromClause(m, currentFrom, column.Expression, m.Type);
 
                     // Second check, if the alias is matching
                     column = table.Columns.Where(x => x.Alias.Name == columnName).FirstOrDefault();
                     if (column != null)
-                        return MapPropertyToCurrentFromClause(currentFrom, column.Expression, m.Type);
+                        return MapPropertyToCurrentFromClause(m, currentFrom, column.Expression, m.Type);
                 }
 
                 IDbExpressionWithResult select = exp as IDbExpressionWithResult;
@@ -224,7 +224,7 @@ namespace AdFactum.Data.Linq.Translation
                             from = from is SelectExpression
                                        ? ((SelectExpression)from).SetDefaultIfEmpty(select.DefaultIfEmpty)
                                        : from;
-                            return MapPropertyToCurrentFromClause(currentFrom, from, m.Type);
+                            return MapPropertyToCurrentFromClause(m, currentFrom, from, m.Type);
                         }
                     }
 
@@ -237,7 +237,7 @@ namespace AdFactum.Data.Linq.Translation
                     if (column != null)
                     {
                         if (member.SourceType == m.Type && !member.SourceType.IsProjectedType(dynamicCache) && !member.SourceType.IsValueObjectType() ) // Only if the type is mapping
-                            return MapPropertyToCurrentFromClause(currentFrom, new PropertyExpression((AliasedExpression)select, column), m.Type);
+                            return MapPropertyToCurrentFromClause(m, currentFrom, new PropertyExpression((AliasedExpression)select, column), m.Type);
 
 
                         // Otherwise we have to create a join
@@ -252,7 +252,7 @@ namespace AdFactum.Data.Linq.Translation
                     if (column != null)
                     {
                         if (member.SourceType == m.Type && !member.SourceType.IsProjectedType(dynamicCache) && !member.SourceType.IsValueObjectType()) // Only if the type is mapping
-                            return MapPropertyToCurrentFromClause(currentFrom, new PropertyExpression((AliasedExpression)select, column), m.Type);
+                            return MapPropertyToCurrentFromClause(m, currentFrom, new PropertyExpression((AliasedExpression)select, column), m.Type);
 
                         // Otherwise we have to create a join
                         var target = Property.GetPropertyInstance((PropertyInfo)member.Source).MetaInfo.LinkTarget;
@@ -312,7 +312,7 @@ namespace AdFactum.Data.Linq.Translation
                 ).FirstOrDefault();
         }
 
-        protected Expression MapPropertyToCurrentFromClause(AliasedExpression currentFrom, Expression exp, Type resultType)
+        protected Expression MapPropertyToCurrentFromClause(MemberExpression me, AliasedExpression currentFrom, Expression exp, Type resultType)
         {
             // Maybe we have to compare to the primary key
             var resultExp = exp as IDbExpressionWithResult;
@@ -352,6 +352,10 @@ namespace AdFactum.Data.Linq.Translation
                 }
             }
 
+            // Maybe we have to attach the MemberExpression again
+            if (me != null && me.Member.DeclaringType.FullName.StartsWith("System."))
+                exp = Expression.MakeMemberAccess(exp, me.Member);
+
             return exp;
         }
 
@@ -361,10 +365,10 @@ namespace AdFactum.Data.Linq.Translation
             Expression right = Visit(b.Right);
 
             if (left is IDbExpressionWithResult)
-                left = MapPropertyToCurrentFromClause(currentFrom, left, left.Type);
+                left = MapPropertyToCurrentFromClause(null, currentFrom, left, left.Type);
 
             if (right is IDbExpressionWithResult)
-                right = MapPropertyToCurrentFromClause(currentFrom, right, right.Type);
+                right = MapPropertyToCurrentFromClause(null, currentFrom, right, right.Type);
 
             Expression conversion = Visit(b.Conversion);
             return UpdateBinary(b, left, right, conversion, b.IsLiftedToNull, b.Method);

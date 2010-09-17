@@ -39,7 +39,7 @@ namespace AdFactum.Data.Linq.Translation
         /// <param name="expression"></param>
         public static void Validate(Expression expression)
         {
-#if DEBUG
+#if INTERNAL_DEBUG
             new ReferingColumnChecker().Visit(expression);
 #endif
         }
@@ -49,7 +49,9 @@ namespace AdFactum.Data.Linq.Translation
         /// </summary>
         protected override Expression VisitSelectExpression(SelectExpression expression)
         {
-            var result = base.VisitSelectExpression(expression);
+            Visit(expression.From);
+            
+            var result = expression;
             var select = result as SelectExpression;
             if (select == null || select.From == null)
                 return result;

@@ -73,36 +73,26 @@ namespace AdFactum.Data.Linq.Translation
                 // Search for the first matching expression
                 foreach (var select in fromSelects)
                 {
-                    var aliased = oe.Expression as AliasedExpression;
+                    var aliased = ExpressionTypeFinder.Find(oe.Expression, (ExpressionType) DbExpressionType.PropertyExpression) as AliasedExpression;
                     if (aliased != null && select.Alias.Equals(aliased.Alias))
                     {
-                        //PropertyExpression prop = aliased as PropertyExpression;
-                        //if (prop != null)
-                        //{
-                        //    var refColumn = select.Columns.Where(col => DbExpressionComparer.AreEqual(col.Expression, prop.ReferringColumn.Expression)).FirstOrDefault();
-                        //    prop = (PropertyExpression) prop.Clone();
-                        //    prop.ReferringColumn = refColumn;
-                        //    var newOe = new OrderExpression(oe.Ordering, prop);
-                        //    newOrderings.Add(newOe);
-                        //}
-                        //else
-                            newOrderings.Add(oe);
+                        newOrderings.Add(oe);
                         continue;
                     }
 
                     OrderExpression orderBy = oe;
-                    var dependentFrom = select.Columns.Where(col => DbExpressionComparer.AreEqual(col.Expression, orderBy.Expression)).FirstOrDefault();
+                    var dependentFrom = select.Columns.Where(col => DbExpressionComparer.AreEqual(col.Expression, aliased)).FirstOrDefault();
                     if (dependentFrom == null)
                     {
-                        dependentFrom = select.Columns.Where(col => DbExpressionFinder.Contains(col.Expression, orderBy.Expression)).FirstOrDefault();
+                        dependentFrom = select.Columns.Where(col => DbExpressionFinder.Contains(col.Expression, aliased)).FirstOrDefault();
                         if (dependentFrom == null)
                             continue;
                     }
 
-                    if (string.IsNullOrEmpty(select.Alias.Name))
-                        newOrderings.Add(new OrderExpression(oe.Ordering, dependentFrom.Expression)); // .SetType(orderBy.Type)));
-                    else
-                        newOrderings.Add(new OrderExpression(oe.Ordering, new PropertyExpression((AliasedExpression)select, dependentFrom).SetType(orderBy.Type)));
+                    // Now, exchange the original alias, with the found dependentFrom column
+                    var newOrdering = (OrderExpression) ExpressionReplacer.Replace(oe, aliased,
+                                                        new PropertyExpression((AliasedExpression) select, dependentFrom));
+                    newOrderings.Add(newOrdering);
                 }
             }
 

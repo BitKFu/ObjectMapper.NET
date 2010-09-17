@@ -1675,6 +1675,7 @@ namespace AdFactum.Data.Linq.Language
                         break;
 
                     case "Trunc":
+                    case "Date":
                         Truncate(m.Expression);
                         break;
 

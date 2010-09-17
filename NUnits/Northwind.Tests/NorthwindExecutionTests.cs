@@ -102,6 +102,14 @@ namespace ObjectMapper.NUnits.Northwind.Tests
 
         private Northwind db;
 
+        [SetUp]
+        public void Setup()
+        {
+#if INTERNAL_DEBUG
+            AdFactum.Data.Linq.Expressions.Alias.ResetAliasCounter();
+#endif
+        }
+
         [Test]
         public void Test1()
         {
