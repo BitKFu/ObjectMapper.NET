@@ -443,7 +443,7 @@ namespace AdFactum.Data.Linq.Language
         /// <returns></returns>
         protected override Expression VisitSysTimeExpression(SysTimeExpression expression)
         {
-            WriteSql("CURRENT_TIME");
+            WriteSql("CURRENT_TIMESTAMP");
             return expression;
         }
 
