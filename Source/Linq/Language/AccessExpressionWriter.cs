@@ -66,11 +66,13 @@ namespace AdFactum.Data.Linq.Language
             {
                 WriteSql("SELECT ");
 
-                if (!string.IsNullOrEmpty(select.SqlId))
-                    WriteSql("/* " + select.SqlId + " */ ");
+                // Comments are not going to be supported by Access
 
-                if (!string.IsNullOrEmpty(select.Hint))
-                    WriteSql("/*+ " + select.Hint + " */ ");
+                //if (!string.IsNullOrEmpty(select.SqlId))
+                //    WriteSql("/* " + select.SqlId + " */ ");
+
+                //if (!string.IsNullOrEmpty(select.Hint))
+                //    WriteSql("/*+ " + select.Hint + " */ ");
 
                 if (select.IsDistinct)
                     WriteSql("DISTINCT ");
@@ -790,6 +792,18 @@ namespace AdFactum.Data.Linq.Language
             else
                 WriteSql(" / ");
             Visit(right);
+        }
+
+        protected override Expression VisitSysDateExpression(SysDateExpression expression)
+        {
+            WriteSql(" DATE()");
+            return expression;
+        }
+
+        protected override Expression VisitSysTimeExpression(SysTimeExpression expression)
+        {
+            WriteSql(" NOW()");
+            return expression;
         }
     }
 }

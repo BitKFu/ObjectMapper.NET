@@ -1104,7 +1104,6 @@ namespace ObjectMapper.NUnits.Northwind.Tests
             Assert.AreEqual(5, list.Count);
         }
 
-        [Category("ExcludeForAccess")]  // ??? this produces a count of 6 ???
         [Test] public void TestDistinctTakeCount()
         {
             var cnt = db.Orders.Distinct().OrderBy(o => o.CustomerID).Select(o => o.CustomerID).Take(5).Count();
@@ -1787,8 +1786,6 @@ namespace ObjectMapper.NUnits.Northwind.Tests
             Assert.AreEqual(4.0, six);
         }
 
-        [Category("ExcludeForAccess")]
-        [Category("ExcludeForSQLite")]
         [Test] public void TestMathFloor()
         {
             // The difference between floor and truncate is how negatives are handled.  Floor drops the decimals and moves the
@@ -1801,8 +1798,6 @@ namespace ObjectMapper.NUnits.Northwind.Tests
             Assert.AreEqual(Math.Floor(-3.4), nfour);
         }
 
-        [Category("ExcludeForAccess")]
-        [Category("ExcludeForSQLite")]
         [Test] public void TestDecimalFloor()
         {
             var four = db.Customers.Where(c => c.CustomerID == "ALFKI").Sum(c => decimal.Floor((c.CustomerID == "ALFKI" ? 3.4m : 3.4m)));
@@ -2134,25 +2129,33 @@ namespace ObjectMapper.NUnits.Northwind.Tests
             Assert.AreEqual(8, eight);
         }
 
-        [Test] public void TestIntBitwiseAnd()
+        [Category("ExcludeForAccess")]
+        [Test]
+        public void TestIntBitwiseAnd()
         {
             var band = db.Customers.Where(c => c.CustomerID == "ALFKI").Sum(c => ((c.CustomerID == "ALFKI") ? 6 : 6) & 3);
             Assert.AreEqual(2, band);
         }
 
-        [Test] public void TestIntBitwiseOr()
+        [Category("ExcludeForAccess")]
+        [Test]
+        public void TestIntBitwiseOr()
         {
             var eleven = db.Customers.Where(c => c.CustomerID == "ALFKI").Sum(c => ((c.CustomerID == "ALFKI") ? 10 : 10) | 3);
             Assert.AreEqual(11, eleven);
         }
 
-        [Test] public void TestIntBitwiseExclusiveOr()
+        [Category("ExcludeForAccess")]
+        [Test]
+        public void TestIntBitwiseExclusiveOr()
         {
             var zero = db.Customers.Where(c => c.CustomerID == "ALFKI").Sum(c => ((c.CustomerID == "ALFKI") ? 1 : 1) ^ 1);
             Assert.AreEqual(0, zero);
         }
 
-        [Test] public void TestIntBitwiseNot()
+        [Category("ExcludeForAccess")]
+        [Test]
+        public void TestIntBitwiseNot()
         {
             var bneg = db.Customers.Where(c => c.CustomerID == "ALFKI").Sum(c => ~((c.CustomerID == "ALFKI") ? -1 : -1));
             Assert.AreEqual(~-1, bneg);
