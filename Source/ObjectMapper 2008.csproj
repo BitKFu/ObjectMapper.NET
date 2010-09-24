@@ -149,6 +149,7 @@
     <Compile Include="Linq\Expressions\DbExpressionExtensions.cs" />
     <Compile Include="Linq\Expressions\DbExpressionFinder.cs" />
     <Compile Include="Linq\Expressions\ExpressionComparer.cs" />
+    <Compile Include="Linq\Expressions\ExpressionVisitorBackpack.cs" />
     <Compile Include="Linq\Expressions\TableExpression.cs" />
     <Compile Include="Linq\Language\AccessExpressionWriter.cs" />
     <Compile Include="Linq\Language\OracleExpressionWriter.cs" />
@@ -170,6 +171,7 @@
     <Compile Include="Linq\LinkBridge.cs" />
     <Compile Include="Linq\LinqExtensions.cs" />
     <Compile Include="Linq\Language\LinqMethodInspector.cs" />
+    <Compile Include="Linq\Expressions\DbPackedExpressionVisitor.cs" />
     <Compile Include="Linq\Translation\PostgresOrderByRewriter.cs" />
     <Compile Include="Linq\Translation\CrossApplyRewriter.cs" />
     <Compile Include="Linq\Translation\CrossJoinRewriter.cs" />

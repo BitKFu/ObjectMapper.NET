@@ -11,12 +11,13 @@ namespace AdFactum.Data.Linq.Translation
     /// <summary>
     /// The OrderBy Rewriter is used to push inner orderings to the outer SQL
     /// </summary>
-    public abstract class OrderByRewriter : DbExpressionVisitor
+    public abstract class OrderByRewriter : DbPackedExpressionVisitor
     {
         protected List<OrderExpression> GatheredOrderings = new List<OrderExpression>();
         private Expression root;
 
-        protected OrderByRewriter(Expression rootEx)
+        protected OrderByRewriter(Expression rootEx, ExpressionVisitorBackpack backpack)
+            : base(backpack)
         {
 #if TRACE
             Console.WriteLine("\nOrderByRewriter:");
@@ -56,7 +57,7 @@ namespace AdFactum.Data.Linq.Translation
         /// </summary>
         /// <param name="orderings">The orderings.</param>
         /// <returns></returns>
-        public static List<OrderExpression> BindToSelection(AliasedExpression bindTo, List<OrderExpression> orderings)
+        public static List<OrderExpression> BindToSelection(AliasedExpression bindTo, List<OrderExpression> orderings, ExpressionVisitorBackpack backpack)
         {
             var newOrderings = new List<OrderExpression>();
 
@@ -73,14 +74,13 @@ namespace AdFactum.Data.Linq.Translation
                 // Search for the first matching expression
                 foreach (var select in fromSelects)
                 {
-                    var aliased = ExpressionTypeFinder.Find(oe.Expression, (ExpressionType) DbExpressionType.PropertyExpression) as AliasedExpression;
+                    var aliased = ExpressionTypeFinder.Find(oe.Expression, (ExpressionType)DbExpressionType.PropertyExpression) as AliasedExpression;
                     if (aliased != null && select.Alias.Equals(aliased.Alias))
                     {
                         newOrderings.Add(oe);
                         continue;
                     }
 
-                    OrderExpression orderBy = oe;
                     var dependentFrom = select.Columns.Where(col => DbExpressionComparer.AreEqual(col.Expression, aliased)).FirstOrDefault();
                     if (dependentFrom == null)
                     {
@@ -91,7 +91,7 @@ namespace AdFactum.Data.Linq.Translation
 
                     // Now, exchange the original alias, with the found dependentFrom column
                     var newOrdering = (OrderExpression) ExpressionReplacer.Replace(oe, aliased,
-                                                        new PropertyExpression((AliasedExpression) select, dependentFrom));
+                                                        new PropertyExpression((AliasedExpression)select, dependentFrom));
                     newOrderings.Add(newOrdering);
                 }
             }

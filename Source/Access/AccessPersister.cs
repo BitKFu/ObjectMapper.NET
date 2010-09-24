@@ -10,6 +10,7 @@ using System.Text;
 using AdFactum.Data.Exceptions;
 using AdFactum.Data.Interfaces;
 using AdFactum.Data.Internal;
+using AdFactum.Data.Linq.Expressions;
 using AdFactum.Data.Linq.Language;
 using AdFactum.Data.Linq.Translation;
 using AdFactum.Data.Queries;
@@ -478,13 +479,13 @@ namespace AdFactum.Data.Access
         /// <param name="groupings"></param>
         /// <param name="level"></param>
         /// <returns></returns>
-        public override System.Linq.Expressions.Expression RewriteExpression(System.Linq.Expressions.Expression expression, AdFactum.Data.Util.Cache<Type, ProjectionClass> dynamicCache, out List<AdFactum.Data.Linq.Expressions.PropertyTupel> groupings, out int level)
+        public override System.Linq.Expressions.Expression RewriteExpression(System.Linq.Expressions.Expression expression, out ExpressionVisitorBackpack backpack, out List<AdFactum.Data.Linq.Expressions.PropertyTupel> groupings, out int level)
         {
+            backpack = new ExpressionVisitorBackpack(TypeMapper);
             var boundExp = PartialEvaluator.Eval(expression);
-            Dictionary<ParameterExpression, MappingStruct> mapping;
 
-            boundExp = QueryBinder.Evaluate(boundExp, out groupings, dynamicCache, TypeMapper, out level, out mapping);
-            boundExp = MemberBinder.Evaluate(boundExp, dynamicCache, TypeMapper, mapping);
+            boundExp = QueryBinder.Evaluate(boundExp, out groupings, backpack, out level);
+            boundExp = MemberBinder.Evaluate(boundExp, backpack);
 
             //// move aggregate computations so they occur in same select as group-by
             //!!! NOT NEEDED ANYMORE !!! boundExp = AggregateRewriter.Rewrite(boundExp, dynamicCache);
@@ -495,23 +496,23 @@ namespace AdFactum.Data.Access
             //// These bundle of Rewriters are all used to get paging mechism in place
             //!!! OBSOLETE HERE      !!! boundExp = AliasReWriter.Rewrite(boundExp, dynamicCache);
             //!!! OBSOLETE HERE      !!! boundExp = RedundantSubqueryRemover.Remove(boundExp, dynamicCache);
-            boundExp = SkipToRowNumberRewriter.Rewrite(boundExp, dynamicCache);
+            boundExp = SkipToRowNumberRewriter.Rewrite(boundExp, backpack);
 
             //// At last, the correct alias can be set.
             //!!! OBSOLETE HERE      !!! boundExp = AliasReWriter.Rewrite(boundExp, dynamicCache);
 
             //// Now Check every OrderBy, and move them up into the sql stack, if necessary
-            boundExp = SqlOrderByRewriter.Rewrite(boundExp);
+            boundExp = SqlOrderByRewriter.Rewrite(boundExp, backpack);
 
             //// Now have a deep look to the Cross Apply Joins. Because perhaps they aren't valid anymore.
             //// This can be, due removal of selects and replacement with the native table expressions. A INNER JOIN / or CROSS JOIN
             //// is the result of that.
-            boundExp = CrossApplyRewriter.Rewrite(boundExp, dynamicCache);
+            boundExp = CrossApplyRewriter.Rewrite(boundExp, backpack);
 
             //// Attempt to rewrite cross joins as inner joins
-            boundExp = RedundantSubqueryRemover.Remove(boundExp, dynamicCache);
-            boundExp = CrossJoinRewriter.Rewrite(boundExp);
-            boundExp = SortAccessJoins.Sort(boundExp);
+            boundExp = RedundantSubqueryRemover.Remove(boundExp, backpack);
+            boundExp = CrossJoinRewriter.Rewrite(boundExp, backpack);
+            boundExp = SortAccessJoins.Sort(boundExp, backpack);
 
             ///// Remove unused columns
             //!!! OBSOLETE HERE      !!! boundExp = AliasReWriter.Rewrite(boundExp, dynamicCache);
@@ -519,11 +520,11 @@ namespace AdFactum.Data.Access
 
             //// Do Final
             //!!! OBSOLETE HERE      !!! boundExp = RedundantSubqueryRemover.Remove(boundExp, dynamicCache );
-            boundExp = RedundantSubqueryRemover.Remove(boundExp, dynamicCache);
-            boundExp = RedundantJoinRemover.Remove(boundExp);
-            boundExp = AliasReWriter.Rewrite(boundExp, dynamicCache);
+            boundExp = RedundantSubqueryRemover.Remove(boundExp, backpack);
+            boundExp = RedundantJoinRemover.Remove(boundExp, backpack);
+            boundExp = AliasReWriter.Rewrite(boundExp, backpack);
 
-            boundExp = UpdateProjection.Rebind(boundExp, dynamicCache);
+            boundExp = UpdateProjection.Rebind(boundExp, backpack);
 
             return boundExp;
         }

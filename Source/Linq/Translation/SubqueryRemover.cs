@@ -20,8 +20,8 @@ namespace AdFactum.Data.Linq.Translation
         /// Initializes a new instance of the <see cref="SubqueryRemover"/> class.
         /// </summary>
         /// <param name="redundant">The redundant.</param>
-        private SubqueryRemover(List<SelectExpression> redundant)
-            :base(ReferenceDirection.Referrer)
+        private SubqueryRemover(List<SelectExpression> redundant, ExpressionVisitorBackpack backpack)
+            :base(ReferenceDirection.Referrer, backpack)
         {
             Redundant = redundant;
         }
@@ -29,18 +29,18 @@ namespace AdFactum.Data.Linq.Translation
         /// <summary>
         /// Removes the specified select.
         /// </summary>
-        public static SelectExpression Remove(SelectExpression select, Cache<Type, ProjectionClass> dynamicCache, List<SelectExpression> redundant)
+        public static SelectExpression Remove(SelectExpression select, List<SelectExpression> redundant, ExpressionVisitorBackpack backpack)
         {
-            var result= (SelectExpression) new SubqueryRemover(redundant).Visit(select);
+            var result = (SelectExpression)new SubqueryRemover(redundant, backpack).Visit(select);
             return result;
         }   
 
         /// <summary>
         /// Removes the specified select.
         /// </summary>
-        public static SelectExpression Remove(SelectExpression select, Cache<Type, ProjectionClass> dynamicCache, params SelectExpression[] redundant)
+        public static SelectExpression Remove(SelectExpression select, ExpressionVisitorBackpack backpack, params SelectExpression[] redundant)
         {
-            var result = (SelectExpression) new SubqueryRemover(redundant.ToList()).Visit(select);
+            var result = (SelectExpression)new SubqueryRemover(redundant.ToList(), backpack).Visit(select);
             return result;
         }
 

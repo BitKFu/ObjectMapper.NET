@@ -7,7 +7,7 @@ using AdFactum.Data.Linq.Expressions;
 
 namespace AdFactum.Data.Linq.Translation
 {
-    public class RebindToSelection : DbExpressionVisitor
+    public class RebindToSelection : DbPackedExpressionVisitor
     {
         AliasedExpression Selection { get; set; }
         HashSet<Alias> AliasesToReplace { get; set; }
@@ -18,7 +18,8 @@ namespace AdFactum.Data.Linq.Translation
         /// </summary>
         /// <param name="currentFrom">The current from.</param>
         /// <param name="newSelection">The new selection.</param>
-        public RebindToSelection(AliasedExpression currentFrom, AliasedExpression newSelection)
+        public RebindToSelection(AliasedExpression currentFrom, AliasedExpression newSelection, ExpressionVisitorBackpack backpack)
+            :base(backpack)
         {
             Selection = newSelection;
             this.currentFrom = currentFrom;
@@ -30,8 +31,8 @@ namespace AdFactum.Data.Linq.Translation
         /// <param name="currentFrom">The current from.</param>
         /// <param name="newSelection">The new selection.</param>
         /// <param name="aliasesToReplace">The aliases to replace.</param>
-        private RebindToSelection(AliasedExpression currentFrom, AliasedExpression newSelection, HashSet<Alias> aliasesToReplace)
-            : this(currentFrom, newSelection)
+        private RebindToSelection(AliasedExpression currentFrom, AliasedExpression newSelection, HashSet<Alias> aliasesToReplace, ExpressionVisitorBackpack backpack)
+            : this(currentFrom, newSelection, backpack)
         {
             AliasesToReplace = aliasesToReplace;
         }
@@ -41,15 +42,15 @@ namespace AdFactum.Data.Linq.Translation
         /// </summary>
         /// <param name="exp"></param>
         /// <returns></returns>
-        public static Expression Rebind(AliasedExpression currentFrom, AliasedExpression selection, Expression exp)
+        public static Expression Rebind(AliasedExpression currentFrom, AliasedExpression selection, Expression exp, ExpressionVisitorBackpack backpack)
         {
-            var rebinder = new RebindToSelection(currentFrom, selection);
+            var rebinder = new RebindToSelection(currentFrom, selection, backpack);
             return rebinder.Visit(exp);
         }
 
-        public static Expression Rebind(AliasedExpression currentFrom, AliasedExpression selection, Expression exp, HashSet<Alias> aliasesToReplace)
+        public static Expression Rebind(AliasedExpression currentFrom, AliasedExpression selection, Expression exp, HashSet<Alias> aliasesToReplace, ExpressionVisitorBackpack backpack)
         {
-            var rebinder = new RebindToSelection(currentFrom, selection, aliasesToReplace);
+            var rebinder = new RebindToSelection(currentFrom, selection, aliasesToReplace, backpack);
             return rebinder.Visit(exp);
         }
 

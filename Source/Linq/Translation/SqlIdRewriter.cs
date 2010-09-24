@@ -10,7 +10,7 @@ namespace AdFactum.Data.Linq.Translation
     /// <summary>
     /// This Rewriter moves the SqlId from the lowest sql to the highest one
     /// </summary>
-    public class SqlIdRewriter : DbExpressionVisitor
+    public class SqlIdRewriter : DbPackedExpressionVisitor
     {
         private Expression root;
         private string storedSqlId;
@@ -18,8 +18,8 @@ namespace AdFactum.Data.Linq.Translation
         /// <summary>
         /// Initializes a new instance of the <see cref="SqlIdRewriter"/> class.
         /// </summary>
-        /// <param name="rootEx">The root ex.</param>
-        protected SqlIdRewriter(Expression rootEx)
+        protected SqlIdRewriter(Expression rootEx, ExpressionVisitorBackpack backpack)
+            : base(backpack)
         {
 #if TRACE
             Console.WriteLine("\nSqlIdRewriter:");
@@ -41,10 +41,10 @@ namespace AdFactum.Data.Linq.Translation
         /// </summary>
         /// <param name="expression">The expression.</param>
         /// <returns></returns>
-        public static Expression Rewrite(Expression expression)
+        public static Expression Rewrite(Expression expression, ExpressionVisitorBackpack backpack)
         {
             Expression rootSelect = ExpressionTypeFinder.Find(expression, typeof (SelectExpression));
-            var writer = new SqlIdRewriter(rootSelect);
+            var writer = new SqlIdRewriter(rootSelect, backpack);
             return writer.Visit(expression);
         }
 

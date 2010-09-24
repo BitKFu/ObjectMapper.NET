@@ -17,13 +17,9 @@ namespace AdFactum.Data.Linq.Translation
     /// <summary>
     /// The QueryBinder converts the real LINQ Query in a first step to a query that is more readable
     /// </summary>
-    public class QueryBinder : DbExpressionVisitor
+    public class QueryBinder : DbPackedExpressionVisitor
     {
         private readonly Cache<string, ArrayList> attributeCache = new Cache<string, ArrayList>("Attribute Cache");
-        private readonly Cache<Type, ProjectionClass> dynamicCache;
-
-        private readonly Dictionary<ParameterExpression, MappingStruct> fromClauseMapping =
-            new Dictionary<ParameterExpression, MappingStruct>();
 
         //private readonly Stack<IRetriever> memberAccess = new Stack<IRetriever>();
         private Expression currentGroupElement;
@@ -42,18 +38,17 @@ namespace AdFactum.Data.Linq.Translation
 
         private void AddFromClauseMapping(ParameterExpression parameter, Expression exp)
         {
-            fromClauseMapping[parameter] = new MappingStruct(exp);
+            Backpack.ParameterMapping[parameter] = new MappingStruct(exp);
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="QueryBinder"/> class.
         /// </summary>
         /// <param name="expression">The expression.</param>
-        private QueryBinder(Expression expression, Cache<Type, ProjectionClass> cache, ITypeMapper typeMapper)
+        private QueryBinder(Expression expression, ExpressionVisitorBackpack backpack)
+            :base(backpack)
         {
             Root = expression;
-            TypeMapper = typeMapper;
-            dynamicCache = cache;
             Level = HierarchyLevel.FlatObject;
         }
 
@@ -61,15 +56,6 @@ namespace AdFactum.Data.Linq.Translation
         protected Cache<string, ArrayList> AttributeCache
         {
             get { return attributeCache; }
-        }
-
-        /// <summary> Gets the Type Mapper</summary>
-        protected ITypeMapper TypeMapper { get; private set; }
-
-        /// <summary> Used to gain access to already mapped tables in order to get the aliases. </summary>
-        protected Dictionary<ParameterExpression, MappingStruct> FromClauseMapping
-        {
-            get { return fromClauseMapping; }
         }
 
         /// <summary> Gets or sets the root. </summary>
@@ -80,7 +66,7 @@ namespace AdFactum.Data.Linq.Translation
 
         protected Cache<Type, ProjectionClass> DynamicCache
         {
-            get { return dynamicCache; }
+            get { return Backpack.ProjectionCache; }
         }
 
         /// <summary>
@@ -109,9 +95,9 @@ namespace AdFactum.Data.Linq.Translation
         /// <summary>
         /// Evaluates the specified expression.
         /// </summary>
-        public static Expression Evaluate(Expression expression, out List<PropertyTupel> groupings, Cache<Type, ProjectionClass> dynamicCache, ITypeMapper typeMapper, out int level, out Dictionary<ParameterExpression, MappingStruct> fromClauseMapping)
+        public static Expression Evaluate(Expression expression, out List<PropertyTupel> groupings, ExpressionVisitorBackpack backpack, out int level)
         {
-            var binder = new QueryBinder(expression, dynamicCache, typeMapper);
+            var binder = new QueryBinder(expression, backpack);
             Expression result = binder.Visit(expression);
             groupings = binder.Groupings;
             level = binder.Level;
@@ -120,15 +106,13 @@ namespace AdFactum.Data.Linq.Translation
             if (tableEx != null)
             {
                 Type projectedType = tableEx.RevealedType;
-                ProjectionClass projection = ReflectionHelper.GetProjection(projectedType, dynamicCache);
-                ReadOnlyCollection<ColumnDeclaration> columns = projection.GetColumns(tableEx.Alias, dynamicCache);
+                ProjectionClass projection = ReflectionHelper.GetProjection(projectedType, backpack.ProjectionCache);
+                ReadOnlyCollection<ColumnDeclaration> columns = projection.GetColumns(tableEx.Alias, backpack.ProjectionCache);
                 var selectExpression = new SelectExpression(projectedType,  Alias.Generate(AliasType.Select), columns, null, tableEx, null);
 
-                fromClauseMapping = binder.FromClauseMapping;
                 return selectExpression;
             }
 
-            fromClauseMapping = binder.FromClauseMapping;
             return result;
         }
 
@@ -527,7 +511,7 @@ namespace AdFactum.Data.Linq.Translation
 
             ReadOnlyCollection<ColumnDeclaration> columns;
             
-            if (resultType.RevealType().IsProjectedType(dynamicCache))
+            if (resultType.RevealType().IsProjectedType(DynamicCache))
                 columns = GetProjection(resultType.RevealType()).GetColumns(alias, DynamicCache);
             else
                 columns = new ReadOnlyCollection<ColumnDeclaration>(new List<ColumnDeclaration>());
@@ -720,7 +704,7 @@ namespace AdFactum.Data.Linq.Translation
                 MethodCallExpression groupJoin = source as MethodCallExpression;
                 NewExpression groupResult = ExpressionTypeFinder.Find(groupJoin.Arguments[4], ExpressionType.New) as NewExpression;
                 ParameterExpression leftParameter = groupResult.Arguments[1] as ParameterExpression;
-                SelectExpression groupConditionSelect = fromClauseMapping[leftParameter].Expression as SelectExpression;
+                SelectExpression groupConditionSelect = Backpack.ParameterMapping[leftParameter].Expression as SelectExpression;
 
                 fromLeft = ((SelectExpression) fromLeft).From;
                 collection = mcs.Arguments[0];
@@ -808,7 +792,7 @@ namespace AdFactum.Data.Linq.Translation
                 var tableProjection = projection as TableExpression;
                 if (tableProjection != null)
                 {
-                    FromClauseMapping[argument.Parameters[0]] = new MappingStruct(tableProjection);
+                    Backpack.ParameterMapping[argument.Parameters[0]] = new MappingStruct(tableProjection);
                     projection = new SelectExpression(tableProjection.Type, Alias.Generate(AliasType.Select),
                                                       ColumnProjector.Evaluate(tableProjection, DynamicCache), null,
                                                       tableProjection, Visit(argument.Body));
@@ -818,7 +802,7 @@ namespace AdFactum.Data.Linq.Translation
                     var selectProjection = projection as SelectExpression;
                     if (selectProjection != null)
                     {
-                        FromClauseMapping[argument.Parameters[0]] =
+                        Backpack.ParameterMapping[argument.Parameters[0]] =
                             new MappingStruct((AliasedExpression)selectProjection.From);
                         if (argument.Body is BinaryExpression)
                             projection = selectProjection.Where == null
@@ -843,7 +827,7 @@ namespace AdFactum.Data.Linq.Translation
             }
 
             var alias = Alias.Generate(AliasType.Select);
-            var pc = ColumnProjector.Evaluate(projection, dynamicCache);
+            var pc = ColumnProjector.Evaluate(projection, DynamicCache);
             Expression aggExpr = new AggregateExpression(returnType, aggName, argExpr, isDistinct);
             var columns = new List<ColumnDeclaration>{new ColumnDeclaration(aggExpr, Alias.Generate(AliasType.Column))};
             //SelectExpression select = new SelectExpression(source.Type, alias, new ReadOnlyCollection<ColumnDeclaration> ( columns ), projection, null, null);
@@ -1387,7 +1371,7 @@ namespace AdFactum.Data.Linq.Translation
             Alias alias = Alias.Generate(AliasType.Select);
             Expression selector1 = Visit(selector.Body);
             ReadOnlyCollection<ColumnDeclaration> columns = ColumnProjector.Evaluate(selector1, DynamicCache);
-            ProjectionClass projection = ReflectionHelper.GetProjection(resultType.RevealType(), dynamicCache);
+            ProjectionClass projection = ReflectionHelper.GetProjection(resultType.RevealType(), DynamicCache);
 
             return new SelectExpression(resultType,  projection, alias, columns, selector1, from, where, null, null, null, null, false, false, SelectResultType.Collection, null, null, null);
         }
@@ -1434,7 +1418,7 @@ namespace AdFactum.Data.Linq.Translation
                 }
 
                 // A NULL can never be assigned by a parameter, that's why we convert it to a const value
-                if (value == null || TypeMapper.IsDbNull(value))
+                if (value == null || Backpack.TypeMapper.IsDbNull(value))
                     return new ValueExpression(retriever.SourceType, null);
 
                 // check, what type of parameter we have
@@ -1478,7 +1462,7 @@ namespace AdFactum.Data.Linq.Translation
         /// <returns></returns>
         private ProjectionClass GetProjection(Type type)
         {
-            return ReflectionHelper.GetProjection(type.RevealType(), dynamicCache );
+            return ReflectionHelper.GetProjection(type.RevealType(), DynamicCache);
         }
 
         protected override Expression VisitComparison(BinaryExpression b, QueryOperator queryOperator)
@@ -1576,8 +1560,8 @@ namespace AdFactum.Data.Linq.Translation
             if (aliased != null) return aliased;
 
             var pe = source as ParameterExpression;
-            if (pe != null && FromClauseMapping[pe].Expression is AliasedExpression)
-                return FromClauseMapping[pe].Expression as AliasedExpression;
+            if (pe != null && Backpack.ParameterMapping[pe].Expression is AliasedExpression)
+                return Backpack.ParameterMapping[pe].Expression as AliasedExpression;
 
             var la = exp as LambdaExpression;
             if (la != null && la.Body is AliasedExpression)

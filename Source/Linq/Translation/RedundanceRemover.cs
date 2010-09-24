@@ -10,7 +10,7 @@ namespace AdFactum.Data.Linq.Translation
     /// <summary>
     /// This class is used to remove redundancies. That means, it removes Cleared Aliases from the Column 
     /// </summary>
-    public abstract class RedundanceRemover : DbExpressionVisitor
+    public abstract class RedundanceRemover : DbPackedExpressionVisitor
     {
         private readonly Dictionary<Alias, IDbExpressionWithResult> redundantSelect = new Dictionary<Alias, IDbExpressionWithResult>();
 
@@ -25,11 +25,10 @@ namespace AdFactum.Data.Linq.Translation
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="referenceDirection"></param>
-        protected RedundanceRemover(ReferenceDirection referenceDirection)
+        protected RedundanceRemover(ReferenceDirection referenceDirection, ExpressionVisitorBackpack backpack)
+            :base (backpack)
         {
             Direction = referenceDirection;
-            //Direction = ReferenceDirection.Referrer;
         }
 
         /// <summary>

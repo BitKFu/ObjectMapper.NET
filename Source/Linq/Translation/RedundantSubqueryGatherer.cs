@@ -9,20 +9,18 @@ namespace AdFactum.Data.Linq.Translation
 {
     public class RedundantSubqueryGatherer : DbExpressionVisitor
     {
-        Cache<Type, ProjectionClass> dynamicCache;
         List<SelectExpression> redundant;
 
-        private RedundantSubqueryGatherer(Cache<Type, ProjectionClass> dynamicCache)
+        private RedundantSubqueryGatherer()
         {
-            this.dynamicCache = dynamicCache;
 #if TRACE
             Console.WriteLine("\nRedundantSubqueryGatherer:");
 #endif
         }
 
-        internal static List<SelectExpression> Gather(Expression source, Cache<Type, ProjectionClass> dynamicCache)
+        internal static List<SelectExpression> Gather(Expression source)
         {
-            var gatherer = new RedundantSubqueryGatherer(dynamicCache);
+            var gatherer = new RedundantSubqueryGatherer();
             gatherer.Visit(source);
 
 #if TRACE

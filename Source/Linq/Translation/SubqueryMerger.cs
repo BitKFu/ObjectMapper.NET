@@ -11,20 +11,19 @@ namespace AdFactum.Data.Linq.Translation
     {
         private AliasedExpression currentFrom;
         private readonly Cache<Type, ProjectionClass> dynamicCache;
-        //private readonly Dictionary<Alias, IDbExpressionWithResult> redundantSelect = new Dictionary<Alias, IDbExpressionWithResult>();
 
-        private SubqueryMerger(Cache<Type, ProjectionClass> dynamicCache)
-            : base(ReferenceDirection.Referrer)
+        private SubqueryMerger(ExpressionVisitorBackpack backpack)
+            : base(ReferenceDirection.Referrer, backpack)
         {
-            this.dynamicCache = dynamicCache;
+            this.dynamicCache = backpack.ProjectionCache;
 #if TRACE
             Console.WriteLine("\nSubqueryMerger:");
 #endif
         }
 
-        internal static Expression Merge(Expression expression, Cache<Type, ProjectionClass> dynamicCache)
+        internal static Expression Merge(Expression expression, ExpressionVisitorBackpack backpack)
         {
-            var result= new SubqueryMerger(dynamicCache).Visit(expression);
+            var result = new SubqueryMerger(backpack).Visit(expression);
             return result;
         }
 
@@ -47,7 +46,7 @@ namespace AdFactum.Data.Linq.Translation
                     SelectExpression fromSelect = GetLeftMostSelect(select.From);
 
                     // remove the redundant subquery
-                    currentFrom = select = SubqueryRemover.Remove(select, dynamicCache, fromSelect);
+                    currentFrom = select = SubqueryRemover.Remove(select, Backpack, fromSelect);
 
                     // merge where expressions 
                     Expression where = select.Where;
@@ -141,7 +140,7 @@ namespace AdFactum.Data.Linq.Translation
             return true;
         }
 
-        private static bool CanMergeWithFrom(SelectExpression select, bool isTopLevel)
+        private bool CanMergeWithFrom(SelectExpression select, bool isTopLevel)
         {
             SelectExpression fromSelect = GetLeftMostSelect(select.From);
             if (fromSelect == null)

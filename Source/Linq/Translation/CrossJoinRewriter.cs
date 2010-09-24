@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using AdFactum.Data.Linq.Expressions;
@@ -8,18 +9,24 @@ namespace AdFactum.Data.Linq.Translation
     /// <summary>
     /// Attempt to rewrite cross joins as inner joins
     /// </summary>
-    public class CrossJoinRewriter : DbExpressionVisitor
+    public class CrossJoinRewriter : DbPackedExpressionVisitor
     {
         private Expression currentWhere;
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="backpack"></param>
+        private CrossJoinRewriter(ExpressionVisitorBackpack backpack) : base(backpack)
+        {
+        }
 
         ///<summary>
         /// Try to remove cross join and replace it with inner joins
         ///</summary>
-        ///<param name="expression"></param>
-        ///<returns></returns>
-        public static Expression Rewrite(Expression expression)
+        public static Expression Rewrite(Expression expression, ExpressionVisitorBackpack backpack)
         {
-            return new CrossJoinRewriter().Visit(expression);
+            return new CrossJoinRewriter(backpack).Visit(expression);
         }
 
         protected override Expression VisitSelectExpression(SelectExpression select)

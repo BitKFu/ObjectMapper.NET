@@ -11,17 +11,16 @@ namespace AdFactum.Data.Linq.Translation
     /// <summary>
     /// This Re Writer is used to solve alias expressions
     /// </summary>
-    public class AliasReWriter : DbExpressionVisitor
+    public class AliasReWriter : DbPackedExpressionVisitor
     {
         private readonly Dictionary<AliasType, int> globalAliasCounter = new Dictionary<AliasType, int>();
         private readonly Dictionary<string, string> globalColumnAliasReference = new Dictionary<string, string>();
 
         private Dictionary<string, string> inJoinCondition = new Dictionary<string, string>();
-        private Cache<Type, ProjectionClass> dynamicCache;
 
-        private AliasReWriter(Cache<Type, ProjectionClass> cache) 
+        private AliasReWriter(ExpressionVisitorBackpack backpack) 
+            :base(backpack)
         {
-            dynamicCache = cache;
 #if TRACE
             Console.WriteLine("\nAliasReWriter:");
 #endif
@@ -33,9 +32,9 @@ namespace AdFactum.Data.Linq.Translation
         /// <param name="expression">The expression.</param>
         /// <param name="cache">The cache.</param>
         /// <returns></returns>
-        public static Expression Rewrite(Expression expression, Cache<Type, ProjectionClass> cache)
+        public static Expression Rewrite(Expression expression, ExpressionVisitorBackpack backpack)
         {
-            var writer = new AliasReWriter(cache);
+            var writer = new AliasReWriter(backpack);
             return writer.Visit(expression);
         }
 
@@ -196,7 +195,7 @@ namespace AdFactum.Data.Linq.Translation
         {
             if (join.Alias.Generated)
             {
-                var pc = ReflectionHelper.GetProjection(join.RevealedType, dynamicCache);
+                var pc = ReflectionHelper.GetProjection(join.RevealedType, Backpack.ProjectionCache);
                 var newExpression = pc.NewExpression;
 
                 string newAlias = null;

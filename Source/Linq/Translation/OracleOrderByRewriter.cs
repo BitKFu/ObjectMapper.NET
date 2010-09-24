@@ -18,20 +18,17 @@ namespace AdFactum.Data.Linq.Translation
         /// <summary>
         /// Initializes a new instance of the <see cref="OracleOrderByRewriter"/> class.
         /// </summary>
-        /// <param name="expression">The expression.</param>
-        private OracleOrderByRewriter(Expression expression)
-            : base(expression)
+        private OracleOrderByRewriter(Expression expression, ExpressionVisitorBackpack backpack)
+            : base(expression, backpack)
         {
         }
 
         /// <summary>
         /// Evaluates the specified expression.
         /// </summary>
-        /// <param name="expression">The expression.</param>
-        /// <returns></returns>
-        public static Expression Rewrite(Expression expression)
+        public static Expression Rewrite(Expression expression, ExpressionVisitorBackpack backpack)
         {
-            var writer = new OracleOrderByRewriter(expression);
+            var writer = new OracleOrderByRewriter(expression, backpack);
             return writer.Visit(expression);
         }
 
@@ -70,7 +67,7 @@ namespace AdFactum.Data.Linq.Translation
             // maybe we already gathered some orderings, than append them now
             if (canReceiveOrderings && GatheredOrderings.Count > 0 && !canPassOnOrderings)
             {
-                GatheredOrderings = BindToSelection(select, GatheredOrderings);
+                GatheredOrderings = BindToSelection(select, GatheredOrderings, Backpack);
 
                 if (hasOrderBy) orderByColumns.AddRange(select.OrderBy);
                 if (GatheredOrderings != null) orderByColumns.AddRange(GatheredOrderings);
@@ -92,7 +89,7 @@ namespace AdFactum.Data.Linq.Translation
             if (select.OrderBy != null)
             {
                 // Try to update all gatheredOrderings to the current selection
-                GatheredOrderings = BindToSelection(select, GatheredOrderings);
+                GatheredOrderings = BindToSelection(select, GatheredOrderings, Backpack);
 
                 // Check if the current ordering, does not exisit in the list
                 if (!GatheredOrderings.Any(x => select.OrderBy.Any(o => DbExpressionComparer.AreEqual(o.Expression, x.Expression))))
@@ -108,7 +105,7 @@ namespace AdFactum.Data.Linq.Translation
             if (GatheredOrderings.Count>0)
             {
                 // Try to update all gatheredOrderings to the current selection
-                GatheredOrderings = BindToSelection(select, GatheredOrderings);
+                GatheredOrderings = BindToSelection(select, GatheredOrderings, Backpack);
             }
 
             return select;

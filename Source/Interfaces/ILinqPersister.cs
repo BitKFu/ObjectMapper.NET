@@ -18,7 +18,7 @@ namespace AdFactum.Data.Interfaces
         /// <summary>
         /// Rewrites the expression
         /// </summary>
-        Expression RewriteExpression(Expression expression, Cache<Type, ProjectionClass> dynamicCache, out List<PropertyTupel> groupings, out int level);
+        Expression RewriteExpression(Expression expression, out ExpressionVisitorBackpack backpack, out List<PropertyTupel> groupings, out int level);
 
         /// <summary>
         /// Gets the type mapper.

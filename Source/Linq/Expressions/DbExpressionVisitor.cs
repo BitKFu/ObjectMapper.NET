@@ -18,10 +18,9 @@ namespace AdFactum.Data.Linq.Expressions
     {
         /// <summary> Gets or sets the groupings. </summary>
         protected List<PropertyTupel> Groupings { get { return groupings; } }
-        private readonly List<PropertyTupel> groupings = new List<PropertyTupel>();
 
-        // FIX!!!! MUST BE CHANGED; BECAUSE IT'S UNSAFE!!!!
-        private static Dictionary<ColumnDeclaration,ColumnDeclaration> exchangeCd = new Dictionary<ColumnDeclaration, ColumnDeclaration>();
+
+        private readonly List<PropertyTupel> groupings = new List<PropertyTupel>();
 
         /// <summary>
         /// Visits the specified exp.
@@ -308,9 +307,6 @@ namespace AdFactum.Data.Linq.Expressions
                 if (alternate != null)
                 {
                     var newCd = new ColumnDeclaration(e, column);
-                    if (exchangeCd.ContainsKey(column))
-                        exchangeCd.Remove(column);
-                    exchangeCd.Add(column, newCd);
                     alternate.Add(newCd);
                 }
             }
@@ -367,11 +363,6 @@ namespace AdFactum.Data.Linq.Expressions
 
             var result = UpdateSelect(select, projection, selector, from, where, orderBy, groupBy, skip, take, select.IsDistinct, select.IsReverse, columns, select.SqlId, select.Hint, defaultIfEmpty);
 
-#if DEBUG
-            // Check, if ater the SelectExpression the columns are valid
-            if (!(this is ReferingColumnChecker))
-                ReferingColumnChecker.Validate(result); 
-#endif
             return result;
         }
 
@@ -426,18 +417,6 @@ namespace AdFactum.Data.Linq.Expressions
         /// <summary> Visits the column expression </summary>
         protected virtual Expression VisitColumn(PropertyExpression expression)
         {
-            // Maybe we must exchange a referring column
-            if (expression.ReferringColumn != null)
-            {
-                ColumnDeclaration exchangedCd;
-                if (exchangeCd.TryGetValue(expression.ReferringColumn, out exchangedCd))
-                    expression.ReferringColumn = exchangedCd;
-            }
-
-            //// Perhaps we have a referring column that needs to be vistited
-            //if (expression.ReferringColumn != null)
-            //    expression.ReferringColumn.Expression = Visit(expression.ReferringColumn.Expression);
-
             return expression;
         }
 
@@ -568,14 +547,14 @@ namespace AdFactum.Data.Linq.Expressions
         /// <summary>
         /// Finds the source column within the current Selection, based on a nested property
         /// </summary>
-        protected static ColumnDeclaration FindSourceColumn(AliasedExpression from, PropertyExpression property)
+        protected  ColumnDeclaration FindSourceColumn(AliasedExpression from, PropertyExpression property)
         {
             property = OriginPropertyFinder.Find(property) ?? property;
             var columns = ColumnProjector.Evaluate(from, from.Projection);
             return columns.Where(x => property.Equals(x.OriginalProperty)).FirstOrDefault();
         }
 
-        protected static ColumnDeclaration FindSourceColumn(AliasedExpression from, ColumnDeclaration declaration)
+        protected  ColumnDeclaration FindSourceColumn(AliasedExpression from, ColumnDeclaration declaration)
         {
             AliasedExpression aliased = declaration.Expression as AliasedExpression;
             if (from == null || (aliased != null && aliased.Alias == from.Alias))
@@ -592,7 +571,7 @@ namespace AdFactum.Data.Linq.Expressions
             return column.SetAlias(declaration.Alias);
         }
 
-        protected static ColumnDeclaration FindSourceColumn(AliasedExpression currentFrom, Expression property)
+        protected ColumnDeclaration FindSourceColumn(AliasedExpression currentFrom, Expression property)
         {
             SelectExpression select = currentFrom as SelectExpression;
             PropertyExpression propertyExpression = property as PropertyExpression;
@@ -627,6 +606,43 @@ namespace AdFactum.Data.Linq.Expressions
         private static bool MembersMatch(MemberInfo a, string propertyName)
         {
             return a.Name.Substring(4) == propertyName;
+        }
+
+        public List<ColumnDeclaration> GetColumns(AliasedExpression currentFrom, ReadOnlyCollection<ColumnDeclaration> existingColumns, Expression selector, ProjectionClass projection)
+        {
+            List<ColumnDeclaration> columns;
+
+            if (selector == null)
+                columns = ColumnProjector.Evaluate(currentFrom, projection).ToList();
+            else
+            {
+                columns = new List<ColumnDeclaration>();
+                var selectorColumns = ColumnProjector.Evaluate(selector, projection);
+
+                columns.AddRange(MapColumnsToCurrentFrom(currentFrom, selectorColumns, existingColumns));
+            }
+
+            return columns;
+        }
+
+        private List<ColumnDeclaration> MapColumnsToCurrentFrom(AliasedExpression currentFrom, ReadOnlyCollection<ColumnDeclaration> selectorColumns, ReadOnlyCollection<ColumnDeclaration> existingColumns)
+        {
+            var columns = new List<ColumnDeclaration>();
+            for (int i = 0; i < selectorColumns.Count; i++)
+            {
+                ColumnDeclaration cd = selectorColumns[i];
+                var declaration = FindSourceColumn(currentFrom, cd);
+                if (declaration == null)
+                    continue;
+
+                // If the alias has been generated, than use the pre-existing one
+                if (declaration.Alias.Generated && selectorColumns.Count == existingColumns.Count)
+                    declaration.Alias = existingColumns[i].Alias;
+
+                columns.Add(declaration);
+            }
+
+            return columns;
         }
     }
 }

@@ -9,6 +9,7 @@ using System.Text;
 using AdFactum.Data.Interfaces;
 using AdFactum.Data.Internal;
 using AdFactum.Data.Linq.Expressions;
+using AdFactum.Data.Linq.Translation;
 using AdFactum.Data.Queries;
 using AdFactum.Data.Util;
 
@@ -17,19 +18,17 @@ namespace AdFactum.Data.Linq.Language
     /// <summary>
     /// The LinqMethodInspector class defines commands that is invoked by the expression 
     /// </summary>
-    public class LinqMethodInspector : DbExpressionVisitor
+    public class LinqMethodInspector : DbPackedExpressionVisitor
     {
         /// <summary> Internal String Builder used to crate the SQL Statement </summary>
         private readonly StringBuilder builder = new StringBuilder();
 
-        private readonly Cache<Type, ProjectionClass> dynamicCache;
         public Expression Root { get; internal set; }
 
-        protected LinqMethodInspector(ILinqPersister persister, List<PropertyTupel> groupings,
-                                      Cache<Type, ProjectionClass> cache)
+        protected LinqMethodInspector(ILinqPersister persister, List<PropertyTupel> groupings, ExpressionVisitorBackpack backpack)
+            :base(backpack)
         {
             LinqPersister = persister;
-            dynamicCache = cache;
             ComparerStack = new Stack<string>();
             groupings.ForEach(tupel => Groupings.Add(tupel));
         }
@@ -38,7 +37,7 @@ namespace AdFactum.Data.Linq.Language
 
         protected Cache<Type, ProjectionClass> DynamicCache
         {
-            get { return dynamicCache; }
+            get { return Backpack.ProjectionCache; }
         }
 
         protected StringBuilder Builder
@@ -1127,9 +1126,9 @@ namespace AdFactum.Data.Linq.Language
         /// </summary>
         public static IDbCommand Evaluate(Type expressionWriterType, Expression root, Expression expression,
                                           List<PropertyTupel> groupings, ILinqPersister linqPersister,
-                                          Cache<Type, ProjectionClass> cache)
+                                          ExpressionVisitorBackpack backpack)
         {
-            var writer = (LinqMethodInspector) Activator.CreateInstance(expressionWriterType, linqPersister, groupings, cache);
+            var writer = (LinqMethodInspector) Activator.CreateInstance(expressionWriterType, linqPersister, groupings, backpack);
             writer.Root = root;
             IDbCommand command = writer.EvaluateCommand(expression);
             return command;

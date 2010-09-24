@@ -13,32 +13,20 @@ namespace AdFactum.Data.Linq.Translation
     /// <summary>
     /// Tries to bind the members
     /// </summary>
-    public class MemberBinder : DbExpressionVisitor
+    public class MemberBinder : DbPackedExpressionVisitor
     {
-        private readonly Dictionary<ParameterExpression, MappingStruct> fromClauseMapping =
-            new Dictionary<ParameterExpression, MappingStruct>();
-
-        private readonly Cache<Type, ProjectionClass> dynamicCache;
 
         private AliasedExpression currentFrom;
 
-        /// <summary> Gets the Type Mapper</summary>
-        protected ITypeMapper TypeMapper { get; private set; }
 
         private readonly Dictionary<ParameterExpression, Expression> visitedParameterMappings = new Dictionary<ParameterExpression, Expression>();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MemberBinder"/> class.
         /// </summary>
-        /// <param name="cache">The cache.</param>
-        /// <param name="typeMapper">The type mapper.</param>
-        /// <param name="mapping">The mapping.</param>
-        private MemberBinder(Cache<Type, ProjectionClass> cache, ITypeMapper typeMapper, Dictionary<ParameterExpression, MappingStruct> mapping)
+        private MemberBinder(ExpressionVisitorBackpack backpack)
+            :base(backpack)
         {
-            TypeMapper = typeMapper;
-            dynamicCache = cache;
-            fromClauseMapping = mapping;
-
 #if TRACE
             Console.WriteLine("\nMemberBinder:");
 #endif
@@ -51,9 +39,9 @@ namespace AdFactum.Data.Linq.Translation
         /// <param name="cache">The cache.</param>
         /// <param name="mapper">The mapper.</param>
         /// <returns></returns>
-        public static Expression Evaluate(Expression exp, Cache<Type, ProjectionClass> cache, ITypeMapper mapper, Dictionary<ParameterExpression, MappingStruct> mapping)
+        public static Expression Evaluate(Expression exp, ExpressionVisitorBackpack backpack)
         {
-            MemberBinder binder = new MemberBinder(cache, mapper, mapping);
+            MemberBinder binder = new MemberBinder(backpack);
             return binder.Visit(exp);
         }
 
@@ -64,7 +52,7 @@ namespace AdFactum.Data.Linq.Translation
         /// <returns></returns>
         private ProjectionClass GetProjection(Type type)
         {
-            return ReflectionHelper.GetProjection(type.RevealType(), dynamicCache);
+            return ReflectionHelper.GetProjection(type.RevealType(), Backpack.ProjectionCache);
         }
 
         private static bool MembersMatch(MemberInfo a, string propertyName)
@@ -236,7 +224,7 @@ namespace AdFactum.Data.Linq.Translation
                             x.OriginalProperty.ParentType == member.Target).FirstOrDefault();
                     if (column != null)
                     {
-                        if (member.SourceType == m.Type && !member.SourceType.IsProjectedType(dynamicCache) && !member.SourceType.IsValueObjectType() ) // Only if the type is mapping
+                        if (member.SourceType == m.Type && !member.SourceType.IsProjectedType(Backpack.ProjectionCache) && !member.SourceType.IsValueObjectType() ) // Only if the type is mapping
                             return MapPropertyToCurrentFromClause(m, currentFrom, new PropertyExpression((AliasedExpression)select, column), m.Type);
 
 
@@ -251,7 +239,7 @@ namespace AdFactum.Data.Linq.Translation
                     column = select.Columns.Where(x => x.Alias.Name.Equals(columnName, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
                     if (column != null)
                     {
-                        if (member.SourceType == m.Type && !member.SourceType.IsProjectedType(dynamicCache) && !member.SourceType.IsValueObjectType()) // Only if the type is mapping
+                        if (member.SourceType == m.Type && !member.SourceType.IsProjectedType(Backpack.ProjectionCache) && !member.SourceType.IsValueObjectType()) // Only if the type is mapping
                             return MapPropertyToCurrentFromClause(m, currentFrom, new PropertyExpression((AliasedExpression)select, column), m.Type);
 
                         // Otherwise we have to create a join
@@ -470,11 +458,11 @@ namespace AdFactum.Data.Linq.Translation
 
             // Get the corresponding table
             MappingStruct table;
-            if (fromClauseMapping.TryGetValue(p, out table))
+            if (Backpack.ParameterMapping.TryGetValue(p, out table))
             {
                 visit = Visit(table.Expression);
                 visitedParameterMappings.Add(p, visit);
-                fromClauseMapping[p] = new MappingStruct(visit);
+                Backpack.ParameterMapping[p] = new MappingStruct(visit);
                 return AdjustType(visit, p.Type);
             }
 
@@ -511,7 +499,7 @@ namespace AdFactum.Data.Linq.Translation
 
             var prop = arg as PropertyExpression;
             if (prop != null && currentFrom != null && prop.Alias != currentFrom.Alias)
-                arg = RebindToSelection.Rebind(currentFrom, currentFrom, prop);
+                arg = RebindToSelection.Rebind(currentFrom, currentFrom, prop, Backpack);
 
             return UpdateAggregate(aggregate, aggregate.Type, aggregate.AggregateName, arg, aggregate.IsDistinct);
         }
@@ -650,66 +638,6 @@ namespace AdFactum.Data.Linq.Translation
 
                 currentFrom = saveCurrentFrom;
             }
-        }
-
-        public static List<ColumnDeclaration> GetColumns(AliasedExpression currentFrom, ReadOnlyCollection<ColumnDeclaration> existingColumns, Expression selector, ProjectionClass projection)
-        {
-            List<ColumnDeclaration> columns;
-
-            if (selector == null)
-                columns = ColumnProjector.Evaluate(currentFrom, projection).ToList();
-            else
-            {
-                columns = new List<ColumnDeclaration>();
-                var selectorColumns = ColumnProjector.Evaluate(selector, projection);
-
-                columns.AddRange(MapColumnsToCurrentFrom(currentFrom, selectorColumns, existingColumns));
-            }
-
-            /*
-             * Expand columns, if tried to access dependend objects
-             *
-            var toExpand = columns.Where(c => c.OriginalProperty != null && c.OriginalProperty.Expandable).ToList();
-            foreach (var expand in toExpand)
-            {
-                Expression fromClause = FromExpressionFinder.Find(currentFrom, expand.OriginalProperty.ContentType);
-                SelectExpression selectFrom = fromClause as SelectExpression;
-                TableExpression tableFrom = fromClause as TableExpression;
-                if (selectFrom != null)
-                {
-                    columns.Remove(expand);
-                    columns.AddRange(selectFrom.Columns);
-                }
-
-                if (tableFrom != null)
-                {
-                    columns.Remove(expand);
-                    columns.AddRange(tableFrom.Columns);
-                }
-            }*/
-
-            return columns;
-        }
-
-        private static List<ColumnDeclaration> MapColumnsToCurrentFrom(AliasedExpression currentFrom, ReadOnlyCollection<ColumnDeclaration> selectorColumns, ReadOnlyCollection<ColumnDeclaration> existingColumns)
-        {
-            var columns = new List<ColumnDeclaration>();
-            for (int i = 0; i < selectorColumns.Count; i++)
-            {
-                ColumnDeclaration cd = selectorColumns[i];
-                var declaration = FindSourceColumn(currentFrom, cd);
-                if (declaration == null)
-                    continue;
-                //   throw new AmbiguousMatchException("Column " + cd + " could not be found in the current result set.\nThat is mostly because a variable has be used ambiguously, e.g. in a Union - two different subselects share the same variables.");
-
-                // If the alias has been generated, than use the pre-existing one
-                if (declaration.Alias.Generated && selectorColumns.Count == existingColumns.Count)
-                    declaration.Alias = existingColumns[i].Alias;
-
-                columns.Add(declaration);
-            }
-
-            return columns;
         }
 
         private HashSet<MemberInitExpression> memberInitExpressions = new HashSet<MemberInitExpression>();

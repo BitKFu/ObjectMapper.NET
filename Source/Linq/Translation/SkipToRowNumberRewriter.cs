@@ -14,18 +14,12 @@ namespace AdFactum.Data.Linq.Translation
     /// </summary>
     public class SkipToRowNumberRewriter : RedundanceRemover
     {
-        private readonly Cache<Type, ProjectionClass> dynamicCache;
-        //private readonly Dictionary<Alias, IDbExpressionWithResult> redundantSelect = new Dictionary<Alias, IDbExpressionWithResult>();
-
         /// <summary>
         /// Initializes a new instance of the <see cref="SkipToRowNumberRewriter"/> class.
         /// </summary>
-        /// <param name="cache">The cache.</param>
-        private SkipToRowNumberRewriter(Cache<Type, ProjectionClass> cache)
-            :base(ReferenceDirection.Forward)
+        private SkipToRowNumberRewriter(ExpressionVisitorBackpack backpack)
+            : base(ReferenceDirection.Forward, backpack)
         {
-            dynamicCache = cache;
-
 #if TRACE
             Console.WriteLine("\nSkipToRowNumberRewriter:");
 #endif
@@ -35,12 +29,9 @@ namespace AdFactum.Data.Linq.Translation
         /// <summary>
         /// Rewrites the SkipTo Expression for SQL Server
         /// </summary>
-        /// <param name="expression">The expression.</param>
-        /// <param name="cache">The cache.</param>
-        /// <returns></returns>
-        public static Expression Rewrite(Expression expression, Cache<Type, ProjectionClass> cache)
+        public static Expression Rewrite(Expression expression, ExpressionVisitorBackpack backpack)
         {
-            return new SkipToRowNumberRewriter(cache).Visit(expression);
+            return new SkipToRowNumberRewriter(backpack).Visit(expression);
         }
 
         /// <summary>
@@ -100,7 +91,7 @@ namespace AdFactum.Data.Linq.Translation
                     }
                 }
 
-                var newBoundOrderings = OrderByRewriter.BindToSelection(newSelect, orderExpressions);
+                var newBoundOrderings = OrderByRewriter.BindToSelection(newSelect, orderExpressions, Backpack);
                 var rownum = new ColumnDeclaration(new RowNumberExpression(newBoundOrderings),
                                                    Alias.Generate(AliasType.Column));
                 newSelect = newSelect.AddColumn(rownum);

@@ -14,8 +14,8 @@ namespace AdFactum.Data.Linq.Translation
         /// Initializes a new instance of the <see cref="SqlOrderByRewriter"/> class.
         /// </summary>
         /// <param name="expression">The expression.</param>
-        private PostgresOrderByRewriter(Expression expression) 
-            : base(expression)
+        private PostgresOrderByRewriter(Expression expression, ExpressionVisitorBackpack backpack)
+            : base(expression, backpack)
         {
         }
 
@@ -24,9 +24,9 @@ namespace AdFactum.Data.Linq.Translation
         /// </summary>
         /// <param name="expression">The expression.</param>
         /// <returns></returns>
-        public static Expression Rewrite(Expression expression)
+        public static Expression Rewrite(Expression expression, ExpressionVisitorBackpack backpack)
         {
-            var writer = new PostgresOrderByRewriter(expression);
+            var writer = new PostgresOrderByRewriter(expression,backpack);
             return writer.Visit(expression);
         }
 
@@ -58,7 +58,7 @@ namespace AdFactum.Data.Linq.Translation
             // maybe we already gathered some orderings, than append them now
             if (canReceiveOrderings && GatheredOrderings.Count > 0 && !canPassOnOrderings)
             {
-                IEnumerable<OrderExpression> bindToSelection = BindToSelection(select, GatheredOrderings);
+                IEnumerable<OrderExpression> bindToSelection = BindToSelection(select, GatheredOrderings, Backpack);
 
                 if (hasOrderBy) orderByColumns.AddRange(select.OrderBy);
                 if (bindToSelection != null) orderByColumns.AddRange(bindToSelection);

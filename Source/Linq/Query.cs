@@ -186,12 +186,10 @@ namespace AdFactum.Data.Linq
         /// <returns></returns>
         public IDbCommand PreCompile(Expression expression)
         {
-            if (DynamicCache == null)
-                DynamicCache = new Cache<Type, ProjectionClass>("Linq Dynamic Cache");
-
             ILinqPersister linqPersister = Persister;
             int i;
-            compiledExpression = linqPersister.RewriteExpression(expression, DynamicCache, out groupings, out i);
+            ExpressionVisitorBackpack backpack;
+            compiledExpression = linqPersister.RewriteExpression(expression, out backpack, out groupings, out i);
             level = i;
 
             var lambda = compiledExpression as LambdaExpression;
@@ -206,14 +204,15 @@ namespace AdFactum.Data.Linq
             Console.WriteLine("\nSql Expression");
             Console.WriteLine("----------------");
 #endif
-            IDbCommand command = LinqMethodInspector.Evaluate(linqPersister.LinqExpressionWriter, 
-                    lambda ?? compiledExpression, compiledExpression, groupings, linqPersister, DynamicCache);
+            IDbCommand command = LinqMethodInspector.Evaluate(linqPersister.LinqExpressionWriter,
+                    lambda ?? compiledExpression, compiledExpression, groupings, linqPersister, backpack);
 
 #if TRACE
             Console.WriteLine(command.CommandText);
 #endif
 
             // Store the current Commands in order to rebind them, if necessary
+            DynamicCache = backpack.ProjectionCache;
             storedParamterCollection = command.Parameters;
             storedSqlCommand = command.CommandText;
 

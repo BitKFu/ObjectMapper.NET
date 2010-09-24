@@ -102,7 +102,7 @@ namespace AdFactum.Data.Internal
         /// <param name="groupings"></param>
         /// <param name="level"></param>
         /// <returns></returns>
-        public abstract Expression RewriteExpression(Expression expression, Cache<Type, ProjectionClass> dynamicCache, out List<PropertyTupel> groupings, out int level);
+        public abstract Expression RewriteExpression(Expression expression, out ExpressionVisitorBackpack backpack, out List<PropertyTupel> groupings, out int level);
 
         /// <summary> Type Mapping class </summary>
         public ITypeMapper TypeMapper { get; protected set; }

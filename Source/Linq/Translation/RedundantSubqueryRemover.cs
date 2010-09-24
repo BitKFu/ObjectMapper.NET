@@ -17,10 +17,10 @@ namespace AdFactum.Data.Linq.Translation
         private readonly Cache<Type, ProjectionClass> dynamicCache;
         //private readonly Dictionary<Alias, IDbExpressionWithResult> RedundantSelect = new Dictionary<Alias, IDbExpressionWithResult>();
 
-        private RedundantSubqueryRemover(Cache<Type, ProjectionClass> dynamicCache) 
-            :base(ReferenceDirection.Referrer)
+        private RedundantSubqueryRemover(ExpressionVisitorBackpack backpack) 
+            :base(ReferenceDirection.Referrer, backpack)
         {
-            this.dynamicCache = dynamicCache;
+            this.dynamicCache = backpack.ProjectionCache;
 #if TRACE
             Console.WriteLine("\nRedundantSubqueryRemover:");
 #endif
@@ -29,14 +29,12 @@ namespace AdFactum.Data.Linq.Translation
         ///<summary>
         /// Rewrites the expression and removes redundant subqueries
         ///</summary>
-        ///<param name="expression"></param>
-        ///<returns></returns>
-        public static Expression Remove(Expression expression, Cache<Type, ProjectionClass> dynamicCache) 
+        public static Expression Remove(Expression expression, ExpressionVisitorBackpack backpack) 
         {
-            expression = new RedundantSubqueryRemover(dynamicCache).Visit(expression);
+            expression = new RedundantSubqueryRemover(backpack).Visit(expression);
             ReferingColumnChecker.Validate(expression);
 
-            expression = SubqueryMerger.Merge(expression, dynamicCache);
+            expression = SubqueryMerger.Merge(expression, backpack);
             return expression;
         }
 
@@ -45,10 +43,10 @@ namespace AdFactum.Data.Linq.Translation
             select = (SelectExpression)base.VisitSelectExpression(select);
 
             // first remove all purely redundant subqueries
-            List<SelectExpression> redundant = RedundantSubqueryGatherer.Gather(select.From, dynamicCache);
+            List<SelectExpression> redundant = RedundantSubqueryGatherer.Gather(select.From);
             if (redundant != null)
             {
-                SelectExpression replacedBy = SubqueryRemover.Remove(select, dynamicCache, redundant);
+                SelectExpression replacedBy = SubqueryRemover.Remove(select, redundant, Backpack);
 
                 if (RedundantSelect.ContainsKey(select.Alias))
                     RedundantSelect.Remove(select.Alias);

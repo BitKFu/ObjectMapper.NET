@@ -12,22 +12,21 @@ namespace AdFactum.Data.Linq.Translation
     /// <summary>
     /// Rewrite aggregate expressions, moving them into same select expression that has the group-by clause
     /// </summary>
-    public class AggregateRewriter : DbExpressionVisitor
+    public class AggregateRewriter : DbPackedExpressionVisitor
     {
         ILookup<Alias, AggregateSubqueryExpression> lookup;
         Dictionary<AggregateSubqueryExpression, Expression> map;
-        readonly Cache<Type, ProjectionClass> dynamicCache;
 
-        private AggregateRewriter(Expression expr, Cache<Type, ProjectionClass> cache)
+        private AggregateRewriter(Expression expr, ExpressionVisitorBackpack backpack)
+            :base(backpack)
         {
-            dynamicCache = cache;
             map = new Dictionary<AggregateSubqueryExpression, Expression>();
             lookup = AggregateGatherer.Gather(expr).ToLookup(a => a.Alias);
         }
 
-        public static Expression Rewrite(Expression expr, Cache<Type, ProjectionClass> cache)
+        public static Expression Rewrite(Expression expr, ExpressionVisitorBackpack backpack)
         {
-            return new AggregateRewriter(expr, cache).Visit(expr);
+            return new AggregateRewriter(expr, backpack).Visit(expr);
         }
 
         protected override Expression VisitSelectExpression(SelectExpression select)
@@ -45,7 +44,7 @@ namespace AdFactum.Data.Linq.Translation
             if (ExpressionTypeFinder.Find(select.Selector, typeof(AggregateSubqueryExpression)) != null)
             {
                 selector = Visit(select.Selector);
-                columns = ColumnProjector.Evaluate(selector, dynamicCache);
+                columns = ColumnProjector.Evaluate(selector, Backpack.ProjectionCache);
             }
 
             select = UpdateSelect(select, select.Projection, selector, from, where, orderBy, groupBy, skip, take, select.IsDistinct,

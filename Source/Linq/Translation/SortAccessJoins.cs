@@ -10,14 +10,13 @@ namespace AdFactum.Data.Linq.Translation
     /// <summary>
     /// This class is used to sort the join for the Access Expression Writer
     /// </summary>
-    public class SortAccessJoins : DbExpressionVisitor
+    public class SortAccessJoins : DbPackedExpressionVisitor
     {
-        Stack<Type> leftJoinTypes = new Stack<Type>();
-
         /// <summary>
         /// Initializes a new instance of the <see cref="SortAccessJoins"/> class.
         /// </summary>
-        public SortAccessJoins()
+        public SortAccessJoins(ExpressionVisitorBackpack backpack)
+            :base(backpack)
         {
 #if TRACE
             Console.WriteLine("\nSortAccessJoins:");
@@ -29,9 +28,9 @@ namespace AdFactum.Data.Linq.Translation
         /// </summary>
         /// <param name="exp">The exp.</param>
         /// <returns></returns>
-        public static Expression Sort(Expression exp)
+        public static Expression Sort(Expression exp, ExpressionVisitorBackpack backpack)
         {
-            return new SortAccessJoins().Visit(exp);
+            return new SortAccessJoins(backpack).Visit(exp);
         }
 
         private Dictionary<Alias, Expression> joinsToSwitch = new Dictionary<Alias, Expression>();
@@ -87,32 +86,5 @@ namespace AdFactum.Data.Linq.Translation
             return result;
         }
 
-        ///// <summary>
-        ///// Visits the join expression.
-        ///// </summary>
-        ///// <param name="join"></param>
-        ///// <returns></returns>
-        //protected override Expression VisitJoinExpression(JoinExpression join)
-        //{
-        //    leftJoinTypes.Push(join.RevealedType);
-        //    try
-        //    {
-        //        var compareTo = ExpressionTypeFinder.Find(join.Condition, typeof (PropertyExpression)) as PropertyExpression;
-
-        //        if (compareTo != null && join.RevealedType == compareTo.Projection.ProjectedType && join.Right is JoinExpression)
-        //            join = UpdateJoin(join, join.Join, join.Right, join.Left, join.Condition);
-
-        //        return base.VisitJoinExpression(join);
-
-        //        //if (result != null && !(result.Left is JoinExpression) && !(result.Right is JoinExpression))
-        //        //    result = UpdateJoin(result, result.Join, result.Right, result.Left, result.Condition);
-
-        //        //return result;
-        //    }
-        //    finally
-        //    {
-        //        leftJoinTypes.Pop();
-        //    }
-        //}
     }
 }

@@ -21,8 +21,8 @@ namespace AdFactum.Data.Linq.Language
         /// <summary>
         /// Constructor to create an expression writer for the access database
         /// </summary>
-        public AccessExpressionWriter(ILinqPersister persister, List<PropertyTupel> groupings, Cache<Type, ProjectionClass> cache) 
-            : base(persister, groupings, cache)
+        public AccessExpressionWriter(ILinqPersister persister, List<PropertyTupel> groupings, ExpressionVisitorBackpack backpack) 
+            : base(persister, groupings, backpack)
         {
             Command = persister.CreateCommand();
         }

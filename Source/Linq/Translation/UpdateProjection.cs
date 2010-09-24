@@ -14,18 +14,19 @@ namespace AdFactum.Data.Linq.Translation
     /// <summary>
     /// 
     /// </summary>
-    public class UpdateProjection : DbExpressionVisitor
+    public class UpdateProjection : DbPackedExpressionVisitor
     {
         private Cache<Type, ProjectionClass> dynamicCache;
 
-        private UpdateProjection(Cache<Type, ProjectionClass> cache)
+        private UpdateProjection(ExpressionVisitorBackpack backpack)
+            :base(backpack)
         {
-            dynamicCache = cache;
+            dynamicCache = backpack.ProjectionCache;
         }
 
-        public static Expression Rebind(Expression expression, Cache<Type, ProjectionClass> cache)
+        public static Expression Rebind(Expression expression, ExpressionVisitorBackpack backpack)
         {
-            return new UpdateProjection(cache).Visit(expression);
+            return new UpdateProjection(backpack).Visit(expression);
         }
 
         protected override Expression Visit(Expression exp)
@@ -34,33 +35,6 @@ namespace AdFactum.Data.Linq.Translation
                 return UpdateTopLevelResult((IDbExpressionWithResult)exp);
 
             return base.Visit(exp);
-        }
-
-        /// <summary>
-        /// Finds the duplicated columns.
-        /// </summary>
-        /// <param name="columns">The columns.</param>
-        /// <returns></returns>
-        private List<ColumnDeclaration> FindDuplicatedColumns(ReadOnlyCollection<ColumnDeclaration> columns)
-        {
-            // Remove duplicated columns
-            var ignoreList = new HashSet<int>();
-            var newColumns = new List<ColumnDeclaration>();
-            for (int col = 0; col < columns.Count; col++)
-            {
-                if (ignoreList.Contains(col))
-                    continue;
-
-                for (int innerCol = col + 1; innerCol < columns.Count; innerCol++)
-                    if (ExpressionComparer.AreEqual(columns[col].Expression, columns[innerCol].Expression))
-                    {
-                        ignoreList.Add(innerCol);
-                    }
-
-                newColumns.Add(columns[col]);
-            }
-
-            return newColumns;
         }
 
         /// <summary>

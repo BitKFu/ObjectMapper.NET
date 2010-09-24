@@ -12,22 +12,20 @@ namespace AdFactum.Data.Linq.Translation
     /// <summary>
     /// Attempts to rewrite cross-apply and outer-apply joins as inner and left-outer joins
     /// </summary>
-    public class CrossApplyRewriter : DbExpressionVisitor
+    public class CrossApplyRewriter : DbPackedExpressionVisitor
     {
-        readonly Cache<Type, ProjectionClass> dynamicCache;
-
-        private CrossApplyRewriter(Cache<Type, ProjectionClass> cache)
+        private CrossApplyRewriter(ExpressionVisitorBackpack backpack)
+            :base(backpack)
         {
-            dynamicCache = cache;
 #if TRACE
             Console.WriteLine("\nCrossApply Rewriter:");
 #endif
 
         }
 
-        public static Expression Rewrite(Expression expression, Cache<Type, ProjectionClass> cache)
+        public static Expression Rewrite(Expression expression, ExpressionVisitorBackpack backpack)
         {
-            return new CrossApplyRewriter(cache).Visit(expression);
+            return new CrossApplyRewriter(backpack).Visit(expression);
         }
 
         /// <summary> Visits the select expression. </summary>
@@ -51,7 +49,7 @@ namespace AdFactum.Data.Linq.Translation
                  || selector != select.Selector
                   )
             {
-                List<ColumnDeclaration> columns = MemberBinder.GetColumns(from, select.Columns, selector, select.Projection);
+                List<ColumnDeclaration> columns = GetColumns(from, select.Columns, selector, select.Projection);
 
                 return UpdateSelect(select, select.Projection, selector, from, where, orderBy, groupBy, skip, take, select.IsDistinct,
                                     select.IsReverse, new ReadOnlyCollection<ColumnDeclaration>(columns), select.SqlId, select.Hint, select.DefaultIfEmpty);
@@ -91,7 +89,7 @@ namespace AdFactum.Data.Linq.Translation
                         if (referencedAliases.Count == 0)
                         {
                             Expression where = select.Where;
-                            where = RebindToSelection.Rebind(select, select, where, DeclaredAliasGatherer.Gather(select.From));
+                            where = RebindToSelection.Rebind(select, select, where, DeclaredAliasGatherer.Gather(select.From), Backpack);
                             
                             select = selectWithoutWhere;
                             JoinType jt = (where == null) ? JoinType.CrossJoin : (join.Join == JoinType.CrossApply ? JoinType.InnerJoin : JoinType.LeftOuter);

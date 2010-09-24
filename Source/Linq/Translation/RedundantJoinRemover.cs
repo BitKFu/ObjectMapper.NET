@@ -8,20 +8,21 @@ namespace AdFactum.Data.Linq.Translation
     /// <summary>
     /// Removes joins expressions that are identical to joins that already exist
     /// </summary>
-    public class RedundantJoinRemover : DbExpressionVisitor
+    public class RedundantJoinRemover : DbPackedExpressionVisitor
     {
         private Dictionary<Alias, AliasedExpression> map;
         private Dictionary<Expression, PropertyExpression> followUpProperties;
 
-        private RedundantJoinRemover()
+        private RedundantJoinRemover(ExpressionVisitorBackpack backpack)
+            :base(backpack)
         {
             map = new Dictionary<Alias, AliasedExpression>();
             followUpProperties = new Dictionary<Expression, PropertyExpression>();
         }
 
-        public static Expression Remove(Expression expression)
+        public static Expression Remove(Expression expression, ExpressionVisitorBackpack backpack)
         {
-            return new RedundantJoinRemover().Visit(expression);
+            return new RedundantJoinRemover(backpack).Visit(expression);
         }
 
         protected override Expression VisitTableExpression(TableExpression expression)

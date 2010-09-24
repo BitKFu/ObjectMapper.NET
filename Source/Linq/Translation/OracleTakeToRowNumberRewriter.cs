@@ -13,13 +13,14 @@ namespace AdFactum.Data.Linq.Translation
     /// This Rewriter is especially used by Oracle in order to rewrite the Take (TOP SQL) Condition to a rownum expression
     /// if the SQL does not contain an ordering
     /// </summary>
-    public class OracleTakeToRowNumberRewriter: DbExpressionVisitor
+    public class OracleTakeToRowNumberRewriter: DbPackedExpressionVisitor
     {
         private readonly Cache<Type, ProjectionClass> dynamicCache;
 
-        private OracleTakeToRowNumberRewriter(Cache<Type, ProjectionClass> cache)
+        private OracleTakeToRowNumberRewriter(ExpressionVisitorBackpack backpack)
+            :base(backpack)
         {
-            dynamicCache = cache;
+            dynamicCache = backpack.ProjectionCache;
 #if TRACE
             Console.WriteLine("\nOracleTakeToRowNumberRewriter:");
 #endif
@@ -30,9 +31,9 @@ namespace AdFactum.Data.Linq.Translation
         /// </summary>
         /// <param name="expression"></param>
         /// <returns></returns>
-        public static Expression Rewrite(Expression expression, Cache<Type, ProjectionClass> cache)
+        public static Expression Rewrite(Expression expression, ExpressionVisitorBackpack backpack)
         {
-            return new OracleTakeToRowNumberRewriter(cache).Visit(expression);
+            return new OracleTakeToRowNumberRewriter(backpack).Visit(expression);
         }
 
         /// <summary>
@@ -55,7 +56,7 @@ namespace AdFactum.Data.Linq.Translation
                     select = select.SetTake(null);
 
                     // if it's a reverse collection, create a surrounding selection
-                    var columns = ColumnProjector.Evaluate(select, dynamicCache);
+                    var columns = ColumnProjector.Evaluate(select, Backpack.ProjectionCache);
                     var sselect = new SelectExpression(select.Type, select.Projection, Alias.Generate(AliasType.Select), columns, null,
                         select, check, null, null, null, null, false, false, select.SelectResult, select.SqlId, select.Hint, select.DefaultIfEmpty);
                     select = sselect;

@@ -18,8 +18,8 @@ namespace AdFactum.Data.Linq.Language
         /// <summary>
         /// Initializes a new instance of the <see cref="SqlExpressionWriter"/> class.
         /// </summary>
-        public SqlExpressionWriter(ILinqPersister nativePersister, List<PropertyTupel> groupings, Cache<Type, ProjectionClass> cache)
-            : base(nativePersister, groupings, cache)
+        public SqlExpressionWriter(ILinqPersister nativePersister, List<PropertyTupel> groupings, ExpressionVisitorBackpack backpack)
+            : base(nativePersister, groupings, backpack)
         {
             Command = nativePersister.CreateCommand();
         }
