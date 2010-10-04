@@ -237,14 +237,25 @@ namespace AdFactum.Data.Linq.Translation
 
                 if (selectExpression.SelectResult == SelectResultType.Collection)
                 {
-                    var lambda = selectExpression.Where as LambdaExpression;
-                    var body = lambda != null ? lambda.Body : selectExpression.Where;
-                    //body = CreateConditionalExpression(body as BinaryExpression) ?? body;
-
-                    //columns.Add(new ColumnDeclaration(body, Alias.Generate(columnName)));
                     Visit(expression);
                     return true;
                 }
+            }
+
+            // Perhaps it's a union expression
+            var unionExpression = expression as UnionExpression;
+            if (unionExpression != null)
+            {
+                Visit(unionExpression);
+                return true;
+            }
+
+            // Perhaps it's a join expression
+            var joinExpression = expression as UnionExpression;
+            if (joinExpression != null)
+            {
+                Visit(joinExpression);
+                return true;
             }
 
             // Perhaps it's a table expression
