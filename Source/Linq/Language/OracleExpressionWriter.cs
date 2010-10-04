@@ -609,21 +609,21 @@ namespace AdFactum.Data.Linq.Language
         /// </summary>
         protected override string ParameterPrefix { get { return ":"; } }
 
-        /// <summary>
-        /// SQL Paramter Expression
-        /// </summary>
-        /// <param name="expression"></param>
-        /// <returns></returns>
-        protected override Expression VisitSqlParameterExpression(SqlParameterExpression expression)
-        {
-            bool guid = (expression.RevealedType == typeof (Guid));
+        ///// <summary>
+        ///// SQL Paramter Expression
+        ///// </summary>
+        ///// <param name="expression"></param>
+        ///// <returns></returns>
+        //protected override Expression VisitSqlParameterExpression(SqlParameterExpression expression)
+        //{
+        //    bool guid = (expression.RevealedType == typeof (Guid));
 
-            if (guid) WriteSql("HEXTORAW(");
-            var result = base.VisitSqlParameterExpression(expression);
-            if (guid) WriteSql(")");
+        //    if (guid) WriteSql("HEXTORAW(");
+        //    var result = base.VisitSqlParameterExpression(expression);
+        //    if (guid) WriteSql(")");
 
-            return result;
-        }
+        //    return result;
+        //}
 
         /// <summary>
         /// Trims the specified

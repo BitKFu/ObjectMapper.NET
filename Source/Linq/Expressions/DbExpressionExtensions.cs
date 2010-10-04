@@ -60,6 +60,18 @@ namespace AdFactum.Data.Linq.Expressions
                                             select.Where, select.OrderBy, select.GroupBy, select.Skip, select.Take,
                                             select.IsDistinct, select.IsReverse, select.SelectResult, select.SqlId, select.Hint, select.DefaultIfEmpty);
 
+            var union = exp as UnionExpression;
+            if (union != null)
+                return new UnionExpression(union.Type, union.Projection, union.First, union.Second, alias, union.Columns, union.UnionAll);
+
+            var join = exp as JoinExpression;
+            if (join != null)
+                return new JoinExpression(join.Type, join.Projection, join.Join, join.Left, join.Right, join.Condition, alias.Name);
+
+            var scalar = exp as ScalarExpression;
+            if (scalar != null)
+                return new ScalarExpression(scalar.Type, alias, scalar.Columns.FirstOrDefault(), scalar.Selector, scalar.From as AliasedExpression);
+
             return exp;
         }
 
@@ -82,6 +94,18 @@ namespace AdFactum.Data.Linq.Expressions
                                             select.From,
                                             select.Where, select.OrderBy, select.GroupBy, select.Skip, select.Take,
                                             select.IsDistinct, select.IsReverse, select.SelectResult, select.SqlId, select.Hint, select.DefaultIfEmpty);
+
+            var union = exp as UnionExpression;
+            if (union != null)
+                return new UnionExpression(union.Type, union.Projection, union.First, union.Second, Alias.Generate(alias), union.Columns, union.UnionAll);
+
+            var join = exp as JoinExpression;
+            if (join != null)
+                return new JoinExpression(join.Type, join.Projection, join.Join, join.Left, join.Right, join.Condition, alias);
+
+            var scalar = exp as ScalarExpression;
+            if (scalar != null)
+                return new ScalarExpression(scalar.Type, Alias.Generate(alias), scalar.Columns.FirstOrDefault(), scalar.Selector, scalar.From as AliasedExpression);
 
             return exp;
         }
@@ -116,9 +140,17 @@ namespace AdFactum.Data.Linq.Expressions
                                             select.Where, select.OrderBy, select.GroupBy, select.Skip, select.Take,
                                             select.IsDistinct, select.IsReverse, select.SelectResult, select.SqlId, select.Hint, select.DefaultIfEmpty);
 
+            var union = exp as UnionExpression;
+            if (union != null)
+                return new UnionExpression(type, union.Projection, union.First, union.Second, union.Alias, union.Columns,union.UnionAll);
+
             var join = exp as JoinExpression;
             if (join != null)
-                return new JoinExpression(type, join.Projection, join.Join, join.Left, join.Right, join.Condition,join.Alias.Name);
+                return new JoinExpression(type, join.Projection, join.Join, join.Left, join.Right, join.Condition, join.Alias.Name);
+
+            var scalar = exp as ScalarExpression;
+            if (scalar != null)
+                return new ScalarExpression(type, scalar.Alias, scalar.Columns.FirstOrDefault(), scalar.Selector, scalar.From as AliasedExpression);
 
             return exp;
         }

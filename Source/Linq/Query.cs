@@ -502,15 +502,26 @@ namespace AdFactum.Data.Linq
         /// </summary>
         private void ReplaceSqlParamter(IDbCommand command)
         {
+            HashSet<string> alreadyProcessed = new HashSet<string>();
             foreach (IDbDataParameter parameter in command.Parameters)
             {
+                // Avoid replacing duplicated parameter names
+                var replaceThis = parameter.ParameterName;
+                if (alreadyProcessed.Contains(replaceThis))
+                    continue;
+
+                alreadyProcessed.Add(replaceThis);
+
                 // count the amount of the same paramter within the sql
                 var startIndex = 0;
-                while ((startIndex = command.CommandText.IndexOf(parameter.ParameterName, startIndex)) > -1)
+                while ((startIndex = command.CommandText.IndexOf(replaceThis, startIndex)) > -1)
                 {
                     var replaceWith = Persister.GetParameterString(parameter);
+
+                    command.CommandText = command.CommandText.Remove(startIndex, replaceThis.Length);
+                    command.CommandText = command.CommandText.Insert(startIndex, replaceWith);
+
                     startIndex += replaceWith.Length;
-                    command.CommandText = command.CommandText.ReplaceFirst(parameter.ParameterName, replaceWith);
                 }
             }
         }
