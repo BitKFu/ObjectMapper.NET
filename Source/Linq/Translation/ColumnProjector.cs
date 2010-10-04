@@ -251,7 +251,7 @@ namespace AdFactum.Data.Linq.Translation
             }
 
             // Perhaps it's a join expression
-            var joinExpression = expression as UnionExpression;
+            var joinExpression = expression as JoinExpression;
             if (joinExpression != null)
             {
                 Visit(joinExpression);
