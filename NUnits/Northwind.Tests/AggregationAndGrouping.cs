@@ -10,6 +10,7 @@ namespace ObjectMapper.NUnits.Northwind.Tests
     /// This test belongs to the linq test series
     /// </summary>
     [TestFixture]
+    [Category("NOT_IMPLEMENTED_RIGHT_NOW")]
     public class AggregationAndGrouping : NorthwindBase
     {
         /// <summary>

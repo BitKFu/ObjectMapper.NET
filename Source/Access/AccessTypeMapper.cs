@@ -207,6 +207,10 @@ namespace AdFactum.Data.Access
         /// <returns></returns>
         public override string GetParamValueAsSQLString(object parameterValue)
         {
+            // Check bool 
+            if (parameterValue is bool)
+                return parameterValue.Equals(true) ? "true" : "false";
+
             /*
              * Check base types
              */

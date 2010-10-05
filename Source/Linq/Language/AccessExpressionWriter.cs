@@ -16,7 +16,7 @@ namespace AdFactum.Data.Linq.Language
     /// </summary>
     public class AccessExpressionWriter : LinqMethodInspector
     {
-        readonly Stack<AliasedExpression> selectStack = new Stack<AliasedExpression>();
+        Stack<AliasedExpression> selectStack = new Stack<AliasedExpression>();
 
         /// <summary>
         /// Constructor to create an expression writer for the access database
@@ -805,5 +805,26 @@ namespace AdFactum.Data.Linq.Language
             WriteSql(" NOW()");
             return expression;
         }
+
+        protected override Expression VisitUnionExpression(UnionExpression union)
+        {
+            var storedStack = selectStack;
+            selectStack = new Stack<AliasedExpression>();
+            try
+            {
+                if (storedStack.Count > 0) WriteSql(" (");
+                Visit(union.First);
+                WriteSql(" UNION ");
+                if (union.UnionAll) WriteSql("ALL ");
+                Visit(union.Second);
+                if (storedStack.Count > 0) WriteSql(") ");
+                return union;
+            }
+            finally
+            {
+                selectStack = storedStack;
+            }
+        }
+
     }
 }

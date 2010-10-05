@@ -7,13 +7,14 @@ using AdFactum.Data.Util;
 using NUnit.Framework;
 using ObjectMapper.NUnits.Northwind.Entities;
 using AdFactum.Data.Exceptions;
-using AdFactum.Data.Interfaces;
 
 namespace ObjectMapper.NUnits.Northwind.Tests
 {
     [TestFixture]
     public class NorthwindExecutionTests : NorthwindBase
     {
+        private const string NOT_IMPLEMENTED = "NOT_IMPLEMENTED_RIGHT_NOW";
+
         public class ResultClass<T1, T2, T3, T4>
         {
             public T1 A1 { get; private set; }
@@ -209,6 +210,7 @@ namespace ObjectMapper.NUnits.Northwind.Tests
             Assert.AreEqual(2, twoCustomers.Count);
         }
 
+        [Category(NOT_IMPLEMENTED)]
         [Test]
         public void TestGroupJoinSimpleExample()
         {
@@ -567,7 +569,9 @@ namespace ObjectMapper.NUnits.Northwind.Tests
             Assert.IsTrue(list.All(y => y == 10));
         }
 
-        [Test] public void TestSelectNestedCollection()
+        [Category(NOT_IMPLEMENTED)]
+        [Test]
+        public void TestSelectNestedCollection()
         {
             var list = (
                            from c in db.Customers
@@ -578,7 +582,9 @@ namespace ObjectMapper.NUnits.Northwind.Tests
             Assert.AreEqual(6, list[0].Count());
         }
 
-        [Test] public void TestSelectNestedCollectionInAnonymousType()
+        [Category(NOT_IMPLEMENTED)]
+        [Test]
+        public void TestSelectNestedCollectionInAnonymousType()
         {
             var list = (
                            from c in db.Customers
@@ -611,6 +617,7 @@ namespace ObjectMapper.NUnits.Northwind.Tests
             Assert.AreEqual(6, list.Count);
         }
 
+        [Category("ExcludeForOracle")]  // the outcoming SQL is correct, but oracle does not like it.
         [Test] public void TestJoinIntoCustomersOrdersCount()
         {
             var list = (
@@ -653,7 +660,6 @@ namespace ObjectMapper.NUnits.Northwind.Tests
             Assert.AreEqual(12, list.Count);
         }
 
-        [Category("ExcludeForMySql")]
         [Test] public void TestMultipleJoinsWithMissingJoinCondition()
         {
             //Assert.Fail("FAILES");
@@ -718,7 +724,9 @@ namespace ObjectMapper.NUnits.Northwind.Tests
             Assert.IsTrue(Enumerable.SequenceEqual(list, sorted));
         }
 
-        [Test] public void TestOrderByJoin()
+        [Category(NOT_IMPLEMENTED)]
+        [Test]
+        public void TestOrderByJoin()
         {
             var list = (
                            from c in db.Customers.OrderBy(c => c.CustomerID)
@@ -730,7 +738,9 @@ namespace ObjectMapper.NUnits.Northwind.Tests
             Assert.IsTrue(Enumerable.SequenceEqual(list, sorted));
         }
 
-        [Test] public void TestOrderBySelectMany()
+        [Category(NOT_IMPLEMENTED)]
+        [Test]
+        public void TestOrderBySelectMany()
         {
             var list = (
                            from c in db.Customers.OrderBy(c => c.CustomerID)
@@ -771,7 +781,9 @@ namespace ObjectMapper.NUnits.Northwind.Tests
             Assert.AreEqual(6, list[0]);
         }
 
-        [Test] public void TestGroupByMax()
+        [Category(NOT_IMPLEMENTED)]
+        [Test]
+        public void TestGroupByMax()
         {
             List<int?> list = (from o in db.Orders group o by o.CustomerID into g select g.Max(o => o.OrderID)).ToList();
 
@@ -779,6 +791,7 @@ namespace ObjectMapper.NUnits.Northwind.Tests
             Assert.IsTrue(new List<int?>() { 11011, 11064 }.Contains(list[0]));
         }
 
+        [Category(NOT_IMPLEMENTED)]
         [Test]
         public void TestGroupByMaxIntoNew()
         {
@@ -803,7 +816,9 @@ namespace ObjectMapper.NUnits.Northwind.Tests
             Assert.AreEqual(6L, list[0]);
         }
 
-        [Test] public void TestGroupBySumMinMaxAvg()
+        [Category(NOT_IMPLEMENTED)]
+        [Test]
+        public void TestGroupBySumMinMaxAvg()
         {
             var list = 
                 db.Orders.Where(o => o.CustomerID == "ALFKI").GroupBy(o => o.CustomerID).Select(g =>
@@ -854,6 +869,7 @@ namespace ObjectMapper.NUnits.Northwind.Tests
             Assert.IsNotNull(customer);
         }
 
+        [Category(NOT_IMPLEMENTED)]
         [Test]
         public void TestGroupBySumMinMaxAvgNewObject1()
         {
@@ -872,6 +888,7 @@ namespace ObjectMapper.NUnits.Northwind.Tests
             Assert.IsNotNull(list[0].D1);
         }
 
+        [Category(NOT_IMPLEMENTED)]
         [Test]
         public void TestGroupBySumMinMaxAvgNewObject2()
         {
@@ -889,6 +906,7 @@ namespace ObjectMapper.NUnits.Northwind.Tests
             Assert.IsNotNull(list[0].D1);
         }
 
+        [Category(NOT_IMPLEMENTED)]
         [Test]
         public void TestGroupByWithResultSelector()
         {
@@ -905,14 +923,18 @@ namespace ObjectMapper.NUnits.Northwind.Tests
             Assert.AreEqual(6, list[0].Sum);           
         }
 
-        [Test] public void TestGroupByWithElementSelectorSum()
+        [Category(NOT_IMPLEMENTED)]
+        [Test]
+        public void TestGroupByWithElementSelectorSum()
         {
             var list = db.Orders.Where(o => o.CustomerID == "ALFKI").GroupBy(o => o.CustomerID, o => (o.CustomerID == "ALFKI" ? 1 : 1)).Select(g => g.Sum()).ToList();
             Assert.AreEqual(1, list.Count);
             Assert.AreEqual(6, list[0]);
         }
 
-        [Test] public void TestGroupByWithElementSelector()
+        [Category(NOT_IMPLEMENTED)]
+        [Test]
+        public void TestGroupByWithElementSelector()
         {
             // note: groups are retrieved through a separately execute subquery per row
             var list = db.Orders.Where(o => o.CustomerID == "ALFKI").GroupBy(o => o.CustomerID, o => (o.CustomerID == "ALFKI" ? 1 : 1)).ToList();
@@ -921,7 +943,9 @@ namespace ObjectMapper.NUnits.Northwind.Tests
             Assert.AreEqual(6, list[0].Sum());
         }
 
-        [Test] public void TestGroupByWithElementSelectorSumMax()
+        [Category(NOT_IMPLEMENTED)]
+        [Test]
+        public void TestGroupByWithElementSelectorSumMax()
         {
             var list = db.Orders.Where(o => o.CustomerID == "ALFKI").GroupBy(o => o.CustomerID, o => (o.CustomerID == "ALFKI" ? 1 : 1)).Select(g => new { Sum = g.Sum(), Max = g.Max() }).ToList();
             Assert.AreEqual(1, list.Count);
@@ -929,20 +953,26 @@ namespace ObjectMapper.NUnits.Northwind.Tests
             Assert.AreEqual(1, list[0].Max);
         }
 
-        [Test] public void TestGroupByWithAnonymousElement()
+        [Category(NOT_IMPLEMENTED)]
+        [Test]
+        public void TestGroupByWithAnonymousElement()
         {
             var list = db.Orders.Where(o => o.CustomerID == "ALFKI").GroupBy(o => o.CustomerID, o => new { X = (o.CustomerID == "ALFKI" ? 1 : 1) }).Select(g => g.Sum(x => x.X)).ToList();
             Assert.AreEqual(1, list.Count);
             Assert.AreEqual(6, list[0]);
         }
 
-        [Test] public void TestGroupByWithTwoPartKey()
+        [Category(NOT_IMPLEMENTED)]
+        [Test]
+        public void TestGroupByWithTwoPartKey()
         {
             var list = db.Orders.Where(o => o.CustomerID == "ALFKI").GroupBy(o => new { o.CustomerID, o.OrderDate }).Select(g => g.Sum(o => (o.CustomerID == "ALFKI" ? 1 : 1))).ToList();
             Assert.AreEqual(6, list.Count);
         }
 
-        [Test] public void TestOrderByGroupBy()
+        [Category(NOT_IMPLEMENTED)]
+        [Test]
+        public void TestOrderByGroupBy()
         {
             // note: order-by is lost when group-by is applied (the sequence of groups is not ordered)
             var list = db.Orders.Where(o => o.CustomerID == "ALFKI").OrderBy(o => o.OrderID).GroupBy(o => o.CustomerID).ToList();
@@ -1304,7 +1334,9 @@ namespace ObjectMapper.NUnits.Northwind.Tests
             Assert.AreEqual(null, single);
         }
 
-        [Test] public void TestAnyTopLevel()
+        [Category("ExcludeForAccess")]
+        [Test]
+        public void TestAnyTopLevel()
         {
             var any = db.Customers.Any();
             Assert.IsTrue(any);
@@ -1316,7 +1348,9 @@ namespace ObjectMapper.NUnits.Northwind.Tests
         //    Assert.AreEqual(1, list.Count);
         //}
 
-        [Test] public void TestAnyWithSubqueryNoPredicate()
+        [Category("ExcludeForAccess")]
+        [Test]
+        public void TestAnyWithSubqueryNoPredicate()
         {
             // customers with at least one order
             var list = db.Customers.Where(c => db.Orders.Where(o => o.CustomerID == c.CustomerID).Any()).ToList();
@@ -1349,6 +1383,7 @@ namespace ObjectMapper.NUnits.Northwind.Tests
             Assert.AreEqual(local.Count, list.Count);
         }
 
+        [Category("ExcludeForAccess")]
         [Test] public void TestAllTopLevel()
         {
             // all customers have name length > 0?
@@ -1356,7 +1391,9 @@ namespace ObjectMapper.NUnits.Northwind.Tests
             Assert.IsTrue(all);
         }
 
-        [Test] public void TestAllTopLevelNoMatches()
+        [Category("ExcludeForAccess")]
+        [Test]
+        public void TestAllTopLevelNoMatches()
         {
             // all customers have name with 'a'
             var all = db.Customers.All(c => c.ContactName.Contains("a"));
@@ -1533,21 +1570,18 @@ namespace ObjectMapper.NUnits.Northwind.Tests
             Assert.AreEqual("Seattle", list[0].City);
         }
 
-        [Category("ExcludeForSQLite")]  // no equivalent function
         [Test] public void TestStringIndexOf()
         {
             var n = db.Customers.Where(c => c.CustomerID == "ALFKI").Sum(c => c.ContactName.IndexOf("ar"));
             Assert.AreEqual(1, n);
         }
 
-        [Category("ExcludeForSQLite")]  // no equivalent function
         [Test] public void TestStringIndexOfChar()
         {
             var n = db.Customers.Where(c => c.CustomerID == "ALFKI").Sum(c => c.ContactName.IndexOf('r'));
             Assert.AreEqual(2, n);
         }
 
-        [Category("ExcludeForSQLite")] // no equivalent function
         [Test] public void TestStringIndexOfWithStart()
         {
             var n = db.Customers.Where(c => c.CustomerID == "ALFKI").Sum(c => c.ContactName.IndexOf("a", 3));
@@ -1562,8 +1596,6 @@ namespace ObjectMapper.NUnits.Northwind.Tests
             Assert.AreEqual(notrim.Trim(), trim);
         }
 
-        [Category("ExcludeForSQLite")]  // no function to help build correct string representation
-        [Category("ExcludeForMySql")]   // MySQL returns datetime as binary after combination of MAX and CONVERT
         [Test] public void TestDateTimeConstructYMD()
         {
             var dt = db.Customers.Where(c => c.CustomerID == "ALFKI").Max(c => new DateTime((c.CustomerID == "ALFKI") ? 1997 : 1997, 7, 4));
@@ -1575,8 +1607,6 @@ namespace ObjectMapper.NUnits.Northwind.Tests
             Assert.AreEqual(0, dt.Second);
         }
 
-        [Category("ExcludeForSQLite")]  // no function to help build correct string representation
-        [Category("ExcludeForMySql")]   // MySQL returns datetime as binary after combination of MAX and CONVERT
         [Test] public void TestDateTimeConstructYMDHMS()
         {
             var dt = db.Customers.Where(c => c.CustomerID == "ALFKI").Max(c => new DateTime((c.CustomerID == "ALFKI") ? 1997 : 1997, 7, 4, 3, 5, 6));
@@ -1626,21 +1656,18 @@ namespace ObjectMapper.NUnits.Northwind.Tests
             Assert.AreEqual(0, v.Count());
         }
 
-        [Category("ExcludeForSQLite")]   // not able to test via construction
         [Test] public void TestDateTimeHour()
         {
             var hour = db.Customers.Where(c => c.CustomerID == "ALFKI").Max(c => new DateTime((c.CustomerID == "ALFKI") ? 1997 : 1997, 7, 4, 3, 5, 6).Hour);
             Assert.AreEqual(3, hour);
         }
 
-        [Category("ExcludeForSQLite")]   // not able to test via construction
         [Test] public void TestDateTimeMinute()
         {
             var minute = db.Customers.Where(c => c.CustomerID == "ALFKI").Max(c => new DateTime((c.CustomerID == "ALFKI") ? 1997 : 1997, 7, 4, 3, 5, 6).Minute);
             Assert.AreEqual(5, minute);
         }
 
-        [Category("ExcludeForSQLite")]   // not able to test via construction
         [Test] public void TestDateTimeSecond()
         {
             var second = db.Customers.Where(c => c.CustomerID == "ALFKI").Max(c => new DateTime((c.CustomerID == "ALFKI") ? 1997 : 1997, 7, 4, 3, 5, 6).Second);
@@ -1653,42 +1680,36 @@ namespace ObjectMapper.NUnits.Northwind.Tests
             Assert.AreEqual(DayOfWeek.Monday, dow);
         }
 
-        [Category("ExcludeForSQLite")]
         [Test] public void TestDateTimeAddYears()
         {
             var od = db.Orders.FirstOrDefault(o => o.OrderDate == new DateTime(1997, 8, 25) && o.OrderDate.AddYears(2).Year == 1999);
             Assert.AreNotEqual(null, od);
         }
 
-        [Category("ExcludeForSQLite")]
         [Test] public void TestDateTimeAddMonths()
         {
             var od = db.Orders.FirstOrDefault(o => o.OrderDate == new DateTime(1997, 8, 25) && o.OrderDate.AddMonths(2).Month == 10);
             Assert.AreNotEqual(null, od);
         }
 
-        [Category("ExcludeForSQLite")]
         [Test] public void TestDateTimeAddDays()
         {
             var od = db.Orders.FirstOrDefault(o => o.OrderDate == new DateTime(1997, 8, 25) && o.OrderDate.AddDays(2).Day == 27);
             Assert.AreNotEqual(null, od);
         }
 
-        [Category("ExcludeForSQLite")]
         [Test] public void TestDateTimeAddHours()
         {
             var od = db.Orders.FirstOrDefault(o => o.OrderDate == new DateTime(1997, 8, 25) && o.OrderDate.AddHours(3).Hour == 3);
             Assert.AreNotEqual(null, od);
         }
 
-        [Category("ExcludeForSQLite")]
         [Test] public void TestDateTimeAddMinutes()
         {
             var od = db.Orders.FirstOrDefault(o => o.OrderDate == new DateTime(1997, 8, 25) && o.OrderDate.AddMinutes(5).Minute == 5);
             Assert.AreNotEqual(null, od);
         }
 
-        [Category("ExcludeForSQLite")]
         [Test] public void TestDateTimeAddSeconds()
         {
             var od = db.Orders.FirstOrDefault(o => o.OrderDate == new DateTime(1997, 8, 25) && o.OrderDate.AddSeconds(6).Second == 6);
@@ -1808,7 +1829,6 @@ namespace ObjectMapper.NUnits.Northwind.Tests
             Assert.AreEqual(decimal.Floor(-3.4m), nfour);
         }
 
-        [Category("ExcludeForSQLite")]
         [Test] public void TestMathTruncate()
         {
             // The difference between floor and truncate is how negatives are handled.  Truncate drops the decimals, 
@@ -2014,7 +2034,6 @@ namespace ObjectMapper.NUnits.Northwind.Tests
             Assert.AreEqual(4.0m, six);
         }
 
-        [Category("ExcludeForSQLite")]
         [Test] public void TestDecimalTruncate()
         {
             // The difference between floor and truncate is how negatives are handled.  Truncate drops the decimals, 
@@ -2243,7 +2262,9 @@ namespace ObjectMapper.NUnits.Northwind.Tests
             Assert.AreEqual(830, cods.Count);
         }
 
-        [Test] public void TestSelectManyJoinedDefaultIfEmpty()
+        [Category(NOT_IMPLEMENTED)]
+        [Test]
+        public void TestSelectManyJoinedDefaultIfEmpty()
         {
             var cods = (
                            from c in db.Customers
@@ -2333,6 +2354,7 @@ namespace ObjectMapper.NUnits.Northwind.Tests
             Assert.AreEqual(108, stuff.Count);
         }
 
+        [Category(NOT_IMPLEMENTED)]
         [Test] public void TestGroupByCountAggregation()
         {
             var ships = (from order in db.Orders
@@ -2350,28 +2372,24 @@ namespace ObjectMapper.NUnits.Northwind.Tests
             }
         }
 
-        //[Test] public void TestCustomersIncludeOrders()
-        //{
-        //    Northwind nw = new Northwind(this.provider.New(new TestPolicy("Orders")));
+        [Test] public void TestCustomersIncludeOrders()
+        {
+            var custs = db.Customers.Where(c => c.CustomerID == "ALFKI").Level(HierarchyLevel.Dependend1stLvl).ToList();
+            Assert.AreEqual(1, custs.Count);
+            Assert.AreNotEqual(null, custs[0].Orders);
+            Assert.AreEqual(6, custs[0].Orders.Count);
+        }
 
-        //    var custs = nw.Customers.Where(c => c.CustomerID == "ALFKI").ToList();
-        //    Assert.AreEqual(1, custs.Count);
-        //    Assert.AreNotEqual(null, custs[0].Orders);
-        //    Assert.AreEqual(6, custs[0].Orders.Count);
-        //}
-
-        //[Test] public void TestCustomersIncludeOrdersAndDetails()
-        //{
-        //    Northwind nw = new Northwind(this.provider.New(new TestPolicy("Orders", "Details")));
-
-        //    var custs = nw.Customers.Where(c => c.CustomerID == "ALFKI").ToList();
-        //    Assert.AreEqual(1, custs.Count);
-        //    Assert.AreNotEqual(null, custs[0].Orders);
-        //    Assert.AreEqual(6, custs[0].Orders.Count);
-        //    Assert.IsTrue(custs[0].Orders.Any(o => o.OrderID == 10643));
-        //    Assert.AreNotEqual(null, custs[0].Orders.Single(o => o.OrderID == 10643).Details);
-        //    Assert.AreEqual(3, custs[0].Orders.Single(o => o.OrderID == 10643).Details.Count);
-        //}
+        [Test] public void TestCustomersIncludeOrdersAndDetails()
+        {
+            var custs = db.Customers.Where(c => c.CustomerID == "ALFKI").Level(HierarchyLevel.Dependend2ndLvl).ToList();
+            Assert.AreEqual(1, custs.Count);
+            Assert.AreNotEqual(null, custs[0].Orders);
+            Assert.AreEqual(6, custs[0].Orders.Count);
+            Assert.IsTrue(custs[0].Orders.Any(o => o.OrderID == 10643));
+            Assert.AreNotEqual(null, custs[0].Orders.Single(o => o.OrderID == 10643).Details);
+            Assert.AreEqual(3, custs[0].Orders.Single(o => o.OrderID == 10643).Details.Count);
+        }
 
         [Test]
         public void TestOuterJoinSimpleExample()
@@ -2409,6 +2427,7 @@ namespace ObjectMapper.NUnits.Northwind.Tests
         /// Simples the count aggregation with having clause.
         /// </summary>
         [Test]
+        [Category(NOT_IMPLEMENTED)]
         public void TestSimpleCountAggregationWithHavingClause()
         {
             var ships = from order in db.Orders

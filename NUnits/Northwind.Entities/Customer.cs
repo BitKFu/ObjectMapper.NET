@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using AdFactum.Data;
+using ObjectMapper.NUnits.Northwind.Entities;
 
 namespace ObjectMapper.NUnits.Northwind
 {
@@ -99,5 +100,8 @@ namespace ObjectMapper.NUnits.Northwind
 
         //[PropertyLength(24)]
         //public string Fax { get; set; }
+
+        [OneToMany(typeof(Order), "CustomerID")]
+        public List<Order> Orders { get; set; }
     }
 }
