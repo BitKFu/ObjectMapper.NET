@@ -40,6 +40,11 @@ namespace AdFactum.Data.Linq.Translation
               || m.Method.ReflectedType == typeof(LinqExtensions))
                  return base.VisitMethodCall(m);
 
+             // Also dont' process SqlId and Hint Methods, because they have to be
+             // evaluated by the QueryBinder
+             if ((m.Method.Name == "Hint" || m.Method.Name == "SqlId") && type.ImplementsInterface(typeof(IQueryable)))
+                 return base.VisitMethodCall(m);
+
              Expression<Func<object>> lambda = Expression.Lambda<Func<object>>(m);
 
              Func<object> fn = lambda.Compile();
