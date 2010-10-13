@@ -312,7 +312,15 @@ namespace AdFactum.Data.Internal
             if (contains)
             {
                 HashEntry entry = objectHash[ConstraintSaveList.CalculateKey(type, id)];
-                return entry.Po.IsFlatLoaded == HierarchyLevel.IsFlatLoaded(hierarchyLevel);
+
+                if (entry.Po != null && // The Object must be in the objecthash
+
+                        // if it's in hash and we want to get a flat version, we take what we get, even if it's deeploaded in it
+                     (HierarchyLevel.IsFlatLoaded(hierarchyLevel)
+
+                        // if it's in hash and we want to get a deep loaded version, we must ensure, that this is really a deeploaded version
+                  || (!HierarchyLevel.IsFlatLoaded(hierarchyLevel) && !entry.Po.IsFlatLoaded)))
+                    return true;
             }
 
             return false;
