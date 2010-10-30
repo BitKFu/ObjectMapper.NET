@@ -422,7 +422,7 @@ namespace AdFactum.Data.Linq.Language
         {
             WriteSql(" CAST (");
             Visit(expression);
-            WriteSql("AS CHARACTER VARYING)");
+            WriteSql(" AS CHARACTER VARYING)");
         }
 
         /// <summary>
