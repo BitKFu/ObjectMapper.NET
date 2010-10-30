@@ -240,7 +240,7 @@ namespace AdFactum.Data.Postgres
 
             // Enums can be evaluated directly
             if (parameterValue != null && parameterValue.GetType().IsEnum)
-                return parameterValue.ToString();
+                return base.GetParamValueAsSQLString(parameterValue.ToString());
 
             return base.GetParamValueAsSQLString(parameterValue);
         }
