@@ -319,9 +319,10 @@ namespace AdFactum.Data.Oracle
                 string trim = DoCasing(parts[x].Trim());
 
                 bool isKeyWord = Keywords.Contains(trim.ToUpper());
+                var containsBlank = trim.Contains(" ") && !(trim.EndsWith(" ASC") || trim.EndsWith(" DESC"));
 
                 result = string.Concat(result, (x > 0 ? "," : ""),
-                                       isKeyWord || trim.Contains(" ") ? string.Concat("\"", trim, "\"") : trim);
+                                       isKeyWord || containsBlank ? string.Concat("\"", trim, "\"") : trim);
             }
 
             return result;

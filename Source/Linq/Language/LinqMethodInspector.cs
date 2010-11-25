@@ -1843,6 +1843,19 @@ namespace AdFactum.Data.Linq.Language
             return select;
         }
 
+        protected ValueExpression GetValueExpression(Expression expr)
+        {
+            ValueExpression valueExpression = expr as ValueExpression;
+            if (valueExpression != null)
+                return valueExpression;
+
+            UnaryExpression unaryExpression = expr as UnaryExpression;
+            if (unaryExpression != null)
+                return GetValueExpression(unaryExpression.Operand);
+
+            return null;
+        }
+
         /// <summary>
         /// Visits the comparison.
         /// </summary>
@@ -1850,8 +1863,8 @@ namespace AdFactum.Data.Linq.Language
         /// <param name="queryOperator">The query operator.</param>
         protected override Expression VisitComparison(BinaryExpression expr, QueryOperator queryOperator)
         {
-            var leftConstantExpression = expr.Left as ValueExpression;
-            var rightConstantExpression = expr.Right as ValueExpression;
+            var leftConstantExpression = GetValueExpression(expr.Left);
+            var rightConstantExpression = GetValueExpression(expr.Right);
             bool rightIsNull = (rightConstantExpression != null && rightConstantExpression.Value == null);
             bool leftIsNull = (leftConstantExpression != null && leftConstantExpression.Value == null);
             bool isNull = rightIsNull || leftIsNull;
