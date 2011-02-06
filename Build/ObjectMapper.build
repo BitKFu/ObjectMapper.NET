@@ -85,8 +85,10 @@
     <call target="settings_2008"/>
     <call target="clean"/>
     <call target="compile"/>
+	
+<!--	
     <call target="testMapper"/>
-    
+-->    
   </target>
 
   <!-- 
