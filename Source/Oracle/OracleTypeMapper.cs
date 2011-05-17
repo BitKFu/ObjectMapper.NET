@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
+using System.Text;
 using AdFactum.Data.Internal;
 using AdFactum.Data.Util;
 using Oracle.DataAccess.Client;
@@ -289,6 +290,29 @@ namespace AdFactum.Data.Oracle
             {
                 var time = (DateTime)parameterValue;
                 return string.Concat("TO_DATE (", time.ToString(@"\'yyyy-MM-dd HH:mm:ss\'"), ", \'YYYY-MM-DD HH24:MI:SS\')");
+            }
+
+            /*
+             * Check GUID Data Type
+             */
+            if (parameterValue is Guid)
+            {
+                Guid guidId = (Guid) parameterValue;
+                byte[] byteArray = guidId.ToByteArray();
+
+                var sb = new StringBuilder();
+                int counter = 0;
+
+                IEnumerator byteEnum = byteArray.GetEnumerator();
+                sb.Append("hextoraw('");
+                while ((byteEnum.MoveNext()) && (counter++ < 100))
+                    sb.Append(((Byte)byteEnum.Current).ToString("X2"));
+
+                if (counter < byteArray.Length)
+                    sb.Append(" ... ");
+
+                sb.Append("')");
+                return sb.ToString();
             }
 
             /*

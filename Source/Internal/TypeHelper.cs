@@ -75,6 +75,26 @@ namespace AdFactum.Data.Internal
             return text;
 		}
 
+		/// <summary>
+		/// String Replace method
+		/// </summary>
+		/// <param name="text"></param>
+		/// <param name="startAtIndex"></param>
+		/// <param name="replaceThis"></param>
+		/// <param name="replaceWith"></param>
+		public static string ReplaceFirst(this string text, int startAtIndex, string replaceThis, string replaceWith)
+		{
+            var index = text.IndexOf(replaceThis, startAtIndex);
+
+			if (index >= 0)
+			{
+				text = text.Remove(index, replaceThis.Length);
+				text = text.Insert(index, replaceWith);
+			}
+		    
+            return text;
+		}
+
         /// <summary>
         /// Gets the type of the base.
         /// </summary>

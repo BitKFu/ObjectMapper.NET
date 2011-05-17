@@ -1699,7 +1699,7 @@ namespace AdFactum.Data.Internal
                     if (field.Name.Equals(DBConst.LastUpdateField))
                     {
                         DateTime now = DateTime.Now;
-                        field.Value = now.AddMilliseconds(-now.Millisecond);
+                        field.Value = new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second);
                     }
 
                     /*
@@ -1866,7 +1866,7 @@ namespace AdFactum.Data.Internal
                         hasToCheckUpdate = !checkUpdate.Equals(DateTime.MinValue);
 
                         DateTime now = DateTime.Now;
-                        field.Value = now.AddMilliseconds(-now.Millisecond);
+                        field.Value = new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second);
                         field.IsModified = true;
                     }
 

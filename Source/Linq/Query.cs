@@ -602,9 +602,9 @@ namespace AdFactum.Data.Linq
                     count++;
 
                     var replaceWith = persister.GetParameterString(oldParameter);
-                    startIndex += replaceWith.Length;
+                    newCommand.CommandText = newCommand.CommandText.ReplaceFirst(startIndex, oldParameter.ParameterName, replaceWith);
 
-                    newCommand.CommandText = newCommand.CommandText.ReplaceFirst(oldParameter.ParameterName, replaceWith);
+                    startIndex += replaceWith.Length;
                 }
     
                 // Only duplicate parameter, if that is allowed
