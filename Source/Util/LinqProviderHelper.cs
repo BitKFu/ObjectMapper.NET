@@ -141,6 +141,7 @@ namespace AdFactum.Data.Util
             foreach (var field in fields)
             {
                 if (field.Value.FieldType != typeof (ListLink)) continue;
+                if (field.Value.CustomProperty.MetaInfo.IsGeneralLinked) continue;
 
                 var linkTarget = field.Value.CustomProperty.MetaInfo.LinkTarget;
                 var tableName = Table.GetTableInstance(type).DefaultName;
