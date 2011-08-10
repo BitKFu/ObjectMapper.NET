@@ -176,7 +176,7 @@ namespace AdFactum.Data.Access
         /// <param name="pDatabaseFile">Database file name</param>
         /// <param name="password">Database password</param>
         /// <param name="additionalConnectionParameters">Additional connection parameters</param>
-        public void Connect(string pDatabaseFile, string password, string additionalConnectionParameters)
+        public virtual void Connect(string pDatabaseFile, string password, string additionalConnectionParameters)
         {
             databaseFile = pDatabaseFile;
             string connectionString;
@@ -195,7 +195,7 @@ namespace AdFactum.Data.Access
         /// </summary>
         /// <param name="pDatabaseFile">Database file name</param>
         /// <param name="password">Database password</param>
-        public void Connect(string pDatabaseFile, string password)
+        public virtual void Connect(string pDatabaseFile, string password)
         {
             Connect(pDatabaseFile, password, string.Empty);
         }
@@ -203,7 +203,7 @@ namespace AdFactum.Data.Access
         /// <summary>
         /// Connecting to an existing database
         /// </summary>
-        public void Connect(string connectionString)
+        public virtual void Connect(string connectionString)
         {
             Debug.Assert(Connection == null, "The Connection has already established");
             Connection = new OleDbConnection {ConnectionString = connectionString};

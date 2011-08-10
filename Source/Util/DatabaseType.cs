@@ -35,9 +35,11 @@ namespace AdFactum.Data.Util
         /// </summary>
         Xml,
 
+#if !CLIENT_PROFILE
         /// <summary>
         /// Postgres Database
         /// </summary>
         Postgres
+#endif
     }
 }

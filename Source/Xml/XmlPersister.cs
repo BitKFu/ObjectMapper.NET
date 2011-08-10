@@ -5,6 +5,7 @@ using System.Data;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Text;
 using AdFactum.Data.Fields;
 using AdFactum.Data.Interfaces;
@@ -21,6 +22,8 @@ namespace AdFactum.Data.Xml
     [Serializable]
     public class XmlPersister : IPersister, ISchemaWriter
     {
+        private readonly ITypeMapper typeMapper = new XmlTypeMapper();
+
         /// <summary>
         /// Database name
         /// </summary>
@@ -672,7 +675,7 @@ namespace AdFactum.Data.Xml
         /// <param name="id">The id.</param>
         /// <param name="fieldTemplates">The field templates.</param>
         /// <returns></returns>
-        private PersistentProperties Load(string tableName, object id, IDictionary fieldTemplates)
+        private PersistentProperties Load(string tableName, object id, Dictionary<string, FieldDescription> fieldTemplates)
         {
             var resultFields = new PersistentProperties();
 
@@ -693,12 +696,22 @@ namespace AdFactum.Data.Xml
             {
                 var column = (DataColumn) columns.Current;
                 string columnName = column.ColumnName.ToUpper();
-                var fieldDescription = (FieldDescription) fieldTemplates[columnName];
+                FieldDescription fieldDescription;
+
+                if (!fieldTemplates.TryGetValue(columnName, out fieldDescription))
+                {
+                    string name = columnName;
+                    columnName = fieldTemplates.Keys.FirstOrDefault(key => key.Equals(name, StringComparison.InvariantCultureIgnoreCase));
+                    if (columnName == null)
+                        continue;
+
+                    fieldDescription = fieldTemplates[columnName];
+                }
 
                 if (fieldDescription == null)
                     continue;
-
-                if (fieldDescription.FieldType.Equals(typeof (VirtualLinkAttribute)))
+                    
+                if (fieldDescription.FieldType.Equals(typeof(VirtualLinkAttribute)))
                     throw new InvalidOperationException("Virtual Links are not supported by the XmlPersister");
 
                 if (columnName.EndsWith(DBConst.TypAddition))
@@ -1273,7 +1286,7 @@ namespace AdFactum.Data.Xml
         /// <value>The type mapper.</value>
         ITypeMapper IPersister.TypeMapper
         {
-            get { throw new NotSupportedException(); }
+            get { return typeMapper; }
         }
 
         /// <summary>

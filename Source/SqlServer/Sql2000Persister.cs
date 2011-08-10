@@ -188,7 +188,7 @@ namespace AdFactum.Data.SqlServer
         /// </summary>
         /// <param name="database">Database Name</param>
         /// <param name="server">Server Name</param>
-        public void Connect(string database, string server)
+        public virtual void Connect(string database, string server)
         {
             Connect(database, server, "");
         }
@@ -199,7 +199,7 @@ namespace AdFactum.Data.SqlServer
         /// <param name="database">Database Name</param>
         /// <param name="server">Server Name</param>
         /// <param name="additionalConnectionParameters">Additional connection parameters</param>
-        public  void Connect(string database, string server, string additionalConnectionParameters)
+        public virtual void Connect(string database, string server, string additionalConnectionParameters)
         {
             String connectionString = String.Format(CONNECTION_STRING_TRUSTED, database, server) + additionalConnectionParameters;
             Connect(connectionString);
@@ -209,7 +209,7 @@ namespace AdFactum.Data.SqlServer
         /// Connects to a Microsoft SQL Server using an Connection String
         /// </summary>
         /// <param name="connectionString"></param>
-        public  void Connect(string connectionString)
+        public virtual void Connect(string connectionString)
         {
             Connection = new SqlConnection {ConnectionString = connectionString};
             Connection.Open();
@@ -225,7 +225,7 @@ namespace AdFactum.Data.SqlServer
         /// <param name="server">Server name</param>
         /// <param name="user">User</param>
         /// <param name="password">Password</param>
-        public void Connect(string database, string server, string user, string password)
+        public virtual void Connect(string database, string server, string user, string password)
         {
             Connect(database, server, user, password, "");
         }
@@ -238,7 +238,7 @@ namespace AdFactum.Data.SqlServer
         /// <param name="user">User</param>
         /// <param name="password">Password</param>
         /// <param name="additionalConnectionParameters">Additional connection parameters</param>
-        public  void Connect(string database, string server, string user, string password, string additionalConnectionParameters)
+        public virtual void Connect(string database, string server, string user, string password, string additionalConnectionParameters)
         {
             String connectionString = String.Format(CONNECTION_STRING, database, server, user, password) + additionalConnectionParameters;
 

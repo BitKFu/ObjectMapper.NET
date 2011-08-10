@@ -1,9 +1,12 @@
 using System;
 using AdFactum.Data.Access;
 using AdFactum.Data.Oracle;
-using AdFactum.Data.Postgres;
 using AdFactum.Data.SqlServer;
 using AdFactum.Data.Xml;
+
+#if !CLIENT_PROFILE
+using AdFactum.Data.Postgres;
+#endif
 
 namespace AdFactum.Data.Util
 {
@@ -80,10 +83,11 @@ namespace AdFactum.Data.Util
 					persister = OpenOracleConnection(connection, tracer);
 					break;
 
+#if !CLIENT_PROFILE
                 case DatabaseType.Postgres:
 			        persister = OpenPostgresConnection(connection, tracer);
 			        break;
-
+#endif
                 default:
 					throw new ArgumentOutOfRangeException("connection", connection.DatabaseType, "This value is not supported.");
 			}
@@ -154,6 +158,8 @@ namespace AdFactum.Data.Util
 			return oracleDb;
 		}
 
+#if !CLIENT_PROFILE
+
         /// <summary>
         /// Opens an Postgres Connection
         /// </summary>
@@ -166,6 +172,8 @@ namespace AdFactum.Data.Util
             postgresDb.Connect(connection.ServerName, connection.UserName, connection.Password, connection.DatabaseName);
             return postgresDb;
         }
+
+#endif
 
 		/// <summary>
 		/// Opens an Access Databaseconnection 

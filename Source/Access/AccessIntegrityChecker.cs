@@ -31,7 +31,10 @@ namespace AdFactum.Data.Access
              */
             info.MismatchedFields.RemoveAll(field => field.RequiredFailure);
             info.MismatchedFields.RemoveAll(field => field.UniqueFailure);
-            
+
+            // Everything that is longer than 255, will get a memo
+            info.MismatchedFields.RemoveAll(field => field.FieldIsShorter && field.Field.CustomProperty.MetaInfo.Length > 255);
+
             return infoCollection;
         }
 
