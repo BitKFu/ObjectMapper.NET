@@ -549,7 +549,7 @@ namespace AdFactum.Data.Internal
             /*
              * Uppercase the property Name
              */
-            //ColumnName = ColumnName.ToUpper();
+            //ColumnName = ColumnName.ToUpper(CultureInfo.InvariantCulture);
         }
 
         /// <summary>

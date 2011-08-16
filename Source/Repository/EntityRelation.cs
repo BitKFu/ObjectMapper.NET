@@ -30,6 +30,9 @@ namespace AdFactum.Data.Repository
 		
 		private VersionInfo versionInfo;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EntityRelation"/> class.
+        /// </summary>
 	    public EntityRelation()
 	    {
 	        Created = DateTime.Now;

@@ -12,6 +12,10 @@ namespace AdFactum.Data.Fields
     [Serializable]
     public class OneToManyLink : SpecializedLink
     {
+        /// <summary>
+        /// Gets or sets the join field.
+        /// </summary>
+        /// <value>The join field.</value>
         public Field JoinField { get; private set; }
 
         /// <summary>
@@ -28,6 +32,7 @@ namespace AdFactum.Data.Fields
         /// Constructor
         /// </summary>
         /// <param name="fdesc">The fdesc.</param>
+        /// <param name="joinField">The join field.</param>
         public OneToManyLink(FieldDescription fdesc, Field joinField)
             : base(fdesc)
         {

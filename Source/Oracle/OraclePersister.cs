@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Data;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
@@ -129,7 +130,10 @@ namespace AdFactum.Data.Oracle
 
 		#endregion
 
-        /// <summary> Returns the Schema Writer </summary>
+        /// <summary>
+        /// Returns the Schema Writer
+        /// </summary>
+        /// <value></value>
         public override ISchemaWriter Schema
         {
             get
@@ -138,6 +142,10 @@ namespace AdFactum.Data.Oracle
             }
         }
 
+        /// <summary>
+        /// Returns the Integrity Checker
+        /// </summary>
+        /// <value></value>
         public override IIntegrity Integrity
         {
             get 
@@ -146,6 +154,10 @@ namespace AdFactum.Data.Oracle
             }
         }
 
+        /// <summary>
+        /// Returns the repository class
+        /// </summary>
+        /// <value></value>
         public override IRepository Repository
         {
             get
@@ -301,7 +313,7 @@ namespace AdFactum.Data.Oracle
                       .Replace(Condition.UPPER, "UPPER"));
 
 		    sql = sql.Trim();
-            if (sql.EndsWith(";") && !sql.ToUpper().EndsWith("END;"))
+            if (sql.EndsWith(";") && !sql.ToUpper(CultureInfo.InvariantCulture).EndsWith("END;"))
                 sql = sql.Substring(0, sql.Length - 1);
 
 		    return sql;
@@ -332,6 +344,7 @@ namespace AdFactum.Data.Oracle
         /// </summary>
         /// <param name="parameters">The parameters.</param>
         /// <param name="numberOfParameter">The number of parameter.</param>
+        /// <param name="type"></param>
         /// <param name="value">The value.</param>
         /// <param name="isUnicode">if set to <c>true</c> [is unicode].</param>
         /// <returns></returns>

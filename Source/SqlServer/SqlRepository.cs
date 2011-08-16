@@ -6,6 +6,9 @@ using AdFactum.Data.Internal;
 
 namespace AdFactum.Data.SqlServer
 {
+    /// <summary>
+    /// SqlRepository
+    /// </summary>
     public class SqlRepository : BaseRepository
     {
         /// <summary>

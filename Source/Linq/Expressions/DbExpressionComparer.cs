@@ -9,31 +9,70 @@ using AdFactum.Data.Linq.Util;
 
 namespace AdFactum.Data.Linq.Expressions
 {
+    /// <summary>
+    /// DbExpressionComparer
+    /// </summary>
     public class DbExpressionComparer : ExpressionComparer
     {
         ScopedDictionary<Alias, Alias> aliasScope;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DbExpressionComparer"/> class.
+        /// </summary>
+        /// <param name="parameterScope">The parameter scope.</param>
+        /// <param name="aliasScope">The alias scope.</param>
+        /// <param name="exactMatch">if set to <c>true</c> [exact match].</param>
         protected DbExpressionComparer(ScopedDictionary<ParameterExpression, ParameterExpression> parameterScope, ScopedDictionary<Alias, Alias> aliasScope, bool exactMatch)
             : base(parameterScope, exactMatch)
         {
             this.aliasScope = aliasScope;
         }
 
+        /// <summary>
+        /// Ares the equal.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <param name="b">The b.</param>
+        /// <returns></returns>
         public new static bool AreEqual(Expression a, Expression b)
         {
             return AreEqual(null, null, a, b, true);
         }
 
+        /// <summary>
+        /// Ares the equal.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <param name="b">The b.</param>
+        /// <param name="exactMatch">if set to <c>true</c> [exact match].</param>
+        /// <returns></returns>
         public new static bool AreEqual(Expression a, Expression b, bool exactMatch)
         {
             return AreEqual(null, null, a, b, exactMatch);
         }
 
+        /// <summary>
+        /// Ares the equal.
+        /// </summary>
+        /// <param name="parameterScope">The parameter scope.</param>
+        /// <param name="aliasScope">The alias scope.</param>
+        /// <param name="a">A.</param>
+        /// <param name="b">The b.</param>
+        /// <returns></returns>
         public static bool AreEqual(ScopedDictionary<ParameterExpression, ParameterExpression> parameterScope, ScopedDictionary<Alias, Alias> aliasScope, Expression a, Expression b)
         {
             return new DbExpressionComparer(parameterScope, aliasScope, true).Compare(a, b);
         }
 
+        /// <summary>
+        /// Ares the equal.
+        /// </summary>
+        /// <param name="parameterScope">The parameter scope.</param>
+        /// <param name="aliasScope">The alias scope.</param>
+        /// <param name="a">A.</param>
+        /// <param name="b">The b.</param>
+        /// <param name="exactMatch">if set to <c>true</c> [exact match].</param>
+        /// <returns></returns>
         public static bool AreEqual(ScopedDictionary<ParameterExpression, ParameterExpression> parameterScope, ScopedDictionary<Alias, Alias> aliasScope, Expression a, Expression b, bool exactMatch)
         {
             return new DbExpressionComparer(parameterScope, aliasScope, exactMatch).Compare(a, b);
@@ -50,6 +89,12 @@ namespace AdFactum.Data.Linq.Expressions
         //    return base.CompareMemberAccess(a, b);
         //}
 
+        /// <summary>
+        /// Compares the specified a.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <param name="b">The b.</param>
+        /// <returns></returns>
         protected override bool Compare(Expression a, Expression b)
         {
             if (a == b)
@@ -117,11 +162,23 @@ namespace AdFactum.Data.Linq.Expressions
             }
         }
 
+        /// <summary>
+        /// Compares the ordering.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <param name="b">The b.</param>
+        /// <returns></returns>
         private bool CompareOrdering(OrderExpression a, OrderExpression b)
         {
             return a.Ordering == b.Ordering && Compare(a.Expression, b.Expression);
         }
 
+        /// <summary>
+        /// Compares the aggregate sub query.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <param name="b">The b.</param>
+        /// <returns></returns>
         private bool CompareAggregateSubQuery(AggregateSubqueryExpression a, AggregateSubqueryExpression b)
         {
             return this.Compare(a.AggregateAsSubquery, b.AggregateAsSubquery)
@@ -129,31 +186,67 @@ namespace AdFactum.Data.Linq.Expressions
                 && a.Alias == b.Alias;
         }
 
+        /// <summary>
+        /// Compares the select function.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <param name="b">The b.</param>
+        /// <returns></returns>
         private bool CompareSelectFunction(SelectFunctionExpression a, SelectFunctionExpression b)
         {
             return a.Function == b.Function;
         }
 
+        /// <summary>
+        /// Compares the cast.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <param name="b">The b.</param>
+        /// <returns></returns>
         private bool CompareCast(CastExpression a, CastExpression b)
         {
             return a.TargetType == b.TargetType && Compare(a.Expression, b.Expression);
         }
 
+        /// <summary>
+        /// Compares the exists.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <param name="b">The b.</param>
+        /// <returns></returns>
         private bool CompareExists(ExistsExpression a, ExistsExpression b)
         {
             return Compare(a.Selection, b.Selection);
         }
 
+        /// <summary>
+        /// Compares the row num.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <param name="b">The b.</param>
+        /// <returns></returns>
         private bool CompareRowNum(RowNumExpression a, RowNumExpression b)
         {
             return a.RevealedType == b.RevealedType;
         }
 
+        /// <summary>
+        /// Compares the union.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <param name="b">The b.</param>
+        /// <returns></returns>
         private bool CompareUnion(UnionExpression a, UnionExpression b)
         {
             return (Compare(a.First, b.First) && Compare(a.Second, b.Second));
         }
 
+        /// <summary>
+        /// Compares the between.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <param name="b">The b.</param>
+        /// <returns></returns>
         private bool CompareBetween(BetweenExpression a, BetweenExpression b)
         {
             return this.Compare(a.Expression, b.Expression)
@@ -161,16 +254,34 @@ namespace AdFactum.Data.Linq.Expressions
                 && this.Compare(a.Upper, b.Upper);
         }
 
+        /// <summary>
+        /// Compares the row count.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <param name="b">The b.</param>
+        /// <returns></returns>
         private bool CompareRowCount(RowNumberExpression a, RowNumberExpression b)
         {
             return this.CompareOrderList(a.OrderBy, b.OrderBy);
         }
 
+        /// <summary>
+        /// Compares the aggregate.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <param name="b">The b.</param>
+        /// <returns></returns>
         private bool CompareAggregate(AggregateExpression a, AggregateExpression b)
         {
             return a.AggregateName == b.AggregateName && this.Compare(a.Argument, b.Argument);
         }
 
+        /// <summary>
+        /// Compares the join.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <param name="b">The b.</param>
+        /// <returns></returns>
         private bool CompareJoin(JoinExpression a, JoinExpression b)
         {
             if (a.Join != b.Join || !this.Compare(a.Left, b.Left))
@@ -199,11 +310,23 @@ namespace AdFactum.Data.Linq.Expressions
             }
         }
 
+        /// <summary>
+        /// Compares the SQL parameter.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <param name="b">The b.</param>
+        /// <returns></returns>
         private bool CompareSqlParameter(SqlParameterExpression a, SqlParameterExpression b)
         {
             return a.ContentType == b.ContentType && a.Value == b.Value;
         }
 
+        /// <summary>
+        /// Compares the select.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <param name="b">The b.</param>
+        /// <returns></returns>
         private bool CompareSelect(SelectExpression a, SelectExpression b)
         {
             var save = this.aliasScope;
@@ -230,21 +353,45 @@ namespace AdFactum.Data.Linq.Expressions
             }
         }
 
+        /// <summary>
+        /// Compares the table.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <param name="b">The b.</param>
+        /// <returns></returns>
         private bool CompareTable(TableExpression a, TableExpression b)
         {
             return a.RevealedType == b.RevealedType;
         }
 
+        /// <summary>
+        /// Compares the value.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <param name="b">The b.</param>
+        /// <returns></returns>
         private bool CompareValue(ValueExpression a, ValueExpression b)
         {
             return a.Value == b.Value;
         }
 
+        /// <summary>
+        /// Compares the property.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <param name="b">The b.</param>
+        /// <returns></returns>
         private bool CompareProperty(PropertyExpression a, PropertyExpression b)
         {
             return this.CompareAlias(a.Alias, b.Alias) && a.Name == b.Name;
         }
 
+        /// <summary>
+        /// Compares the alias.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <param name="b">The b.</param>
+        /// <returns></returns>
         protected virtual bool CompareAlias(Alias a, Alias b)
         {
             if (this.aliasScope != null)
@@ -256,6 +403,11 @@ namespace AdFactum.Data.Linq.Expressions
             return a == b;
         }
 
+        /// <summary>
+        /// Maps the aliases.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <param name="b">The b.</param>
         private void MapAliases(Expression a, Expression b)
         {
             Alias[] prodA = DeclaredAliasGatherer.Gather(a).ToArray();
@@ -266,6 +418,12 @@ namespace AdFactum.Data.Linq.Expressions
             }
         }
 
+        /// <summary>
+        /// Compares the order list.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <param name="b">The b.</param>
+        /// <returns></returns>
         protected virtual bool CompareOrderList(ReadOnlyCollection<OrderExpression> a, ReadOnlyCollection<OrderExpression> b)
         {
             if (a == b)
@@ -283,6 +441,12 @@ namespace AdFactum.Data.Linq.Expressions
             return true;
         }
 
+        /// <summary>
+        /// Compares the column declarations.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <param name="b">The b.</param>
+        /// <returns></returns>
         protected virtual bool CompareColumnDeclarations(ReadOnlyCollection<ColumnDeclaration> a, ReadOnlyCollection<ColumnDeclaration> b)
         {
             if (a == b)
@@ -299,6 +463,12 @@ namespace AdFactum.Data.Linq.Expressions
             return true;
         }
 
+        /// <summary>
+        /// Compares the column declaration.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <param name="b">The b.</param>
+        /// <returns></returns>
         protected virtual bool CompareColumnDeclaration(ColumnDeclaration a, ColumnDeclaration b)
         {
             return a.PropertyName == b.PropertyName && Compare(a.Expression, b.Expression);

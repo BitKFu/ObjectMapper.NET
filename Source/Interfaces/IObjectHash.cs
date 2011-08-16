@@ -7,13 +7,14 @@ namespace AdFactum.Data
 	/// </summary>
 	public interface IObjectHash
 	{
-		/// <summary>
-		/// This method checks, if a value object is stored within the object cache.
-		/// </summary>
-		/// <param name="vo">Fieldvalue Object</param>
-		/// <returns>
-		/// Returns true, if the value object is stored within the object cache.
-		/// </returns>
+        /// <summary>
+        /// This method checks, if a value object is stored within the object cache.
+        /// </summary>
+        /// <param name="vo">Fieldvalue Object</param>
+        /// <param name="hierarchyLevel">The hierarchy level.</param>
+        /// <returns>
+        /// Returns true, if the value object is stored within the object cache.
+        /// </returns>
 		bool Contains(object vo, int hierarchyLevel);
 
         /// <summary>

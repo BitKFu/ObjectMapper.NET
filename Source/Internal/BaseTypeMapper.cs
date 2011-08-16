@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Text;
 using AdFactum.Data.Util;
@@ -394,7 +395,7 @@ namespace AdFactum.Data.Internal
                 case SqlCasing.LowerCase:
                     return identifier.ToLower();
                 case SqlCasing.UpperCase:
-                    return identifier.ToUpper();
+                    return identifier.ToUpper(CultureInfo.InvariantCulture);
             }
 
             return identifier;

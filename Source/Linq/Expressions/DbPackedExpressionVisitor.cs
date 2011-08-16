@@ -8,6 +8,9 @@ using AdFactum.Data.Linq.Expressions;
 
 namespace AdFactum.Data.Linq.Translation
 {
+    /// <summary>
+    /// DbPackedExpressionVisitor
+    /// </summary>
     public class DbPackedExpressionVisitor : DbExpressionVisitor
     {
         /// <summary>
@@ -19,10 +22,15 @@ namespace AdFactum.Data.Linq.Translation
             this.backpack = backpack;
         }
 
+        /// <summary>
+        /// Gets the backpack.
+        /// </summary>
+        /// <value>The backpack.</value>
         public ExpressionVisitorBackpack Backpack
         {
             get { return backpack; }
         }
+
         private readonly ExpressionVisitorBackpack backpack;
 
         /// <summary> Visits the column declarations. </summary>
@@ -52,6 +60,11 @@ namespace AdFactum.Data.Linq.Translation
             return alternate != null ? alternate.AsReadOnly() : columns;
         }
 
+        /// <summary>
+        /// Visits the select expression.
+        /// </summary>
+        /// <param name="expression">The expression.</param>
+        /// <returns></returns>
         protected override Expression VisitSelectExpression(SelectExpression expression)
         {
             Expression result = base.VisitSelectExpression(expression);

@@ -98,13 +98,16 @@ namespace AdFactum.Data.Internal
         /// Rewrites the expression
         /// </summary>
         /// <param name="expression"></param>
-        /// <param name="dynamicCache"></param>
+        /// <param name="backpack"></param>
         /// <param name="groupings"></param>
         /// <param name="level"></param>
         /// <returns></returns>
         public abstract Expression RewriteExpression(Expression expression, out ExpressionVisitorBackpack backpack, out List<PropertyTupel> groupings, out int level);
 
-        /// <summary> Type Mapping class </summary>
+        /// <summary>
+        /// Type Mapping class
+        /// </summary>
+        /// <value></value>
         public ITypeMapper TypeMapper { get; protected set; }
 
 

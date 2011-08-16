@@ -498,6 +498,7 @@
     <Compile Include="Xml\XmlPersister.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Xml\XmlTypeMapper.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ObjectMapper.snk" />

@@ -29,6 +29,11 @@ namespace AdFactum.Data.Linq.Translation
             return new CrossJoinRewriter(backpack).Visit(expression);
         }
 
+        /// <summary>
+        /// Visits the select expression.
+        /// </summary>
+        /// <param name="select">The select.</param>
+        /// <returns></returns>
         protected override Expression VisitSelectExpression(SelectExpression select)
         {
             Expression saveWhere = currentWhere;
@@ -48,6 +53,11 @@ namespace AdFactum.Data.Linq.Translation
             }
         }
 
+        /// <summary>
+        /// Visits the join expression.
+        /// </summary>
+        /// <param name="join"></param>
+        /// <returns></returns>
         protected override Expression VisitJoinExpression(JoinExpression join)
         {
             join = (JoinExpression) base.VisitJoinExpression(join);
@@ -70,6 +80,16 @@ namespace AdFactum.Data.Linq.Translation
             return join;
         }
 
+        /// <summary>
+        /// Determines whether this instance [can be join condition] the specified expression.
+        /// </summary>
+        /// <param name="expression">The expression.</param>
+        /// <param name="left">The left.</param>
+        /// <param name="right">The right.</param>
+        /// <param name="all">All.</param>
+        /// <returns>
+        /// 	<c>true</c> if this instance [can be join condition] the specified expression; otherwise, <c>false</c>.
+        /// </returns>
         private static bool CanBeJoinCondition(Expression expression, IEnumerable<Alias> left, IEnumerable<Alias> right, IEnumerable<Alias> all)
         {
             // an expression is good if it has at least one reference to an alias from both left & right sets and does

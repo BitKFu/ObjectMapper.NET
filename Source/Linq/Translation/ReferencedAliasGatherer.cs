@@ -11,11 +11,19 @@ namespace AdFactum.Data.Linq.Translation
     {
         readonly HashSet<Alias> aliases;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ReferencedAliasGatherer"/> class.
+        /// </summary>
         private ReferencedAliasGatherer()
         {
             aliases = new HashSet<Alias>();
         }
 
+        /// <summary>
+        /// Gathers the specified source.
+        /// </summary>
+        /// <param name="source">The source.</param>
+        /// <returns></returns>
         public static HashSet<Alias> Gather(Expression source)
         {
             var gatherer = new ReferencedAliasGatherer();
@@ -23,6 +31,11 @@ namespace AdFactum.Data.Linq.Translation
             return gatherer.aliases;
         }
 
+        /// <summary>
+        /// Visits the column.
+        /// </summary>
+        /// <param name="column">The column.</param>
+        /// <returns></returns>
         protected override Expression VisitColumn(PropertyExpression column)
         {
             aliases.Add(column.Alias);

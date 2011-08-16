@@ -9,6 +9,9 @@ using AdFactum.Data.Util;
 
 namespace AdFactum.Data.SqlServer
 {
+    /// <summary>
+    /// SqlSchemaWriter
+    /// </summary>
     public class SqlSchemaWriter : BaseSchemaWriter
     {
         /// <summary>

@@ -140,7 +140,10 @@ namespace AdFactum.Data.Access
             Connect(pDatabaseFile, pPassword, additionalConnectionParameters);
         }
 
-        /// <summary> Returns the Schema Writer </summary>
+        /// <summary>
+        /// Returns the Schema Writer
+        /// </summary>
+        /// <value></value>
         public override ISchemaWriter Schema
         {
             get
@@ -149,6 +152,10 @@ namespace AdFactum.Data.Access
             }
         }
 
+        /// <summary>
+        /// Returns the Integrity Checker
+        /// </summary>
+        /// <value></value>
         public override IIntegrity Integrity
         {
             get
@@ -441,6 +448,12 @@ namespace AdFactum.Data.Access
             return parameter;
         }
 
+        /// <summary>
+        /// Creates the parameter from an existing parameter.
+        /// </summary>
+        /// <param name="copyFrom"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
         public override IDbDataParameter CreateParameter(IDbDataParameter copyFrom, object value)
         {
             var copy = (OleDbParameter) copyFrom;
@@ -475,7 +488,7 @@ namespace AdFactum.Data.Access
         /// Rewrites the Linq Expression
         /// </summary>
         /// <param name="expression"></param>
-        /// <param name="dynamicCache"></param>
+        /// <param name="backpack"></param>
         /// <param name="groupings"></param>
         /// <param name="level"></param>
         /// <returns></returns>

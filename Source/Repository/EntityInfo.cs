@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Globalization;
 using System.Text;
 using AdFactum.Data.Internal;
 
@@ -122,8 +123,8 @@ namespace AdFactum.Data.Repository
 		[PropertyName("SHORT_NAME")]
 		public string ShortName
 		{
-			get { return shortName.ToUpper(); }
-			set { shortName = value.ToUpper(); }
+			get { return shortName.ToUpper(CultureInfo.InvariantCulture); }
+			set { shortName = value.ToUpper(CultureInfo.InvariantCulture); }
 		}
 
 		/// <summary>
@@ -208,13 +209,13 @@ namespace AdFactum.Data.Repository
 			 * Use Tablename if the length <= 6
 			 */
 			if (TableName.Length <= 6)
-				result = TableName.ToUpper();
+				result = TableName.ToUpper(CultureInfo.InvariantCulture);
 
 			/*
 			 * Use ObjectType name if the length <= 6
 			 */
 			if ((ObjectType.Name.Length <= 6) && (names.Contains(result) || result.Equals("")))
-				result = ObjectType.Name.ToUpper();
+				result = ObjectType.Name.ToUpper(CultureInfo.InvariantCulture);
 					
 			/*
 			 * Try to retrieve the splitting name
@@ -247,7 +248,7 @@ namespace AdFactum.Data.Repository
                                 string combinePart = nameParts[combineWithPart].Length >= 3
                                                        ? nameParts[combineWithPart].Substring(0, 3)
                                                        : nameParts[combineWithPart];
-                                result = string.Concat(outerPart,combinePart).ToUpper();
+                                result = string.Concat(outerPart,combinePart).ToUpper(CultureInfo.InvariantCulture);
                             }
 
                             combineWithPart++;
@@ -266,7 +267,7 @@ namespace AdFactum.Data.Repository
 			{
 				result = string.Concat(
 					TableName.Substring(0,3),
-					TableName.Substring(TableName.Length-3)).ToUpper();
+					TableName.Substring(TableName.Length-3)).ToUpper(CultureInfo.InvariantCulture);
 			}
 
             /*
@@ -285,7 +286,7 @@ namespace AdFactum.Data.Repository
                     if (tableName.Length >= nameLength)
 		                do
 		                {
-                            result = string.Concat(TableName.Substring(0, nameLength), counter.ToString(formatter)).ToUpper();
+                            result = string.Concat(TableName.Substring(0, nameLength), counter.ToString(formatter)).ToUpper(CultureInfo.InvariantCulture);
 		                    counter++;
 		                } while (names.Contains(result) && (counter < Math.Pow(10, 6-nameLength)));
 		        }
@@ -301,7 +302,7 @@ namespace AdFactum.Data.Repository
 		                do
 		                {
 		                    result =
-                                string.Concat(TableName.Substring(tableName.Length - nameLength, nameLength), counter.ToString(formatter)).ToUpper();
+                                string.Concat(TableName.Substring(tableName.Length - nameLength, nameLength), counter.ToString(formatter)).ToUpper(CultureInfo.InvariantCulture);
 		                    counter++;
                         } while (names.Contains(result) && (counter < Math.Pow(10, 6 - nameLength)));
 		        }

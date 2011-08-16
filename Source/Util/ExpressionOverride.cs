@@ -13,6 +13,9 @@ namespace AdFactum.Data.Util
     /// </summary>
     public class ExpressionOverride
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public static readonly Cache<string, SelectReplacement> Replacements = new Cache<string, SelectReplacement>("Expression Overrides");
 
         /// <summary>

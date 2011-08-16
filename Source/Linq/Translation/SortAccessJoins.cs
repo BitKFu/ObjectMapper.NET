@@ -27,13 +27,21 @@ namespace AdFactum.Data.Linq.Translation
         /// Sorts the specified exp.
         /// </summary>
         /// <param name="exp">The exp.</param>
+        /// <param name="backpack">The backpack.</param>
         /// <returns></returns>
         public static Expression Sort(Expression exp, ExpressionVisitorBackpack backpack)
         {
             return new SortAccessJoins(backpack).Visit(exp);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         private Dictionary<Alias, Expression> joinsToSwitch = new Dictionary<Alias, Expression>();
+
+        /// <summary>
+        /// 
+        /// </summary>
         public HashSet<Alias> usedInConditions = new HashSet<Alias>();
 
         /// <summary>

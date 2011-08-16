@@ -7,6 +7,9 @@ using AdFactum.Data.Util;
 
 namespace AdFactum.Data.Interfaces
 {
+    /// <summary>
+    /// ILinqQueryProvider
+    /// </summary>
     public interface ILinqQueryProvider : IQueryProvider
     {
         /// <summary>

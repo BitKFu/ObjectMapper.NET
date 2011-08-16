@@ -7,11 +7,17 @@ using AdFactum.Data.Repository;
 
 namespace AdFactum.Data.Postgres
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class PostgresIntegrityChecker : BaseIntegrityChecker
     {
         /// <summary>
         /// Constructor
         /// </summary>
+        /// <param name="persister"></param>
+        /// <param name="typeMapper"></param>
+        /// <param name="databaseSchema"></param>
         public PostgresIntegrityChecker(INativePersister persister, ITypeMapper typeMapper, string databaseSchema) 
             : base(persister, typeMapper, databaseSchema)
         {
@@ -35,6 +41,11 @@ namespace AdFactum.Data.Postgres
             return infoCollection;
         }
 
+        /// <summary>
+        /// Calculates the size.
+        /// </summary>
+        /// <param name="size">The size.</param>
+        /// <returns></returns>
         protected override int CalculateSize(int size)
         {
             if (size == -1)
@@ -43,6 +54,11 @@ namespace AdFactum.Data.Postgres
             return size;
         }
 
+        /// <summary>
+        /// Calculates the size of the unicode.
+        /// </summary>
+        /// <param name="size">The size.</param>
+        /// <returns></returns>
         protected override int CalculateUnicodeSize(int size)
         {
             if (size == -1)

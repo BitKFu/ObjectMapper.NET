@@ -20,6 +20,7 @@ namespace AdFactum.Data.Linq.Translation
         /// Initializes a new instance of the <see cref="SubqueryRemover"/> class.
         /// </summary>
         /// <param name="redundant">The redundant.</param>
+        /// <param name="backpack">The backpack.</param>
         private SubqueryRemover(List<SelectExpression> redundant, ExpressionVisitorBackpack backpack)
             :base(ReferenceDirection.Referrer, backpack)
         {
@@ -62,6 +63,11 @@ namespace AdFactum.Data.Linq.Translation
             return resultEx;
         }
 
+        /// <summary>
+        /// Check the property expressions
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <returns></returns>
         protected override Expression VisitColumn(PropertyExpression expression)
         {
             var result= base.VisitColumn(expression);

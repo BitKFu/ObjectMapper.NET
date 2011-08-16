@@ -36,8 +36,7 @@ namespace AdFactum.Data.Linq.Translation
         /// Evaluates the specified exp.
         /// </summary>
         /// <param name="exp">The exp.</param>
-        /// <param name="cache">The cache.</param>
-        /// <param name="mapper">The mapper.</param>
+        /// <param name="backpack">The backpack.</param>
         /// <returns></returns>
         public static Expression Evaluate(Expression exp, ExpressionVisitorBackpack backpack)
         {
@@ -55,6 +54,12 @@ namespace AdFactum.Data.Linq.Translation
             return ReflectionHelper.GetProjection(type.RevealType(), Backpack.ProjectionCache);
         }
 
+        /// <summary>
+        /// Memberses the match.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <param name="propertyName">Name of the property.</param>
+        /// <returns></returns>
         private static bool MembersMatch(MemberInfo a, string propertyName)
         {
             return a.Name.Substring(4) == propertyName;
@@ -63,6 +68,11 @@ namespace AdFactum.Data.Linq.Translation
         private Expression previousExpression;
         private Stack<Expression> callStack = new Stack<Expression>();
 
+        /// <summary>
+        /// Visits the specified exp.
+        /// </summary>
+        /// <param name="exp">The exp.</param>
+        /// <returns></returns>
         protected override Expression Visit(Expression exp)
         {
             previousExpression = callStack.Count>0 ?callStack.Peek() : null;
@@ -79,6 +89,11 @@ namespace AdFactum.Data.Linq.Translation
 
         }
 
+        /// <summary>
+        /// Visits the order by.
+        /// </summary>
+        /// <param name="expressions">The expressions.</param>
+        /// <returns></returns>
         protected override ReadOnlyCollection<OrderExpression> VisitOrderBy(ReadOnlyCollection<OrderExpression> expressions)
         {
             if (expressions == null)
@@ -255,6 +270,12 @@ namespace AdFactum.Data.Linq.Translation
             return UpdateMemberAccess(m, exp, m.Member);
         }
 
+        /// <summary>
+        /// Creates the inner join.
+        /// </summary>
+        /// <param name="linkTarget">The link target.</param>
+        /// <param name="column">The column.</param>
+        /// <returns></returns>
         private Expression CreateInnerJoin(Type linkTarget, ColumnDeclaration column)
         {
             var primaryKey = ReflectionHelper.GetPrimaryKeyPropertyInfoNonRecursive(linkTarget);
@@ -271,6 +292,12 @@ namespace AdFactum.Data.Linq.Translation
         }
 
 
+        /// <summary>
+        /// Finds the source column.
+        /// </summary>
+        /// <param name="currentFrom">The current from.</param>
+        /// <param name="property">The property.</param>
+        /// <returns></returns>
         private ColumnDeclaration FindSourceColumn(Expression currentFrom, Expression property)
         {
             if (currentFrom == null)
@@ -300,6 +327,14 @@ namespace AdFactum.Data.Linq.Translation
                 ).FirstOrDefault();
         }
 
+        /// <summary>
+        /// Maps the property to current from clause.
+        /// </summary>
+        /// <param name="me">Me.</param>
+        /// <param name="currentFrom">The current from.</param>
+        /// <param name="exp">The exp.</param>
+        /// <param name="resultType">Type of the result.</param>
+        /// <returns></returns>
         protected Expression MapPropertyToCurrentFromClause(MemberExpression me, AliasedExpression currentFrom, Expression exp, Type resultType)
         {
             // Maybe we have to compare to the primary key
@@ -347,6 +382,12 @@ namespace AdFactum.Data.Linq.Translation
             return exp;
         }
 
+        /// <summary>
+        /// Visits the comparison.
+        /// </summary>
+        /// <param name="b">The b.</param>
+        /// <param name="queryOperator">The query operator.</param>
+        /// <returns></returns>
         protected override Expression VisitComparison(BinaryExpression b, AdFactum.Data.Queries.QueryOperator queryOperator)
         {
             Expression left = Visit(b.Left);
@@ -525,11 +566,21 @@ namespace AdFactum.Data.Linq.Translation
             }
         }
 
+        /// <summary>
+        /// Visits the column expression
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <returns></returns>
         protected override Expression VisitColumn(PropertyExpression expression)
         {
             return base.VisitColumn(expression);
         }
 
+        /// <summary>
+        /// Visits the join expression.
+        /// </summary>
+        /// <param name="join"></param>
+        /// <returns></returns>
         protected override Expression VisitJoinExpression(JoinExpression join)
         {
             var saveCurrentFrom = currentFrom;
@@ -548,6 +599,11 @@ namespace AdFactum.Data.Linq.Translation
             }
         }
 
+        /// <summary>
+        /// Visits the union expression.
+        /// </summary>
+        /// <param name="union">The union.</param>
+        /// <returns></returns>
         protected override Expression VisitUnionExpression(UnionExpression union)
         {
             var saveCurrentFrom = currentFrom;

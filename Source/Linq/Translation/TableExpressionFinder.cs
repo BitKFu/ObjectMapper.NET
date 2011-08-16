@@ -5,6 +5,9 @@ using AdFactum.Data.Util;
 
 namespace AdFactum.Data.Linq.Translation
 {
+    /// <summary>
+    /// PropertyMapping
+    /// </summary>
     public class PropertyMapping
     {
         /// <summary>
@@ -16,18 +19,40 @@ namespace AdFactum.Data.Linq.Translation
             Column = columnToFind;
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PropertyMapping"/> class.
+        /// </summary>
+        /// <param name="typeToFind">The type to find.</param>
+        /// <param name="columnToFind">The column to find.</param>
+        /// <param name="foundExpression">The found expression.</param>
         public PropertyMapping(Type typeToFind, ColumnDeclaration columnToFind, AliasedExpression foundExpression)
             :this(typeToFind, columnToFind)
         {
             FromClause = foundExpression;
         }
 
+        /// <summary>
+        /// Gets or sets the type.
+        /// </summary>
+        /// <value>The type.</value>
         public Type Type { get; private set;}
+
+        /// <summary>
+        /// Gets or sets the column.
+        /// </summary>
+        /// <value>The column.</value>
         public ColumnDeclaration Column { get; private set;}
 
+        /// <summary>
+        /// Gets or sets from clause.
+        /// </summary>
+        /// <value>From clause.</value>
         public AliasedExpression FromClause { get; private set; }
     }
 
+    /// <summary>
+    /// TableExpressionFinder
+    /// </summary>
     public class TableExpressionFinder : DbExpressionVisitor
     {
         private readonly PropertyMapping searchFor;
@@ -45,6 +70,8 @@ namespace AdFactum.Data.Linq.Translation
         /// Evaluates the specified expression.
         /// </summary>
         /// <param name="expression">The expression.</param>
+        /// <param name="type">The type.</param>
+        /// <param name="columnName">Name of the column.</param>
         /// <returns></returns>
         public static PropertyMapping FindForType(Expression expression, Type type, ColumnDeclaration columnName)
         {

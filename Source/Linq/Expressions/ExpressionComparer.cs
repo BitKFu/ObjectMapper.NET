@@ -14,37 +14,80 @@ namespace AdFactum.Data.Linq.Expressions
         ScopedDictionary<ParameterExpression, ParameterExpression> parameterScope;
         readonly bool exactMatch;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ExpressionComparer"/> class.
+        /// </summary>
+        /// <param name="parameterScope">The parameter scope.</param>
+        /// <param name="exactMatch">if set to <c>true</c> [exact match].</param>
         protected ExpressionComparer(ScopedDictionary<ParameterExpression, ParameterExpression> parameterScope, bool exactMatch)
         {
             this.parameterScope = parameterScope;
             this.exactMatch = exactMatch;
         }
 
+        /// <summary>
+        /// Gets a value indicating whether [exact match].
+        /// </summary>
+        /// <value><c>true</c> if [exact match]; otherwise, <c>false</c>.</value>
         protected bool ExactMatch
         {
             get { return this.exactMatch; }
         }
 
+        /// <summary>
+        /// Ares the equal.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <param name="b">The b.</param>
+        /// <returns></returns>
         public static bool AreEqual(Expression a, Expression b)
         {
             return AreEqual(null, a, b);
         }
 
+        /// <summary>
+        /// Ares the equal.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <param name="b">The b.</param>
+        /// <param name="exactMatch">if set to <c>true</c> [exact match].</param>
+        /// <returns></returns>
         public static bool AreEqual(Expression a, Expression b, bool exactMatch)
         {
             return AreEqual(null, a, b, exactMatch);
         }
 
+        /// <summary>
+        /// Ares the equal.
+        /// </summary>
+        /// <param name="parameterScope">The parameter scope.</param>
+        /// <param name="a">A.</param>
+        /// <param name="b">The b.</param>
+        /// <returns></returns>
         public static bool AreEqual(ScopedDictionary<ParameterExpression, ParameterExpression> parameterScope, Expression a, Expression b)
         {
             return new ExpressionComparer(parameterScope, true).Compare(a, b);
         }
 
+        /// <summary>
+        /// Ares the equal.
+        /// </summary>
+        /// <param name="parameterScope">The parameter scope.</param>
+        /// <param name="a">A.</param>
+        /// <param name="b">The b.</param>
+        /// <param name="exactMatch">if set to <c>true</c> [exact match].</param>
+        /// <returns></returns>
         public static bool AreEqual(ScopedDictionary<ParameterExpression, ParameterExpression> parameterScope, Expression a, Expression b, bool exactMatch)
         {
             return new ExpressionComparer(parameterScope, exactMatch).Compare(a, b);
         }
 
+        /// <summary>
+        /// Compares the specified a.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <param name="b">The b.</param>
+        /// <returns></returns>
         protected virtual bool Compare(Expression a, Expression b)
         {
             if (a == b)
@@ -122,6 +165,12 @@ namespace AdFactum.Data.Linq.Expressions
             }
         }
 
+        /// <summary>
+        /// Compares the unary.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <param name="b">The b.</param>
+        /// <returns></returns>
         protected virtual bool CompareUnary(UnaryExpression a, UnaryExpression b)
         {
             return a.NodeType == b.NodeType
@@ -131,6 +180,12 @@ namespace AdFactum.Data.Linq.Expressions
                    && this.Compare(a.Operand, b.Operand);
         }
 
+        /// <summary>
+        /// Compares the binary.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <param name="b">The b.</param>
+        /// <returns></returns>
         protected virtual bool CompareBinary(BinaryExpression a, BinaryExpression b)
         {
             return a.NodeType == b.NodeType
@@ -141,12 +196,24 @@ namespace AdFactum.Data.Linq.Expressions
                    && this.Compare(a.Right, b.Right);
         }
 
+        /// <summary>
+        /// Compares the type is.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <param name="b">The b.</param>
+        /// <returns></returns>
         protected virtual bool CompareTypeIs(TypeBinaryExpression a, TypeBinaryExpression b)
         {
             return a.TypeOperand == b.TypeOperand
                    && this.Compare(a.Expression, b.Expression);
         }
 
+        /// <summary>
+        /// Compares the conditional.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <param name="b">The b.</param>
+        /// <returns></returns>
         protected virtual bool CompareConditional(ConditionalExpression a, ConditionalExpression b)
         {
             return this.Compare(a.Test, b.Test)
@@ -154,6 +221,12 @@ namespace AdFactum.Data.Linq.Expressions
                    && this.Compare(a.IfFalse, b.IfFalse);
         }
 
+        /// <summary>
+        /// Compares the constant.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <param name="b">The b.</param>
+        /// <returns></returns>
         protected virtual bool CompareConstant(ConstantExpression a, ConstantExpression b)
         {
             if (this.exactMatch)
@@ -166,6 +239,12 @@ namespace AdFactum.Data.Linq.Expressions
             }
         }
 
+        /// <summary>
+        /// Compares the parameter.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <param name="b">The b.</param>
+        /// <returns></returns>
         protected virtual bool CompareParameter(ParameterExpression a, ParameterExpression b)
         {
             if (this.parameterScope != null)
@@ -177,12 +256,24 @@ namespace AdFactum.Data.Linq.Expressions
             return a == b;
         }
 
+        /// <summary>
+        /// Compares the member access.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <param name="b">The b.</param>
+        /// <returns></returns>
         protected virtual bool CompareMemberAccess(MemberExpression a, MemberExpression b)
         {
             return a.Member == b.Member
                    && this.Compare(a.Expression, b.Expression);
         }
 
+        /// <summary>
+        /// Compares the method call.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <param name="b">The b.</param>
+        /// <returns></returns>
         protected virtual bool CompareMethodCall(MethodCallExpression a, MethodCallExpression b)
         {
             return a.Method == b.Method
@@ -190,6 +281,12 @@ namespace AdFactum.Data.Linq.Expressions
                    && this.CompareExpressionList(a.Arguments, b.Arguments);
         }
 
+        /// <summary>
+        /// Compares the lambda.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <param name="b">The b.</param>
+        /// <returns></returns>
         protected virtual bool CompareLambda(LambdaExpression a, LambdaExpression b)
         {
             int n = a.Parameters.Count;
@@ -217,6 +314,12 @@ namespace AdFactum.Data.Linq.Expressions
             }
         }
 
+        /// <summary>
+        /// Compares the new.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <param name="b">The b.</param>
+        /// <returns></returns>
         protected virtual bool CompareNew(NewExpression a, NewExpression b)
         {
             return a.Constructor == b.Constructor
@@ -224,6 +327,12 @@ namespace AdFactum.Data.Linq.Expressions
                    && this.CompareMemberList(a.Members, b.Members);
         }
 
+        /// <summary>
+        /// Compares the expression list.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <param name="b">The b.</param>
+        /// <returns></returns>
         protected virtual bool CompareExpressionList(ReadOnlyCollection<Expression> a, ReadOnlyCollection<Expression> b)
         {
             if (a == b)
@@ -240,6 +349,12 @@ namespace AdFactum.Data.Linq.Expressions
             return true;
         }
 
+        /// <summary>
+        /// Compares the member list.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <param name="b">The b.</param>
+        /// <returns></returns>
         protected virtual bool CompareMemberList(ReadOnlyCollection<MemberInfo> a, ReadOnlyCollection<MemberInfo> b)
         {
             if (a == b)
@@ -256,23 +371,47 @@ namespace AdFactum.Data.Linq.Expressions
             return true;
         }
 
+        /// <summary>
+        /// Compares the new array.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <param name="b">The b.</param>
+        /// <returns></returns>
         protected virtual bool CompareNewArray(NewArrayExpression a, NewArrayExpression b)
         {
             return this.CompareExpressionList(a.Expressions, b.Expressions);
         }
 
+        /// <summary>
+        /// Compares the invocation.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <param name="b">The b.</param>
+        /// <returns></returns>
         protected virtual bool CompareInvocation(InvocationExpression a, InvocationExpression b)
         {
             return this.Compare(a.Expression, b.Expression)
                    && this.CompareExpressionList(a.Arguments, b.Arguments);
         }
 
+        /// <summary>
+        /// Compares the member init.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <param name="b">The b.</param>
+        /// <returns></returns>
         protected virtual bool CompareMemberInit(MemberInitExpression a, MemberInitExpression b)
         {
             return this.Compare(a.NewExpression, b.NewExpression)
                    && this.CompareBindingList(a.Bindings, b.Bindings);
         }
 
+        /// <summary>
+        /// Compares the binding list.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <param name="b">The b.</param>
+        /// <returns></returns>
         protected virtual bool CompareBindingList(ReadOnlyCollection<MemberBinding> a, ReadOnlyCollection<MemberBinding> b)
         {
             if (a == b)
@@ -289,6 +428,12 @@ namespace AdFactum.Data.Linq.Expressions
             return true;
         }
 
+        /// <summary>
+        /// Compares the binding.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <param name="b">The b.</param>
+        /// <returns></returns>
         protected virtual bool CompareBinding(MemberBinding a, MemberBinding b)
         {
             if (a == b)
@@ -312,30 +457,60 @@ namespace AdFactum.Data.Linq.Expressions
             }
         }
 
+        /// <summary>
+        /// Compares the member assignment.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <param name="b">The b.</param>
+        /// <returns></returns>
         protected virtual bool CompareMemberAssignment(MemberAssignment a, MemberAssignment b)
         {
             return a.Member == b.Member
                    && this.Compare(a.Expression, b.Expression);
         }
 
+        /// <summary>
+        /// Compares the member list binding.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <param name="b">The b.</param>
+        /// <returns></returns>
         protected virtual bool CompareMemberListBinding(MemberListBinding a, MemberListBinding b)
         {
             return a.Member == b.Member
                    && this.CompareElementInitList(a.Initializers, b.Initializers);
         }
 
+        /// <summary>
+        /// Compares the member member binding.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <param name="b">The b.</param>
+        /// <returns></returns>
         protected virtual bool CompareMemberMemberBinding(MemberMemberBinding a, MemberMemberBinding b)
         {
             return a.Member == b.Member
                    && this.CompareBindingList(a.Bindings, b.Bindings);
         }
 
+        /// <summary>
+        /// Compares the list init.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <param name="b">The b.</param>
+        /// <returns></returns>
         protected virtual bool CompareListInit(ListInitExpression a, ListInitExpression b)
         {
             return this.Compare(a.NewExpression, b.NewExpression)
                    && this.CompareElementInitList(a.Initializers, b.Initializers);
         }
 
+        /// <summary>
+        /// Compares the element init list.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <param name="b">The b.</param>
+        /// <returns></returns>
         protected virtual bool CompareElementInitList(ReadOnlyCollection<ElementInit> a, ReadOnlyCollection<ElementInit> b)
         {
             if (a == b)
@@ -352,6 +527,12 @@ namespace AdFactum.Data.Linq.Expressions
             return true;
         }
 
+        /// <summary>
+        /// Compares the element init.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <param name="b">The b.</param>
+        /// <returns></returns>
         protected virtual bool CompareElementInit(ElementInit a, ElementInit b)
         {
             return a.AddMethod == b.AddMethod

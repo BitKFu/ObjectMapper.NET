@@ -7,10 +7,16 @@ using AdFactum.Data.Util;
 
 namespace AdFactum.Data.Linq.Translation
 {
+    /// <summary>
+    /// RedundantSubqueryGatherer
+    /// </summary>
     public class RedundantSubqueryGatherer : DbExpressionVisitor
     {
         List<SelectExpression> redundant;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RedundantSubqueryGatherer"/> class.
+        /// </summary>
         private RedundantSubqueryGatherer()
         {
 #if TRACE
@@ -18,6 +24,11 @@ namespace AdFactum.Data.Linq.Translation
 #endif
         }
 
+        /// <summary>
+        /// Gathers the specified source.
+        /// </summary>
+        /// <param name="source">The source.</param>
+        /// <returns></returns>
         internal static List<SelectExpression> Gather(Expression source)
         {
             var gatherer = new RedundantSubqueryGatherer();
@@ -36,6 +47,13 @@ namespace AdFactum.Data.Linq.Translation
             return gatherer.redundant;
         }
 
+        /// <summary>
+        /// Determines whether [is redudant subquery] [the specified select].
+        /// </summary>
+        /// <param name="select">The select.</param>
+        /// <returns>
+        /// 	<c>true</c> if [is redudant subquery] [the specified select]; otherwise, <c>false</c>.
+        /// </returns>
         public static bool IsRedudantSubquery(SelectExpression select)
         {
             return (RedundantSubqueryRemover.IsSimpleProjection(select) || RedundantSubqueryRemover.IsNameMapProjection(select))
@@ -48,6 +66,11 @@ namespace AdFactum.Data.Linq.Translation
                    && (select.GroupBy == null || select.GroupBy.Count == 0);
         }
 
+        /// <summary>
+        /// Visits the select expression.
+        /// </summary>
+        /// <param name="select"></param>
+        /// <returns></returns>
         protected override Expression VisitSelectExpression(SelectExpression select)
         {
             if (IsRedudantSubquery(select))

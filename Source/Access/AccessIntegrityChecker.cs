@@ -5,6 +5,9 @@ using AdFactum.Data.Repository;
 
 namespace AdFactum.Data.Access
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class AccessIntegrityChecker : BaseIntegrityChecker
     {
         /// <summary>
@@ -51,6 +54,11 @@ namespace AdFactum.Data.Access
             return size;
         }
 
+        /// <summary>
+        /// Calculates the size.
+        /// </summary>
+        /// <param name="size">The size.</param>
+        /// <returns></returns>
         protected override int CalculateSize(int size)
         {
             if (size == int.MaxValue / 4 - 1)

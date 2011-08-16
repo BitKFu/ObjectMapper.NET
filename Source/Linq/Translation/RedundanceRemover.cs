@@ -14,12 +14,25 @@ namespace AdFactum.Data.Linq.Translation
     {
         private readonly Dictionary<Alias, IDbExpressionWithResult> redundantSelect = new Dictionary<Alias, IDbExpressionWithResult>();
 
+        /// <summary>
+        /// 
+        /// </summary>
         protected enum ReferenceDirection
         {
+            /// <summary>
+            /// 
+            /// </summary>
             Forward,
+            /// <summary>
+            /// 
+            /// </summary>
             Referrer
         }
 
+        /// <summary>
+        /// Gets or sets the direction.
+        /// </summary>
+        /// <value>The direction.</value>
         protected ReferenceDirection Direction { get; private set; }
 
         /// <summary>

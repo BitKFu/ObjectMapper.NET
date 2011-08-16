@@ -17,6 +17,11 @@ namespace AdFactum.Data.Linq.Translation
         ILookup<Alias, AggregateSubqueryExpression> lookup;
         Dictionary<AggregateSubqueryExpression, Expression> map;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AggregateRewriter"/> class.
+        /// </summary>
+        /// <param name="expr">The expr.</param>
+        /// <param name="backpack">The backpack.</param>
         private AggregateRewriter(Expression expr, ExpressionVisitorBackpack backpack)
             :base(backpack)
         {
@@ -24,11 +29,22 @@ namespace AdFactum.Data.Linq.Translation
             lookup = AggregateGatherer.Gather(expr).ToLookup(a => a.Alias);
         }
 
+        /// <summary>
+        /// Rewrites the specified expr.
+        /// </summary>
+        /// <param name="expr">The expr.</param>
+        /// <param name="backpack">The backpack.</param>
+        /// <returns></returns>
         public static Expression Rewrite(Expression expr, ExpressionVisitorBackpack backpack)
         {
             return new AggregateRewriter(expr, backpack).Visit(expr);
         }
 
+        /// <summary>
+        /// Visits the select expression.
+        /// </summary>
+        /// <param name="select">The select.</param>
+        /// <returns></returns>
         protected override Expression VisitSelectExpression(SelectExpression select)
         {
             var from = VisitSource(select.From);
@@ -67,6 +83,11 @@ namespace AdFactum.Data.Linq.Translation
             return select;
         }
 
+        /// <summary>
+        /// Visits the aggregate subquery.
+        /// </summary>
+        /// <param name="aggregate">The aggregate.</param>
+        /// <returns></returns>
         protected override Expression VisitAggregateSubquery(AggregateSubqueryExpression aggregate)
         {
             Expression mapped;
@@ -77,13 +98,25 @@ namespace AdFactum.Data.Linq.Translation
             return aggregate; // Visit(aggregate.AggregateAsSubquery);
         }
 
+        /// <summary>
+        /// AggregateGatherer
+        /// </summary>
         class AggregateGatherer : DbExpressionVisitor
         {
             List<AggregateSubqueryExpression> aggregates = new List<AggregateSubqueryExpression>();
+            
+            /// <summary>
+            /// Initializes a new instance of the <see cref="AggregateGatherer"/> class.
+            /// </summary>
             private AggregateGatherer()
             {
             }
 
+            /// <summary>
+            /// Gathers the specified expression.
+            /// </summary>
+            /// <param name="expression">The expression.</param>
+            /// <returns></returns>
             internal static List<AggregateSubqueryExpression> Gather(Expression expression)
             {
                 AggregateGatherer gatherer = new AggregateGatherer();
@@ -91,12 +124,22 @@ namespace AdFactum.Data.Linq.Translation
                 return gatherer.aggregates;
             }
 
+            /// <summary>
+            /// Visits the select expression.
+            /// </summary>
+            /// <param name="select">The select.</param>
+            /// <returns></returns>
             protected override Expression VisitSelectExpression(SelectExpression select)
             {
                 Visit(select.Selector);
                 return base.VisitSelectExpression(select);
             }
 
+            /// <summary>
+            /// Visits the aggregate subquery.
+            /// </summary>
+            /// <param name="aggregate">The aggregate.</param>
+            /// <returns></returns>
             protected override Expression VisitAggregateSubquery(AggregateSubqueryExpression aggregate)
             {
                 this.aggregates.Add(aggregate);

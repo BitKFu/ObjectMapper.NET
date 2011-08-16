@@ -126,6 +126,11 @@ namespace AdFactum.Data.Linq.Expressions
             return expression;
         }
 
+        /// <summary>
+        /// Visits the scalar expression.
+        /// </summary>
+        /// <param name="expression">The expression.</param>
+        /// <returns></returns>
         protected virtual Expression VisitScalarExpression(ScalarExpression expression)
         {
             var from = VisitSource(expression.From);
@@ -134,6 +139,13 @@ namespace AdFactum.Data.Linq.Expressions
             return UpdateScalarExpression(expression, columns.FirstOrDefault(), from);
         }
 
+        /// <summary>
+        /// Updates the scalar expression.
+        /// </summary>
+        /// <param name="expression">The expression.</param>
+        /// <param name="column">The column.</param>
+        /// <param name="from">From.</param>
+        /// <returns></returns>
         protected Expression UpdateScalarExpression(ScalarExpression expression, ColumnDeclaration column, AliasedExpression from)
         {
             if (expression.Columns.FirstOrDefault() != column ||
@@ -143,35 +155,67 @@ namespace AdFactum.Data.Linq.Expressions
             return expression;
         }
 
+        /// <summary>
+        /// Visits the sys time expression.
+        /// </summary>
+        /// <param name="expression">The expression.</param>
+        /// <returns></returns>
         protected virtual Expression VisitSysTimeExpression(SysTimeExpression expression)
         {
             return expression;
         }
 
+        /// <summary>
+        /// Visits the sys date expression.
+        /// </summary>
+        /// <param name="expression">The expression.</param>
+        /// <returns></returns>
         protected virtual Expression VisitSysDateExpression(SysDateExpression expression)
         {
             return expression;
         }
 
+        /// <summary>
+        /// Visits the order expression.
+        /// </summary>
+        /// <param name="orderExpression">The order expression.</param>
+        /// <returns></returns>
         protected virtual Expression VisitOrderExpression(OrderExpression orderExpression)
         {
             var orderBy = Visit(orderExpression.Expression);
             return UpdateOrderExpression(orderExpression, orderBy);
         }
 
+        /// <summary>
+        /// Updates the order expression.
+        /// </summary>
+        /// <param name="orderExpression">The order expression.</param>
+        /// <param name="orderBy">The order by.</param>
+        /// <returns></returns>
         protected Expression UpdateOrderExpression(OrderExpression orderExpression, Expression orderBy)
         {
             if (orderBy != orderExpression.Expression)
                 return new OrderExpression(orderExpression.Ordering, orderBy);
             return orderExpression;
         }
-            
+
+        /// <summary>
+        /// Visits the aggregate subquery.
+        /// </summary>
+        /// <param name="aggregate">The aggregate.</param>
+        /// <returns></returns>
         protected virtual Expression VisitAggregateSubquery(AggregateSubqueryExpression aggregate)
         {
             var subquery = (ScalarExpression)Visit(aggregate.AggregateAsSubquery);
             return UpdateAggregateSubquery(aggregate, subquery);
         }
 
+        /// <summary>
+        /// Updates the aggregate subquery.
+        /// </summary>
+        /// <param name="aggregate">The aggregate.</param>
+        /// <param name="subquery">The subquery.</param>
+        /// <returns></returns>
         protected AggregateSubqueryExpression UpdateAggregateSubquery(AggregateSubqueryExpression aggregate, ScalarExpression subquery)
         {
             if (subquery != aggregate.AggregateAsSubquery)
@@ -201,6 +245,12 @@ namespace AdFactum.Data.Linq.Expressions
             return UpdateCast(expression, subExpression);
         }
 
+        /// <summary>
+        /// Updates the cast.
+        /// </summary>
+        /// <param name="exists">The exists.</param>
+        /// <param name="subExpression">The sub expression.</param>
+        /// <returns></returns>
         protected Expression UpdateCast(CastExpression exists, Expression subExpression)
         {
             if (exists.Expression != subExpression)
@@ -220,6 +270,12 @@ namespace AdFactum.Data.Linq.Expressions
             return UpdateExists(expression, subSelect);
         }
 
+        /// <summary>
+        /// Updates the exists.
+        /// </summary>
+        /// <param name="exists">The exists.</param>
+        /// <param name="subSelect">The sub select.</param>
+        /// <returns></returns>
         protected Expression UpdateExists(ExistsExpression exists, SelectExpression subSelect)
         {
             if (exists.Selection != subSelect)
@@ -236,6 +292,11 @@ namespace AdFactum.Data.Linq.Expressions
             return rowNumExpression;
         }
 
+        /// <summary>
+        /// Visits the union expression.
+        /// </summary>
+        /// <param name="union">The union.</param>
+        /// <returns></returns>
         protected virtual Expression VisitUnionExpression(UnionExpression union)
         {
             var first = Visit(union.First);
@@ -243,6 +304,13 @@ namespace AdFactum.Data.Linq.Expressions
             return UpdateUnion(union, first, second);
         }
 
+        /// <summary>
+        /// Updates the union.
+        /// </summary>
+        /// <param name="union">The union.</param>
+        /// <param name="first">The first.</param>
+        /// <param name="second">The second.</param>
+        /// <returns></returns>
         protected Expression UpdateUnion(UnionExpression union, Expression first, Expression second)
         {
             if (union.First != first || union.Second != second)
@@ -265,6 +333,12 @@ namespace AdFactum.Data.Linq.Expressions
         /// <summary>
         /// Updates the join.
         /// </summary>
+        /// <param name="join">The join.</param>
+        /// <param name="joinType">Type of the join.</param>
+        /// <param name="left">The left.</param>
+        /// <param name="right">The right.</param>
+        /// <param name="condition">The condition.</param>
+        /// <returns></returns>
         protected JoinExpression UpdateJoin(JoinExpression join, JoinType joinType, Expression left, Expression right, Expression condition)
         {
             if (joinType != join.Join || left != join.Left || right != join.Right || condition != join.Condition)
@@ -285,6 +359,8 @@ namespace AdFactum.Data.Linq.Expressions
         /// <summary>
         /// Visits the source.
         /// </summary>
+        /// <param name="source">The source.</param>
+        /// <returns></returns>
         protected virtual AliasedExpression VisitSource(Expression source)
         {
             return Visit(source) as AliasedExpression;
@@ -314,6 +390,11 @@ namespace AdFactum.Data.Linq.Expressions
             return alternate != null ? alternate.AsReadOnly() : columns;
         }
 
+        /// <summary>
+        /// Visits the order by.
+        /// </summary>
+        /// <param name="expressions">The expressions.</param>
+        /// <returns></returns>
         protected virtual ReadOnlyCollection<OrderExpression> VisitOrderBy(ReadOnlyCollection<OrderExpression> expressions)
         {
             if (expressions == null) return expressions;
@@ -334,7 +415,11 @@ namespace AdFactum.Data.Linq.Expressions
             return alternate != null ? alternate.AsReadOnly() : expressions;
         }
 
-        /// <summary> Visits the select expression. </summary>
+        /// <summary>
+        /// Visits the select expression.
+        /// </summary>
+        /// <param name="select">The select.</param>
+        /// <returns></returns>
         protected virtual Expression VisitSelectExpression(SelectExpression select)
         {
             var from = VisitSource(select.From);
@@ -385,6 +470,25 @@ namespace AdFactum.Data.Linq.Expressions
             return projection;
         }
 
+        /// <summary>
+        /// Updates the select.
+        /// </summary>
+        /// <param name="select">The select.</param>
+        /// <param name="projection">The projection.</param>
+        /// <param name="selector">The selector.</param>
+        /// <param name="from">From.</param>
+        /// <param name="where">The where.</param>
+        /// <param name="orderBy">The order by.</param>
+        /// <param name="groupBy">The group by.</param>
+        /// <param name="skip">The skip.</param>
+        /// <param name="take">The take.</param>
+        /// <param name="isDistinct">if set to <c>true</c> [is distinct].</param>
+        /// <param name="isReverse">if set to <c>true</c> [is reverse].</param>
+        /// <param name="columns">The columns.</param>
+        /// <param name="sqlId">The SQL id.</param>
+        /// <param name="hint">The hint.</param>
+        /// <param name="defaultIfEmpty">The default if empty.</param>
+        /// <returns></returns>
         protected SelectExpression UpdateSelect(SelectExpression select, ProjectionClass projection, Expression selector, 
             AliasedExpression from, Expression where, ReadOnlyCollection<OrderExpression> orderBy, 
             ReadOnlyCollection<Expression> groupBy, Expression skip, Expression take, bool isDistinct, 
@@ -554,6 +658,12 @@ namespace AdFactum.Data.Linq.Expressions
             return columns.Where(x => property.Equals(x.OriginalProperty)).FirstOrDefault();
         }
 
+        /// <summary>
+        /// Finds the source column.
+        /// </summary>
+        /// <param name="from">From.</param>
+        /// <param name="declaration">The declaration.</param>
+        /// <returns></returns>
         protected  ColumnDeclaration FindSourceColumn(AliasedExpression from, ColumnDeclaration declaration)
         {
             AliasedExpression aliased = declaration.Expression as AliasedExpression;
@@ -571,6 +681,12 @@ namespace AdFactum.Data.Linq.Expressions
             return column.SetAlias(declaration.Alias);
         }
 
+        /// <summary>
+        /// Finds the source column.
+        /// </summary>
+        /// <param name="currentFrom">The current from.</param>
+        /// <param name="property">The property.</param>
+        /// <returns></returns>
         protected ColumnDeclaration FindSourceColumn(AliasedExpression currentFrom, Expression property)
         {
             SelectExpression select = currentFrom as SelectExpression;
@@ -603,11 +719,25 @@ namespace AdFactum.Data.Linq.Expressions
             return found;
         }
 
+        /// <summary>
+        /// Memberses the match.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <param name="propertyName">Name of the property.</param>
+        /// <returns></returns>
         private static bool MembersMatch(MemberInfo a, string propertyName)
         {
             return a.Name.Substring(4) == propertyName;
         }
 
+        /// <summary>
+        /// Gets the columns.
+        /// </summary>
+        /// <param name="currentFrom">The current from.</param>
+        /// <param name="existingColumns">The existing columns.</param>
+        /// <param name="selector">The selector.</param>
+        /// <param name="projection">The projection.</param>
+        /// <returns></returns>
         public List<ColumnDeclaration> GetColumns(AliasedExpression currentFrom, ReadOnlyCollection<ColumnDeclaration> existingColumns, Expression selector, ProjectionClass projection)
         {
             List<ColumnDeclaration> columns;
@@ -625,6 +755,13 @@ namespace AdFactum.Data.Linq.Expressions
             return columns;
         }
 
+        /// <summary>
+        /// Maps the columns to current from.
+        /// </summary>
+        /// <param name="currentFrom">The current from.</param>
+        /// <param name="selectorColumns">The selector columns.</param>
+        /// <param name="existingColumns">The existing columns.</param>
+        /// <returns></returns>
         private List<ColumnDeclaration> MapColumnsToCurrentFrom(AliasedExpression currentFrom, ReadOnlyCollection<ColumnDeclaration> selectorColumns, ReadOnlyCollection<ColumnDeclaration> existingColumns)
         {
             var columns = new List<ColumnDeclaration>();

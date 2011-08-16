@@ -18,17 +18,32 @@ namespace AdFactum.Data.Linq.Translation
     {
         private Cache<Type, ProjectionClass> dynamicCache;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="UpdateProjection"/> class.
+        /// </summary>
+        /// <param name="backpack"></param>
         private UpdateProjection(ExpressionVisitorBackpack backpack)
             :base(backpack)
         {
             dynamicCache = backpack.ProjectionCache;
         }
 
+        /// <summary>
+        /// Rebinds the specified expression.
+        /// </summary>
+        /// <param name="expression">The expression.</param>
+        /// <param name="backpack">The backpack.</param>
+        /// <returns></returns>
         public static Expression Rebind(Expression expression, ExpressionVisitorBackpack backpack)
         {
             return new UpdateProjection(backpack).Visit(expression);
         }
 
+        /// <summary>
+        /// Visits the specified exp.
+        /// </summary>
+        /// <param name="exp">The exp.</param>
+        /// <returns></returns>
         protected override Expression Visit(Expression exp)
         {
             if (exp is IDbExpressionWithResult)
@@ -73,8 +88,5 @@ namespace AdFactum.Data.Linq.Translation
 
             return (Expression) expression;
         }
-
-
-
     }
 }

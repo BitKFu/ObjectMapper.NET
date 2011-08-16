@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Data;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
 using AdFactum.Data.Interfaces;
@@ -17,6 +18,9 @@ using NpgsqlTypes;
 
 namespace AdFactum.Data.Postgres
 {
+    /// <summary>
+    /// PostgresPersister
+    /// </summary>
     public class PostgresPersister : BasePersister
     {
         /// <summary>
@@ -302,7 +306,7 @@ namespace AdFactum.Data.Postgres
                       .Replace(Condition.UPPER, "UPPER"));
 
             sql = sql.Trim();
-            if (sql.EndsWith(";") && !sql.ToUpper().EndsWith("END;"))
+            if (sql.EndsWith(";") && !sql.ToUpper(CultureInfo.InvariantCulture).EndsWith("END;"))
                 sql = sql.Substring(0, sql.Length - 1);
 
             return sql;
@@ -357,7 +361,7 @@ namespace AdFactum.Data.Postgres
         /// Rewrites the LINQ Expressions
         /// </summary>
         /// <param name="expression"></param>
-        /// <param name="dynamicCache"></param>
+        /// <param name="backpack"></param>
         /// <param name="groupings"></param>
         /// <param name="level"></param>
         /// <returns></returns>
@@ -466,6 +470,12 @@ namespace AdFactum.Data.Postgres
             return result;
         }
 
+        /// <summary>
+        /// Executes the secure db call.
+        /// </summary>
+        /// <param name="command">The command.</param>
+        /// <param name="nonQuery">if set to <c>true</c> [non query].</param>
+        /// <returns></returns>
         protected override object ExecuteSecureDbCall(IDbCommand command, bool nonQuery)
         {
             DontDisposeCommand = true;

@@ -695,7 +695,7 @@ namespace AdFactum.Data.Xml
             while (columns.MoveNext())
             {
                 var column = (DataColumn) columns.Current;
-                string columnName = column.ColumnName.ToUpper();
+                string columnName = column.ColumnName.ToUpper(CultureInfo.InvariantCulture);
                 FieldDescription fieldDescription;
 
                 if (!fieldTemplates.TryGetValue(columnName, out fieldDescription))
@@ -774,7 +774,7 @@ namespace AdFactum.Data.Xml
             while (columns.MoveNext())
             {
                 string column = ((DataColumn) columns.Current).ColumnName;
-                if (column.ToUpper().Equals(columnName.ToUpper()))
+                if (column.ToUpper(CultureInfo.InvariantCulture).Equals(columnName.ToUpper(CultureInfo.InvariantCulture)))
                 {
                     result = true;
                     break;

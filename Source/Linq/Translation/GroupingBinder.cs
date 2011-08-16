@@ -8,10 +8,17 @@ using AdFactum.Data.Linq.Expressions;
 
 namespace AdFactum.Data.Linq.Translation
 {
+    /// <summary>
+    /// GroupingBinder
+    /// </summary>
     public class GroupingBinder : DbExpressionVisitor
     {
         private Type resultType;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="GroupingBinder"/> class.
+        /// </summary>
+        /// <param name="resultType">Type of the result.</param>
         private GroupingBinder(Type resultType)
         {
 #if TRACE
@@ -23,6 +30,7 @@ namespace AdFactum.Data.Linq.Translation
         /// <summary>
         /// Evaluates the specified expression.
         /// </summary>
+        /// <param name="resultType">Type of the result.</param>
         /// <param name="expression">The expression.</param>
         /// <returns></returns>
         public static List<PropertyTupel> Evaluate(Type resultType, Expression expression)

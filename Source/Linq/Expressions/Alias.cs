@@ -53,8 +53,11 @@ namespace AdFactum.Data.Linq.Expressions
             set { nonGeneratedAlias = value;}
         }
 
-        /// Generates the specified pre.
+        /// <summary>
+        /// Generates the specified type.
         /// </summary>
+        /// <param name="type">The type.</param>
+        /// <returns></returns>
         public static Alias Generate (AliasType type)
         {
             return new Alias(type);
@@ -133,6 +136,8 @@ namespace AdFactum.Data.Linq.Expressions
         /// Returns a <see cref="System.String"/> that represents this instance.
         /// </summary>
         /// <returns>
+        /// A <see cref="System.String"/> that represents this instance.
+        /// </returns>
         public override string ToString()
         {
             return Name;

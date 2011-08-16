@@ -48,16 +48,6 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\LinqPad\ObjectMapper2LinqPad.csproj">
-      <Project>{9E2B9062-0B94-43BD-9B5E-32BFA61A6B96}</Project>
-      <Name>ObjectMapper2LinqPad</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Source\ObjectMapper 2008.csproj">
-      <Project>{35A18F34-D0D8-47CF-A9F6-EC9D84DD80B0}</Project>
-      <Name>ObjectMapper 2008</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

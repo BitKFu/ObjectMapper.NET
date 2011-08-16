@@ -29,7 +29,8 @@ namespace AdFactum.Data.Linq.Translation
         /// <summary>
         /// Rewrites the Top Expression for Oracle
         /// </summary>
-        /// <param name="expression"></param>
+        /// <param name="expression">The expression.</param>
+        /// <param name="backpack">The backpack.</param>
         /// <returns></returns>
         public static Expression Rewrite(Expression expression, ExpressionVisitorBackpack backpack)
         {

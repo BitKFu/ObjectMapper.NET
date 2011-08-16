@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data.OleDb;
+using System.Globalization;
 using System.IO;
 using AdFactum.Data.Internal;
 using AdFactum.Data.Util;
@@ -254,7 +255,7 @@ namespace AdFactum.Data.Access
             {
                 string trim = parts[x].Trim();
 
-                bool isKeyWord = Keywords.Contains(trim.ToUpper());
+                bool isKeyWord = Keywords.Contains(trim.ToUpper(CultureInfo.InvariantCulture));
                 result = string.Concat(result, (x > 0 ? "," : ""),
                                        isKeyWord || trim.IndexOfAny(SpecialCharacters) >= 0 ? string.Concat("[", trim, "]") : trim);
             }

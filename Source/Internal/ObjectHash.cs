@@ -75,6 +75,7 @@ namespace AdFactum.Data.Internal
         /// Checks if the object hash contains the persistent object
         /// </summary>
         /// <param name="vo">Fieldvalue Object</param>
+        /// <param name="hierarchyLevel">The hierarchy level.</param>
         /// <returns>
         /// 	<c>true</c> if [contains] [the specified type]; otherwise, <c>false</c>.
         /// </returns>
@@ -306,6 +307,10 @@ namespace AdFactum.Data.Internal
         /// </summary>
         /// <param name="type">The type.</param>
         /// <param name="id">The id.</param>
+        /// <param name="hierarchyLevel">The hierarchy level.</param>
+        /// <returns>
+        /// 	<c>true</c> if [contains] [the specified type]; otherwise, <c>false</c>.
+        /// </returns>
         public bool Contains(Type type, object id, int hierarchyLevel)
         {
             bool contains = objectHash.Contains(type, id);

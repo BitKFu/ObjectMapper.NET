@@ -8,6 +8,9 @@ using AdFactum.Data.Util;
 
 namespace AdFactum.Data.Access
 {
+    /// <summary>
+    /// AccessSchemaWriter
+    /// </summary>
     public class AccessSchemaWriter : BaseSchemaWriter
     {
         /// <summary>

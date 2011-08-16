@@ -45,6 +45,7 @@ namespace AdFactum.Data.Linq.Translation
         /// Initializes a new instance of the <see cref="QueryBinder"/> class.
         /// </summary>
         /// <param name="expression">The expression.</param>
+        /// <param name="backpack">The backpack.</param>
         private QueryBinder(Expression expression, ExpressionVisitorBackpack backpack)
             :base(backpack)
         {
@@ -64,6 +65,10 @@ namespace AdFactum.Data.Linq.Translation
         /// <summary> Gets or sets the then bys. </summary>
         public List<OrderExpression> ThenBys { get; private set; }
 
+        /// <summary>
+        /// Gets the dynamic cache.
+        /// </summary>
+        /// <value>The dynamic cache.</value>
         protected Cache<Type, ProjectionClass> DynamicCache
         {
             get { return Backpack.ProjectionCache; }
@@ -72,6 +77,9 @@ namespace AdFactum.Data.Linq.Translation
         /// <summary>
         /// Returns true, if distinct is allowed in aggregate functions
         /// </summary>
+        /// <value>
+        /// 	<c>true</c> if [allow distinct in aggregates]; otherwise, <c>false</c>.
+        /// </value>
         protected virtual bool AllowDistinctInAggregates
         {
             get { return true; }
@@ -91,10 +99,14 @@ namespace AdFactum.Data.Linq.Translation
             return e as LambdaExpression;
         }
 
-
         /// <summary>
         /// Evaluates the specified expression.
         /// </summary>
+        /// <param name="expression">The expression.</param>
+        /// <param name="groupings">The groupings.</param>
+        /// <param name="backpack">The backpack.</param>
+        /// <param name="level">The level.</param>
+        /// <returns></returns>
         public static Expression Evaluate(Expression expression, out List<PropertyTupel> groupings, ExpressionVisitorBackpack backpack, out int level)
         {
             var binder = new QueryBinder(expression, backpack);
@@ -408,6 +420,12 @@ namespace AdFactum.Data.Linq.Translation
         /// <summary>
         /// Binds the all expression
         /// </summary>
+        /// <param name="type">The type.</param>
+        /// <param name="method">The method.</param>
+        /// <param name="source">The source.</param>
+        /// <param name="predicate">The predicate.</param>
+        /// <param name="isRoot">if set to <c>true</c> [is root].</param>
+        /// <returns></returns>
         private Expression BindAnyAll(Type type, MethodInfo method, Expression source, LambdaExpression predicate,
                                       bool isRoot)
         {
@@ -489,8 +507,10 @@ namespace AdFactum.Data.Linq.Translation
         /// <summary>
         /// Union expression binding
         /// </summary>
-        /// <param name="first"></param>
-        /// <param name="second"></param>
+        /// <param name="resultType">Type of the result.</param>
+        /// <param name="first">The first.</param>
+        /// <param name="second">The second.</param>
+        /// <param name="unionAll">if set to <c>true</c> [union all].</param>
         /// <returns></returns>
         private Expression BindUnion(Type resultType, Expression first, Expression second, bool unionAll)
         {
@@ -545,6 +565,17 @@ namespace AdFactum.Data.Linq.Translation
             return false;
         }
 
+        /// <summary>
+        /// Binds the group join.
+        /// </summary>
+        /// <param name="resultType">Type of the result.</param>
+        /// <param name="groupJoinMethod">The group join method.</param>
+        /// <param name="outerSource">The outer source.</param>
+        /// <param name="innerSource">The inner source.</param>
+        /// <param name="outerKey">The outer key.</param>
+        /// <param name="innerKey">The inner key.</param>
+        /// <param name="resultSelector">The result selector.</param>
+        /// <returns></returns>
         protected virtual Expression BindGroupJoin(Type resultType, MethodInfo groupJoinMethod, Expression outerSource,
                                                    Expression innerSource, LambdaExpression outerKey,
                                                    LambdaExpression innerKey, LambdaExpression resultSelector)
@@ -567,6 +598,16 @@ namespace AdFactum.Data.Linq.Translation
             return new SelectExpression(resultType, alias, pc, resultExpr, outerProjection, null);
         }
 
+        /// <summary>
+        /// Binds the join.
+        /// </summary>
+        /// <param name="resultType">Type of the result.</param>
+        /// <param name="outerSource">The outer source.</param>
+        /// <param name="innerSource">The inner source.</param>
+        /// <param name="outerKey">The outer key.</param>
+        /// <param name="innerKey">The inner key.</param>
+        /// <param name="resultSelector">The result selector.</param>
+        /// <returns></returns>
         protected virtual Expression BindJoin(Type resultType, Expression outerSource, Expression innerSource,
                                               LambdaExpression outerKey, LambdaExpression innerKey,
                                               LambdaExpression resultSelector)
@@ -1376,7 +1417,11 @@ namespace AdFactum.Data.Linq.Translation
             return new SelectExpression(resultType,  projection, alias, columns, selector1, from, where, null, null, null, null, false, false, SelectResultType.Collection, null, null, null);
         }
 
-        /// <summary> Visits the constant. </summary>
+        /// <summary>
+        /// Visits the constant.
+        /// </summary>
+        /// <param name="c">The c.</param>
+        /// <returns></returns>
         protected override Expression VisitConstant(ConstantExpression c)
         {
             var provider = c.Value as ILinqQueryProvider;
@@ -1465,6 +1510,12 @@ namespace AdFactum.Data.Linq.Translation
             return ReflectionHelper.GetProjection(type.RevealType(), DynamicCache);
         }
 
+        /// <summary>
+        /// Visits the comparison.
+        /// </summary>
+        /// <param name="b">The b.</param>
+        /// <param name="queryOperator">The query operator.</param>
+        /// <returns></returns>
         protected override Expression VisitComparison(BinaryExpression b, QueryOperator queryOperator)
         {
             // Do we have a expression tupel as a child?
@@ -1572,20 +1623,42 @@ namespace AdFactum.Data.Linq.Translation
 
         #region Nested type: GroupByInfo
 
+        /// <summary>
+        /// 
+        /// </summary>
         protected class GroupByInfo
         {
+            /// <summary>
+            /// Initializes a new instance of the <see cref="GroupByInfo"/> class.
+            /// </summary>
+            /// <param name="alias">The alias.</param>
+            /// <param name="element">The element.</param>
             internal GroupByInfo(Alias alias, Expression element)
             {
                 Alias = alias;
                 Element = element;
             }
 
+            /// <summary>
+            /// Gets or sets the alias.
+            /// </summary>
+            /// <value>The alias.</value>
             internal Alias Alias { get; set; }
+
+            /// <summary>
+            /// Gets or sets the element.
+            /// </summary>
+            /// <value>The element.</value>
             internal Expression Element { get; set; }
         }
 
         #endregion
 
+        /// <summary>
+        /// Strips the expression.
+        /// </summary>
+        /// <param name="bound">The bound.</param>
+        /// <returns></returns>
         private Expression StripExpression (Expression bound)
         {
             // If it's a select expression, only take the selector
@@ -1605,13 +1678,24 @@ namespace AdFactum.Data.Linq.Translation
 
     #region Nested type: MappingStruct
 
+    /// <summary>
+    /// 
+    /// </summary>
     public class MappingStruct
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MappingStruct"/> class.
+        /// </summary>
+        /// <param name="bound">The bound.</param>
         internal MappingStruct(Expression bound)
         {
             Expression = bound;
         }
 
+        /// <summary>
+        /// Gets or sets the expression.
+        /// </summary>
+        /// <value>The expression.</value>
         internal Expression Expression { get; private set; }
     }
 

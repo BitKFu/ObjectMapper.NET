@@ -6,6 +6,9 @@ using AdFactum.Data.Internal;
 
 namespace AdFactum.Data.Oracle
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class OracleIntegrityChecker : BaseIntegrityChecker
     {
         /// <summary>

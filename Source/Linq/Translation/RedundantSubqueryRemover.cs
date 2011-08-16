@@ -38,6 +38,11 @@ namespace AdFactum.Data.Linq.Translation
             return expression;
         }
 
+        /// <summary>
+        /// Visits the select expression.
+        /// </summary>
+        /// <param name="select"></param>
+        /// <returns></returns>
         protected override Expression VisitSelectExpression(SelectExpression select)
         {
             select = (SelectExpression)base.VisitSelectExpression(select);
@@ -70,11 +75,23 @@ namespace AdFactum.Data.Linq.Translation
             return select;
         }
 
+        /// <summary>
+        /// Check the property expressions
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <returns></returns>
         protected override Expression VisitColumn(PropertyExpression expression)
         {
             return base.VisitColumn(expression);
         }
 
+        /// <summary>
+        /// Determines whether [is simple projection] [the specified select].
+        /// </summary>
+        /// <param name="select">The select.</param>
+        /// <returns>
+        /// 	<c>true</c> if [is simple projection] [the specified select]; otherwise, <c>false</c>.
+        /// </returns>
         internal static bool IsSimpleProjection(SelectExpression select)
         {
             foreach (ColumnDeclaration decl in select.Columns)
@@ -88,6 +105,13 @@ namespace AdFactum.Data.Linq.Translation
             return true;
         }
 
+        /// <summary>
+        /// Determines whether [is name map projection] [the specified select].
+        /// </summary>
+        /// <param name="select">The select.</param>
+        /// <returns>
+        /// 	<c>true</c> if [is name map projection] [the specified select]; otherwise, <c>false</c>.
+        /// </returns>
         internal static bool IsNameMapProjection(SelectExpression select)
         {
             if (select.From is TableExpression) return false;
@@ -107,6 +131,13 @@ namespace AdFactum.Data.Linq.Translation
             return true;
         }
 
+        /// <summary>
+        /// Determines whether [is initial projection] [the specified select].
+        /// </summary>
+        /// <param name="select">The select.</param>
+        /// <returns>
+        /// 	<c>true</c> if [is initial projection] [the specified select]; otherwise, <c>false</c>.
+        /// </returns>
         internal static bool IsInitialProjection(SelectExpression select)
         {
             return select.From is TableExpression;

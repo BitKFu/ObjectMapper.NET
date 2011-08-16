@@ -25,6 +25,11 @@ namespace AdFactum.Data.Linq.Translation
 
         private readonly Cache<Type, ProjectionClass> dynamicCache;
         private Stack<JoinStruct> inJoinCondition = new Stack<JoinStruct>();
+
+        /// <summary>
+        /// Gets the dynamic cache.
+        /// </summary>
+        /// <value>The dynamic cache.</value>
         protected Cache<Type, ProjectionClass> DynamicCache { get { return dynamicCache; } }
 
         /// <summary>
@@ -37,6 +42,11 @@ namespace AdFactum.Data.Linq.Translation
             dynamicCache = cache;
         }
 
+        /// <summary>
+        /// Visits the specified exp.
+        /// </summary>
+        /// <param name="exp">The exp.</param>
+        /// <returns></returns>
         protected override Expression Visit(Expression exp)
         {
             try
@@ -82,18 +92,33 @@ namespace AdFactum.Data.Linq.Translation
             return new ReadOnlyCollection<ColumnDeclaration>(projector.columns);
         }
 
+        /// <summary>
+        /// Visits the aggregate subquery.
+        /// </summary>
+        /// <param name="aggregate">The aggregate.</param>
+        /// <returns></returns>
         protected override Expression VisitAggregateSubquery(AggregateSubqueryExpression aggregate)
         {
             columns.Add(new ColumnDeclaration(aggregate.AggregateAsSubquery, Alias.Generate(AliasType.Column)));
             return aggregate;
         }
 
+        /// <summary>
+        /// Visits the aggregate expression
+        /// </summary>
+        /// <param name="aggregate"></param>
+        /// <returns></returns>
         protected override Expression VisitAggregateExpression(AggregateExpression aggregate)
         {
             columns.Add(new ColumnDeclaration(aggregate, Alias.Generate(AliasType.Column)));
             return aggregate;
         }
 
+        /// <summary>
+        /// Visits the union expression.
+        /// </summary>
+        /// <param name="union">The union.</param>
+        /// <returns></returns>
         protected override Expression VisitUnionExpression(UnionExpression union)
         {
             //var asSelect = union.First as SelectExpression ?? union.Second as SelectExpression;
@@ -107,6 +132,11 @@ namespace AdFactum.Data.Linq.Translation
             return union;
         }
 
+        /// <summary>
+        /// Visits the binary.
+        /// </summary>
+        /// <param name="b">The b.</param>
+        /// <returns></returns>
         protected override Expression VisitBinary(BinaryExpression b)
         {
             if (inJoinCondition.Count == 0)
@@ -117,6 +147,8 @@ namespace AdFactum.Data.Linq.Translation
         /// <summary>
         /// Visits the parameter expression
         /// </summary>
+        /// <param name="expression">The expression.</param>
+        /// <returns></returns>
         protected override Expression VisitSqlParameterExpression(SqlParameterExpression expression)
         {
             columns.Add(new ColumnDeclaration(expression, Alias.Generate(AliasType.Column)));
@@ -134,6 +166,11 @@ namespace AdFactum.Data.Linq.Translation
             return expression;
         }
 
+        /// <summary>
+        /// Visits the value expression.
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <returns></returns>
         protected override Expression VisitValueExpression(ValueExpression expression)
         {
             if (Level < 2)     // Level 3 is the first and only top-level where a value expression can be a result column
@@ -143,6 +180,11 @@ namespace AdFactum.Data.Linq.Translation
             return expression;
         }
 
+        /// <summary>
+        /// Visits the conditional.
+        /// </summary>
+        /// <param name="c">The c.</param>
+        /// <returns></returns>
         protected override Expression VisitConditional(ConditionalExpression c)
         {
             columns.Add(new ColumnDeclaration(c, Alias.Generate(AliasType.Column)));
@@ -182,6 +224,13 @@ namespace AdFactum.Data.Linq.Translation
             return UpdateJoin(join, join.Join, left, right, condition);
         }
 
+        /// <summary>
+        /// Visits the join condition.
+        /// </summary>
+        /// <param name="expression">The expression.</param>
+        /// <param name="joinType">Type of the join.</param>
+        /// <param name="joinName">Name of the join.</param>
+        /// <returns></returns>
         private Expression VisitJoinCondition(Expression expression, JoinType joinType, string joinName)
         {
             inJoinCondition.Push(new JoinStruct() { joinType = joinType, name = joinName });
@@ -195,6 +244,11 @@ namespace AdFactum.Data.Linq.Translation
             }
         }
 
+        /// <summary>
+        /// Creates the conditional expression.
+        /// </summary>
+        /// <param name="expression">The expression.</param>
+        /// <returns></returns>
         private ConditionalExpression CreateConditionalExpression(BinaryExpression expression)
         {
             return expression != null
@@ -202,6 +256,12 @@ namespace AdFactum.Data.Linq.Translation
                 : null;
         }
 
+        /// <summary>
+        /// Adds from expresion.
+        /// </summary>
+        /// <param name="expression">The expression.</param>
+        /// <param name="columnName">Name of the column.</param>
+        /// <returns></returns>
         private bool AddFromExpresion(Expression expression, string columnName)
         {
             // Maybe we have to find a property expression, nested within a member expression
@@ -385,6 +445,11 @@ namespace AdFactum.Data.Linq.Translation
             return select;
         }
 
+        /// <summary>
+        /// Visits the scalar expression.
+        /// </summary>
+        /// <param name="scalar">The scalar.</param>
+        /// <returns></returns>
         protected override Expression VisitScalarExpression(ScalarExpression scalar)
         {
             AddSelectColumns(scalar, scalar.Columns);

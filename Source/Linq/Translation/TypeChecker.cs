@@ -11,6 +11,10 @@ namespace AdFactum.Data.Linq.Translation
         private bool found;
         private readonly DbExpressionType searchForType;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TypeChecker"/> class.
+        /// </summary>
+        /// <param name="searchFor">The search for.</param>
         private TypeChecker(DbExpressionType searchFor)
         {
             searchForType = searchFor;
@@ -29,6 +33,11 @@ namespace AdFactum.Data.Linq.Translation
             return checker.found;
         }
 
+        /// <summary>
+        /// Visits the specified exp.
+        /// </summary>
+        /// <param name="exp">The exp.</param>
+        /// <returns></returns>
         protected override Expression Visit(Expression exp)
         {
             if (exp == null) return null;

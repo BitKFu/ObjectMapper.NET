@@ -6,11 +6,23 @@ using System.Text;
 
 namespace AdFactum.Data.Linq.Expressions
 {
+    /// <summary>
+    /// DbExpressionFinder
+    /// </summary>
     public class DbExpressionFinder : DbExpressionVisitor
     {
         Expression ToFind { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether this <see cref="DbExpressionFinder"/> is found.
+        /// </summary>
+        /// <value><c>true</c> if found; otherwise, <c>false</c>.</value>
         public bool Found { get; private set; }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DbExpressionFinder"/> class.
+        /// </summary>
+        /// <param name="toFind">To find.</param>
         private DbExpressionFinder(Expression toFind)
         {
             ToFind = toFind;
@@ -29,6 +41,11 @@ namespace AdFactum.Data.Linq.Expressions
             return finder.Found;
         }
 
+        /// <summary>
+        /// Visits the specified exp.
+        /// </summary>
+        /// <param name="exp">The exp.</param>
+        /// <returns></returns>
         protected override Expression Visit(Expression exp)
         {
             if (Found)
@@ -43,6 +60,11 @@ namespace AdFactum.Data.Linq.Expressions
             return base.Visit(exp);
         }
 
+        /// <summary>
+        /// Visits the column expression
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <returns></returns>
         protected override Expression VisitColumn(PropertyExpression expression)
         {
             if (expression.ReferringColumn != null)

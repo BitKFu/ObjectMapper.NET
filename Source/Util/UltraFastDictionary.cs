@@ -15,11 +15,21 @@ namespace AdFactum.Data.Util
 
         #region IEnumerable<KeyValuePair<TKey,TValue>> Members
 
+        /// <summary>
+        /// Gets the enumerator.
+        /// </summary>
+        /// <returns></returns>
         public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
         {
             return InnerDictionary.GetEnumerator();
         }
 
+        /// <summary>
+        /// Returns an enumerator that iterates through a collection.
+        /// </summary>
+        /// <returns>
+        /// An <see cref="T:System.Collections.IEnumerator"/> object that can be used to iterate through the collection.
+        /// </returns>
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
@@ -27,6 +37,10 @@ namespace AdFactum.Data.Util
 
         #endregion
 
+        /// <summary>
+        /// Gets the dictionary enumerator.
+        /// </summary>
+        /// <returns></returns>
         public IDictionaryEnumerator GetDictionaryEnumerator()
         {
             return InnerDictionary.GetEnumerator();
@@ -38,6 +52,13 @@ namespace AdFactum.Data.Util
     /// </summary>
     public static class UltraFastDictionaryImpl
     {
+        /// <summary>
+        /// Valueses the specified dict.
+        /// </summary>
+        /// <typeparam name="TKey">The type of the key.</typeparam>
+        /// <typeparam name="TValue">The type of the value.</typeparam>
+        /// <param name="dict">The dict.</param>
+        /// <returns></returns>
         public static Dictionary<TKey, TValue>.ValueCollection Values<TKey, TValue>(
             this UltraFastDictionary<TKey, TValue> dict)
         {
@@ -46,6 +67,15 @@ namespace AdFactum.Data.Util
                        : null;
         }
 
+        /// <summary>
+        /// Adds the specified dict.
+        /// </summary>
+        /// <typeparam name="TKey">The type of the key.</typeparam>
+        /// <typeparam name="TValue">The type of the value.</typeparam>
+        /// <param name="dict">The dict.</param>
+        /// <param name="key">The key.</param>
+        /// <param name="value">The value.</param>
+        /// <returns></returns>
         public static UltraFastDictionary<TKey, TValue> Add<TKey, TValue>(this UltraFastDictionary<TKey, TValue> dict,
                                                                           TKey key, TValue value)
         {
@@ -56,6 +86,15 @@ namespace AdFactum.Data.Util
             return dict;
         }
 
+        /// <summary>
+        /// Tries the get value.
+        /// </summary>
+        /// <typeparam name="TKey">The type of the key.</typeparam>
+        /// <typeparam name="TValue">The type of the value.</typeparam>
+        /// <param name="dict">The dict.</param>
+        /// <param name="key">The key.</param>
+        /// <param name="value">The value.</param>
+        /// <returns></returns>
         public static bool TryGetValue<TKey, TValue>(this UltraFastDictionary<TKey, TValue> dict, TKey key,
                                                      out TValue value)
         {
@@ -68,6 +107,14 @@ namespace AdFactum.Data.Util
             return dict.InnerDictionary.TryGetValue(key, out value);
         }
 
+        /// <summary>
+        /// Gets the specified dict.
+        /// </summary>
+        /// <typeparam name="TKey">The type of the key.</typeparam>
+        /// <typeparam name="TValue">The type of the value.</typeparam>
+        /// <param name="dict">The dict.</param>
+        /// <param name="key">The key.</param>
+        /// <returns></returns>
         public static TValue Get<TKey, TValue>(this UltraFastDictionary<TKey, TValue> dict, TKey key)
         {
             if (dict == null)
@@ -76,6 +123,13 @@ namespace AdFactum.Data.Util
             return dict.InnerDictionary[key];
         }
 
+        /// <summary>
+        /// Removes the specified dict.
+        /// </summary>
+        /// <typeparam name="TKey">The type of the key.</typeparam>
+        /// <typeparam name="TValue">The type of the value.</typeparam>
+        /// <param name="dict">The dict.</param>
+        /// <param name="key">The key.</param>
         public static void Remove<TKey, TValue>(this UltraFastDictionary<TKey, TValue> dict, TKey key)
         {
             if (dict == null)
@@ -84,6 +138,16 @@ namespace AdFactum.Data.Util
             dict.InnerDictionary.Remove(key);
         }
 
+        /// <summary>
+        /// Determines whether [contains] [the specified dict].
+        /// </summary>
+        /// <typeparam name="TKey">The type of the key.</typeparam>
+        /// <typeparam name="TValue">The type of the value.</typeparam>
+        /// <param name="dict">The dict.</param>
+        /// <param name="key">The key.</param>
+        /// <returns>
+        /// 	<c>true</c> if [contains] [the specified dict]; otherwise, <c>false</c>.
+        /// </returns>
         public static bool Contains<TKey, TValue>(this UltraFastDictionary<TKey, TValue> dict, TKey key)
         {
             if (dict == null)

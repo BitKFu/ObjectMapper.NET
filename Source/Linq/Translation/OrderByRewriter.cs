@@ -13,9 +13,17 @@ namespace AdFactum.Data.Linq.Translation
     /// </summary>
     public abstract class OrderByRewriter : DbPackedExpressionVisitor
     {
+        /// <summary>
+        /// 
+        /// </summary>
         protected List<OrderExpression> GatheredOrderings = new List<OrderExpression>();
         private Expression root;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="OrderByRewriter"/> class.
+        /// </summary>
+        /// <param name="rootEx">The root ex.</param>
+        /// <param name="backpack">The backpack.</param>
         protected OrderByRewriter(Expression rootEx, ExpressionVisitorBackpack backpack)
             : base(backpack)
         {
@@ -55,7 +63,9 @@ namespace AdFactum.Data.Linq.Translation
         /// <summary>
         /// Binds to selection.
         /// </summary>
+        /// <param name="bindTo">The bind to.</param>
         /// <param name="orderings">The orderings.</param>
+        /// <param name="backpack">The backpack.</param>
         /// <returns></returns>
         public static List<OrderExpression> BindToSelection(AliasedExpression bindTo, List<OrderExpression> orderings, ExpressionVisitorBackpack backpack)
         {

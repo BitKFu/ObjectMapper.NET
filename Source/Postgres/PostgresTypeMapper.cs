@@ -9,6 +9,9 @@ using NpgsqlTypes;
 
 namespace AdFactum.Data.Postgres
 {
+    /// <summary>
+    /// PostgresTypeMapper
+    /// </summary>
     public class PostgresTypeMapper : BaseTypeMapper
     {
         private SqlCasing sqlCasing = SqlCasing.Mixed;
@@ -74,6 +77,9 @@ namespace AdFactum.Data.Postgres
 
         #endregion
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PostgresTypeMapper"/> class.
+        /// </summary>
         public PostgresTypeMapper()
         {
             DbMappingTable.Add(typeof(Boolean), "boolean");

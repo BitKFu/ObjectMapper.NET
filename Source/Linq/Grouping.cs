@@ -15,12 +15,22 @@ namespace AdFactum.Data.Linq
         private IEnumerable<TElement> group;
         private TKey key;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Grouping&lt;TKey, TElement&gt;"/> class.
+        /// </summary>
+        /// <param name="key">The key.</param>
+        /// <param name="group">The group.</param>
         public Grouping(TKey key, IEnumerable<TElement> group)
         {
             this.key = key;
             this.group = group;
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Grouping&lt;TKey, TElement&gt;"/> class.
+        /// </summary>
+        /// <param name="key">The key.</param>
+        /// <param name="group">The group.</param>
         public Grouping(TKey key, IList group)
         {
             this.key = key;
@@ -29,11 +39,19 @@ namespace AdFactum.Data.Linq
 
         #region IGrouping<TKey,TElement> Members
 
+        /// <summary>
+        /// Gets the key.
+        /// </summary>
+        /// <value>The key.</value>
         public TKey Key
         {
             get { return key; }
         }
 
+        /// <summary>
+        /// Gets the enumerator.
+        /// </summary>
+        /// <returns></returns>
         public IEnumerator<TElement> GetEnumerator()
         {
             if (!(group is List<TElement>))
@@ -41,6 +59,12 @@ namespace AdFactum.Data.Linq
             return group.GetEnumerator();
         }
 
+        /// <summary>
+        /// Returns an enumerator that iterates through a collection.
+        /// </summary>
+        /// <returns>
+        /// An <see cref="T:System.Collections.IEnumerator"/> object that can be used to iterate through the collection.
+        /// </returns>
         IEnumerator IEnumerable.GetEnumerator()
         {
             return group.GetEnumerator();

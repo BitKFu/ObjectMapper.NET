@@ -5,6 +5,9 @@ using AdFactum.Data.Linq.Expressions;
 
 namespace AdFactum.Data.Linq.Translation
 {
+    /// <summary>
+    /// FromExpressionFinder
+    /// </summary>
     public class FromExpressionFinder : DbExpressionVisitor
     {
         private readonly Type findType;
@@ -13,21 +16,39 @@ namespace AdFactum.Data.Linq.Translation
 
         private AliasedExpression foundExpression;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FromExpressionFinder"/> class.
+        /// </summary>
+        /// <param name="find">The find.</param>
         private FromExpressionFinder(Type find)
         {
             findType = find;
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FromExpressionFinder"/> class.
+        /// </summary>
+        /// <param name="find">The find.</param>
         private FromExpressionFinder(ColumnDeclaration find)
         {
             columnToFind = find;
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FromExpressionFinder"/> class.
+        /// </summary>
+        /// <param name="find">The find.</param>
         private FromExpressionFinder(Expression find)
         {
             expressionToFind = find;
         }
 
+        /// <summary>
+        /// Finds the specified search in.
+        /// </summary>
+        /// <param name="searchIn">The search in.</param>
+        /// <param name="typeToFind">The type to find.</param>
+        /// <returns></returns>
         public static AliasedExpression Find(Expression searchIn, Type typeToFind)
         {
             var fef = new FromExpressionFinder(typeToFind);
@@ -35,6 +56,12 @@ namespace AdFactum.Data.Linq.Translation
             return fef.foundExpression;
         }
 
+        /// <summary>
+        /// Finds the specified search in.
+        /// </summary>
+        /// <param name="searchIn">The search in.</param>
+        /// <param name="declaration">The declaration.</param>
+        /// <returns></returns>
         public static AliasedExpression Find(Expression searchIn, ColumnDeclaration declaration)
         {
             var fef = new FromExpressionFinder(declaration);
@@ -42,6 +69,12 @@ namespace AdFactum.Data.Linq.Translation
             return fef.foundExpression;
         }
 
+        /// <summary>
+        /// Finds the specified search in.
+        /// </summary>
+        /// <param name="searchIn">The search in.</param>
+        /// <param name="expression">The expression.</param>
+        /// <returns></returns>
         public static AliasedExpression Find(Expression searchIn, Expression expression)
         {
             var fef = new FromExpressionFinder(expression);
@@ -49,6 +82,11 @@ namespace AdFactum.Data.Linq.Translation
             return fef.foundExpression;
         }
 
+        /// <summary>
+        /// Visits the specified exp.
+        /// </summary>
+        /// <param name="exp">The exp.</param>
+        /// <returns></returns>
         protected override Expression Visit(Expression exp)
         {
             if (foundExpression != null) 
@@ -56,6 +94,11 @@ namespace AdFactum.Data.Linq.Translation
             return base.Visit(exp);
         }
 
+        /// <summary>
+        /// Visits the table expression.
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <returns></returns>
         protected override Expression VisitTableExpression(TableExpression expression)
         {
             if (expression.RevealedType == findType)
@@ -83,6 +126,11 @@ namespace AdFactum.Data.Linq.Translation
             return base.VisitTableExpression(expression);
         }
 
+        /// <summary>
+        /// Visits the select expression.
+        /// </summary>
+        /// <param name="select"></param>
+        /// <returns></returns>
         protected override Expression VisitSelectExpression(SelectExpression select)
         {
             if (select.RevealedType == findType)
@@ -109,6 +157,11 @@ namespace AdFactum.Data.Linq.Translation
             return base.VisitSelectExpression(select);
         }
 
+        /// <summary>
+        /// Visits the union expression.
+        /// </summary>
+        /// <param name="union">The union.</param>
+        /// <returns></returns>
         protected override Expression VisitUnionExpression(UnionExpression union)
         {
             if (union.RevealedType == findType)

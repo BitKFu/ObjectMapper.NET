@@ -8,8 +8,17 @@ using AdFactum.Data.Util;
 
 namespace AdFactum.Data.Linq.Expressions
 {
+    /// <summary>
+    /// DbExpressionExtensions
+    /// </summary>
     public static class DbExpressionExtensions
     {
+        /// <summary>
+        /// Sets the columns.
+        /// </summary>
+        /// <param name="select">The select.</param>
+        /// <param name="columns">The columns.</param>
+        /// <returns></returns>
         public static SelectExpression SetColumns(this SelectExpression select, IList<ColumnDeclaration> columns)
         {
             return new SelectExpression(select.Type, select.Projection, select.Alias,
@@ -18,6 +27,12 @@ namespace AdFactum.Data.Linq.Expressions
                                         select.Take, select.IsDistinct, select.IsReverse, select.SelectResult, select.SqlId, select.Hint, select.DefaultIfEmpty);
         }
 
+        /// <summary>
+        /// Adds the column.
+        /// </summary>
+        /// <param name="select">The select.</param>
+        /// <param name="column">The column.</param>
+        /// <returns></returns>
         public static SelectExpression AddColumn(this SelectExpression select, ColumnDeclaration column)
         {
             var columns = new List<ColumnDeclaration>(select.Columns);
@@ -25,6 +40,12 @@ namespace AdFactum.Data.Linq.Expressions
             return select.SetColumns(columns);
         }
 
+        /// <summary>
+        /// Removes the column.
+        /// </summary>
+        /// <param name="select">The select.</param>
+        /// <param name="column">The column.</param>
+        /// <returns></returns>
         public static SelectExpression RemoveColumn(this SelectExpression select, ColumnDeclaration column)
         {
             var columns = new List<ColumnDeclaration>(select.Columns);
@@ -32,6 +53,12 @@ namespace AdFactum.Data.Linq.Expressions
             return select.SetColumns(columns);
         }
 
+        /// <summary>
+        /// Sets the alias.
+        /// </summary>
+        /// <param name="decl">The decl.</param>
+        /// <param name="alias">The alias.</param>
+        /// <returns></returns>
         public static ColumnDeclaration SetAlias(this ColumnDeclaration decl, Alias alias)
         {
             if (decl.Alias.Equals(alias))
@@ -40,6 +67,12 @@ namespace AdFactum.Data.Linq.Expressions
             return new ColumnDeclaration(decl.Expression, alias, decl.PropertyName);
         }
 
+        /// <summary>
+        /// Sets the alias.
+        /// </summary>
+        /// <param name="exp">The exp.</param>
+        /// <param name="alias">The alias.</param>
+        /// <returns></returns>
         public static AliasedExpression SetAlias(this AliasedExpression exp, Alias alias)
         {
             if (exp.Alias == alias)
@@ -75,6 +108,12 @@ namespace AdFactum.Data.Linq.Expressions
             return exp;
         }
 
+        /// <summary>
+        /// Sets the alias.
+        /// </summary>
+        /// <param name="exp">The exp.</param>
+        /// <param name="alias">The alias.</param>
+        /// <returns></returns>
         public static AliasedExpression SetAlias(this AliasedExpression exp, string alias)
         {
             if (exp.Alias.Name == alias)
@@ -110,6 +149,12 @@ namespace AdFactum.Data.Linq.Expressions
             return exp;
         }
 
+        /// <summary>
+        /// Sets the default if empty.
+        /// </summary>
+        /// <param name="exp">The exp.</param>
+        /// <param name="defaultIfEmpty">The default if empty.</param>
+        /// <returns></returns>
         public static SelectExpression SetDefaultIfEmpty(this SelectExpression exp, Expression defaultIfEmpty)
         {
             var select = exp as SelectExpression;
@@ -121,6 +166,12 @@ namespace AdFactum.Data.Linq.Expressions
             return exp;
         }
 
+        /// <summary>
+        /// Sets the type.
+        /// </summary>
+        /// <param name="exp">The exp.</param>
+        /// <param name="type">The type.</param>
+        /// <returns></returns>
         public static AliasedExpression SetType(this AliasedExpression exp, Type type)
         {
             if (exp.Type == type)
@@ -155,6 +206,12 @@ namespace AdFactum.Data.Linq.Expressions
             return exp;
         }
 
+        /// <summary>
+        /// Sets the projection.
+        /// </summary>
+        /// <param name="exp">The exp.</param>
+        /// <param name="projection">The projection.</param>
+        /// <returns></returns>
         public static AliasedExpression SetProjection(this AliasedExpression exp, ProjectionClass projection)
         {
             if (exp.Projection == projection)
@@ -177,6 +234,12 @@ namespace AdFactum.Data.Linq.Expressions
             return exp;
         }
 
+        /// <summary>
+        /// Sets the distinct.
+        /// </summary>
+        /// <param name="select">The select.</param>
+        /// <param name="isDistinct">if set to <c>true</c> [is distinct].</param>
+        /// <returns></returns>
         public static SelectExpression SetDistinct(this SelectExpression select, bool isDistinct)
         {
             if (select.IsDistinct != isDistinct)
@@ -188,6 +251,12 @@ namespace AdFactum.Data.Linq.Expressions
             return select;
         }
 
+        /// <summary>
+        /// Sets the reverse.
+        /// </summary>
+        /// <param name="select">The select.</param>
+        /// <param name="isReverse">if set to <c>true</c> [is reverse].</param>
+        /// <returns></returns>
         public static SelectExpression SetReverse(this SelectExpression select, bool isReverse)
         {
             if (select.IsReverse != isReverse)
@@ -199,6 +268,12 @@ namespace AdFactum.Data.Linq.Expressions
             return select;
         }
 
+        /// <summary>
+        /// Sets the where.
+        /// </summary>
+        /// <param name="select">The select.</param>
+        /// <param name="where">The where.</param>
+        /// <returns></returns>
         public static SelectExpression SetWhere(this SelectExpression select, Expression where)
         {
             if (where != select.Where)
@@ -210,6 +285,12 @@ namespace AdFactum.Data.Linq.Expressions
             return select;
         }
 
+        /// <summary>
+        /// Sets the order by.
+        /// </summary>
+        /// <param name="select">The select.</param>
+        /// <param name="orderBy">The order by.</param>
+        /// <returns></returns>
         public static SelectExpression SetOrderBy(this SelectExpression select, IList<OrderExpression> orderBy)
         {
             return new SelectExpression(select.Type, select.Projection, select.Alias, select.Columns, select.Selector, select.From,
@@ -218,6 +299,12 @@ namespace AdFactum.Data.Linq.Expressions
                                         select.SelectResult, select.SqlId, select.Hint, select.DefaultIfEmpty);
         }
 
+        /// <summary>
+        /// Sets the type of the result.
+        /// </summary>
+        /// <param name="select">The select.</param>
+        /// <param name="resultType">Type of the result.</param>
+        /// <returns></returns>
         public static SelectExpression SetResultType(this SelectExpression select, SelectResultType resultType)
         {
             return new SelectExpression(select.Type, select.Projection, select.Alias, select.Columns, select.Selector, select.From,
@@ -226,6 +313,12 @@ namespace AdFactum.Data.Linq.Expressions
                                         resultType, select.SqlId, select.Hint, select.DefaultIfEmpty);
         }
 
+        /// <summary>
+        /// Sets the SQL id.
+        /// </summary>
+        /// <param name="select">The select.</param>
+        /// <param name="sqlId">The SQL id.</param>
+        /// <returns></returns>
         public static SelectExpression SetSqlId(this SelectExpression select, string sqlId)
         {
             return new SelectExpression(select.Type, select.Projection, select.Alias, select.Columns, select.Selector, select.From,
@@ -234,6 +327,12 @@ namespace AdFactum.Data.Linq.Expressions
                                         select.SelectResult, sqlId, select.Hint, select.DefaultIfEmpty);
         }
 
+        /// <summary>
+        /// Sets the hint.
+        /// </summary>
+        /// <param name="select">The select.</param>
+        /// <param name="hint">The hint.</param>
+        /// <returns></returns>
         public static SelectExpression SetHint(this SelectExpression select, string hint)
         {
             return new SelectExpression(select.Type, select.Projection, select.Alias, select.Columns, select.Selector, select.From,
@@ -242,6 +341,12 @@ namespace AdFactum.Data.Linq.Expressions
                                         select.SelectResult, select.SqlId, hint, select.DefaultIfEmpty);
         }
 
+        /// <summary>
+        /// Sets the group by.
+        /// </summary>
+        /// <param name="select">The select.</param>
+        /// <param name="groupBy">The group by.</param>
+        /// <returns></returns>
         public static SelectExpression SetGroupBy(this SelectExpression select, IList<Expression> groupBy)
         {
             return new SelectExpression(select.Type, select.Projection, select.Alias, select.Columns, select.Selector, select.From,
@@ -250,6 +355,12 @@ namespace AdFactum.Data.Linq.Expressions
                                         select.SelectResult, select.SqlId, select.Hint, select.DefaultIfEmpty);
         }
 
+        /// <summary>
+        /// Sets the selector.
+        /// </summary>
+        /// <param name="select">The select.</param>
+        /// <param name="selector">The selector.</param>
+        /// <returns></returns>
         public static SelectExpression SetSelector(this SelectExpression select, Expression selector)
         {
             return new SelectExpression(select.Type, select.Projection, select.Alias, select.Columns, selector, select.From,
@@ -258,6 +369,12 @@ namespace AdFactum.Data.Linq.Expressions
                                         select.SelectResult, select.SqlId, select.Hint, select.DefaultIfEmpty);
         }
 
+        /// <summary>
+        /// Sets the skip.
+        /// </summary>
+        /// <param name="select">The select.</param>
+        /// <param name="skip">The skip.</param>
+        /// <returns></returns>
         public static SelectExpression SetSkip(this SelectExpression select, Expression skip)
         {
             if (skip != select.Skip)
@@ -269,6 +386,12 @@ namespace AdFactum.Data.Linq.Expressions
             return select;
         }
 
+        /// <summary>
+        /// Sets the take.
+        /// </summary>
+        /// <param name="select">The select.</param>
+        /// <param name="take">The take.</param>
+        /// <returns></returns>
         public static SelectExpression SetTake(this SelectExpression select, Expression take)
         {
             if (take != select.Take)
@@ -280,6 +403,12 @@ namespace AdFactum.Data.Linq.Expressions
             return select;
         }
 
+        /// <summary>
+        /// Adds the redundant select.
+        /// </summary>
+        /// <param name="select">The select.</param>
+        /// <param name="newAlias">The new alias.</param>
+        /// <returns></returns>
         public static SelectExpression AddRedundantSelect(this SelectExpression select, Alias newAlias)
         {
             IEnumerable<ColumnDeclaration> newColumns =

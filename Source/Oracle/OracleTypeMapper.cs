@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
+using System.Globalization;
 using System.IO;
 using System.Text;
 using AdFactum.Data.Internal;
@@ -342,7 +343,7 @@ namespace AdFactum.Data.Oracle
             {
                 string trim = DoCasing(parts[x].Trim());
 
-                bool isKeyWord = Keywords.Contains(trim.ToUpper());
+                bool isKeyWord = Keywords.Contains(trim.ToUpper(CultureInfo.InvariantCulture));
                 var containsBlank = trim.Contains(" ") && !(trim.EndsWith(" ASC") || trim.EndsWith(" DESC"));
 
                 result = string.Concat(result, (x > 0 ? "," : ""),

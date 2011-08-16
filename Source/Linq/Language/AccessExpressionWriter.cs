@@ -153,6 +153,11 @@ namespace AdFactum.Data.Linq.Language
             }
         }
 
+        /// <summary>
+        /// Visits the scalar expression.
+        /// </summary>
+        /// <param name="select">The select.</param>
+        /// <returns></returns>
         protected override Expression VisitScalarExpression(ScalarExpression select)
         {
             if (selectStack.Count > 0)
@@ -217,6 +222,11 @@ namespace AdFactum.Data.Linq.Language
             WriteSql(")");
         }
 
+        /// <summary>
+        /// Visits the Join Expression
+        /// </summary>
+        /// <param name="join"></param>
+        /// <returns></returns>
         protected override Expression VisitJoinExpression(JoinExpression join)
         {
             if (join.Join != JoinType.CrossJoin)
@@ -502,6 +512,10 @@ namespace AdFactum.Data.Linq.Language
             WriteSql(")");
         }
 
+        /// <summary>
+        /// Adds the date time expressions.
+        /// </summary>
+        /// <param name="time">The time.</param>
         protected override void AddDateTimeExpressions(Expression[] time)
         {
             char separator = time.Length == 3 ? '/' : '-';
@@ -794,18 +808,33 @@ namespace AdFactum.Data.Linq.Language
             Visit(right);
         }
 
+        /// <summary>
+        /// Visits the sys date expression.
+        /// </summary>
+        /// <param name="expression">The expression.</param>
+        /// <returns></returns>
         protected override Expression VisitSysDateExpression(SysDateExpression expression)
         {
             WriteSql(" DATE()");
             return expression;
         }
 
+        /// <summary>
+        /// Visits the sys time expression.
+        /// </summary>
+        /// <param name="expression">The expression.</param>
+        /// <returns></returns>
         protected override Expression VisitSysTimeExpression(SysTimeExpression expression)
         {
             WriteSql(" NOW()");
             return expression;
         }
 
+        /// <summary>
+        /// Visits the union expression.
+        /// </summary>
+        /// <param name="union">The union.</param>
+        /// <returns></returns>
         protected override Expression VisitUnionExpression(UnionExpression union)
         {
             var storedStack = selectStack;

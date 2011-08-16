@@ -156,7 +156,10 @@ namespace AdFactum.Data.SqlServer
 
         #endregion
 
-        /// <summary> Returns the Schema Writer </summary>
+        /// <summary>
+        /// Returns the Schema Writer
+        /// </summary>
+        /// <value></value>
         public override ISchemaWriter Schema
         {
             get
@@ -165,6 +168,10 @@ namespace AdFactum.Data.SqlServer
             }
         }
 
+        /// <summary>
+        /// Returns the Integrity Checker
+        /// </summary>
+        /// <value></value>
         public override IIntegrity Integrity
         {
             get
@@ -173,6 +180,10 @@ namespace AdFactum.Data.SqlServer
             }
         }
 
+        /// <summary>
+        /// Returns the repository class
+        /// </summary>
+        /// <value></value>
         public override IRepository Repository
         {
             get

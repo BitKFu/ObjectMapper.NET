@@ -23,8 +23,18 @@ namespace AdFactum.Data.Linq.Language
         /// <summary> Internal String Builder used to crate the SQL Statement </summary>
         private readonly StringBuilder builder = new StringBuilder();
 
+        /// <summary>
+        /// Gets or sets the root.
+        /// </summary>
+        /// <value>The root.</value>
         public Expression Root { get; internal set; }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="LinqMethodInspector"/> class.
+        /// </summary>
+        /// <param name="persister">The persister.</param>
+        /// <param name="groupings">The groupings.</param>
+        /// <param name="backpack">The backpack.</param>
         protected LinqMethodInspector(ILinqPersister persister, List<PropertyTupel> groupings, ExpressionVisitorBackpack backpack)
             :base(backpack)
         {
@@ -33,18 +43,34 @@ namespace AdFactum.Data.Linq.Language
             groupings.ForEach(tupel => Groupings.Add(tupel));
         }
 
+        /// <summary>
+        /// Gets or sets the comparer stack.
+        /// </summary>
+        /// <value>The comparer stack.</value>
         protected Stack<string> ComparerStack { get; private set; }
 
+        /// <summary>
+        /// Gets the dynamic cache.
+        /// </summary>
+        /// <value>The dynamic cache.</value>
         protected Cache<Type, ProjectionClass> DynamicCache
         {
             get { return Backpack.ProjectionCache; }
         }
 
+        /// <summary>
+        /// Gets the builder.
+        /// </summary>
+        /// <value>The builder.</value>
         protected StringBuilder Builder
         {
             get { return builder; }
         }
 
+        /// <summary>
+        /// Gets or sets the in conditional expression.
+        /// </summary>
+        /// <value>The in conditional expression.</value>
         protected int InConditionalExpression { get; set; }
 
         /// <summary>
@@ -1810,6 +1836,11 @@ namespace AdFactum.Data.Linq.Language
             return between;
         }
 
+        /// <summary>
+        /// Visits the scalar expression.
+        /// </summary>
+        /// <param name="select">The select.</param>
+        /// <returns></returns>
         protected override Expression VisitScalarExpression(ScalarExpression select)
         {
             WriteSql("SELECT ");
@@ -1843,6 +1874,11 @@ namespace AdFactum.Data.Linq.Language
             return select;
         }
 
+        /// <summary>
+        /// Gets the value expression.
+        /// </summary>
+        /// <param name="expr">The expr.</param>
+        /// <returns></returns>
         protected ValueExpression GetValueExpression(Expression expr)
         {
             ValueExpression valueExpression = expr as ValueExpression;
@@ -1983,6 +2019,11 @@ namespace AdFactum.Data.Linq.Language
             return join;
         }
 
+        /// <summary>
+        /// Visits the predicate.
+        /// </summary>
+        /// <param name="expr">The expr.</param>
+        /// <returns></returns>
         protected virtual Expression VisitPredicate(Expression expr)
         {
             Visit(expr);
@@ -1993,6 +2034,11 @@ namespace AdFactum.Data.Linq.Language
             return expr;
         }
 
+        /// <summary>
+        /// Visits the union expression.
+        /// </summary>
+        /// <param name="union">The union.</param>
+        /// <returns></returns>
         protected override Expression VisitUnionExpression(UnionExpression union)
         {
             if (Root != union) WriteSql(" (");
@@ -2004,6 +2050,11 @@ namespace AdFactum.Data.Linq.Language
             return union;
         }
 
+        /// <summary>
+        /// Visits the join left.
+        /// </summary>
+        /// <param name="source">The source.</param>
+        /// <returns></returns>
         protected virtual Expression VisitJoinLeft(Expression source)
         {
             var subSelect = Visit(source) as IDbExpressionWithResult;
@@ -2013,6 +2064,11 @@ namespace AdFactum.Data.Linq.Language
             return source;
         }
 
+        /// <summary>
+        /// Visits the join right.
+        /// </summary>
+        /// <param name="source">The source.</param>
+        /// <returns></returns>
         protected virtual Expression VisitJoinRight(Expression source)
         {
             var subSelect = Visit(source) as IDbExpressionWithResult;
@@ -2022,11 +2078,25 @@ namespace AdFactum.Data.Linq.Language
             return source;
         }
 
+        /// <summary>
+        /// Determines whether the specified type is boolean.
+        /// </summary>
+        /// <param name="type">The type.</param>
+        /// <returns>
+        /// 	<c>true</c> if the specified type is boolean; otherwise, <c>false</c>.
+        /// </returns>
         protected virtual bool IsBoolean(Type type)
         {
             return type == typeof (bool) || type == typeof (bool?);
         }
 
+        /// <summary>
+        /// Determines whether the specified expr is predicate.
+        /// </summary>
+        /// <param name="expr">The expr.</param>
+        /// <returns>
+        /// 	<c>true</c> if the specified expr is predicate; otherwise, <c>false</c>.
+        /// </returns>
         protected virtual bool IsPredicate(Expression expr)
         {
             switch (expr.NodeType)
@@ -2116,6 +2186,11 @@ namespace AdFactum.Data.Linq.Language
             return sfe;
         }
 
+        /// <summary>
+        /// Visits the element initializer list.
+        /// </summary>
+        /// <param name="original">The original.</param>
+        /// <returns></returns>
         protected override IEnumerable<ElementInit> VisitElementInitializerList(ReadOnlyCollection<ElementInit> original)
         {
             List<ElementInit> list = null;

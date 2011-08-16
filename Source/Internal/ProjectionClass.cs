@@ -20,15 +20,32 @@ using AdFactum.Data.Util;
 
 namespace AdFactum.Data.Internal
 {
+    /// <summary>
+    /// NameAndType
+    /// </summary>
     public class NameAndType
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="NameAndType"/> class.
+        /// </summary>
+        /// <param name="name">The name.</param>
+        /// <param name="type">The type.</param>
         public NameAndType(string name, Type type)
         {
             Name = name;
             Type = type;
         }
 
+        /// <summary>
+        /// Gets or sets the type.
+        /// </summary>
+        /// <value>The type.</value>
         public Type Type { get; private set;}
+        
+        /// <summary>
+        /// Gets or sets the name.
+        /// </summary>
+        /// <value>The name.</value>
         public string Name  { get; private set;}
     }
 
@@ -904,7 +921,7 @@ namespace AdFactum.Data.Internal
                 /*
                  * Prüfen, ob das Property nicht mit einem neueren Property überschrieben werden muss
                  */
-                var propertyName = propertyCustomInfo.ColumnName; //.ToUpper();
+                var propertyName = propertyCustomInfo.ColumnName; //.ToUpper(CultureInfo.InvariantCulture);
 
                 /*
                  * Handelt es sich um einen Virtuellen Link?

@@ -13,6 +13,9 @@ using AdFactum.Data.Util;
 
 namespace AdFactum.Data.Postgres
 {
+    /// <summary>
+    /// PostgresSchemaWriter
+    /// </summary>
     public class PostgresSchemaWriter : BaseSchemaWriter
     {
         HashSet<Type> enumTypes = new HashSet<Type>();

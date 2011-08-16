@@ -4,6 +4,9 @@ using AdFactum.Data.Repository;
 
 namespace AdFactum.Data.SqlServer
 {
+    /// <summary>
+    /// SqlIntegrityChecker
+    /// </summary>
     public class SqlIntegrityChecker : BaseIntegrityChecker
     {
         /// <summary>

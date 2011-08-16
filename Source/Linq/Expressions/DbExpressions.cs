@@ -153,6 +153,12 @@ namespace AdFactum.Data.Linq.Expressions
         /// <summary> Gets or sets the expression. </summary>
         public Expression Binding { get; private set; }
 
+        /// <summary>
+        /// Returns a <see cref="System.String"/> that represents this instance.
+        /// </summary>
+        /// <returns>
+        /// A <see cref="System.String"/> that represents this instance.
+        /// </returns>
         public override string ToString()
         {
             return Binding.ToString();
@@ -444,6 +450,12 @@ namespace AdFactum.Data.Linq.Expressions
         {
         }
 
+        /// <summary>
+        /// Returns a <see cref="System.String"/> that represents this instance.
+        /// </summary>
+        /// <returns>
+        /// A <see cref="System.String"/> that represents this instance.
+        /// </returns>
         [DebuggerStepThrough]
         public override string ToString()
         {
@@ -506,7 +518,16 @@ namespace AdFactum.Data.Linq.Expressions
     /// </summary>
     public class CastExpression : DbExpression
     {
+        /// <summary>
+        /// Gets or sets the expression.
+        /// </summary>
+        /// <value>The expression.</value>
         public Expression Expression { get; private set; }
+
+        /// <summary>
+        /// Gets or sets the type of the target.
+        /// </summary>
+        /// <value>The type of the target.</value>
         public Type TargetType { get; private set; }
         
         /// <summary> Constructor </summary>
@@ -517,6 +538,12 @@ namespace AdFactum.Data.Linq.Expressions
             TargetType = targetType;
         }
 
+        /// <summary>
+        /// Returns a <see cref="System.String"/> that represents this instance.
+        /// </summary>
+        /// <returns>
+        /// A <see cref="System.String"/> that represents this instance.
+        /// </returns>
         [DebuggerStepThrough]
         public override string ToString()
         {
@@ -529,6 +556,10 @@ namespace AdFactum.Data.Linq.Expressions
     /// </summary>
     public class SelectFunctionExpression : DbExpression
     {
+        /// <summary>
+        /// Gets or sets the function.
+        /// </summary>
+        /// <value>The function.</value>
         public string Function { get; private set; }
 
         /// <summary>
@@ -540,6 +571,12 @@ namespace AdFactum.Data.Linq.Expressions
             Function = function;
         }
 
+        /// <summary>
+        /// Returns a <see cref="System.String"/> that represents this instance.
+        /// </summary>
+        /// <returns>
+        /// A <see cref="System.String"/> that represents this instance.
+        /// </returns>
         [DebuggerStepThrough]
         public override string ToString()
         {
@@ -565,6 +602,12 @@ namespace AdFactum.Data.Linq.Expressions
             Selection = select;
         }
 
+        /// <summary>
+        /// Returns a <see cref="System.String"/> that represents this instance.
+        /// </summary>
+        /// <returns>
+        /// A <see cref="System.String"/> that represents this instance.
+        /// </returns>
         [DebuggerStepThrough]
         public override string ToString()
         {
@@ -798,7 +841,7 @@ namespace AdFactum.Data.Linq.Expressions
         /// <summary>
         /// Initializes a new instance of the <see cref="ParameterExpression"/> class.
         /// </summary>
-        /// <param name="parentProjection">Type of the parent.</param>
+        /// <param name="parentType">Type of the parent.</param>
         /// <param name="value">The value.</param>
         public SqlParameterExpression(Type parentType, object value)
             : base(DbExpressionType.SqlParameterExpression, parentType, Alias.Generate(AliasType.Parameter), null)
@@ -1064,6 +1107,9 @@ namespace AdFactum.Data.Linq.Expressions
         {
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SelectExpression"/> class.
+        /// </summary>
         public SelectExpression(Type type, Alias alias, ReadOnlyCollection<ColumnDeclaration> columns, Expression selector, AliasedExpression from, Expression where, Expression defaultIfEmpty)
             : this(type, from != null ? from.Projection : null, alias, columns, selector, from, where, null, null, null, null, false, false, SelectResultType.Collection, null, null, defaultIfEmpty)
         {
@@ -1194,8 +1240,17 @@ namespace AdFactum.Data.Linq.Expressions
         }
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public class AggregateSubqueryExpression : AliasedExpression
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AggregateSubqueryExpression"/> class.
+        /// </summary>
+        /// <param name="groupByAlias">The group by alias.</param>
+        /// <param name="aggregateInGroupSelect">The aggregate in group select.</param>
+        /// <param name="aggregateAsSubquery">The aggregate as subquery.</param>
         public AggregateSubqueryExpression(Alias groupByAlias, Expression aggregateInGroupSelect, ScalarExpression aggregateAsSubquery)
             : base(DbExpressionType.AggregateSubquery, aggregateAsSubquery.Type, groupByAlias, aggregateAsSubquery.Projection)
         {
@@ -1203,8 +1258,17 @@ namespace AdFactum.Data.Linq.Expressions
             //GroupByAlias = groupByAlias;
             AggregateAsSubquery = aggregateAsSubquery;
         }
-        //public Alias GroupByAlias { get; private set; }
+
+        /// <summary>
+        /// Gets or sets the aggregate in group select.
+        /// </summary>
+        /// <value>The aggregate in group select.</value>
         public Expression AggregateInGroupSelect { get; private set; }
+
+        /// <summary>
+        /// Gets or sets the aggregate as subquery.
+        /// </summary>
+        /// <value>The aggregate as subquery.</value>
         public ScalarExpression AggregateAsSubquery { get; private set; }
     }
 

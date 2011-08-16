@@ -7,11 +7,18 @@ using AdFactum.Data.Util;
 
 namespace AdFactum.Data.Linq.Translation
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class SubqueryMerger : RedundanceRemover
     {
         private AliasedExpression currentFrom;
         private readonly Cache<Type, ProjectionClass> dynamicCache;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SubqueryMerger"/> class.
+        /// </summary>
+        /// <param name="backpack"></param>
         private SubqueryMerger(ExpressionVisitorBackpack backpack)
             : base(ReferenceDirection.Referrer, backpack)
         {
@@ -21,6 +28,12 @@ namespace AdFactum.Data.Linq.Translation
 #endif
         }
 
+        /// <summary>
+        /// Merges the specified expression.
+        /// </summary>
+        /// <param name="expression">The expression.</param>
+        /// <param name="backpack">The backpack.</param>
+        /// <returns></returns>
         internal static Expression Merge(Expression expression, ExpressionVisitorBackpack backpack)
         {
             var result = new SubqueryMerger(backpack).Visit(expression);
@@ -29,6 +42,11 @@ namespace AdFactum.Data.Linq.Translation
 
         bool isTopLevel = true;
 
+        /// <summary>
+        /// Visits the select expression.
+        /// </summary>
+        /// <param name="select"></param>
+        /// <returns></returns>
         protected override Expression VisitSelectExpression(SelectExpression select)
         {
             var saveCurrentFrom = currentFrom;
@@ -98,11 +116,21 @@ namespace AdFactum.Data.Linq.Translation
             }
         }
 
+        /// <summary>
+        /// Check the property expressions
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <returns></returns>
         protected override Expression VisitColumn(PropertyExpression expression)
         {
             return base.VisitColumn(expression);
         }
 
+        /// <summary>
+        /// Visits the scalar expression.
+        /// </summary>
+        /// <param name="expression">The expression.</param>
+        /// <returns></returns>
         protected override Expression VisitScalarExpression(ScalarExpression expression)
         {
             var saveCurrentFrom = currentFrom;
@@ -119,6 +147,11 @@ namespace AdFactum.Data.Linq.Translation
             }
         }
 
+        /// <summary>
+        /// Gets the left most select.
+        /// </summary>
+        /// <param name="source">The source.</param>
+        /// <returns></returns>
         private static SelectExpression GetLeftMostSelect(Expression source)
         {
             var select = source as SelectExpression;
@@ -128,6 +161,13 @@ namespace AdFactum.Data.Linq.Translation
             return null;
         }
 
+        /// <summary>
+        /// Determines whether [is column projection] [the specified select].
+        /// </summary>
+        /// <param name="select">The select.</param>
+        /// <returns>
+        /// 	<c>true</c> if [is column projection] [the specified select]; otherwise, <c>false</c>.
+        /// </returns>
         private static bool IsColumnProjection(SelectExpression select)
         {
             for (int i = 0, n = select.Columns.Count; i < n; i++)
@@ -140,6 +180,14 @@ namespace AdFactum.Data.Linq.Translation
             return true;
         }
 
+        /// <summary>
+        /// Determines whether this instance [can merge with from] the specified select.
+        /// </summary>
+        /// <param name="select">The select.</param>
+        /// <param name="isTopLevel">if set to <c>true</c> [is top level].</param>
+        /// <returns>
+        /// 	<c>true</c> if this instance [can merge with from] the specified select; otherwise, <c>false</c>.
+        /// </returns>
         private bool CanMergeWithFrom(SelectExpression select, bool isTopLevel)
         {
             SelectExpression fromSelect = GetLeftMostSelect(select.From);

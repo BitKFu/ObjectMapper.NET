@@ -40,6 +40,7 @@ namespace AdFactum.Data.Linq.Translation
         /// Rewrites the specified expression.
         /// </summary>
         /// <param name="expression">The expression.</param>
+        /// <param name="backpack">The backpack.</param>
         /// <returns></returns>
         public static Expression Rewrite(Expression expression, ExpressionVisitorBackpack backpack)
         {

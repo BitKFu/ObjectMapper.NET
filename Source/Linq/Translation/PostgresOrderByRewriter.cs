@@ -6,6 +6,9 @@ using AdFactum.Data.Linq.Expressions;
 
 namespace AdFactum.Data.Linq.Translation
 {
+    /// <summary>
+    /// PostgresOrderByRewriter
+    /// </summary>
     public class PostgresOrderByRewriter : OrderByRewriter
     {
         readonly Stack<SelectExpression> callStack = new Stack<SelectExpression>();
@@ -14,6 +17,7 @@ namespace AdFactum.Data.Linq.Translation
         /// Initializes a new instance of the <see cref="SqlOrderByRewriter"/> class.
         /// </summary>
         /// <param name="expression">The expression.</param>
+        /// <param name="backpack">The backpack.</param>
         private PostgresOrderByRewriter(Expression expression, ExpressionVisitorBackpack backpack)
             : base(expression, backpack)
         {
@@ -23,6 +27,7 @@ namespace AdFactum.Data.Linq.Translation
         /// Evaluates the specified expression.
         /// </summary>
         /// <param name="expression">The expression.</param>
+        /// <param name="backpack">The backpack.</param>
         /// <returns></returns>
         public static Expression Rewrite(Expression expression, ExpressionVisitorBackpack backpack)
         {

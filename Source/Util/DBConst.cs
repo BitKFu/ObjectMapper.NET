@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using AdFactum.Data.Internal;
 
 namespace AdFactum.Data.Util
@@ -58,7 +59,7 @@ namespace AdFactum.Data.Util
                 case SqlCasing.Mixed:
                     return value;
                 case SqlCasing.UpperCase:
-                    return value.ToUpper();
+                    return value.ToUpper(CultureInfo.InvariantCulture);
                 default:
                     throw new ArgumentOutOfRangeException();
             }

@@ -53,7 +53,7 @@ namespace AdFactum.Data
 		/// <param name="isPrimaryParameter">Defines if the field is primary</param>
 		public FieldDescription(string fieldName, Type parentTypeParameter, Type fieldType, Type fieldContent, Property fieldProperty, bool isPrimaryParameter)
 		{
-            name = fieldName; //.ToUpper();
+            name = fieldName; //.ToUpper(CultureInfo.InvariantCulture);
             parentType = parentTypeParameter;
 			type = fieldType;
 			content = fieldContent;

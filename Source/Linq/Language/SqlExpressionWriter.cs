@@ -128,6 +128,11 @@ namespace AdFactum.Data.Linq.Language
             }
         }
 
+        /// <summary>
+        /// Visits the scalar expression.
+        /// </summary>
+        /// <param name="select">The select.</param>
+        /// <returns></returns>
         protected override Expression VisitScalarExpression(ScalarExpression select)
         {
             if (selectStack.Count > 0)

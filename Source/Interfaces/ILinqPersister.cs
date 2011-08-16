@@ -8,6 +8,9 @@ using AdFactum.Data.Util;
 
 namespace AdFactum.Data.Interfaces
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public interface ILinqPersister
     {
         /// <summary>

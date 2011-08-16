@@ -30,7 +30,7 @@ namespace AdFactum.Data.Linq.Translation
         /// Evaluates the specified expression.
         /// </summary>
         /// <param name="expression">The expression.</param>
-        /// <param name="cache">The cache.</param>
+        /// <param name="backpack">The backpack.</param>
         /// <returns></returns>
         public static Expression Rewrite(Expression expression, ExpressionVisitorBackpack backpack)
         {

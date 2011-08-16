@@ -6,6 +6,9 @@ using AdFactum.Data.Internal;
 
 namespace AdFactum.Data.Postgres
 {
+    /// <summary>
+    /// PostgresRepository
+    /// </summary>
     public class PostgresRepository : BaseRepository
     {
         /// <summary>

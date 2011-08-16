@@ -11,6 +11,9 @@ using AdFactum.Data.Util;
 
 namespace AdFactum.Data.Internal
 {
+    /// <summary>
+    /// BaseRepository
+    /// </summary>
     public abstract class BaseRepository : IRepository
     {
         /// <summary> Sql Tracer </summary>

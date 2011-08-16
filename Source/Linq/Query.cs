@@ -23,12 +23,11 @@ namespace AdFactum.Data.Linq
         /// <summary>
         /// Determines whether the specified objects are equal.
         /// </summary>
+        /// <param name="x">The x.</param>
+        /// <param name="y">The y.</param>
         /// <returns>
         /// true if the specified objects are equal; otherwise, false.
         /// </returns>
-        /// <param name="x">The first object of type <paramref name="T"/> to compare.
-        ///                 </param><param name="y">The second object of type <paramref name="T"/> to compare.
-        ///                 </param>
         public bool Equals(IDataParameter x, IDataParameter y)
         {
             return x.ParameterName == y.ParameterName;

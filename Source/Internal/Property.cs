@@ -386,6 +386,10 @@ namespace AdFactum.Data.Internal
             get { return PropertyTypeOverride ?? propertyInfo.PropertyType; }
 	    }
 
+        /// <summary>
+        /// Gets or sets the property type override.
+        /// </summary>
+        /// <value>The property type override.</value>
         protected Type PropertyTypeOverride { get; set;}
 
         /// <summary>

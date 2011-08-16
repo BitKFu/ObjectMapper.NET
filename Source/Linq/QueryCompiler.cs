@@ -49,30 +49,70 @@ namespace AdFactum.Data.Linq
     /// </summary>
     public class QueryCompiler
     {
+        /// <summary>
+        /// Compiles the specified query.
+        /// </summary>
+        /// <typeparam name="TResult">The type of the result.</typeparam>
+        /// <param name="query">The query.</param>
+        /// <returns></returns>
         public static OrmDelegate<ObjectMapper, TResult> Compile<TResult>(
             Expression<Func<TResult>> query)
         {
             return new CompiledQuery(query).PrepareQuery<TResult>().CreateDelegate<TResult>;
         }
 
+        /// <summary>
+        /// Compiles the specified query.
+        /// </summary>
+        /// <typeparam name="TArg1">The type of the arg1.</typeparam>
+        /// <typeparam name="TResult">The type of the result.</typeparam>
+        /// <param name="query">The query.</param>
+        /// <returns></returns>
         public static OrmDelegate<ObjectMapper, TArg1, TResult> Compile<TArg1, TResult>(
             Expression<OrmDelegate<TArg1, TResult>> query)
         {
             return new CompiledQuery(query).PrepareQuery<TResult>().CreateDelegate<TArg1, TResult>;
         }
 
+        /// <summary>
+        /// Compiles the specified query.
+        /// </summary>
+        /// <typeparam name="TArg1">The type of the arg1.</typeparam>
+        /// <typeparam name="TArg2">The type of the arg2.</typeparam>
+        /// <typeparam name="TResult">The type of the result.</typeparam>
+        /// <param name="query">The query.</param>
+        /// <returns></returns>
         public static OrmDelegate<ObjectMapper, TArg1, TArg2, TResult> Compile<TArg1, TArg2, TResult>(
             Expression<OrmDelegate<TArg1, TArg2, TResult>> query)
         {
             return new CompiledQuery(query).PrepareQuery<TResult>().CreateDelegate<TArg1, TArg2, TResult>;
         }
 
+        /// <summary>
+        /// Compiles the specified query.
+        /// </summary>
+        /// <typeparam name="TArg1">The type of the arg1.</typeparam>
+        /// <typeparam name="TArg2">The type of the arg2.</typeparam>
+        /// <typeparam name="TArg3">The type of the arg3.</typeparam>
+        /// <typeparam name="TResult">The type of the result.</typeparam>
+        /// <param name="query">The query.</param>
+        /// <returns></returns>
         public static OrmDelegate<ObjectMapper, TArg1, TArg2, TArg3, TResult> Compile<TArg1, TArg2, TArg3, TResult>(
             Expression<OrmDelegate<TArg1, TArg2, TArg3, TResult>> query)
         {
             return new CompiledQuery(query).PrepareQuery<TResult>().CreateDelegate<TArg1, TArg2, TArg3, TResult>;
         }
 
+        /// <summary>
+        /// Compiles the specified query.
+        /// </summary>
+        /// <typeparam name="TArg1">The type of the arg1.</typeparam>
+        /// <typeparam name="TArg2">The type of the arg2.</typeparam>
+        /// <typeparam name="TArg3">The type of the arg3.</typeparam>
+        /// <typeparam name="TArg4">The type of the arg4.</typeparam>
+        /// <typeparam name="TResult">The type of the result.</typeparam>
+        /// <param name="query">The query.</param>
+        /// <returns></returns>
         public static OrmDelegate<ObjectMapper, TArg1, TArg2, TArg3, TArg4, TResult> Compile
             <TArg1, TArg2, TArg3, TArg4, TResult>(
             Expression<OrmDelegate<TArg1, TArg2, TArg3, TArg4, TResult>> query)
@@ -80,6 +120,17 @@ namespace AdFactum.Data.Linq
             return new CompiledQuery(query).PrepareQuery<TResult>().CreateDelegate<TArg1, TArg2, TArg3, TArg4, TResult>;
         }
 
+        /// <summary>
+        /// Compiles the specified query.
+        /// </summary>
+        /// <typeparam name="TArg1">The type of the arg1.</typeparam>
+        /// <typeparam name="TArg2">The type of the arg2.</typeparam>
+        /// <typeparam name="TArg3">The type of the arg3.</typeparam>
+        /// <typeparam name="TArg4">The type of the arg4.</typeparam>
+        /// <typeparam name="TArg5">The type of the arg5.</typeparam>
+        /// <typeparam name="TResult">The type of the result.</typeparam>
+        /// <param name="query">The query.</param>
+        /// <returns></returns>
         public static OrmDelegate<ObjectMapper, TArg1, TArg2, TArg3, TArg4, TArg5, TResult> Compile
             <TArg1, TArg2, TArg3, TArg4, TArg5, TResult>(
             Expression<OrmDelegate<TArg1, TArg2, TArg3, TArg4, TArg5, TResult>> query)
@@ -89,6 +140,18 @@ namespace AdFactum.Data.Linq
                     <TArg1, TArg2, TArg3, TArg4, TArg5, TResult>;
         }
 
+        /// <summary>
+        /// Compiles the specified query.
+        /// </summary>
+        /// <typeparam name="TArg1">The type of the arg1.</typeparam>
+        /// <typeparam name="TArg2">The type of the arg2.</typeparam>
+        /// <typeparam name="TArg3">The type of the arg3.</typeparam>
+        /// <typeparam name="TArg4">The type of the arg4.</typeparam>
+        /// <typeparam name="TArg5">The type of the arg5.</typeparam>
+        /// <typeparam name="TArg6">The type of the arg6.</typeparam>
+        /// <typeparam name="TResult">The type of the result.</typeparam>
+        /// <param name="query">The query.</param>
+        /// <returns></returns>
         public static OrmDelegate<ObjectMapper, TArg1, TArg2, TArg3, TArg4, TArg5, TArg6, TResult> Compile
             <TArg1, TArg2, TArg3, TArg4, TArg5, TArg6, TResult>(
             Expression<OrmDelegate<TArg1, TArg2, TArg3, TArg4, TArg5, TArg6, TResult>> query)
@@ -98,6 +161,19 @@ namespace AdFactum.Data.Linq
                     <TArg1, TArg2, TArg3, TArg4, TArg5, TArg6, TResult>;
         }
 
+        /// <summary>
+        /// Compiles the specified query.
+        /// </summary>
+        /// <typeparam name="TArg1">The type of the arg1.</typeparam>
+        /// <typeparam name="TArg2">The type of the arg2.</typeparam>
+        /// <typeparam name="TArg3">The type of the arg3.</typeparam>
+        /// <typeparam name="TArg4">The type of the arg4.</typeparam>
+        /// <typeparam name="TArg5">The type of the arg5.</typeparam>
+        /// <typeparam name="TArg6">The type of the arg6.</typeparam>
+        /// <typeparam name="TArg7">The type of the arg7.</typeparam>
+        /// <typeparam name="TResult">The type of the result.</typeparam>
+        /// <param name="query">The query.</param>
+        /// <returns></returns>
         public static OrmDelegate<ObjectMapper, TArg1, TArg2, TArg3, TArg4, TArg5, TArg6, TArg7, TResult> Compile
             <TArg1, TArg2, TArg3, TArg4, TArg5, TArg6, TArg7, TResult>(
             Expression<OrmDelegate<TArg1, TArg2, TArg3, TArg4, TArg5, TArg6, TArg7, TResult>> query)
@@ -107,6 +183,20 @@ namespace AdFactum.Data.Linq
                     <TArg1, TArg2, TArg3, TArg4, TArg5, TArg6, TArg7, TResult>;
         }
 
+        /// <summary>
+        /// Compiles the specified query.
+        /// </summary>
+        /// <typeparam name="TArg1">The type of the arg1.</typeparam>
+        /// <typeparam name="TArg2">The type of the arg2.</typeparam>
+        /// <typeparam name="TArg3">The type of the arg3.</typeparam>
+        /// <typeparam name="TArg4">The type of the arg4.</typeparam>
+        /// <typeparam name="TArg5">The type of the arg5.</typeparam>
+        /// <typeparam name="TArg6">The type of the arg6.</typeparam>
+        /// <typeparam name="TArg7">The type of the arg7.</typeparam>
+        /// <typeparam name="TArg8">The type of the arg8.</typeparam>
+        /// <typeparam name="TResult">The type of the result.</typeparam>
+        /// <param name="query">The query.</param>
+        /// <returns></returns>
         public static OrmDelegate<ObjectMapper, TArg1, TArg2, TArg3, TArg4, TArg5, TArg6, TArg7, TArg8, TResult> Compile
             <TArg1, TArg2, TArg3, TArg4, TArg5, TArg6, TArg7, TArg8, TResult>(
             Expression<OrmDelegate<TArg1, TArg2, TArg3, TArg4, TArg5, TArg6, TArg7, TArg8, TResult>> query)
@@ -126,6 +216,10 @@ namespace AdFactum.Data.Linq
         private readonly LambdaExpression query;
         private ILinqQueryProvider provider;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CompiledQuery"/> class.
+        /// </summary>
+        /// <param name="expression">The expression.</param>
         public CompiledQuery(LambdaExpression expression)
         {
             query = expression;
@@ -191,6 +285,7 @@ namespace AdFactum.Data.Linq
         /// <summary>
         /// Returns the stored sql command id
         /// </summary>
+        /// <value>The stored SQL id.</value>
         public string StoredSqlId
         {
             get
@@ -203,7 +298,7 @@ namespace AdFactum.Data.Linq
         /// <summary>
         /// This method is used to replace the query arguments within the expression tree
         /// </summary>
-        /// <param name="args"></param>
+        /// <param name="args">The args.</param>
         /// <returns></returns>
         private Expression ReplaceQueryArguments(object[] args)
         {
@@ -239,33 +334,99 @@ namespace AdFactum.Data.Linq
                 );
         }
 
+        /// <summary>
+        /// Creates the delegate.
+        /// </summary>
+        /// <typeparam name="TResult">The type of the result.</typeparam>
+        /// <param name="mapper">The mapper.</param>
+        /// <returns></returns>
         public TResult CreateDelegate<TResult>(ObjectMapper mapper)
         {
             return Execute<TResult>(mapper, null);
         }
 
+        /// <summary>
+        /// Creates the delegate.
+        /// </summary>
+        /// <typeparam name="TArg1">The type of the arg1.</typeparam>
+        /// <typeparam name="TResult">The type of the result.</typeparam>
+        /// <param name="mapper">The mapper.</param>
+        /// <param name="arg1">The arg1.</param>
+        /// <returns></returns>
         public TResult CreateDelegate<TArg1, TResult>(ObjectMapper mapper, TArg1 arg1)
         {
             return Execute<TResult>(mapper, arg1);
         }
 
+        /// <summary>
+        /// Creates the delegate.
+        /// </summary>
+        /// <typeparam name="TArg1">The type of the arg1.</typeparam>
+        /// <typeparam name="TArg2">The type of the arg2.</typeparam>
+        /// <typeparam name="TResult">The type of the result.</typeparam>
+        /// <param name="mapper">The mapper.</param>
+        /// <param name="arg1">The arg1.</param>
+        /// <param name="arg2">The arg2.</param>
+        /// <returns></returns>
         public TResult CreateDelegate<TArg1, TArg2, TResult>(ObjectMapper mapper, TArg1 arg1, TArg2 arg2)
         {
             return Execute<TResult>(mapper, arg1, arg2);
         }
 
+        /// <summary>
+        /// Creates the delegate.
+        /// </summary>
+        /// <typeparam name="TArg1">The type of the arg1.</typeparam>
+        /// <typeparam name="TArg2">The type of the arg2.</typeparam>
+        /// <typeparam name="TArg3">The type of the arg3.</typeparam>
+        /// <typeparam name="TResult">The type of the result.</typeparam>
+        /// <param name="mapper">The mapper.</param>
+        /// <param name="arg1">The arg1.</param>
+        /// <param name="arg2">The arg2.</param>
+        /// <param name="arg3">The arg3.</param>
+        /// <returns></returns>
         public TResult CreateDelegate<TArg1, TArg2, TArg3, TResult>(ObjectMapper mapper, TArg1 arg1, TArg2 arg2,
                                                                     TArg3 arg3)
         {
             return Execute<TResult>(mapper, arg1, arg2, arg3);
         }
 
+        /// <summary>
+        /// Creates the delegate.
+        /// </summary>
+        /// <typeparam name="TArg1">The type of the arg1.</typeparam>
+        /// <typeparam name="TArg2">The type of the arg2.</typeparam>
+        /// <typeparam name="TArg3">The type of the arg3.</typeparam>
+        /// <typeparam name="TArg4">The type of the arg4.</typeparam>
+        /// <typeparam name="TResult">The type of the result.</typeparam>
+        /// <param name="mapper">The mapper.</param>
+        /// <param name="arg1">The arg1.</param>
+        /// <param name="arg2">The arg2.</param>
+        /// <param name="arg3">The arg3.</param>
+        /// <param name="arg4">The arg4.</param>
+        /// <returns></returns>
         public TResult CreateDelegate<TArg1, TArg2, TArg3, TArg4, TResult>(ObjectMapper mapper, TArg1 arg1, TArg2 arg2,
                                                                            TArg3 arg3, TArg4 arg4)
         {
             return Execute<TResult>(mapper, arg1, arg2, arg3, arg4);
         }
 
+        /// <summary>
+        /// Creates the delegate.
+        /// </summary>
+        /// <typeparam name="TArg1">The type of the arg1.</typeparam>
+        /// <typeparam name="TArg2">The type of the arg2.</typeparam>
+        /// <typeparam name="TArg3">The type of the arg3.</typeparam>
+        /// <typeparam name="TArg4">The type of the arg4.</typeparam>
+        /// <typeparam name="TArg5">The type of the arg5.</typeparam>
+        /// <typeparam name="TResult">The type of the result.</typeparam>
+        /// <param name="mapper">The mapper.</param>
+        /// <param name="arg1">The arg1.</param>
+        /// <param name="arg2">The arg2.</param>
+        /// <param name="arg3">The arg3.</param>
+        /// <param name="arg4">The arg4.</param>
+        /// <param name="arg5">The arg5.</param>
+        /// <returns></returns>
         public TResult CreateDelegate<TArg1, TArg2, TArg3, TArg4, TArg5, TResult>(ObjectMapper mapper, TArg1 arg1,
                                                                                   TArg2 arg2, TArg3 arg3, TArg4 arg4,
                                                                                   TArg5 arg5)
@@ -273,6 +434,24 @@ namespace AdFactum.Data.Linq
             return Execute<TResult>(mapper, arg1, arg2, arg3, arg4, arg5);
         }
 
+        /// <summary>
+        /// Creates the delegate.
+        /// </summary>
+        /// <typeparam name="TArg1">The type of the arg1.</typeparam>
+        /// <typeparam name="TArg2">The type of the arg2.</typeparam>
+        /// <typeparam name="TArg3">The type of the arg3.</typeparam>
+        /// <typeparam name="TArg4">The type of the arg4.</typeparam>
+        /// <typeparam name="TArg5">The type of the arg5.</typeparam>
+        /// <typeparam name="TArg6">The type of the arg6.</typeparam>
+        /// <typeparam name="TResult">The type of the result.</typeparam>
+        /// <param name="mapper">The mapper.</param>
+        /// <param name="arg1">The arg1.</param>
+        /// <param name="arg2">The arg2.</param>
+        /// <param name="arg3">The arg3.</param>
+        /// <param name="arg4">The arg4.</param>
+        /// <param name="arg5">The arg5.</param>
+        /// <param name="arg6">The arg6.</param>
+        /// <returns></returns>
         public TResult CreateDelegate<TArg1, TArg2, TArg3, TArg4, TArg5, TArg6, TResult>(ObjectMapper mapper, TArg1 arg1,
                                                                                          TArg2 arg2, TArg3 arg3,
                                                                                          TArg4 arg4, TArg5 arg5,
@@ -281,6 +460,26 @@ namespace AdFactum.Data.Linq
             return Execute<TResult>(mapper, arg1, arg2, arg3, arg4, arg5, arg6);
         }
 
+        /// <summary>
+        /// Creates the delegate.
+        /// </summary>
+        /// <typeparam name="TArg1">The type of the arg1.</typeparam>
+        /// <typeparam name="TArg2">The type of the arg2.</typeparam>
+        /// <typeparam name="TArg3">The type of the arg3.</typeparam>
+        /// <typeparam name="TArg4">The type of the arg4.</typeparam>
+        /// <typeparam name="TArg5">The type of the arg5.</typeparam>
+        /// <typeparam name="TArg6">The type of the arg6.</typeparam>
+        /// <typeparam name="TArg7">The type of the arg7.</typeparam>
+        /// <typeparam name="TResult">The type of the result.</typeparam>
+        /// <param name="mapper">The mapper.</param>
+        /// <param name="arg1">The arg1.</param>
+        /// <param name="arg2">The arg2.</param>
+        /// <param name="arg3">The arg3.</param>
+        /// <param name="arg4">The arg4.</param>
+        /// <param name="arg5">The arg5.</param>
+        /// <param name="arg6">The arg6.</param>
+        /// <param name="arg7">The arg7.</param>
+        /// <returns></returns>
         public TResult CreateDelegate<TArg1, TArg2, TArg3, TArg4, TArg5, TArg6, TArg7, TResult>(ObjectMapper mapper,
                                                                                                 TArg1 arg1, TArg2 arg2,
                                                                                                 TArg3 arg3, TArg4 arg4,
@@ -290,6 +489,28 @@ namespace AdFactum.Data.Linq
             return Execute<TResult>(mapper, arg1, arg2, arg3, arg4, arg5, arg6, arg7);
         }
 
+        /// <summary>
+        /// Creates the delegate.
+        /// </summary>
+        /// <typeparam name="TArg1">The type of the arg1.</typeparam>
+        /// <typeparam name="TArg2">The type of the arg2.</typeparam>
+        /// <typeparam name="TArg3">The type of the arg3.</typeparam>
+        /// <typeparam name="TArg4">The type of the arg4.</typeparam>
+        /// <typeparam name="TArg5">The type of the arg5.</typeparam>
+        /// <typeparam name="TArg6">The type of the arg6.</typeparam>
+        /// <typeparam name="TArg7">The type of the arg7.</typeparam>
+        /// <typeparam name="TArg8">The type of the arg8.</typeparam>
+        /// <typeparam name="TResult">The type of the result.</typeparam>
+        /// <param name="mapper">The mapper.</param>
+        /// <param name="arg1">The arg1.</param>
+        /// <param name="arg2">The arg2.</param>
+        /// <param name="arg3">The arg3.</param>
+        /// <param name="arg4">The arg4.</param>
+        /// <param name="arg5">The arg5.</param>
+        /// <param name="arg6">The arg6.</param>
+        /// <param name="arg7">The arg7.</param>
+        /// <param name="arg8">The arg8.</param>
+        /// <returns></returns>
         public TResult CreateDelegate<TArg1, TArg2, TArg3, TArg4, TArg5, TArg6, TArg7, TArg8, TResult>(
             ObjectMapper mapper, TArg1 arg1, TArg2 arg2, TArg3 arg3, TArg4 arg4, TArg5 arg5, TArg6 arg6, TArg7 arg7,
             TArg8 arg8)

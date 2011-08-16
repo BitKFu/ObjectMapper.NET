@@ -20,11 +20,22 @@ namespace AdFactum.Data.Linq.Translation
             followUpProperties = new Dictionary<Expression, PropertyExpression>();
         }
 
+        /// <summary>
+        /// Removes the specified expression.
+        /// </summary>
+        /// <param name="expression">The expression.</param>
+        /// <param name="backpack">The backpack.</param>
+        /// <returns></returns>
         public static Expression Remove(Expression expression, ExpressionVisitorBackpack backpack)
         {
             return new RedundantJoinRemover(backpack).Visit(expression);
         }
 
+        /// <summary>
+        /// Visits the table expression.
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <returns></returns>
         protected override Expression VisitTableExpression(TableExpression expression)
         {
             AliasedExpression similarTable;
@@ -33,6 +44,11 @@ namespace AdFactum.Data.Linq.Translation
             return expression;
         }
 
+        /// <summary>
+        /// Visits the join expression.
+        /// </summary>
+        /// <param name="join"></param>
+        /// <returns></returns>
         protected override Expression VisitJoinExpression(JoinExpression join)
         {
             Expression result = base.VisitJoinExpression(join);
@@ -53,6 +69,12 @@ namespace AdFactum.Data.Linq.Translation
             return result;
         }
 
+        /// <summary>
+        /// Finds the similar right.
+        /// </summary>
+        /// <param name="join">The join.</param>
+        /// <param name="compareTo">The compare to.</param>
+        /// <returns></returns>
         private Expression FindSimilarRight(JoinExpression join, JoinExpression compareTo)
         {
             if (join == null)
@@ -77,6 +99,11 @@ namespace AdFactum.Data.Linq.Translation
             return result;
         }
 
+        /// <summary>
+        /// Visits the column.
+        /// </summary>
+        /// <param name="column">The column.</param>
+        /// <returns></returns>
         protected override Expression VisitColumn(PropertyExpression column)
         {
             AliasedExpression mapped;

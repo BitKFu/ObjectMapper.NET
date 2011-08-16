@@ -61,6 +61,7 @@ namespace AdFactum.Data
         /// </summary>
         /// <param name="parameters">The parameters.</param>
         /// <param name="numberOfParameter">The number of parameter.</param>
+        /// <param name="type">The type.</param>
         /// <param name="value">The value.</param>
         /// <param name="isUnicode">if set to <c>true</c> [is unicode].</param>
         /// <returns></returns>
@@ -70,6 +71,7 @@ namespace AdFactum.Data
         /// Creates the parameter.
         /// </summary>
         /// <param name="parameterName">Name of the parameter.</param>
+        /// <param name="type">The type.</param>
         /// <param name="value">The value.</param>
         /// <param name="isUnicode">if set to <c>true</c> [is unicode].</param>
         /// <returns></returns>

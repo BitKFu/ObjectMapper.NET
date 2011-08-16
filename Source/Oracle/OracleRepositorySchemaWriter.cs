@@ -18,6 +18,10 @@ namespace AdFactum.Data.Oracle
     /// </summary>
     public class OracleRepositorySchemaWriter : OracleSchemaWriter
     {
+        /// <summary>
+        /// Gets or sets the mapper.
+        /// </summary>
+        /// <value>The mapper.</value>
         public ObjectMapper Mapper { get; set;}
 
         /// <summary>

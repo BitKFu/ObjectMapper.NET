@@ -5,6 +5,9 @@ using AdFactum.Data.Repository;
 
 namespace AdFactum.Data.Oracle
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class OracleRepository : BaseRepository
     {
         /// <summary>

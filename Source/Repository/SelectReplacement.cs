@@ -5,6 +5,9 @@ using System.Text;
 
 namespace AdFactum.Data.Repository
 {
+    /// <summary>
+    /// SelectReplacement
+    /// </summary>
     [Table("OMRE_ORM_REPLACEMENT")]
     [Serializable]
     public class SelectReplacement : MarkedValueObject

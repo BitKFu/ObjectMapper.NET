@@ -174,6 +174,15 @@ namespace AdFactum.Data.Internal
         }
 
 
+        /// <summary>
+        /// Updates the one to many.
+        /// </summary>
+        /// <param name="vo">The vo.</param>
+        /// <param name="mapper">The mapper.</param>
+        /// <param name="hash">The hash.</param>
+        /// <param name="hierarchyLevel">The hierarchy level.</param>
+        /// <param name="recursionTest">The recursion test.</param>
+        /// <param name="secondStepUpdate">if set to <c>true</c> [second step update].</param>
         public void UpdateOneToMany(
             IValueObject vo,
             ObjectMapper mapper,

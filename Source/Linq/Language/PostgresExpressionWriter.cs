@@ -134,6 +134,11 @@ namespace AdFactum.Data.Linq.Language
             }
         }
 
+        /// <summary>
+        /// Visits the scalar expression.
+        /// </summary>
+        /// <param name="select">The select.</param>
+        /// <returns></returns>
         protected override Expression VisitScalarExpression(ScalarExpression select)
         {
             if (selectStack.Count > 0)
@@ -459,6 +464,12 @@ namespace AdFactum.Data.Linq.Language
             Visit(right);
         }
 
+        /// <summary>
+        /// Indexes the of.
+        /// </summary>
+        /// <param name="expression">The expression.</param>
+        /// <param name="indexOf">The index of.</param>
+        /// <param name="startFrom">The start from.</param>
         protected override void IndexOf(Expression expression, Expression indexOf, Expression startFrom)
         {
             WriteSql(" STRPOS(");

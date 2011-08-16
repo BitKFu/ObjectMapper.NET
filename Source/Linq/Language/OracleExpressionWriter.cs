@@ -45,6 +45,11 @@ namespace AdFactum.Data.Linq.Language
             return expression;
         }
 
+        /// <summary>
+        /// Visits the scalar expression.
+        /// </summary>
+        /// <param name="select">The select.</param>
+        /// <returns></returns>
         protected override Expression VisitScalarExpression(ScalarExpression select)
         {
             if (selectStack.Count > 0)
@@ -366,6 +371,8 @@ namespace AdFactum.Data.Linq.Language
         /// <summary>
         /// Add an amount of Seconds to the given "addTo" Expression.
         /// </summary>
+        /// <param name="addToExp"></param>
+        /// <param name="addValueExp"></param>
         protected override void AddSeconds(Expression addToExp, Expression addValueExp)
         {
             Visit(addToExp);
@@ -376,6 +383,10 @@ namespace AdFactum.Data.Linq.Language
 
         #endregion
 
+        /// <summary>
+        /// Truncates the specified
+        /// </summary>
+        /// <param name="expression">The expression.</param>
         protected override void Truncate(Expression expression)
         {
             WriteSql(" TRUNC(");
@@ -442,6 +453,11 @@ namespace AdFactum.Data.Linq.Language
 
         #endregion
 
+        /// <summary>
+        /// Moduloes the specified
+        /// </summary>
+        /// <param name="left">The left.</param>
+        /// <param name="right">The right.</param>
         protected override void Modulo(Expression left, Expression right)
         {
             WriteSql(" MOD(");

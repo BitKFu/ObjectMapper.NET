@@ -14,6 +14,10 @@ namespace AdFactum.Data.Linq.Translation
     /// </summary>
     public class CrossApplyRewriter : DbPackedExpressionVisitor
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CrossApplyRewriter"/> class.
+        /// </summary>
+        /// <param name="backpack"></param>
         private CrossApplyRewriter(ExpressionVisitorBackpack backpack)
             :base(backpack)
         {
@@ -23,6 +27,12 @@ namespace AdFactum.Data.Linq.Translation
 
         }
 
+        /// <summary>
+        /// Rewrites the specified expression.
+        /// </summary>
+        /// <param name="expression">The expression.</param>
+        /// <param name="backpack">The backpack.</param>
+        /// <returns></returns>
         public static Expression Rewrite(Expression expression, ExpressionVisitorBackpack backpack)
         {
             return new CrossApplyRewriter(backpack).Visit(expression);
@@ -58,6 +68,11 @@ namespace AdFactum.Data.Linq.Translation
             return select;
         }
 
+        /// <summary>
+        /// Visits the join expression.
+        /// </summary>
+        /// <param name="join"></param>
+        /// <returns></returns>
         protected override Expression VisitJoinExpression(JoinExpression join)
         {
             join = (JoinExpression)base.VisitJoinExpression(join);
