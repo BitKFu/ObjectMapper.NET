@@ -655,7 +655,22 @@ namespace AdFactum.Data.Linq.Expressions
         {
             property = OriginPropertyFinder.Find(property) ?? property;
             var columns = ColumnProjector.Evaluate(from, from.Projection);
-            return columns.Where(x => property.Equals(x.OriginalProperty)).FirstOrDefault();
+            
+            // Try to find the perfect match
+            var perfectMatch = columns.Where(x => property.Equals(x.OriginalProperty)).FirstOrDefault();
+            if (perfectMatch != null)
+                return perfectMatch;
+
+            // PropertyName match the original columns
+            IDbExpressionWithResult expressionWithResult = from as IDbExpressionWithResult;
+            columns = expressionWithResult != null ? expressionWithResult.Columns : columns;
+
+            var propertyMatch = columns.Where(x =>
+              {
+                  var propExp = x.Expression as PropertyExpression;
+                  return (propExp != null && propExp.Name == property.Name);
+              }).FirstOrDefault();
+            return propertyMatch;
         }
 
         /// <summary>
@@ -676,7 +691,7 @@ namespace AdFactum.Data.Linq.Expressions
 
             var column = FindSourceColumn(from, pe);
             if (column == null)
-                return column;
+                return declaration;
 
             return column.SetAlias(declaration.Alias);
         }

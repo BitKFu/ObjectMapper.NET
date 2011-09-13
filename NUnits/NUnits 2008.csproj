@@ -161,9 +161,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+    <None Include="App.config" />
     <None Include="Nunit.Access.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
