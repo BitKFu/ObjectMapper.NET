@@ -90,11 +90,11 @@ namespace AdFactum.Data.Linq.Language
             {
                 WriteSql("SELECT ");
 
-                if (!string.IsNullOrEmpty(select.SqlId))
-                    WriteSql("/* " + select.SqlId + " */ ");
-
                 if (!string.IsNullOrEmpty(select.Hint))
                     WriteSql("/*+ " + select.Hint + " */ ");
+
+                if (!string.IsNullOrEmpty(select.SqlId))
+                    WriteSql("/* " + select.SqlId + " */ ");
 
                 if (select.IsDistinct)
                     WriteSql("DISTINCT ");
