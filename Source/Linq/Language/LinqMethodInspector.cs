@@ -1810,6 +1810,34 @@ namespace AdFactum.Data.Linq.Language
         }
 
         /// <summary>
+        /// Visits the order by.
+        /// </summary>
+        /// <param name="expressions">The expressions.</param>
+        /// <returns></returns>
+        protected override ReadOnlyCollection<OrderExpression> VisitOrderBy(ReadOnlyCollection<OrderExpression> expressions)
+        {
+            if (expressions == null) return expressions;
+
+            List<OrderExpression> alternate = null;
+            for (int i = 0, n = expressions.Count; i < n; i++)
+            {
+                if (i>0)
+                    WriteSql(", ");
+
+                OrderExpression expr = expressions[i];
+                OrderExpression e = Visit(expr) as OrderExpression;
+
+                if (alternate == null && e != expr)
+                    alternate = expressions.Take(i).ToList();
+
+                if (alternate != null)
+                    alternate.Add(e);
+            }
+
+            return alternate != null ? alternate.AsReadOnly() : expressions;
+        }
+
+        /// <summary>
         /// Visits the Order Expression
         /// </summary>
         /// <param name="orderExpression"></param>

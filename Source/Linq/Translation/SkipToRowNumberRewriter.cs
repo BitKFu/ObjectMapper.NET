@@ -58,8 +58,15 @@ namespace AdFactum.Data.Linq.Translation
                 {
                     orderExpressions = new List<OrderExpression>();
 
-                    var fromAlias = select.From as SelectExpression;
-                    if (fromAlias != null && fromAlias.OrderBy != null)
+                    SelectExpression fromAlias = select.From as SelectExpression;
+                    bool isReverse = false;
+                    while (fromAlias != null && fromAlias.OrderBy == null)
+                    {
+                        isReverse ^= (fromAlias.IsReverse);
+                        fromAlias = fromAlias.From as SelectExpression;
+                    }
+
+                    if (fromAlias != null)
                     {
                         foreach (var orderBy in fromAlias.OrderBy)
                         {
@@ -68,10 +75,10 @@ namespace AdFactum.Data.Linq.Translation
 
                             // Copy the expression
                             PropertyExpression prop = column.Expression as PropertyExpression;
-                            Expression copy = (Expression) (prop != null ? prop.Clone() : column.Expression);
+                            Expression copy = (Expression)(prop != null ? prop.Clone() : column.Expression);
 
                             orderExpressions.Add(new OrderExpression(
-                                                     Ordering.Asc,
+                                                     isReverse ? Ordering.Desc : Ordering.Asc,
                                                      copy));
                         }
                     }
