@@ -1385,6 +1385,8 @@ namespace AdFactum.Data.Internal
                     properties.FieldProperties = properties.FieldProperties.Add(template.Key, specializedLink);
                 }
             }
+
+            IsModified = false;
         }
 
         /// <summary>
