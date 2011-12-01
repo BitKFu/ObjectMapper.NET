@@ -295,6 +295,7 @@ namespace AdFactum.Data.Internal
                                  */
                                 var dictionaryLink = new OneToManyLink( new FieldDescription(columnName, ObjectType, property.PropertyType, false), joinField);
                                 dictionaryLink.SetLinkedObject(po, hash, mapper);
+                                dictionaryLink.Property.Value = tempVo;
                                 propertyList.Add(key, dictionaryLink);
                             }
                             else
