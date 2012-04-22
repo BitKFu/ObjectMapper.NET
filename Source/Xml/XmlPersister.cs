@@ -7,6 +7,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using AdFactum.Data.Exceptions;
 using AdFactum.Data.Fields;
 using AdFactum.Data.Interfaces;
 using AdFactum.Data.Internal;
@@ -1302,7 +1303,7 @@ namespace AdFactum.Data.Xml
         /// </summary>
         IRepository IPersister.Repository
         {
-            get { throw new NotSupportedException(); }
+            get { throw new PersisterDoesNotSupportRepositoryException(); }
         }
 
         /// <summary>

@@ -519,7 +519,7 @@ namespace AdFactum.Data.Linq
 
             MethodInfo method = query.GetType().GetMethod("Level");
             
-            var call = Expression.Call(Expression.Constant(query), method, new[]{query.Expression, Expression.Constant(level)});
+            var call = Expression.Call(Expression.Constant(query), method, new[] { Expression.Constant(query.Expression), Expression.Constant(level) });
             return query.CreateQuery<TSource>(call); 
         }
 

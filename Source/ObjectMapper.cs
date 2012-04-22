@@ -2703,6 +2703,8 @@ namespace AdFactum.Data
                     po = hash.Get(type, id);
                     if (hash.GetVO(type, id) == null)
                     {
+                        // Replace the existing PO with a new one
+                        po = new PersistentObject(projection, HierarchyLevel.IsFlatLoaded(hierarchyLevel), entry, ((Field)entry.FieldProperties.Get(primaryKey)).Value);
                         po.CreateVO(this, objectFactory, hash, hierarchyLevel, globalParameter);
                         po.IsModified = true;
                     }
