@@ -538,7 +538,7 @@ namespace AdFactum.Data.Linq
 
             MethodInfo method = query.GetType().GetMethod("SqlId", BindingFlags.NonPublic | BindingFlags.Instance);
 
-            var call = Expression.Call(Expression.Constant(query), method, new[] { query.Expression, Expression.Constant(sqlId) });
+            var call = Expression.Call(Expression.Constant(query), method, new[] { Expression.Constant(query.Expression), Expression.Constant(sqlId) });
             return query.CreateQuery<TSource>(call);
         }
 
@@ -552,7 +552,7 @@ namespace AdFactum.Data.Linq
 
             MethodInfo method = query.GetType().GetMethod("Hint", BindingFlags.NonPublic | BindingFlags.Instance);
 
-            var call = Expression.Call(Expression.Constant(query), method, new[] { query.Expression, Expression.Constant(hint) });
+            var call = Expression.Call(Expression.Constant(query), method, new[] { Expression.Constant(query.Expression), Expression.Constant(hint) });
             return query.CreateQuery<TSource>(call);
         }
 
