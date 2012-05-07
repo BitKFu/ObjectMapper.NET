@@ -518,8 +518,12 @@ namespace AdFactum.Data.Linq
             if (query == null) return source;
 
             MethodInfo method = query.GetType().GetMethod("Level");
-            
+
+#if VS2010
             var call = Expression.Call(Expression.Constant(query), method, new[] { Expression.Constant(query.Expression), Expression.Constant(level) });
+#else
+            var call = Expression.Call(Expression.Constant(query), method, new[] { query.Expression, Expression.Constant(level) });
+#endif
             return query.CreateQuery<TSource>(call); 
         }
 
@@ -538,7 +542,12 @@ namespace AdFactum.Data.Linq
 
             MethodInfo method = query.GetType().GetMethod("SqlId", BindingFlags.NonPublic | BindingFlags.Instance);
 
+#if VS2010
             var call = Expression.Call(Expression.Constant(query), method, new[] { Expression.Constant(query.Expression), Expression.Constant(sqlId) });
+#else
+            var call = Expression.Call(Expression.Constant(query), method, new[] { query.Expression, Expression.Constant(sqlId) });
+#endif
+
             return query.CreateQuery<TSource>(call);
         }
 
@@ -552,7 +561,11 @@ namespace AdFactum.Data.Linq
 
             MethodInfo method = query.GetType().GetMethod("Hint", BindingFlags.NonPublic | BindingFlags.Instance);
 
+#if VS2010
             var call = Expression.Call(Expression.Constant(query), method, new[] { Expression.Constant(query.Expression), Expression.Constant(hint) });
+#else
+            var call = Expression.Call(Expression.Constant(query), method, new[] { query.Expression, Expression.Constant(hint) });
+#endif
             return query.CreateQuery<TSource>(call);
         }
 

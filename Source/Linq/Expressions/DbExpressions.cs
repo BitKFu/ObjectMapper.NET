@@ -472,9 +472,14 @@ namespace AdFactum.Data.Linq.Expressions
         /// Initializes a new instance of the <see cref="SysDateExpression"/> class.
         /// </summary>
         public SysDateExpression()
-            :base(DbExpressionType.SysDate, typeof(DateTime))
+            : base(DbExpressionType.SysDate, typeof(SysDateExpression))
         {
         }
+
+        /// <summary>
+        /// Fake Today Method, because Today of DateTime is static
+        /// </summary>
+        public DateTime Today { get; set; }
 
         /// <summary>
         /// Returns a <see cref="System.String"/> that represents this instance.
@@ -497,9 +502,14 @@ namespace AdFactum.Data.Linq.Expressions
         /// Initializes a new instance of the <see cref="SysTimeExpression"/> class.
         /// </summary>
         public SysTimeExpression()
-            : base(DbExpressionType.SysTime, typeof(DateTime))
+            : base(DbExpressionType.SysTime, typeof(SysTimeExpression))
         {
         }
+
+        /// <summary>
+        /// Fake now Method, because now of DateTime is static
+        /// </summary>
+        public DateTime Now { get; set; }
 
         /// <summary>
         /// Returns a <see cref="System.String"/> that represents this instance.

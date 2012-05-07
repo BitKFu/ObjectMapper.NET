@@ -164,8 +164,15 @@ namespace ObjectMapper.NUnits.Northwind.Tests
         }
 
         [Test]
+        public void TestSqlId()
+        { 
+            var customer = db.Customers.SqlId("TestSqlId").Where(r => r.CustomerID == "ANATR").First();
+            Assert.IsNotNull(customer);
+        }
+
+        [Test]
         public void TestSqlIdAndHint()
-        {
+        { 
             var customer = db.Customers.SqlId("TestSqlId").Hint("FIRST_ROWS").Where(r => r.CustomerID == "ANATR").First();
             Assert.IsNotNull(customer);
         }

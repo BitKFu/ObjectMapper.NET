@@ -133,10 +133,10 @@ namespace AdFactum.Data.Linq.Translation
         {
             // Solve DateTime.Now, DateTime.Today
             if (m.Expression == null && m.Type == typeof(DateTime) && m.Member.Name == "Today")
-                m = Expression.MakeMemberAccess(new SysDateExpression(), m.Member);
+                m = Expression.MakeMemberAccess(new SysDateExpression(), typeof(SysDateExpression).GetProperty("Today"));
 
             if (m.Expression == null && m.Type == typeof(DateTime) && m.Member.Name == "Now")
-                m = Expression.MakeMemberAccess(new SysTimeExpression(), m.Member);
+                m = Expression.MakeMemberAccess(new SysTimeExpression(), typeof(SysTimeExpression).GetProperty("Now"));
 
             Expression exp = Visit(m.Expression);
 
