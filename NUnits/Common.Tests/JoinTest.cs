@@ -52,13 +52,6 @@ namespace ObjectMapper.NUnits.Common.Tests
                 var loaded = (FullFeaturedCompany) mapper.FlatLoad(typeof (FullFeaturedCompany), new CollectionJoin(c1, "Employees", emp));
                 Assert.AreEqual(c1.Id, loaded.Id, "Could not load company");
 
-                var linqLoaded = (from ffCompany in mapper.Query<FullFeaturedCompany>()
-                                  from employee in mapper.Query<LinkBridge<FullFeaturedCompany, Employee>>("FFCOMPANY_EMPLOYEES")
-                                  where ffCompany == employee.Parent && ffCompany == c1
-                                  select ffCompany).Single();
-                Assert.AreEqual(c1.Id, linqLoaded.Id, "Could not load company");
-
-
                 /*
                  * Join typeof(Company) with owner object
                  */
@@ -72,6 +65,47 @@ namespace ObjectMapper.NUnits.Common.Tests
                                               new CollectionJoin(typeof (FullFeaturedCompany), "Employees",
                                                                  typeof (Employee)));
                 Assert.AreEqual(3, selection.Count, "Could not find the 3 expected companies.");
+            }
+        }
+
+        /// <summary>
+        /// Collections the join objects.
+        /// </summary>
+        [Test]
+        [Category("ExcludeForAccess")]
+        [Category("ExcludeForPostgres")]
+        public void CollectionJoinObjects_Linq()
+        {
+            using (AdFactum.Data.ObjectMapper mapper = OBM.CreateMapper(Connection))
+            {
+                var emp = new Employee("All", "Mine");
+                var c1 = new FullFeaturedCompany("Heavy stuff");
+                c1.Employees.Add(emp);
+                var c2 = new FullFeaturedCompany("Light stuff");
+                c2.Employees.Add(emp);
+
+                var emp2 = new Employee("Thats", "not mine");
+                var c3 = new FullFeaturedCompany("Other stuff");
+                c3.Employees.Add(emp2);
+
+                bool nested = OBM.BeginTransaction(mapper);
+                mapper.Delete(typeof (FullFeaturedCompany));
+                mapper.Save(emp); // Store this object first, because it's used twice
+                mapper.Flush();
+
+                mapper.Save(c1);
+                mapper.Save(c2);
+                mapper.Save(c3);
+                OBM.Commit(mapper, nested);
+
+                /*
+                 * Join company c1 object with owner object
+                 */
+                var linqLoaded = (from ffCompany in mapper.Query<FullFeaturedCompany>()
+                                  from employee in mapper.Query<LinkBridge<FullFeaturedCompany, Employee>>("FFCOMPANY_EMPLOYEES")
+                                  where ffCompany == employee.Parent && ffCompany == c1
+                                  select ffCompany).Single();
+                Assert.AreEqual(c1.Id, linqLoaded.Id, "Could not load company");
             }
         }
 

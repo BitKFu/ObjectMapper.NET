@@ -46,8 +46,8 @@ namespace ObjectMapper.NUnits.Common.Tests
                 using (AdFactum.Data.ObjectMapper mapper = OBM.CreateMapper(masterConnection))
                 {
                     var persister = (INativePersister) mapper.Persister;
-                    persister.Execute("if db_id('ObjectMapper') is not null\n drop database ObjectMapper;");
-                    persister.Execute("create database ObjectMapper;");
+                    persister.Execute(string.Format("if db_id('{0}') is not null\n drop database {0};", Connection.DatabaseName));
+                    persister.Execute(string.Format("create database {0};", Connection.DatabaseName));
                 }
             }
 

@@ -240,6 +240,10 @@ namespace AdFactum.Data.Oracle
 			/*
 		 	 * Build inner tables
 		 	 */
+
+            string hint = PrivateHintClause(projection, whereClause, command.Parameters, null, null, virtualAlias,
+                                            ref index);
+
             string withClause = PrivateWithClause(projection, whereClause, command.Parameters, null, null, virtualAlias, ref index);
             string innerTableStr = PrivateFromClause(projection, whereClause, command.Parameters, fieldTemplates, globalParameter, virtualAlias, ref index);
             string innerWhere = PrivateCompleteWhereClause(projection, fieldTemplates, whereClause, globalParameter, virtualAlias, command.Parameters, ref index);
@@ -266,7 +270,7 @@ namespace AdFactum.Data.Oracle
             /*
 			* Build outer Select 
 			*/
-            string outerSql = string.Concat(withClause, distinct ? "SELECT DISTINCT " : "SELECT "
+            string outerSql = string.Concat(withClause, distinct ? string.Concat("SELECT ", hint, " DISTINCT ") : string.Concat("SELECT ", hint)
                                             , " * "
                                             , " FROM "
                                             , " (SELECT /*+ FIRST_ROWS(", rowHint.ToString(), ")*/ IQ.*, ROWNUM AS Z_R_N FROM (", businessSql
@@ -707,6 +711,170 @@ namespace AdFactum.Data.Oracle
             boundExp = UpdateProjection.Rebind(boundExp, backpack);
 
             return boundExp;
+        }
+
+        /// <summary>
+        /// Counts number of rows that matches the whereclause
+        /// </summary>
+        /// <param name="projection">The projection.</param>
+        /// <param name="whereClause">Where clause to filter the selection.</param>
+        /// <param name="fieldTemplates">The field templates.</param>
+        /// <param name="globalParameter">Load Parameter for virtual links</param>
+        /// <returns>Number of rows</returns>
+        public override int Count(ProjectionClass projection, ICondition whereClause,
+                                 Dictionary<string, FieldDescription> fieldTemplates, IDictionary globalParameter)
+        {
+            int numberOfRows = 0;
+            int index = 1;
+            IDictionary virtualAlias = new HybridDictionary();
+
+            IDbCommand command = CreateCommand();
+            string grouping = projection.GetGrouping();
+
+            string hint = PrivateHintClause(projection, whereClause, command.Parameters, null, null, virtualAlias,
+                                            ref index);
+
+            string withClause = PrivateWithClause(projection, whereClause, command.Parameters, null, null, virtualAlias,
+                                                  ref index);
+            string tables = PrivateFromClause(projection, whereClause, command.Parameters, fieldTemplates,
+                                              globalParameter, virtualAlias, ref index);
+            string query = string.Concat(withClause, "SELECT ", hint, " COUNT(", string.IsNullOrEmpty(grouping) ? "*" : "count(*)",
+                                         ") FROM ", tables,
+                                         PrivateCompleteWhereClause(projection, null, whereClause, globalParameter,
+                                                                    virtualAlias, command.Parameters, ref index));
+
+            if (!string.IsNullOrEmpty(grouping))
+                query = string.Concat(query, " GROUP BY ", grouping);
+
+            query += PrivateCompleteHavingClause(projection, fieldTemplates, whereClause, globalParameter, virtualAlias,
+                                                 command.Parameters, ref index);
+
+            command.CommandText = query;
+
+            IDataReader reader = ExecuteReader(command);
+            if (reader.Read())
+                numberOfRows = (int)ConvertSourceToTargetType(reader.GetValue(0), typeof(Int32));
+            reader.Close();
+
+            return numberOfRows;
+        }
+
+        /// <summary>
+        /// Selects the specified projection.
+        /// </summary>
+        /// <param name="projection">The projection.</param>
+        /// <param name="additonalColumns">The additonal columns.</param>
+        /// <param name="whereClause">The where clause.</param>
+        /// <param name="orderBy">The order by.</param>
+        /// <param name="fieldTemplates">The field templates.</param>
+        /// <param name="globalParameter">The global parameter.</param>
+        /// <param name="distinct">if set to <c>true</c> [distinct].</param>
+        /// <returns></returns>
+        protected override List<PersistentProperties> Select(ProjectionClass projection, string additonalColumns, ICondition whereClause,
+                                       OrderBy orderBy, Dictionary<string, FieldDescription> fieldTemplates,
+                                       IDictionary globalParameter, bool distinct)
+        {
+            IDbCommand command = CreateCommand();
+
+            int index = 1;
+            IDictionary virtualAlias = new HybridDictionary();
+            string withClause = PrivateWithClause(projection, whereClause, command.Parameters, null, null, virtualAlias,
+                                                  ref index);
+
+            string hint = PrivateHintClause(projection, whereClause, command.Parameters, null, null, virtualAlias,
+                                            ref index);
+
+            string fromClause = PrivateFromClause(projection, whereClause, command.Parameters, fieldTemplates,
+                                                  globalParameter, virtualAlias, ref index);
+            string virtualFields = BuildVirtualFields(fieldTemplates, globalParameter, virtualAlias);
+            string selectFunctions = BuildSelectFunctionFields(fieldTemplates, globalParameter);
+
+            /*
+             * SQL Bauen
+             */
+
+            String query = string.Concat(withClause
+                                         , distinct ? string.Concat("SELECT ", hint, " DISTINCT ") : string.Concat("SELECT ", hint),
+                                         projection.GetColumns(whereClause, additonalColumns), " "
+                                         , virtualFields
+                                         , selectFunctions
+                                         , BuildJoinFields(whereClause)
+                                         , " FROM "
+                                         , fromClause);
+
+            /*
+             * Query bauen
+             */
+            query += PrivateCompleteWhereClause(projection, fieldTemplates, whereClause, globalParameter, virtualAlias,
+                                                command.Parameters, ref index);
+
+            string grouping = projection.GetGrouping();
+            if (!string.IsNullOrEmpty(grouping))
+                query = string.Concat(query, " GROUP BY ", grouping);
+
+            query += PrivateCompleteHavingClause(projection, fieldTemplates, whereClause, globalParameter, virtualAlias,
+                                                 command.Parameters, ref index);
+            query += (orderBy != null ? string.Concat(" ORDER BY ", orderBy.Columns, " ", orderBy.Ordering) : "");
+
+            /*
+             * Die IDs selektieren und Objekt laden
+             */
+            command.CommandText = query;
+
+            List<PersistentProperties> result = PrivateSelect(command, fieldTemplates, 0, int.MaxValue);
+            return result;
+        }
+
+        /// <summary>
+        /// Retuns a list with primary keys that matches the search criteria.
+        /// </summary>
+        /// <param name="projection">The projection.</param>
+        /// <param name="primaryKeyColumn">The primary key column.</param>
+        /// <param name="whereClause">Where clause to filter the selection.</param>
+        /// <param name="orderBy">Order clause to order the selection.</param>
+        /// <returns>Returns a list with IDs.</returns>
+        public override IList SelectIDs(ProjectionClass projection, string primaryKeyColumn, ICondition whereClause,
+                                       OrderBy orderBy)
+        {
+            IDbCommand command = CreateCommand();
+            IDictionary virtualAlias = new HybridDictionary();
+
+            int index = 1;
+            string withClause = PrivateWithClause(projection, whereClause, command.Parameters, null, null, virtualAlias,
+                                                  ref index);
+            string hint = PrivateHintClause(projection, whereClause, command.Parameters, null, null, virtualAlias,
+                                            ref index);
+            string fromClause = PrivateFromClause(projection, whereClause, command.Parameters, null, null, virtualAlias,
+                                                  ref index);
+            string query = string.Concat(withClause, "SELECT ", hint, projection.PrimaryKeyColumns, " FROM ", fromClause);
+
+            /*
+			 * Query bauen
+			 */
+            query += PrivateCompleteWhereClause(projection, null, whereClause, null, virtualAlias, command.Parameters,
+                                                ref index);
+
+            string grouping = projection.GetGrouping();
+            if (!string.IsNullOrEmpty(grouping))
+                query = string.Concat(query, " GROUP BY ", grouping);
+
+            query += PrivateCompleteHavingClause(projection, null, whereClause, null, virtualAlias, command.Parameters,
+                                                 ref index);
+            query += (orderBy != null ? string.Concat(" ORDER BY ", orderBy.Columns, " ", orderBy.Ordering) : "");
+
+            /*
+			 * Die IDs selektieren und Objekt laden
+			 */
+            command.CommandText = query;
+
+            var ids = new ArrayList();
+            IDataReader reader = ExecuteReader(command);
+            while (reader.Read())
+                ids.Add(ConvertSourceToTargetType(reader.GetValue(0), typeof(Guid)));
+
+            reader.Close();
+
+            return ids;
         }
     }
 

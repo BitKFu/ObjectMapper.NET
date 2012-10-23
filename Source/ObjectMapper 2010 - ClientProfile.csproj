@@ -358,6 +358,7 @@
     <Compile Include="MarkedAutoIncValueObject.cs" />
     <Compile Include="Projection.Attributes\SumAttribute.cs" />
     <Compile Include="Queries\ConditionClause.cs" />
+    <Compile Include="Queries\HintCondition.cs" />
     <Compile Include="Queries\UnionAll.cs" />
     <Compile Include="Queries\WithClause.cs" />
     <Compile Include="Repository\SelectReplacement.cs" />

@@ -85,7 +85,7 @@ namespace AdFactum.Data.Postgres
             DbMappingTable.Add(typeof(Boolean), "boolean");
             DbMappingTable.Add(typeof(Byte), "smallint");
             DbMappingTable.Add(typeof(DateTime), "timestamp");
-            DbMappingTable.Add(typeof(Decimal), "real");
+            DbMappingTable.Add(typeof(Decimal), "double precision");
             DbMappingTable.Add(typeof(Double), "double precision");
             DbMappingTable.Add(typeof(Guid), "uuid");
             DbMappingTable.Add(typeof(Int16), "smallint");
@@ -102,7 +102,7 @@ namespace AdFactum.Data.Postgres
             SqlMappingTable.Add(typeof(Boolean), (int)NpgsqlDbType.Boolean);
             SqlMappingTable.Add(typeof(Byte), (int)NpgsqlDbType.Smallint);
             SqlMappingTable.Add(typeof(DateTime), (int)NpgsqlDbType.Timestamp);
-            SqlMappingTable.Add(typeof(Decimal), (int)NpgsqlDbType.Real);
+            SqlMappingTable.Add(typeof(Decimal), (int)NpgsqlDbType.Double);
             SqlMappingTable.Add(typeof(Double), (int)NpgsqlDbType.Double);
             SqlMappingTable.Add(typeof(Guid), (int)NpgsqlDbType.Uuid);
             SqlMappingTable.Add(typeof(Int16), (int)NpgsqlDbType.Smallint);
@@ -262,10 +262,10 @@ namespace AdFactum.Data.Postgres
                 return typeof (Int16);
 
             if (checkType == typeof(decimal))
-                return typeof(Single);
+                return typeof(Double);
 
             if (checkType == typeof(TimeSpan))
-                return typeof (NpgsqlInterval);
+                return typeof (TimeSpan);
 
             return base.GetTypeForDatabase(checkType);
         }
@@ -288,6 +288,9 @@ namespace AdFactum.Data.Postgres
 
             if (value is Enum) 
                 return value;
+
+            if (value is decimal)
+                return Convert.ToDouble(value);
 
             return base.ConvertValueToDbType(value);
         }

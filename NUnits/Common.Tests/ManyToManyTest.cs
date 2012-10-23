@@ -56,6 +56,8 @@ namespace ObjectMapper.NUnits.Common.Tests
         }
 
         [Test]
+        [Category("ExcludeForAccess")]
+        [Category("ExcludeForPostgres")]
         public void TestDualManyToManyLinkBridge()
         {
             using (var mapper = OBM.CreateMapper(Connection))

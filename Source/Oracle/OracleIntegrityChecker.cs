@@ -18,5 +18,15 @@ namespace AdFactum.Data.Oracle
             : base(persister, typeMapper, databaseSchema)
         {
         }
+
+        /// <summary>
+        /// Calculates the size of the unicode.
+        /// </summary>
+        /// <param name="size">The size.</param>
+        /// <returns></returns>
+        protected override int CalculateUnicodeSize(int size)
+        {
+            return size == int.MaxValue ? size/2 : size;
+        }
     }
 }

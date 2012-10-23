@@ -20,6 +20,7 @@ namespace ObjectMapper.NUnits.Common.Tests
         [Test]
         [Category("ExcludeForAccess")]
         [Category("ExcludeForOracle")]
+        [Category("ExcludeForPostgres")]
         public void TestSqlServerFunctions()
         {
             using (AdFactum.Data.ObjectMapper mapper = OBM.CreateMapper(Connection))

@@ -451,7 +451,7 @@ namespace AdFactum.Data.Internal
                     join2.Append(" ON ");
                     join2.Append(BuildJoinQualifier(virtualAlias, vfd.CurrentTable.DefaultName, vfd.CurrentJoinField));
                     join2.Append(" = ");
-                    join2.Append(string.Concat(identifier, "lt.", DBConst.PropertyField));
+                    join2.Append(string.Concat(identifier, "lt.", Condition.QUOTE_OPEN, DBConst.PropertyField, Condition.QUOTE_CLOSE));
 
                     /*
                      * If there is a global parameter specified, than use an inner join
@@ -484,7 +484,7 @@ namespace AdFactum.Data.Internal
                     join1.Append(" ");
                     join1.Append(identifier);
                     join1.Append(" ON ");
-                    join1.Append(string.Concat(identifier, "lt.", DBConst.ParentObjectField));
+                    join1.Append(string.Concat(identifier, "lt.", Condition.QUOTE_OPEN, DBConst.ParentObjectField, Condition.QUOTE_CLOSE));
                     join1.Append(" = ");
                     join1.Append(string.Concat(identifier, ".", Condition.QUOTE_OPEN,
                                                GetPrimaryKeyColumn(fieldTemplates), Condition.QUOTE_CLOSE));
@@ -695,6 +695,42 @@ namespace AdFactum.Data.Internal
         }
 
         /// <summary>
+        /// Privates the with clause.
+        /// </summary>
+        /// <param name="projection">The projection.</param>
+        /// <param name="whereClause">The where clause.</param>
+        /// <param name="parameters">The parameters.</param>
+        /// <param name="fieldTemplates">The field templates.</param>
+        /// <param name="globalParameter">The global parameter.</param>
+        /// <param name="virtualAlias">The virtual alias.</param>
+        /// <param name="index">The index.</param>
+        /// <returns></returns>
+        protected virtual string PrivateHintClause(ProjectionClass projection, ICondition hintClause,
+                                                   IDataParameterCollection parameters,
+                                                   Dictionary<string, FieldDescription> fieldTemplates,
+                                                   IDictionary globalParameter, IDictionary virtualAlias, ref int index)
+        {
+            if (hintClause == null)
+                return string.Empty;
+
+            var result = new StringBuilder();
+            var hintCondition = hintClause as HintCondition;
+
+            // * Did we get a with clause condition? 
+            if (hintCondition != null)
+            {
+                result.Append(hintCondition.ConditionString);
+            }
+
+            // * Add Additional Additions            
+            foreach (ICondition condition in hintClause.AdditionalConditions)
+                result.Append(PrivateHintClause(projection, condition, parameters, fieldTemplates, globalParameter,
+                                                virtualAlias, ref index));
+
+            return result.ToString();
+        }
+
+        /// <summary>
         /// ReplaceSqlValueParameters
         /// </summary>
         /// <param name="valueList"></param>
@@ -859,7 +895,27 @@ namespace AdFactum.Data.Internal
             {
                 if (condition == null ||
                     condition.GetContextDependentConditionClause(projection) != ConditionClause.WhereClause)
-                    return string.Empty;
+                {
+                    if (constraintInterface != null)
+                    {
+                        var sb = new StringBuilder();
+
+                        // access addtional conditions
+                        bool innerFirst = first;
+                        foreach (var additionalCondition in constraintInterface.AdditionalConditions)
+                        {
+                            sb.Append(PrivateWhereClause(projection, additionalCondition, parameterCollection,
+                                                         globalParameter, ref index, innerFirst));
+                            innerFirst = false;
+                        }
+
+                        return sb.ToString();
+                    }
+                    else
+                    {
+                        return string.Empty;
+                    }
+                }
             }
             else if (condition != null &&
                      condition.GetContextDependentConditionClause(projection) != ConditionClause.WhereClause)
@@ -2282,7 +2338,7 @@ namespace AdFactum.Data.Internal
 
                 string subTable = string.Concat(ConcatedSchema, TypeMapper.Quote(CreateChildTableName(tableName, complexMember)));
                 string subQuery = string.Concat("DELETE FROM ", subTable, " WHERE ", subTable, ".",
-                                                DBConst.ParentObjectField, "=", GetParameterString(parameter));
+                                                TypeMapper.Quote(DBConst.ParentObjectField), "=", GetParameterString(parameter));
 
                 command.CommandText = subQuery;
                 ExecuteNonQuery(command);
@@ -2900,6 +2956,7 @@ namespace AdFactum.Data.Internal
             IDictionary virtualAlias = new HybridDictionary();
             string withClause = PrivateWithClause(projection, whereClause, command.Parameters, null, null, virtualAlias,
                                                   ref index);
+
             string fromClause = PrivateFromClause(projection, whereClause, command.Parameters, fieldTemplates,
                                                   globalParameter, virtualAlias, ref index);
             string virtualFields = BuildVirtualFields(fieldTemplates, globalParameter, virtualAlias);
@@ -2908,6 +2965,7 @@ namespace AdFactum.Data.Internal
             /*
              * SQL Bauen
              */
+
             String query = string.Concat(withClause
                                          , distinct ? "SELECT DISTINCT " : "SELECT ",
                                          projection.GetColumns(whereClause, additonalColumns), " "

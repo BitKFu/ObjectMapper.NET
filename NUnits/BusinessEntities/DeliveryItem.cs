@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using AdFactum.Data;
+using AdFactum.Data.Queries;
 using AdFactum.Data.Util;
 using ObjectMapper.NUnits.BusinessEntities.Core;
 
@@ -68,7 +69,7 @@ namespace ObjectMapper.NUnits.BusinessEntities
         /// Gets or sets the name of the product.
         /// </summary>
         /// <value>The name of the product.</value>
-        [VirtualLink("SELECT * FROM PRODUCT", typeof(Product), "ProductName", "ProductKey", "ProductKey", "ValidUntil", "@VALIDATION_DATE")]
+        [VirtualLink("SELECT * FROM " + Condition.QUOTE_OPEN + "Product" + Condition.QUOTE_CLOSE, typeof(Product), "ProductName", "ProductKey", "ProductKey", "ValidUntil", "@VALIDATION_DATE")]
         public string ProductName02
         {
             get { return productName02; }

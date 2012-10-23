@@ -77,7 +77,7 @@ namespace ObjectMapper.NUnits.Common.Tests
                  */
                 List<FullFeaturedEmployee> names = new List<FullFeaturedEmployee>(
                     new ListAdapter<FullFeaturedEmployee>(
-                        mapper.Select(typeof(FullFeaturedEmployee), 
+                        mapper.Select(typeof(FullFeaturedEmployee),
                             new CollectionJoin(typeof(FullFeaturedCompany), "Employees", typeof(Employee)))));
 
                 ObjectDumper.Write(names);
@@ -116,7 +116,7 @@ namespace ObjectMapper.NUnits.Common.Tests
                  * Search using Table replacement
                  */
                 IList friends = mapper.FlatSelect(typeof(Friend),
-                                                  new TableReplacement(typeof(Friend), "SELECT * FROM #SR#CONTACTS"));
+                                                  new TableReplacement(typeof(Friend), "SELECT * FROM #SR#" + mapper.Persister.TypeMapper.Quote("Contacts")));
 
                 // Load contacts to friends table
                 Assert.AreEqual(3, friends.Count);
@@ -129,22 +129,25 @@ namespace ObjectMapper.NUnits.Common.Tests
         [Test]
         [Category("ExcludeForSqlServerCE")]
         [Category("ExcludeForAccess")]
-        public void TestSubSelectTableReplacement()
+        public void SubSelect_TableReplacement_ReturnsCompany_ForPostgres()
         {
+            // Arrange
+            FullFeaturedCompany company = new FullFeaturedCompany("Milk farmer old John");
+            company.Contacts.Add(new Contact("Hans", "Hecht"));
+            company.Contacts.Add(new Contact("Susanne", "Hecht"));
+            company.Contacts.Add(new Contact("Karl", "Hecht"));
+            company.Contacts.Add(new Contact("Werner", "Hecht"));
+
+            company.Employees.Add(new Employee("John", "Milk Farmer"));
+            company.Employees.Add(new Employee("Lilly", "Milk Farmer"));
+
+            ConditionList contactCondition;
+            ConditionList employeeCondition;
             using (AdFactum.Data.ObjectMapper mapper = OBM.CreateMapper(Connection))
             {
                 /*
                  * Build a small company employee, company contacts structure
                  */
-                FullFeaturedCompany company = new FullFeaturedCompany("Milk farmer old John");
-                company.Contacts.Add(new Contact("Hans", "Hecht"));
-                company.Contacts.Add(new Contact("Susanne", "Hecht"));
-                company.Contacts.Add(new Contact("Karl", "Hecht"));
-                company.Contacts.Add(new Contact("Werner", "Hecht"));
-
-                company.Employees.Add(new Employee("John", "Milk Farmer"));
-                company.Employees.Add(new Employee("Lilly", "Milk Farmer"));
-
                 mapper.BeginTransaction();
                 mapper.Save(company);
                 mapper.Commit();
@@ -152,26 +155,47 @@ namespace ObjectMapper.NUnits.Common.Tests
                 /*
                  * Select the company where a contact is called "Hans" as Firstname and the Employee is called "John" als FirstName
                  */
-                ICondition contactCondition = new ConditionList(
+                contactCondition = new ConditionList(
                     new CollectionJoin(company, "Contacts", typeof(Contact)),
                     new AndCondition(typeof(Contact), "FirstName", "Hans"),
-                    new TableReplacement(typeof(Contact), "SELECT * FROM #SR#CONTACTS"));
-                SubSelect contactSubSelect = new SubSelect(typeof(FullFeaturedCompany), "Id", contactCondition);
+                    new TableReplacement(typeof(Contact), "SELECT * FROM #SR#" + mapper.Persister.TypeMapper.Quote("Contacts")));
 
-                ICondition employeeCondition = new ConditionList(
+                employeeCondition = new ConditionList(
                     new CollectionJoin(company, "Employees", typeof(Employee)),
                     new AndCondition(typeof(Employee), "FirstName", "John"),
-                    new TableReplacement(typeof(Contact), "SELECT * FROM #SR#EMPLOYEE"));
-                SubSelect employeeSubSelect = new SubSelect(typeof(FullFeaturedCompany), "Id", employeeCondition);
+                    new TableReplacement(typeof(Contact), "SELECT * FROM #SR#" + mapper.Persister.TypeMapper.Quote("Employee")));
 
-                ICondition companyCondition = new InCondition(typeof(FullFeaturedCompany), "Id",
-                                                              new Union(contactSubSelect, employeeSubSelect));
-
-                FullFeaturedCompany loaded =
-                    (FullFeaturedCompany)mapper.Load(typeof(FullFeaturedCompany), companyCondition);
-                Assert.IsNotNull(loaded, "Could not load company");
-                Assert.AreEqual(company.Id, loaded.Id, "Company equals not expected company");
             }
+
+            SubSelect contactSubSelect = new SubSelect(typeof(FullFeaturedCompany), "Id", contactCondition);
+            SubSelect employeeSubSelect = new SubSelect(typeof(FullFeaturedCompany), "Id", employeeCondition);
+            ICondition companyCondition = new InCondition(typeof(FullFeaturedCompany), "Id", new Union(contactSubSelect, employeeSubSelect));
+
+            try
+            {
+                using (AdFactum.Data.ObjectMapper mapper = OBM.CreateMapper(Connection))
+                {
+                    // Act
+                    FullFeaturedCompany loaded =
+                        (FullFeaturedCompany)mapper.Load(typeof(FullFeaturedCompany), companyCondition);
+
+                    // Assert
+                    Assert.IsNotNull(loaded, "Could not load company");
+                    Assert.AreEqual(company.Id, loaded.Id, "Company equals not expected company");
+                }
+            }
+            finally
+            {
+                using (AdFactum.Data.ObjectMapper mapper = OBM.CreateMapper(Connection))
+                {
+                    var nested = OBM.BeginTransaction(mapper);
+                    mapper.DeleteRecursive(company, HierarchyLevel.AllDependencies);
+
+                    OBM.Commit(mapper, nested);
+                }
+            }
+
+
         }
     }
 }

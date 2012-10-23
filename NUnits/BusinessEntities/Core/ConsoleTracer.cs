@@ -44,7 +44,7 @@ namespace ObjectMapper.NUnits.Core
         /// <param name="extended">The extended string with parameter</param>
         /// <param name="affactedRows">The rows which are touched by the sql statement.</param>
         /// <param name="duration">Duration of an sql statement</param>
-        public void SqlCommand(IDbCommand original, string extended, int affactedRows, TimeSpan duration)
+        public virtual void SqlCommand(IDbCommand original, string extended, int affactedRows, TimeSpan duration)
         {
             Console.WriteLine(extended);
         }

@@ -52,6 +52,11 @@ namespace AdFactum.Data.Queries
         /// <summary>
         /// JoinClause
         /// </summary>
-        JoinClause
+        JoinClause,
+
+        /// <summary>
+        /// HintClause
+        /// </summary>
+        HintClause
     }
 }

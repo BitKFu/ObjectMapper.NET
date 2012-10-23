@@ -54,9 +54,8 @@
     <UseVSHostingProcess>true</UseVSHostingProcess>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Npgsql, Version=2.0.6.0, Culture=neutral, PublicKeyToken=5d8b90d52f46fda7, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\Program Files (x86)\PostgreSQL\Npgsql\bin\Npgsql.dll</HintPath>
+    <Reference Include="Npgsql">
+      <HintPath>..\..\ISIS\RELEASES\ISIS-6.x\ISIS-6.3\ISIS-6.3.0\ObjectMapper\3rdParty\Npgsql2.0.12.0-bin-ms.net4.0\Npgsql.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework, Version=2.2.8.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -87,6 +86,7 @@
     <Compile Include="BusinessEntities\BackLinkedEmployee.cs" />
     <Compile Include="BusinessEntities\CharacterBlob.cs" />
     <Compile Include="BusinessEntities\Core\BaseVO.cs" />
+    <Compile Include="Common.Tests\CountTest.cs" />
     <Compile Include="Common.Tests\ManyToManyTest.cs" />
     <Compile Include="Common.Tests\ObjectMapperSetup.cs" />
     <Compile Include="BusinessEntities\Country.cs" />
@@ -121,6 +121,8 @@
     <Compile Include="Common.Tests\DefaultPrimaryKeyTest.cs" />
     <Compile Include="Common.Tests\LinqTest.cs" />
     <Compile Include="Common.Tests\MultiThreadingTest.cs" />
+    <Compile Include="Common.Tests\SelectIdTest.cs" />
+    <Compile Include="Common.Tests\SelectTest.cs" />
     <Compile Include="Northwind.Entities\Category.cs" />
     <Compile Include="Northwind.Entities\Customer.cs" />
     <Compile Include="Northwind.Entities\Employee.cs" />

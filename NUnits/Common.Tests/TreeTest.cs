@@ -13,10 +13,12 @@ namespace ObjectMapper.NUnits.Common.Tests
     [TestFixture]
     public class TreeTest : ObjectMapperTest
     {
+        private const string NOT_IMPLEMENTED = "NOT_IMPLEMENTED_RIGHT_NOW";
+
         /// <summary>
         /// Try to load the parent via Linq 
         /// </summary>
-        [Test]
+        [Test, Category(NOT_IMPLEMENTED)]
         public void LinqTreeLoadParent()
         {
             using (AdFactum.Data.ObjectMapper mapper = OBM.CreateMapper(Connection))

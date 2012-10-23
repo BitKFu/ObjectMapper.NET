@@ -18,6 +18,8 @@ namespace ObjectMapper.NUnits.Common.Tests
     [TestFixture]
     public class InConditionTest : ObjectMapperTest
     {
+        private const string NOT_IMPLEMENTED = "NOT_IMPLEMENTED_RIGHT_NOW";
+
         /// <summary>
         /// Ins the condition by value.
         /// </summary>
@@ -46,15 +48,6 @@ namespace ObjectMapper.NUnits.Common.Tests
                  * We selected two contacts
                  */
                 Assert.AreEqual(2, hechtFamily.Count, "We expected two objects.");
-
-                var names = new[]{"Annemarie", "Olaf"};
-                var contacts = mapper.Query<Contact>();
-
-                var hechtFamily2 = from contact in contacts
-                                   where names.Contains(contact.FirstName)
-                                   select contact;
-
-                Assert.AreEqual(2, hechtFamily2.Count(), "We expected two objects.");
             }
         }
 
@@ -104,7 +97,35 @@ namespace ObjectMapper.NUnits.Common.Tests
                     (FullFeaturedCompany)mapper.Load(typeof(FullFeaturedCompany), companyCondition);
                 Assert.IsNotNull(loaded, "Could not load company");
                 Assert.AreEqual(company.Id, loaded.Id, "Company equals not expected company");
-                
+            }
+        }
+
+
+        /// <summary>
+        /// Ins the condition by sub select.
+        /// </summary>
+        [Test]
+        [Category("ExcludeForAccess")]
+        [Category(NOT_IMPLEMENTED)]
+        public void InConditionBySubSelectUsingLinq()
+        {
+            using (AdFactum.Data.ObjectMapper mapper = OBM.CreateMapper(Connection))
+            {
+                /*
+                 * Build a small company employee, company contacts structure
+                 */
+                var company = new FullFeaturedCompany("Milk farmer old John");
+                company.Contacts.Add(new Contact("Hans", "Hecht"));
+                company.Contacts.Add(new Contact("Susanne", "Hecht"));
+                company.Contacts.Add(new Contact("Karl", "Hecht"));
+                company.Contacts.Add(new Contact("Werner", "Hecht"));
+
+                company.Employees.Add(new Employee("John", "Milk Farmer"));
+                company.Employees.Add(new Employee("Lilly", "Milk Farmer"));
+
+                mapper.BeginTransaction();
+                mapper.Save(company);
+                mapper.Commit();
 
                 /*
                  * Now using linq
@@ -134,11 +155,9 @@ namespace ObjectMapper.NUnits.Common.Tests
 
                            select fcompany;
 
-                //ObjectDumper.Write(john.ToList());
-
                 var unionCompany = (from fcompany in fullFeaturedCompanies
-                                   where hans.Union(john).Contains(fcompany)
-                                   select fcompany).First();
+                                    where hans.Union(john).Contains(fcompany)
+                                    select fcompany).First();
 
                 Assert.IsNotNull(unionCompany, "Could not load company");
                 Assert.AreEqual(company.Id, unionCompany.Id, "Company equals not expected company");
