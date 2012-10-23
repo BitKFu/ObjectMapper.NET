@@ -521,9 +521,6 @@
     <None Include="ObjectMapper.snk" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="ObjectMapper .NET 2008.sln" />
-  </ItemGroup>
-  <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
       <Visible>False</Visible>
       <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
