@@ -846,7 +846,15 @@ namespace AdFactum.Data.Oracle
                                             ref index);
             string fromClause = PrivateFromClause(projection, whereClause, command.Parameters, null, null, virtualAlias,
                                                   ref index);
-            string query = string.Concat(withClause, "SELECT ", hint, projection.PrimaryKeyColumns, " FROM ", fromClause);
+
+            // WorkItem 64803: Fix the primary id column name. If a with clause is used, the Schema name must not be taken
+            var idColumns = string.IsNullOrEmpty(withClause)
+                ? projection.PrimaryKeyColumns
+                : string.Concat(Condition.QUOTE_OPEN, projection.TableName(DatabaseType.Oracle),
+                                Condition.QUOTE_CLOSE, ".",
+                                Condition.QUOTE_OPEN, projection.GetPrimaryKeyDescription().Name, Condition.QUOTE_CLOSE);
+
+            string query = string.Concat(withClause, "SELECT ", hint, idColumns, " FROM ", fromClause);
 
             /*
 			 * Query bauen
