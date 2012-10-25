@@ -889,33 +889,30 @@ namespace AdFactum.Data.Internal
         {
             var condition = constraintInterface as Condition;
 
+            // A HintClause may contain other where clauses. That's why we have to dig deeper into the rabbit burrow
+            if (constraintInterface != null && constraintInterface.ConditionClause == ConditionClause.HintClause)
+            {
+                var sb = new StringBuilder();
+
+                // access addtional conditions
+                bool innerFirst = first;
+                foreach (var additionalCondition in constraintInterface.AdditionalConditions)
+                {
+                    sb.Append(PrivateWhereClause(projection, additionalCondition, parameterCollection,
+                                                 globalParameter, ref index, innerFirst));
+                    innerFirst = false;
+                }
+
+                return sb.ToString();
+            } 
+            
             if (constraintInterface == null
                 || (constraintInterface.ConditionClause != ConditionClause.WhereClause
                     && constraintInterface.ConditionClause != ConditionClause.Undefined))
             {
                 if (condition == null ||
                     condition.GetContextDependentConditionClause(projection) != ConditionClause.WhereClause)
-                {
-                    if (constraintInterface != null)
-                    {
-                        var sb = new StringBuilder();
-
-                        // access addtional conditions
-                        bool innerFirst = first;
-                        foreach (var additionalCondition in constraintInterface.AdditionalConditions)
-                        {
-                            sb.Append(PrivateWhereClause(projection, additionalCondition, parameterCollection,
-                                                         globalParameter, ref index, innerFirst));
-                            innerFirst = false;
-                        }
-
-                        return sb.ToString();
-                    }
-                    else
-                    {
                         return string.Empty;
-                    }
-                }
             }
             else if (condition != null &&
                      condition.GetContextDependentConditionClause(projection) != ConditionClause.WhereClause)

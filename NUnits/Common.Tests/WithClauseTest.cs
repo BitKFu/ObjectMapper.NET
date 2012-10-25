@@ -61,7 +61,8 @@ namespace ObjectMapper.NUnits.Common.Tests
              * Do subselect
              */
             WithClause subClause = new WithClause("sub01", typeof(Activity), 
-                new AndCondition(typeof (Activity), "Company", c1));
+                new Join(typeof(Company), "Id", typeof(Activity), "Company"),
+                new AndCondition(typeof(Company), "Id", c1));
 
             SubSelect activityId01 = new SubSelect(typeof(Activity), "Id", 
                 new AndCondition(typeof(Activity), "ActivityDate", DateTime.Today),
