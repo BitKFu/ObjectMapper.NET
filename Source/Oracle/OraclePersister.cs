@@ -628,16 +628,22 @@ namespace AdFactum.Data.Oracle
             command.CommandText = string.Concat("SELECT ", tableName, "_SEQ.CURRVAL FROM DUAL");
 
             IDataReader reader = ExecuteReader(command);
-            if (reader.Read())
+            try
             {
-                object lastId = reader.GetValue(0);
-                if (lastId != DBNull.Value)
-                    autoId = (int)ConvertSourceToTargetType(reader.GetValue(0), typeof(Int32));
+                if (reader.Read())
+                {
+                    object lastId = reader.GetValue(0);
+                    if (lastId != DBNull.Value)
+                        autoId = (int) ConvertSourceToTargetType(reader.GetValue(0), typeof (Int32));
+                }
+                return autoId;
             }
-            reader.Close();
-
-            return autoId;
-        }
+            finally
+            {
+                reader.Close();
+                reader.Dispose();
+            }
+	    }
 
 	    #region Dispose Pattern
 
@@ -752,11 +758,18 @@ namespace AdFactum.Data.Oracle
             command.CommandText = query;
 
             IDataReader reader = ExecuteReader(command);
-            if (reader.Read())
-                numberOfRows = (int)ConvertSourceToTargetType(reader.GetValue(0), typeof(Int32));
-            reader.Close();
+            try
+            {
+                if (reader.Read())
+                    numberOfRows = (int)ConvertSourceToTargetType(reader.GetValue(0), typeof(Int32));
 
-            return numberOfRows;
+                return numberOfRows;
+            }
+            finally 
+            {
+                reader.Close();
+                reader.Dispose();
+            }
         }
 
         /// <summary>
@@ -877,12 +890,18 @@ namespace AdFactum.Data.Oracle
 
             var ids = new ArrayList();
             IDataReader reader = ExecuteReader(command);
-            while (reader.Read())
-                ids.Add(ConvertSourceToTargetType(reader.GetValue(0), typeof(Guid)));
+            try
+            {
+                while (reader.Read())
+                    ids.Add(ConvertSourceToTargetType(reader.GetValue(0), typeof(Guid)));
 
-            reader.Close();
-
-            return ids;
+                return ids;
+            }
+            finally 
+            {
+                reader.Close();
+                reader.Dispose();
+            }
         }
     }
 

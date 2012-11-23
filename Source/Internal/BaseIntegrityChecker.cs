@@ -117,6 +117,7 @@ namespace AdFactum.Data.Internal
 
             Dictionary<string, FieldDescription> fields = info.Fields;
             reader.Close();
+            reader.Dispose();
 
             /*
 			 * Enumerate all fields of the object

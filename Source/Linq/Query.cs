@@ -389,11 +389,16 @@ namespace AdFactum.Data.Linq
                 // Read the resultset
                 var resultSet = new ArrayList();
                 IDataReader reader = nativePersister.ExecuteReader(command);
-                while (reader.Read())
-                    resultSet.Add(reader.GetValue(0));
-
-                reader.Close();
-                reader.Dispose();
+                try
+                {
+                    while (reader.Read())
+                        resultSet.Add(reader.GetValue(0));
+                }
+                finally 
+                {
+                    reader.Close();
+                    reader.Dispose();
+                }
 
                 // Convert result
                 Type genericListType = typeof (List<>).MakeGenericType(ElementType);

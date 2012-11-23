@@ -156,15 +156,22 @@ namespace AdFactum.Data.Postgres
             command.CommandText = string.Concat("SELECT CURRVAL('", TypeMapper.Quote(TypeMapper.DoCasing(tableName+ "_seq")) ,"')");
 
             IDataReader reader = ExecuteReader(command);
-            if (reader.Read())
+            try
             {
-                object lastId = reader.GetValue(0);
-                if (lastId != DBNull.Value)
-                    autoId = (int)ConvertSourceToTargetType(reader.GetValue(0), typeof(Int32));
-            }
-            reader.Close();
+                if (reader.Read())
+                {
+                    object lastId = reader.GetValue(0);
+                    if (lastId != DBNull.Value)
+                        autoId = (int)ConvertSourceToTargetType(reader.GetValue(0), typeof(Int32));
+                }
 
-            return autoId;
+                return autoId;
+            }
+            finally 
+            {
+                reader.Close();
+                reader.Dispose();
+            }
         }
 
         /// <summary> Returns the Schema Writer </summary>

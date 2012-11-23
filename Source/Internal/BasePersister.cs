@@ -1558,6 +1558,7 @@ namespace AdFactum.Data.Internal
             finally
             {
                 reader.Close();
+                reader.Dispose();
             }
 
             return result;
@@ -2202,41 +2203,44 @@ namespace AdFactum.Data.Internal
             command.CommandText = sql;
             IDataReader reader = ExecuteReader(command);
 
-            var projection = ReflectionHelper.GetProjection(parentType, null);
-            Type parentPrimaryKeyType = projection.GetPrimaryKeyDescription().ContentType;
-
-            /*
-            * Add child listings
-            */
-            var resultHash = new SortedList();
-            Dictionary<string, int> fieldIndexDict;
-            Dictionary<int, string> indexFieldDict;
-            GetColumns(reader, null, out fieldIndexDict, out indexFieldDict);
-            while (reader.Read())
+            try
             {
-                object linkId = ConvertSourceToTargetType(reader.GetValue(0), linkIdType);
+                var projection = ReflectionHelper.GetProjection(parentType, null);
+                Type parentPrimaryKeyType = projection.GetPrimaryKeyDescription().ContentType;
 
-                var listlink = new ListLink(null,
-                                            linkId, parentType,
-                                            TypeMapper.ConvertToType(parentPrimaryKeyType,
-                                                                   reader.GetValue(
-                                                                       fieldIndexDict[DBConst.ParentObjectField])),
-                                            // Parent Id
-                                            TypeMapper.ConvertToType(linkedPrimaryKeyType,
-                                                                   reader.GetValue(
-                                                                       fieldIndexDict[DBConst.PropertyField])),
-                                            // Property
-                                            (string)
-                                            ConvertSourceToTargetType(
-                                                reader.GetValue(fieldIndexDict[DBConst.LinkedToField]),
-                                                typeof (string))); // Link To
+                /*
+                * Add child listings
+                */
+                var resultHash = new SortedList();
+                Dictionary<string, int> fieldIndexDict;
+                Dictionary<int, string> indexFieldDict;
+                GetColumns(reader, null, out fieldIndexDict, out indexFieldDict);
+                while (reader.Read())
+                {
+                    object linkId = ConvertSourceToTargetType(reader.GetValue(0), linkIdType);
 
-                resultHash.Add(linkId, listlink);
+                    var listlink = new ListLink(
+                        null,
+                        linkId, parentType,
+                        TypeMapper.ConvertToType(parentPrimaryKeyType, reader.GetValue(fieldIndexDict[DBConst.ParentObjectField])),
+                        // Parent Id
+
+                        TypeMapper.ConvertToType(linkedPrimaryKeyType, reader.GetValue(fieldIndexDict[DBConst.PropertyField])),
+                        // Property
+
+                        (string) ConvertSourceToTargetType(reader.GetValue(fieldIndexDict[DBConst.LinkedToField]), typeof (string))); 
+                        // Link To
+
+                    resultHash.Add(linkId, listlink);
+                }
+
+                return resultHash;
             }
-
-            reader.Close();
-
-            return resultHash;
+            finally
+            {
+                reader.Close();
+                reader.Dispose();
+            }
         }
 
         /// <summary>
@@ -2271,40 +2275,43 @@ namespace AdFactum.Data.Internal
             command.CommandText = sql;
             IDataReader reader = ExecuteReader(command);
 
-            var projection = ReflectionHelper.GetProjection(parentType, null);
-            Type parentPrimaryKeyType = projection.GetPrimaryKeyDescription().ContentType;
-
-            /*
-            * Add child listings
-            */
-            IList list = new ArrayList();
-            Dictionary<string, int> fieldIndexDict;
-            Dictionary<int, string> indexFieldDict;
-            GetColumns(reader, null, out fieldIndexDict, out indexFieldDict);
-            while (reader.Read())
+            try
             {
-                var listlink = new ListLink(null,
-                                            (string)
-                                            ConvertSourceToTargetType(
-                                                reader.GetValue(fieldIndexDict[DBConst.LinkedToField]),
-                                                typeof (string)), // Link To
-                                            parentType,
-                                            TypeMapper.ConvertToType(parentPrimaryKeyType,
-                                                                   reader.GetValue(
-                                                                       fieldIndexDict[DBConst.ParentObjectField])),
-                                            // Parent Id
-                                            TypeMapper.ConvertToType(linkedPrimaryKeyType,
-                                                                   reader.GetValue(
-                                                                       fieldIndexDict[DBConst.PropertyField]))
-                    // Property
-                    );
+                var projection = ReflectionHelper.GetProjection(parentType, null);
+                Type parentPrimaryKeyType = projection.GetPrimaryKeyDescription().ContentType;
 
-                list.Add(listlink);
+                /*
+                * Add child listings
+                */
+                IList list = new ArrayList();
+                Dictionary<string, int> fieldIndexDict;
+                Dictionary<int, string> indexFieldDict;
+                GetColumns(reader, null, out fieldIndexDict, out indexFieldDict);
+                while (reader.Read())
+                {
+                    var listlink = new ListLink(
+                        null, 
+                        (string) ConvertSourceToTargetType(reader.GetValue(fieldIndexDict[DBConst.LinkedToField]),typeof (string)), 
+                        // Link To
+                        
+                        parentType,
+                        TypeMapper.ConvertToType(parentPrimaryKeyType, reader.GetValue(fieldIndexDict[DBConst.ParentObjectField])),
+                        // Parent Id
+
+                        TypeMapper.ConvertToType(linkedPrimaryKeyType, reader.GetValue(fieldIndexDict[DBConst.PropertyField]))
+                        // Property
+                        );
+
+                    list.Add(listlink);
+                }
+
+                return list;
             }
-
-            reader.Close();
-
-            return list;
+            finally
+            {
+                reader.Close();
+                reader.Dispose();
+            }
         }
 
         /// <summary>
@@ -2409,10 +2416,16 @@ namespace AdFactum.Data.Internal
 
             var ids = new ArrayList();
             IDataReader reader = ExecuteReader(command);
-            while (reader.Read())
-                ids.Add(ConvertSourceToTargetType(reader.GetValue(0), typeof (Guid)));
-
-            reader.Close();
+            try
+            {
+                while (reader.Read())
+                    ids.Add(ConvertSourceToTargetType(reader.GetValue(0), typeof(Guid)));
+            }
+            finally
+            {
+                reader.Close();
+                reader.Dispose();
+            }
 
             return ids;
         }
@@ -2439,10 +2452,16 @@ namespace AdFactum.Data.Internal
             command.CommandText = query;
 
             IDataReader reader = ExecuteReader(command);
-            bool result = reader.Read();
-            reader.Close();
-
-            return result;
+            try
+            {
+                bool result = reader.Read();
+                return result;
+            }
+            finally 
+            {
+                reader.Close();
+                reader.Dispose();
+            }
         }
 
         /// <summary>
@@ -2559,11 +2578,18 @@ namespace AdFactum.Data.Internal
             command.CommandText = query;
 
             IDataReader reader = ExecuteReader(command);
-            if (reader.Read())
-                numberOfRows = (int) ConvertSourceToTargetType(reader.GetValue(0), typeof (Int32));
-            reader.Close();
+            try
+            {
+                if (reader.Read())
+                    numberOfRows = (int)ConvertSourceToTargetType(reader.GetValue(0), typeof(Int32));
 
-            return numberOfRows;
+                return numberOfRows;
+            }
+            finally 
+            {
+                reader.Close();
+                reader.Dispose();
+            }
         }
 
         /// <summary>
