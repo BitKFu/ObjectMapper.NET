@@ -45,6 +45,8 @@
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <OutputPath>..\output\.NET2010\debug\</OutputPath>
@@ -92,9 +94,12 @@
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Npgsql, Version=2.0.12.0, Culture=neutral, PublicKeyToken=5d8b90d52f46fda7, processorArchitecture=MSIL">
+    <Reference Include="Mono.Security, Version=2.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
+      <HintPath>..\packages\Npgsql.2.0.11\lib\Net40\Mono.Security.dll</HintPath>
+    </Reference>
+    <Reference Include="Npgsql, Version=2.0.11.0, Culture=neutral, PublicKeyToken=5d8b90d52f46fda7, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\3dParty\Npgsql2.0.12.0-bin-ms.net4.0\Npgsql.dll</HintPath>
+      <HintPath>..\packages\Npgsql.2.0.11\lib\Net40\Npgsql.dll</HintPath>
     </Reference>
     <Reference Include="Oracle.DataAccess">
       <Name>Oracle.DataAccess</Name>
@@ -521,6 +526,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="ObjectMapper.snk" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -546,4 +552,5 @@
     <PostBuildEvent>
     </PostBuildEvent>
   </PropertyGroup>
+  <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
 </Project>
