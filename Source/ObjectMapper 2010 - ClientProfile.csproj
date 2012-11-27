@@ -501,6 +501,7 @@
     <Compile Include="Util\SqlFile.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Util\SqlStopwatch.cs" />
     <Compile Include="Util\UltraFastDictionary.cs" />
     <Compile Include="Util\UniversalFactory.cs" />
     <Compile Include="ValueObject.cs">

@@ -227,8 +227,10 @@ namespace AdFactum.Data.Oracle
         /// <returns>List of value objects</returns>
         protected override List<PersistentProperties> PageSelect(ProjectionClass projection, string additionalColumns, ICondition whereClause, OrderBy orderBy, int minLine, int maxLine, Dictionary<string, FieldDescription> fieldTemplates, IDictionary globalParameter, bool distinct)
 		{
-			IDbCommand command = CreateCommand();
+            SqlStopwatch stopwatch = new SqlStopwatch(SqlTracer);
+            IDbCommand command = CreateCommand();
 
+            int rows = 0;
             try
             {
 
@@ -296,10 +298,12 @@ namespace AdFactum.Data.Oracle
                 command.CommandText = outerSql;
 
                 List<PersistentProperties> result = PrivateSelect(command, fieldTemplates, 0, int.MaxValue);
+                rows = result.Count;
                 return result;
             }
             finally
             {
+                stopwatch.Stop(command, CreateSql(command), rows);
                 command.DisposeSafe();
             }
 		}
@@ -640,6 +644,7 @@ namespace AdFactum.Data.Oracle
 	    protected override int SelectLastAutoId(string tableName)
 	    {
             int autoId = -1;
+            SqlStopwatch stopwatch = new SqlStopwatch(SqlTracer);
             IDbCommand command = CreateCommand();
 
             try
@@ -665,6 +670,7 @@ namespace AdFactum.Data.Oracle
             }
             finally
             {
+                stopwatch.Stop(command, CreateSql(command), 1);
                 command.DisposeSafe();
             }
 	    }
@@ -758,6 +764,7 @@ namespace AdFactum.Data.Oracle
             int index = 1;
             IDictionary virtualAlias = new HybridDictionary();
 
+            SqlStopwatch stopwatch = new SqlStopwatch(SqlTracer);
             IDbCommand command = CreateCommand();
 
             try
@@ -803,6 +810,7 @@ namespace AdFactum.Data.Oracle
             }
             finally
             {
+                stopwatch.Stop(command, CreateSql(command), numberOfRows);
                 command.DisposeSafe();
             }
         }
@@ -822,8 +830,10 @@ namespace AdFactum.Data.Oracle
                                        OrderBy orderBy, Dictionary<string, FieldDescription> fieldTemplates,
                                        IDictionary globalParameter, bool distinct)
         {
+            SqlStopwatch stopwatch = new SqlStopwatch(SqlTracer);
             IDbCommand command = CreateCommand();
 
+            int rows = 0;
             try
             {
                 int index = 1;
@@ -878,10 +888,12 @@ namespace AdFactum.Data.Oracle
                 command.CommandText = query;
 
                 List<PersistentProperties> result = PrivateSelect(command, fieldTemplates, 0, int.MaxValue);
+                rows = result.Count;
                 return result;
             }
             finally
             {
+                stopwatch.Stop(command, CreateSql(command), rows);
                 command.DisposeSafe();
             }
         }
@@ -897,8 +909,10 @@ namespace AdFactum.Data.Oracle
         public override IList SelectIDs(ProjectionClass projection, string primaryKeyColumn, ICondition whereClause,
                                        OrderBy orderBy)
         {
+            SqlStopwatch stopwatch = new SqlStopwatch(SqlTracer);
             IDbCommand command = CreateCommand();
 
+            int rows = 0;
             try
             {
                 IDictionary virtualAlias = new HybridDictionary();
@@ -951,6 +965,7 @@ namespace AdFactum.Data.Oracle
                     while (reader.Read())
                         ids.Add(ConvertSourceToTargetType(reader.GetValue(0), typeof(Guid)));
 
+                    rows = ids.Count;
                     return ids;
                 }
                 finally
@@ -961,6 +976,7 @@ namespace AdFactum.Data.Oracle
             }
             finally
             {
+                stopwatch.Stop(command, CreateSql(command), rows);
                 command.DisposeSafe();
             }
         }

@@ -189,8 +189,6 @@ namespace AdFactum.Data.Internal
         protected virtual object ExecuteSecureDbCall(IDbCommand command, bool nonQuery)
         {
             command.CommandText = ReplaceStatics(command.CommandText);
-
-            DateTime start = DateTime.Now;
             try
             {
                 if (nonQuery) return command.ExecuteNonQuery();
@@ -205,10 +203,6 @@ namespace AdFactum.Data.Internal
             {
                 ErrorMessage(exc);
                 throw new SqlCoreException(exc, 0, CreateSql(command));
-            }
-            finally
-            {
-                SqlOutput(command, 0, DateTime.Now.Subtract(start));
             }
         }
 
@@ -277,24 +271,6 @@ namespace AdFactum.Data.Internal
 
             if (SqlTracer.TraceErrorEnabled)
                 SqlTracer.ErrorMessage(exc.Message, exc.Source);
-        }
-
-        /// <summary>
-        /// This method is used for formatting sql output strings
-        /// </summary>
-        /// <param name="command">command</param>
-        /// <param name="rows">Affacted Rows</param>
-        /// <param name="duration">Duration</param>
-        protected void SqlOutput(IDbCommand command, int rows, TimeSpan duration)
-        {
-            if (SqlTracer == null)
-                return;
-
-            if (!SqlTracer.TraceSqlEnabled)
-                return;
-
-            string sql = CreateSql(command);
-            SqlTracer.SqlCommand(command, sql + ";", rows, duration);
         }
 
         #endregion
@@ -1328,19 +1304,21 @@ namespace AdFactum.Data.Internal
         /// <returns>Filled data table</returns>
         public DataTable FillTable(string sqlSelect)
         {
-            DateTime start = DateTime.Now;
+            SqlStopwatch stopwatch = new SqlStopwatch(SqlTracer);
             var dataSet = new DataSet("TableX");
             IDbDataAdapter adapter = CreateDataAdapter();
+            var rows = 0;
+
             try
             {
                 adapter.SelectCommand = CreateCommand(sqlSelect);
-                adapter.Fill(dataSet);
+                rows = adapter.Fill(dataSet);
 
                 return dataSet.Tables["Table"];
             }
             finally
             {
-                SqlOutput(adapter.SelectCommand, -1, DateTime.Now - start);
+                stopwatch.Stop(adapter.SelectCommand, CreateSql(adapter.SelectCommand), rows);
                 adapter.SelectCommand.DisposeSafe();
             }
         }
@@ -1352,21 +1330,22 @@ namespace AdFactum.Data.Internal
         /// <returns></returns>
         public DataTable FillTable(IDbCommand sqlCommand)
         {
-            DateTime start = DateTime.Now;
+            var inserted = 0;
 
+            SqlStopwatch stopwatch = new SqlStopwatch(SqlTracer);
             try
             {
                 var dataSet = new DataSet("TableX");
                 IDbDataAdapter adapter = CreateDataAdapter();
 
                 adapter.SelectCommand = sqlCommand;
-                adapter.Fill(dataSet);
+                inserted = adapter.Fill(dataSet);
 
                 return dataSet.Tables["Table"];
             }
             finally
             {
-                SqlOutput(sqlCommand, -1, DateTime.Now - start);
+                stopwatch.Stop(sqlCommand, CreateSql(sqlCommand), inserted);
             }
         }
 
@@ -1743,6 +1722,7 @@ namespace AdFactum.Data.Internal
             /*
 			 * Jetzt die Werte hinzufügen
 			 */
+            SqlStopwatch stopwatch = new SqlStopwatch(SqlTracer);
             IDbCommand command = CreateCommand();
 
             try
@@ -1890,6 +1870,7 @@ namespace AdFactum.Data.Internal
             }
             finally
             {
+                stopwatch.Stop(command, CreateSql(command), 1);
                 command.DisposeSafe();
             }
         }
@@ -2036,6 +2017,7 @@ namespace AdFactum.Data.Internal
                  */
                 if (columns.Count > 0)
                 {
+                    SqlStopwatch stopwatch = new SqlStopwatch(SqlTracer);
                     IDbCommand command = CreateCommand();
                     try
                     {
@@ -2147,6 +2129,7 @@ namespace AdFactum.Data.Internal
                     }
                     finally
                     {
+                        stopwatch.Stop(command, CreateSql(command), 1);
                         command.DisposeSafe();
                     }
                 }
@@ -2165,6 +2148,7 @@ namespace AdFactum.Data.Internal
         public PersistentProperties Load(ProjectionClass projection, object id,
                                 Dictionary<string, FieldDescription> fieldTemplates, IDictionary globalParameter)
         {
+            SqlStopwatch stopwatch = new SqlStopwatch(SqlTracer);
             IDbCommand command = CreateCommand();
 
             try
@@ -2206,6 +2190,7 @@ namespace AdFactum.Data.Internal
             }
             finally
             {
+                stopwatch.Stop(command, CreateSql(command), 1);
                 command.DisposeSafe();
             }
         }
@@ -2226,8 +2211,10 @@ namespace AdFactum.Data.Internal
             /*
 			* Do select on child Table
 			*/
+            SqlStopwatch stopwatch = new SqlStopwatch(SqlTracer);
             IDbCommand command = CreateCommand();
 
+            int rows = 0;
             try
             {
                 IDbDataParameter parameter = CreateParameter("primaryKey", id, false);
@@ -2283,6 +2270,7 @@ namespace AdFactum.Data.Internal
                         resultHash.Add(linkId, listlink);
                     }
 
+                    rows = resultHash.Count;
                     return resultHash;
                 }
                 finally
@@ -2293,6 +2281,7 @@ namespace AdFactum.Data.Internal
             }
             finally
             {
+                stopwatch.Stop(command, CreateSql(command), rows);
                 command.DisposeSafe();
             }
         }
@@ -2312,8 +2301,10 @@ namespace AdFactum.Data.Internal
             /*
             * Do select on child Table
             */
+            SqlStopwatch stopwatch = new SqlStopwatch(SqlTracer);
             IDbCommand command = CreateCommand();
 
+            int rows=0;
             try
             {
                 IDbDataParameter parameter = CreateParameter("primaryKey", objectId, false);
@@ -2366,6 +2357,7 @@ namespace AdFactum.Data.Internal
                         list.Add(listlink);
                     }
 
+                    rows = list.Count;
                     return list;
                 }
                 finally
@@ -2376,6 +2368,7 @@ namespace AdFactum.Data.Internal
             }
             finally
             {
+                stopwatch.Stop(command, CreateSql(command), rows);
                 command.DisposeSafe();
             }
         }
@@ -2391,8 +2384,10 @@ namespace AdFactum.Data.Internal
             IDbCommand command = null;
             IDbDataParameter parameter;
 
+            SqlStopwatch stopwatch;
             foreach (var entry in fieldTemplates)
             {
+                stopwatch = new SqlStopwatch(SqlTracer);
                 try
                 {
                     FieldDescription field = entry.Value;
@@ -2419,9 +2414,13 @@ namespace AdFactum.Data.Internal
                 }
                 finally
                 {
+                    stopwatch.Stop(command, CreateSql(command), -1);
                     command.DisposeSafe();
                 }
             }
+
+            stopwatch = new SqlStopwatch(SqlTracer);
+            int rows= 0;
             try
             {
                 /*
@@ -2442,7 +2441,7 @@ namespace AdFactum.Data.Internal
                 /*
                  * Execute query
                  */
-                int rows = ExecuteNonQuery(command);
+                rows = ExecuteNonQuery(command);
                 if ((rows == 0) && (SqlTracer != null) && (SqlTracer.TraceErrorEnabled))
                 {
                     SqlTracer.ErrorMessage(
@@ -2452,6 +2451,7 @@ namespace AdFactum.Data.Internal
             }
             finally
             {
+                stopwatch.Stop(command, CreateSql(command), rows);
                 command.DisposeSafe();
             }
         }
@@ -2467,8 +2467,10 @@ namespace AdFactum.Data.Internal
         public virtual IList SelectIDs(ProjectionClass projection, string primaryKeyColumn, ICondition whereClause,
                                        OrderBy orderBy)
         {
+            SqlStopwatch stopwatch = new SqlStopwatch(SqlTracer);
             IDbCommand command = CreateCommand();
 
+            int rows = 0;
             try
             {
                 IDictionary virtualAlias = new HybridDictionary();
@@ -2516,10 +2518,12 @@ namespace AdFactum.Data.Internal
                     reader.Dispose();
                 }
 
+                rows = ids.Count;
                 return ids;
             }
             finally
             {
+                stopwatch.Stop(command, CreateSql(command), rows);
                 command.DisposeSafe();
             }
         }
@@ -2536,6 +2540,7 @@ namespace AdFactum.Data.Internal
             /*
 			 * Do selection
 			 */
+            SqlStopwatch stopwatch = new SqlStopwatch(SqlTracer);
             IDbCommand command = CreateCommand();
 
             try
@@ -2564,6 +2569,7 @@ namespace AdFactum.Data.Internal
             }
             finally
             {
+                stopwatch.Stop(command, CreateSql(command), 0);
                 command.DisposeSafe();
             }
         }
@@ -2669,6 +2675,7 @@ namespace AdFactum.Data.Internal
             int index = 1;
             IDictionary virtualAlias = new HybridDictionary();
 
+            SqlStopwatch stopwatch = new SqlStopwatch(SqlTracer);
             IDbCommand command = CreateCommand();
 
             try
@@ -2711,6 +2718,7 @@ namespace AdFactum.Data.Internal
             }
             finally
             {
+                stopwatch.Stop(command, CreateSql(command), numberOfRows);
                 command.DisposeSafe();
             }
         }
@@ -2813,6 +2821,9 @@ namespace AdFactum.Data.Internal
         /// <returns></returns>
         protected virtual string CreateSql(IDbCommand command)
         {
+            if (command == null)
+                return string.Empty;
+
             string sql = command.CommandText;
 
             IEnumerator enumParam = command.Parameters.GetEnumerator();
@@ -3096,8 +3107,10 @@ namespace AdFactum.Data.Internal
                                        OrderBy orderBy, Dictionary<string, FieldDescription> fieldTemplates,
                                        IDictionary globalParameter, bool distinct)
         {
+            SqlStopwatch stopwatch = new SqlStopwatch(SqlTracer);
             IDbCommand command = CreateCommand();
 
+            int rows = 0;
             try
             {
                 int index = 1;
@@ -3146,10 +3159,12 @@ namespace AdFactum.Data.Internal
                 command.CommandText = query;
 
                 List<PersistentProperties> result = PrivateSelect(command, fieldTemplates, 0, int.MaxValue);
+                rows = result.Count;
                 return result;
             }
             finally
             {
+                stopwatch.Stop(command, CreateSql(command), rows);
                 command.DisposeSafe();
             }
         }
@@ -3172,8 +3187,10 @@ namespace AdFactum.Data.Internal
                                            Dictionary<string, FieldDescription> fieldTemplates,
                                            IDictionary globalParameter, bool distinct)
         {
+            SqlStopwatch stopwatch = new SqlStopwatch(SqlTracer);
             IDbCommand command = CreateCommand();
 
+            int rows = 0;
             try
             {
                 IDictionary virtualAlias = new HybridDictionary();
@@ -3216,10 +3233,12 @@ namespace AdFactum.Data.Internal
                 command.CommandText = query;
 
                 List<PersistentProperties> result = PrivateSelect(command, fieldTemplates, minLine, maxLine);
+                rows = result.Count;
                 return result;
             }
             finally
             {
+                stopwatch.Stop(command, CreateSql(command), rows);
                 command.DisposeSafe();
             }
         }
@@ -3238,8 +3257,10 @@ namespace AdFactum.Data.Internal
         /// <param name="link">The link.</param>
         public virtual void DeleteSubLink(string tableName, ListLink link)
         {
+            SqlStopwatch stopwatch = new SqlStopwatch(SqlTracer);
             IDbCommand command = CreateCommand();
 
+            int rows = 0;
             try
             {
 
@@ -3275,7 +3296,7 @@ namespace AdFactum.Data.Internal
                  * Execute query
                  */
                 command.CommandText = query;
-                int rows = ExecuteNonQuery(command);
+                rows = ExecuteNonQuery(command);
                 if ((rows == 0) && (SqlTracer != null) && (SqlTracer.TraceErrorEnabled))
                 {
                     SqlTracer.ErrorMessage(
@@ -3285,6 +3306,7 @@ namespace AdFactum.Data.Internal
             }
             finally
             {
+                stopwatch.Stop(command, CreateSql(command), rows);
                 command.DisposeSafe();
             }
         }

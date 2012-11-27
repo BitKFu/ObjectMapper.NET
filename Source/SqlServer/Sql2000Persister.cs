@@ -7,6 +7,7 @@ using System.Data.SqlClient;
 using AdFactum.Data.Interfaces;
 using AdFactum.Data.Internal;
 using AdFactum.Data.Queries;
+using AdFactum.Data.Util;
 
 namespace AdFactum.Data.SqlServer
 {
@@ -286,8 +287,10 @@ namespace AdFactum.Data.SqlServer
                                     fieldTemplates, globalParameter, distinct);
 
 
+            SqlStopwatch stopwatch = new SqlStopwatch(SqlTracer);
             IDbCommand command = CreateCommand();
 
+            int rows = 0;
             try
             {
                 IDictionary virtualAlias = new HybridDictionary();
@@ -328,10 +331,12 @@ namespace AdFactum.Data.SqlServer
                 command.CommandText = query;
 
                 List<PersistentProperties> result = PrivateSelect(command, fieldTemplates, minLine, maxLine);
+                rows = result.Count;
                 return result;
             }
             finally
             {
+                stopwatch.Stop(command, CreateSql(command), rows);
                 command.DisposeSafe();
             }
         }

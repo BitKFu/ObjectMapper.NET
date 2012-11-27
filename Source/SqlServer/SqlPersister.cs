@@ -4,6 +4,7 @@ using System.Collections.Specialized;
 using System.Data;
 using AdFactum.Data.Internal;
 using AdFactum.Data.Queries;
+using AdFactum.Data.Util;
 
 namespace AdFactum.Data.SqlServer
 {
@@ -149,8 +150,10 @@ namespace AdFactum.Data.SqlServer
                 return base.PageSelect(projection, additionalColumns, whereClause, orderBy, minLine, maxLine,
                                        fieldTemplates, globalParameter, distinct);
 
+            SqlStopwatch stopwatch = new SqlStopwatch(SqlTracer);
             IDbCommand command = CreateCommand();
 
+            int rows = 0;
             try
             {
 
@@ -207,10 +210,12 @@ namespace AdFactum.Data.SqlServer
                 command.CommandText = outerSql;
 
                 List<PersistentProperties> result = PrivateSelect(command, fieldTemplates, 0, int.MaxValue);
+                rows = result.Count;
                 return result;
             }
             finally
             {
+                stopwatch.Stop(command, CreateSql(command), rows);
                 command.DisposeSafe();
             }
         }

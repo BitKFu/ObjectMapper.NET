@@ -15,6 +15,7 @@ using AdFactum.Data.Linq.Language;
 using AdFactum.Data.Linq.Translation;
 using AdFactum.Data.Queries;
 using AdFactum.Data.SqlServer;
+using AdFactum.Data.Util;
 
 namespace AdFactum.Data.Access
 {
@@ -212,7 +213,6 @@ namespace AdFactum.Data.Access
         /// </summary>
         public virtual void Connect(string connectionString)
         {
-            Debug.Assert(Connection == null, "The Connection has already established");
             Connection = new OleDbConnection {ConnectionString = connectionString};
             Connection.Open();
 
@@ -233,6 +233,8 @@ namespace AdFactum.Data.Access
                                                           Dictionary<string, FieldDescription> fieldTemplates)
         {
             IDbCommand command = CreateCommand();
+            SqlStopwatch stopwatch = new SqlStopwatch(SqlTracer);
+            int rows = 0;
 
             try
             {
@@ -257,10 +259,12 @@ namespace AdFactum.Data.Access
                 command.CommandText = businessSql;
 
                 List<PersistentProperties> result = PrivateSelect(command, fieldTemplates, 0, int.MaxValue);
+                rows = result.Count;
                 return result;
             }
             finally
             {
+                stopwatch.Stop(command, CreateSql(command), rows);
                 command.DisposeSafe();
             }
         }
@@ -304,6 +308,9 @@ namespace AdFactum.Data.Access
         /// <returns></returns>
         protected override string CreateSql(IDbCommand command)
         {
+            if (command == null)
+                return string.Empty;
+
             string sql = command.CommandText;
 
             int startPos = 0;
@@ -373,7 +380,6 @@ namespace AdFactum.Data.Access
             /*
              * SQL ausführen und loggen
              */
-            DateTime start = DateTime.Now;
             object result = null;
             int trys = 0;
             try
@@ -418,11 +424,6 @@ namespace AdFactum.Data.Access
             {
                 ErrorMessage(exc);
                 throw new SqlCoreException(exc, 0, CreateSql(command));
-            }
-            finally
-            {
-                SqlOutput(command, 0, DateTime.Now.Subtract(start));
-                command.Dispose();
             }
         }
 

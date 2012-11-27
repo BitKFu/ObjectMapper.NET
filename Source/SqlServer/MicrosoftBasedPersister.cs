@@ -24,6 +24,7 @@ namespace AdFactum.Data.SqlServer
         protected override int SelectLastAutoId(string tableName)
         {
             int autoId = -1;
+            SqlStopwatch stopwatch = new SqlStopwatch(SqlTracer);
             IDbCommand command = CreateCommand();
 
             try
@@ -50,6 +51,7 @@ namespace AdFactum.Data.SqlServer
             }
             finally
             {
+                stopwatch.Stop(command, CreateSql(command), 1);
                 command.DisposeSafe();
             }
         }

@@ -13,6 +13,7 @@ using AdFactum.Data.Linq.Expressions;
 using AdFactum.Data.Linq.Language;
 using AdFactum.Data.Linq.Translation;
 using AdFactum.Data.Queries;
+using AdFactum.Data.Util;
 using Npgsql;
 using NpgsqlTypes;
 
@@ -150,25 +151,34 @@ namespace AdFactum.Data.Postgres
         protected override int SelectLastAutoId(string tableName)
         {
             int autoId = -1;
+            SqlStopwatch stopwatch = new SqlStopwatch(SqlTracer);
             IDbCommand command = CreateCommand();
             command.CommandText = string.Concat("SELECT CURRVAL('", TypeMapper.Quote(TypeMapper.DoCasing(tableName+ "_seq")) ,"')");
 
-            IDataReader reader = ExecuteReader(command);
             try
             {
-                if (reader.Read())
+                IDataReader reader = ExecuteReader(command);
+                try
                 {
-                    object lastId = reader.GetValue(0);
-                    if (lastId != DBNull.Value)
-                        autoId = (int)ConvertSourceToTargetType(reader.GetValue(0), typeof(Int32));
-                }
+                    if (reader.Read())
+                    {
+                        object lastId = reader.GetValue(0);
+                        if (lastId != DBNull.Value)
+                            autoId = (int) ConvertSourceToTargetType(reader.GetValue(0), typeof (Int32));
+                    }
 
-                return autoId;
+                    return autoId;
+                }
+                finally
+                {
+                    reader.Close();
+                    reader.Dispose();
+                }
             }
-            finally 
+            finally
             {
-                reader.Close();
-                reader.Dispose();
+                stopwatch.Stop(command, CreateSql(command), 1);
+                command.DisposeSafe();
             }
         }
 
@@ -428,51 +438,65 @@ namespace AdFactum.Data.Postgres
                                            Dictionary<string, FieldDescription> fieldTemplates,
                                            IDictionary globalParameter, bool distinct)
         {
+            SqlStopwatch stopwatch = new SqlStopwatch(SqlTracer);
             IDbCommand command = CreateCommand();
-            IDictionary virtualAlias = new HybridDictionary();
+            int rows = 0;
+            try
+            {
+                IDictionary virtualAlias = new HybridDictionary();
 
-            int index = 1;
-            string withClause = PrivateWithClause(projection, whereClause, command.Parameters, null, null, virtualAlias,
-                                                  ref index);
-            string tables = PrivateFromClause(projection, whereClause, command.Parameters, fieldTemplates,
-                                              globalParameter, virtualAlias, ref index);
+                int index = 1;
+                string withClause = PrivateWithClause(projection, whereClause, command.Parameters, null, null,
+                                                      virtualAlias,
+                                                      ref index);
+                string tables = PrivateFromClause(projection, whereClause, command.Parameters, fieldTemplates,
+                                                  globalParameter, virtualAlias, ref index);
 
-            /*
-             * SQL Bauen
-             */
-            String query = string.Concat(withClause, distinct ? "SELECT DISTINCT " : "SELECT ",
-                                         projection.GetColumns(whereClause, additionalColumns), " "
-                                         , BuildVirtualFields(fieldTemplates, globalParameter, virtualAlias)
-                                         , BuildSelectFunctionFields(fieldTemplates, globalParameter)
-                                         , " FROM " + tables);
+                /*
+                 * SQL Bauen
+                 */
+                String query = string.Concat(withClause, distinct ? "SELECT DISTINCT " : "SELECT ",
+                                             projection.GetColumns(whereClause, additionalColumns), " "
+                                             , BuildVirtualFields(fieldTemplates, globalParameter, virtualAlias)
+                                             , BuildSelectFunctionFields(fieldTemplates, globalParameter)
+                                             , " FROM " + tables);
 
-            /*
-             * Query bauen
-             */
-            query += PrivateCompleteWhereClause(projection, fieldTemplates, whereClause, globalParameter, virtualAlias,
-                                                command.Parameters, ref index);
+                /*
+                 * Query bauen
+                 */
+                query += PrivateCompleteWhereClause(projection, fieldTemplates, whereClause, globalParameter,
+                                                    virtualAlias,
+                                                    command.Parameters, ref index);
 
-            string grouping = projection.GetGrouping();
-            if (!string.IsNullOrEmpty(grouping))
-                query = string.Concat(query, " GROUP BY ", grouping);
+                string grouping = projection.GetGrouping();
+                if (!string.IsNullOrEmpty(grouping))
+                    query = string.Concat(query, " GROUP BY ", grouping);
 
-            query += PrivateCompleteHavingClause(projection, fieldTemplates, whereClause, globalParameter, virtualAlias,
-                                                 command.Parameters, ref index);
-            query += (orderBy != null ? " ORDER BY " + orderBy.Columns + " " + orderBy.Ordering : "");
+                query += PrivateCompleteHavingClause(projection, fieldTemplates, whereClause, globalParameter,
+                                                     virtualAlias,
+                                                     command.Parameters, ref index);
+                query += (orderBy != null ? " ORDER BY " + orderBy.Columns + " " + orderBy.Ordering : "");
 
-            if (minLine > 0)
-                query += " OFFSET " + (minLine-1);
+                if (minLine > 0)
+                    query += " OFFSET " + (minLine - 1);
 
-            if (maxLine<int.MaxValue)
-                query += " LIMIT " + (maxLine - minLine+1);
+                if (maxLine < int.MaxValue)
+                    query += " LIMIT " + (maxLine - minLine + 1);
 
-            /*
-             * Die IDs selektieren und Objekt laden
-             */
-            command.CommandText = query;
+                /*
+                 * Die IDs selektieren und Objekt laden
+                 */
+                command.CommandText = query;
 
-            List<PersistentProperties> result = PrivateSelect(command, fieldTemplates, 0, int.MaxValue);
-            return result;
+                List<PersistentProperties> result = PrivateSelect(command, fieldTemplates, 0, int.MaxValue);
+                rows = result.Count;
+                return result;
+            }
+            finally
+            {
+                stopwatch.Stop(command, CreateSql(command), rows);
+                command.DisposeSafe();
+            }
         }
     }
 }
