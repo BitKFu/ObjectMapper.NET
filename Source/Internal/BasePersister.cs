@@ -125,9 +125,9 @@ namespace AdFactum.Data.Internal
         /// </summary>
         public string DatabaseSchema { get; set; }
 
-	    /// <summary> Returns the Schema Writer </summary>
+        /// <summary> Returns the Schema Writer </summary>
         public abstract ISchemaWriter Schema
-        { 
+        {
             get;
         }
 
@@ -135,7 +135,7 @@ namespace AdFactum.Data.Internal
         /// Returns the repository class
         /// </summary>
         public abstract IRepository Repository
-        { 
+        {
             get;
         }
 
@@ -143,7 +143,7 @@ namespace AdFactum.Data.Internal
         /// Returns the Integrity Checker
         /// </summary>
         public abstract IIntegrity Integrity
-        { 
+        {
             get;
         }
 
@@ -163,7 +163,7 @@ namespace AdFactum.Data.Internal
             /*
              * Execute secure call
              */
-            var reader = (IDataReader) ExecuteSecureDbCall(command, false);
+            var reader = (IDataReader)ExecuteSecureDbCall(command, false);
             return reader;
         }
 
@@ -176,7 +176,7 @@ namespace AdFactum.Data.Internal
             /*
 			 * Execute secure call
 			 */
-            var rows = (int) ExecuteSecureDbCall(command, true);
+            var rows = (int)ExecuteSecureDbCall(command, true);
             return rows;
         }
 
@@ -209,11 +209,6 @@ namespace AdFactum.Data.Internal
             finally
             {
                 SqlOutput(command, 0, DateTime.Now.Subtract(start));
-
-                if (!DontDisposeCommand)
-                    command.Dispose();
-                else
-                    DontDisposeCommand = false;
             }
         }
 
@@ -221,10 +216,10 @@ namespace AdFactum.Data.Internal
         /// Returns the columns of a oracle table
         /// </summary>
         public virtual void GetColumns(
-            IDataReader reader, 
-            Dictionary<string, FieldDescription> fieldTemplates, 
-            
-            out Dictionary<string,int> fieldIndexDict, 
+            IDataReader reader,
+            Dictionary<string, FieldDescription> fieldTemplates,
+
+            out Dictionary<string, int> fieldIndexDict,
             out Dictionary<int, string> indexFieldDict)
         {
             int fields = reader.FieldCount;
@@ -249,7 +244,7 @@ namespace AdFactum.Data.Internal
 
                         // Find simple column + Type Addition
                         fieldTemplates.Keys.Where(
-                            key => name.Equals(key+DBConst.TypAddition, StringComparison.InvariantCultureIgnoreCase)).Select(key => key + DBConst.TypAddition)
+                            key => name.Equals(key + DBConst.TypAddition, StringComparison.InvariantCultureIgnoreCase)).Select(key => key + DBConst.TypAddition)
                             .FirstOrDefault() ??
 
                         columnName;
@@ -343,7 +338,7 @@ namespace AdFactum.Data.Internal
             }
             else
             {
-                tableName = (string) virtualAlias[vfd.VirtualIdentifier];
+                tableName = (string)virtualAlias[vfd.VirtualIdentifier];
                 result =
                     string.Concat(tableName, ".", Condition.QUOTE_OPEN, vfd.ResultField.Name, Condition.QUOTE_CLOSE);
             }
@@ -383,7 +378,7 @@ namespace AdFactum.Data.Internal
             {
                 if (entry.Value is VirtualFieldDescription)
                 {
-                    var vfd = (VirtualFieldDescription) entry.Value;
+                    var vfd = (VirtualFieldDescription)entry.Value;
                     if (virtualAlias.Contains(vfd.VirtualIdentifier))
                         continue;
 
@@ -407,7 +402,7 @@ namespace AdFactum.Data.Internal
              */
             foreach (VirtualFieldDescription vfd in vfdList)
             {
-                identifier = (string) virtualAlias[vfd.VirtualIdentifier];
+                identifier = (string)virtualAlias[vfd.VirtualIdentifier];
 
                 if (vfd.GlobalParameter.IsNotNullOrEmpty() &&
                     ((globalParameter == null) || (!globalParameter.Contains(vfd.GlobalParameter))))
@@ -575,7 +570,7 @@ namespace AdFactum.Data.Internal
                     var vfd = entry.Value as VirtualFieldDescription;
                     if ((vfd != null) && (virtualAlias.Contains(vfd.VirtualIdentifier)))
                     {
-                        var identifier = (string) virtualAlias[vfd.VirtualIdentifier];
+                        var identifier = (string)virtualAlias[vfd.VirtualIdentifier];
 
                         /*
                          * Build a unique List, because we only have to join once.
@@ -792,7 +787,7 @@ namespace AdFactum.Data.Internal
 
             while (tableEnumerator.MoveNext())
             {
-                var tupel = (Set.Tupel) tableEnumerator.Current;
+                var tupel = (Set.Tupel)tableEnumerator.Current;
                 if (tupel.Member != null)
                 {
                     string overwrite = PrivateWhereClause(projection, tupel.Member, parameters, globalParameter,
@@ -904,15 +899,15 @@ namespace AdFactum.Data.Internal
                 }
 
                 return sb.ToString();
-            } 
-            
+            }
+
             if (constraintInterface == null
                 || (constraintInterface.ConditionClause != ConditionClause.WhereClause
                     && constraintInterface.ConditionClause != ConditionClause.Undefined))
             {
                 if (condition == null ||
                     condition.GetContextDependentConditionClause(projection) != ConditionClause.WhereClause)
-                        return string.Empty;
+                    return string.Empty;
             }
             else if (condition != null &&
                      condition.GetContextDependentConditionClause(projection) != ConditionClause.WhereClause)
@@ -985,7 +980,7 @@ namespace AdFactum.Data.Internal
                                     || (condition.CompareOperator == QueryOperator.NotLike_NoCaseSensitive))
                                 )
                             {
-                                var transform = (string) curValue;
+                                var transform = (string)curValue;
                                 transform = transform.Replace('*', '%');
 
                                 /*
@@ -1023,7 +1018,7 @@ namespace AdFactum.Data.Internal
 
                 if ((globalParameter != null) && (conditionString.Contains(Condition.GlobalJoin)))
                 {
-                    var vfd = (VirtualFieldDescription) condition.Field.FieldDescription;
+                    var vfd = (VirtualFieldDescription)condition.Field.FieldDescription;
                     object curValue = globalParameter[vfd.GlobalParameter];
 
                     if (condition.UseBindParameter)
@@ -1045,7 +1040,7 @@ namespace AdFactum.Data.Internal
                     if (subSelects != null)
                         for (int counter = 1; counter <= subSelects.Count; counter++)
                         {
-                            var subSelect = (SubSelect) subSelects[counter - 1];
+                            var subSelect = (SubSelect)subSelects[counter - 1];
                             var subSelectProjection = new ProjectionClass(subSelect.ResultType);
 
                             ICondition[] additionals = subSelect.AdditionalConditions;
@@ -1156,7 +1151,7 @@ namespace AdFactum.Data.Internal
                         ((globalParameter == null) || (!globalParameter.Contains(virtualField.GlobalParameter))))
                         continue;
 
-                    var identifier = (string) virtualAlias[virtualField.VirtualIdentifier];
+                    var identifier = (string)virtualAlias[virtualField.VirtualIdentifier];
                     result.Append(string.Concat(", ", identifier, ".", Condition.QUOTE_OPEN,
                                                 virtualField.ResultField.Name, Condition.QUOTE_CLOSE, " as ",
                                                 virtualField.Name));
@@ -1185,7 +1180,7 @@ namespace AdFactum.Data.Internal
                     if (globalParameter != null)
                     {
                         foreach (DictionaryEntry parameter in globalParameter)
-                            selectFunction = selectFunction.Replace((string) parameter.Key, TypeMapper.GetParamValueAsSQLString(parameter.Value));
+                            selectFunction = selectFunction.Replace((string)parameter.Key, TypeMapper.GetParamValueAsSQLString(parameter.Value));
                     }
 
                     result.Append(string.Concat(", ", selectFunction, " as ", identifier));
@@ -1229,9 +1224,6 @@ namespace AdFactum.Data.Internal
         {
             return AddParameter(parameters, ref numberOfParameter, value.GetType(), value, isUnicode);
         }
-
-        /// <summary> True, if the command shall not disposed after execution </summary>
-        public bool DontDisposeCommand { get; set;}
 
         /// <summary>
         /// Creates the parameter from an existing parameter.
@@ -1284,7 +1276,7 @@ namespace AdFactum.Data.Internal
             sql = quoteSearch.Replace(sql, match =>
                                                {
                                                    quoteEnumerator.MoveNext();
-                                                   return ((Match) quoteEnumerator.Current).Value;
+                                                   return ((Match)quoteEnumerator.Current).Value;
                                                });
 
             return sql;
@@ -1349,6 +1341,7 @@ namespace AdFactum.Data.Internal
             finally
             {
                 SqlOutput(adapter.SelectCommand, -1, DateTime.Now - start);
+                adapter.SelectCommand.DisposeSafe();
             }
         }
 
@@ -1386,8 +1379,15 @@ namespace AdFactum.Data.Internal
         {
             IDbCommand command = CreateCommand(execSql);
 
-            int count = ExecuteNonQuery(command);
-            return count;
+            try
+            {
+                int count = ExecuteNonQuery(command);
+                return count;
+            }
+            finally
+            {
+                command.DisposeSafe();
+            }
         }
 
         /// <summary>
@@ -1399,14 +1399,22 @@ namespace AdFactum.Data.Internal
         public int ExecuteWithParameter(string execSql, params object[] parameter)
         {
             IDbCommand command = CreateCommand(execSql);
-            int count = 1;
-            foreach (object curValue in parameter)
-            {
-                AddParameter(command.Parameters, ref count, curValue, false);
-            }
 
-            count = ExecuteNonQuery(command);
-            return count;
+            try
+            {
+                int count = 1;
+                foreach (object curValue in parameter)
+                {
+                    AddParameter(command.Parameters, ref count, curValue, false);
+                }
+
+                count = ExecuteNonQuery(command);
+                return count;
+            }
+            finally
+            {
+                command.DisposeSafe();
+            }
         }
 
         #endregion
@@ -1432,10 +1440,10 @@ namespace AdFactum.Data.Internal
         /// <param name="startRow">The start row.</param>
         /// <param name="endRow">The end row.</param>
         /// <returns></returns>
-        protected List<PersistentProperties> PrivateSelect(IDbCommand command, Dictionary<string, FieldDescription> fieldTemplates, int startRow, int endRow)
+        protected virtual List<PersistentProperties> PrivateSelect(IDbCommand command, Dictionary<string, FieldDescription> fieldTemplates, int startRow, int endRow)
         {
             var reader = ExecuteReader(command);
-            var result = new List<PersistentProperties> ();
+            var result = new List<PersistentProperties>();
             IList ids = new ArrayList();
 
             try
@@ -1542,8 +1550,8 @@ namespace AdFactum.Data.Internal
                                 if (persistField == null)
                                     resultFields.FieldProperties = resultFields.FieldProperties.Add(column, new SpecializedLink(fieldDescription));
                                 else
-                                    resultFields.FieldProperties = resultFields.FieldProperties.Add(column, new SpecializedLink(fieldDescription, 
-                                        ConvertSourceToTargetType(persistField,typeof(Guid))));
+                                    resultFields.FieldProperties = resultFields.FieldProperties.Add(column, new SpecializedLink(fieldDescription,
+                                        ConvertSourceToTargetType(persistField, typeof(Guid))));
                                 continue;
                             }
 
@@ -1678,28 +1686,28 @@ namespace AdFactum.Data.Internal
             if (targetType == typeof(Int64))
                 return source != DBNull.Value ? Convert.ToInt64(source) : (Int64)0;
 
-            if (targetType == typeof (Double))
+            if (targetType == typeof(Double))
                 return source != DBNull.Value ? Convert.ToDouble(source) : 0.0;
 
             if (targetType == typeof(Decimal))
                 return source != DBNull.Value ? Convert.ToDecimal(source) : (Decimal)0;
 
-            if ((targetType == typeof (Guid)) && (source is byte[]))
-                return new Guid((byte[]) source);
+            if ((targetType == typeof(Guid)) && (source is byte[]))
+                return new Guid((byte[])source);
 
             if (targetType == typeof(bool))
             {
                 if (source is Int16)
-                    return source.Equals((Int16) 1);
+                    return source.Equals((Int16)1);
 
                 if (source is Decimal)
-                    return source.Equals((Decimal) 1);
+                    return source.Equals((Decimal)1);
 
                 if (source is int)
                     return source.Equals(1);
             }
 
-            if ((targetType == typeof (string)) && (source == DBNull.Value))
+            if ((targetType == typeof(string)) && (source == DBNull.Value))
                 return string.Empty;
 
             return source;
@@ -1737,146 +1745,153 @@ namespace AdFactum.Data.Internal
 			 */
             IDbCommand command = CreateCommand();
 
-            var enumerator = fields.FieldProperties.GetEnumerator();
-            while (enumerator.MoveNext())
+            try
             {
-                /*
-				 * Nur hinzufügen, wenn es sich um ein Feld oder eine Verknüpfung handelt
-				 */
-                if (enumerator.Current.Value is Field)
+                var enumerator = fields.FieldProperties.GetEnumerator();
+                while (enumerator.MoveNext())
                 {
-                    var field = (Field)enumerator.Current.Value;
-
-                    if (field.FieldDescription.IsPrimary)
-                        primaryKey = field;
-
                     /*
-					 * Beim LastUpdate Feld das Datum setzen
-					 */
-                    if (field.Name.Equals(DBConst.LastUpdateField))
-                    {
-                        DateTime now = DateTime.Now;
-                        field.Value = new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second);
-                    }
-
-                    /*
-                     * Select Functions can't be inserted
+                     * Nur hinzufügen, wenn es sich um ein Feld oder eine Verknüpfung handelt
                      */
-                    string selectFunction = string.Empty;
-                    string insertFunction = string.Empty;
-                    if (field.FieldDescription.CustomProperty != null)
+                    if (enumerator.Current.Value is Field)
                     {
-                        selectFunction = field.FieldDescription.CustomProperty.MetaInfo.SelectFunction;
-                        insertFunction = field.FieldDescription.CustomProperty.MetaInfo.InsertFunction;
-                    }
+                        var field = (Field)enumerator.Current.Value;
 
-                    if (selectFunction.IsNotNullOrEmpty())
+                        if (field.FieldDescription.IsPrimary)
+                            primaryKey = field;
+
+                        /*
+                         * Beim LastUpdate Feld das Datum setzen
+                         */
+                        if (field.Name.Equals(DBConst.LastUpdateField))
+                        {
+                            DateTime now = DateTime.Now;
+                            field.Value = new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second);
+                        }
+
+                        /*
+                         * Select Functions can't be inserted
+                         */
+                        string selectFunction = string.Empty;
+                        string insertFunction = string.Empty;
+                        if (field.FieldDescription.CustomProperty != null)
+                        {
+                            selectFunction = field.FieldDescription.CustomProperty.MetaInfo.SelectFunction;
+                            insertFunction = field.FieldDescription.CustomProperty.MetaInfo.InsertFunction;
+                        }
+
+                        if (selectFunction.IsNotNullOrEmpty())
+                            continue;
+
+                        columns.Add(field);
+
+                        if (insertFunction.IsNotNullOrEmpty())
+                            values.Add(new InsertFunctionAttribute(insertFunction));
+                        else
+                            values.Add(field.Value);
                         continue;
+                    }
 
-                    columns.Add(field);
 
-                    if (insertFunction.IsNotNullOrEmpty())
-                        values.Add(new InsertFunctionAttribute(insertFunction));
-                    else
-                        values.Add(field.Value);
-                    continue;
+                    /*
+                     * ... oder eine Verknüpfung zu einem anderen VO
+                     */
+                    if (enumerator.Current.Value is Link)
+                    {
+                        var link = (Link)enumerator.Current.Value;
+                        columns.Add(link.Property);
+                        values.Add(link.Property.Value);
+
+                        columns.Add(link.LinkedTo);
+                        values.Add(link.LinkedTo.Value);
+
+                        continue;
+                    }
+
+                    if (enumerator.Current.Value is OneToManyLink)
+                    {
+                        continue;
+                    }
+
+                    /*
+                     * ... oder eine Verknüpfung zu einem anderen VO
+                     */
+                    if (enumerator.Current.Value is SpecializedLink)
+                    {
+                        var link = (SpecializedLink)enumerator.Current.Value;
+                        columns.Add(link.Property);
+                        values.Add(link.Property.Value);
+
+                        continue;
+                    }
                 }
+
+                /*
+                 * SQL bauen
+                 */
+                IEnumerator<Field> colEnumerator = columns.GetEnumerator();
+                IEnumerator valEnumerator = values.GetEnumerator();
+                bool first = true;
+                int counter = 1;
+
+                while (colEnumerator.MoveNext())
+                {
+                    valEnumerator.MoveNext();
+                    Object curValue = valEnumerator.Current;
+                    Field column = colEnumerator.Current;
+
+                    if (TypeMapper.IsDbNull(curValue) == false)
+                    {
+                        var dbFunction = curValue as DatabaseFunction;
+                        if (dbFunction == null)
+                        {
+                            IDbDataParameter parameter = AddParameter(command.Parameters, ref counter, curValue,
+                                                                      column.FieldDescription.CustomProperty.MetaInfo.
+                                                                          IsUnicode);
+                            valQuery += (!first ? ", " : " ") + GetParameterString(parameter);
+                        }
+                        else
+                        {
+                            valQuery += (!first ? ", " : " ") + dbFunction.Function;
+                        }
+
+                        colQuery += (!first ? ", " : " ") + TypeMapper.Quote(column.Name);
+                        first = false;
+                    }
+                }
+
+                query += string.Concat("(", colQuery, ") VALUES (", valQuery, ")");
+                command.CommandText = query;
 
 
                 /*
-				 * ... oder eine Verknüpfung zu einem anderen VO
-				 */
-                if (enumerator.Current.Value is Link)
-                {
-                    var link = (Link)enumerator.Current.Value;
-                    columns.Add(link.Property);
-                    values.Add(link.Property.Value);
-
-                    columns.Add(link.LinkedTo);
-                    values.Add(link.LinkedTo.Value);
-
-                    continue;
-                }
-
-                if (enumerator.Current.Value is OneToManyLink)
-                {
-                    continue;
-                }
+                 * SQL ausführen
+                 */
+                int rows = ExecuteNonQuery(command);
 
                 /*
-				 * ... oder eine Verknüpfung zu einem anderen VO
-				 */
-                if (enumerator.Current.Value is SpecializedLink)
+                 * If Primary Key is an auto increment key, the id has to be updated
+                 */
+                if ((primaryKey != null) && (primaryKey.FieldDescription.IsAutoIncrement))
+                    primaryKey.Value = SelectLastAutoId(tableName);
+
+                /*
+                 * Insert failed
+                 */
+                if (rows == 0)
                 {
-                    var link = (SpecializedLink)enumerator.Current.Value;
-                    columns.Add(link.Property);
-                    values.Add(link.Property.Value);
-
-                    continue;
+                    var exc = new InvalidOperationException("Could not insert object into table " + tableName);
+                    ErrorMessage(exc);
+                    throw exc;
                 }
+
+                UpdateLinkedObjects(tableName, primaryKey, fields);
+                return primaryKey != null ? primaryKey.Value : null;
             }
-
-            /*
-			 * SQL bauen
-			 */
-            IEnumerator<Field> colEnumerator = columns.GetEnumerator();
-            IEnumerator valEnumerator = values.GetEnumerator();
-            bool first = true;
-            int counter = 1;
-
-            while (colEnumerator.MoveNext())
+            finally
             {
-                valEnumerator.MoveNext();
-                Object curValue = valEnumerator.Current;
-                Field column = colEnumerator.Current;
-
-                if (TypeMapper.IsDbNull(curValue) == false)
-                {
-                    var dbFunction = curValue as DatabaseFunction;
-                    if (dbFunction == null)
-                    {
-                        IDbDataParameter parameter = AddParameter(command.Parameters, ref counter, curValue,
-                                                                  column.FieldDescription.CustomProperty.MetaInfo.
-                                                                      IsUnicode);
-                        valQuery += (!first ? ", " : " ") + GetParameterString(parameter);
-                    }
-                    else
-                    {
-                        valQuery += (!first ? ", " : " ") + dbFunction.Function;
-                    }
-
-                    colQuery += (!first ? ", " : " ") + TypeMapper.Quote(column.Name);
-                    first = false;
-                }
+                command.DisposeSafe();
             }
-
-            query += string.Concat("(", colQuery, ") VALUES (", valQuery, ")");
-            command.CommandText = query;
-
-
-            /*
-			 * SQL ausführen
-			 */
-            int rows = ExecuteNonQuery(command);
-
-            /*
-             * If Primary Key is an auto increment key, the id has to be updated
-             */
-            if ((primaryKey != null) && (primaryKey.FieldDescription.IsAutoIncrement))
-                primaryKey.Value = SelectLastAutoId(tableName);
-
-            /*
-             * Insert failed
-             */
-            if (rows == 0)
-            {
-                var exc = new InvalidOperationException("Could not insert object into table " + tableName);
-                ErrorMessage(exc);
-                throw exc;
-            }
-
-            UpdateLinkedObjects(tableName, primaryKey, fields);
-            return primaryKey != null ? primaryKey.Value : null;
         }
 
         /// <summary>
@@ -1912,14 +1927,14 @@ namespace AdFactum.Data.Internal
 				 */
                 if (enumerator.Current.Value is Field)
                 {
-                    var field = (Field) enumerator.Current.Value;
+                    var field = (Field)enumerator.Current.Value;
 
                     /*
 					 * Set the last update field
 					 */
                     if (field.Name.Equals(DBConst.LastUpdateField))
                     {
-                        checkUpdate = (DateTime) field.Value;
+                        checkUpdate = (DateTime)field.Value;
                         hasToCheckUpdate = !checkUpdate.Equals(DateTime.MinValue);
 
                         DateTime now = DateTime.Now;
@@ -1955,7 +1970,8 @@ namespace AdFactum.Data.Internal
                     else
                         /*
                          * Bei Modifizierung übernehmen
-                         */ if (field.IsModified)
+                         */
+                        if (field.IsModified)
                         {
                             columns.Add(field);
                             values.Add(field.Value);
@@ -2012,110 +2028,126 @@ namespace AdFactum.Data.Internal
              */
             if ((columns.Count == 1) && (hasToCheckUpdate))
             {
-                ((Field) fields.FieldProperties.Get(DBConst.LastUpdateField)).Value = checkUpdate;
+                ((Field)fields.FieldProperties.Get(DBConst.LastUpdateField)).Value = checkUpdate;
             }
             else
                 /*
                  * Update DB only if minimum one column has changed
-                 */ 
+                 */
                 if (columns.Count > 0)
                 {
                     IDbCommand command = CreateCommand();
-
-                    /*
-				    * SQL bauen
-				    */
-                    IEnumerator<Field> colEnumerator = columns.GetEnumerator();
-
-                    bool first = true;
-
-                    IEnumerator valEnumerator = values.GetEnumerator();
-                    int counter = 1;
-
-                    while (colEnumerator.MoveNext())
+                    try
                     {
-                        valEnumerator.MoveNext();
-                        object curValue = valEnumerator.Current;
-                        Field column = colEnumerator.Current;
+                        /*
+                        * SQL bauen
+                        */
+                        IEnumerator<Field> colEnumerator = columns.GetEnumerator();
 
-                        if (TypeMapper.IsDbNull(curValue) == false)
+                        bool first = true;
+
+                        IEnumerator valEnumerator = values.GetEnumerator();
+                        int counter = 1;
+
+                        while (colEnumerator.MoveNext())
                         {
-                            var dbFunction = curValue as DatabaseFunction;
-                            if (dbFunction == null)
+                            valEnumerator.MoveNext();
+                            object curValue = valEnumerator.Current;
+                            Field column = colEnumerator.Current;
+
+                            if (TypeMapper.IsDbNull(curValue) == false)
                             {
-                                IDbDataParameter parameter = AddParameter(command.Parameters, ref counter, curValue,
-                                                                          column.FieldDescription.CustomProperty.
-                                                                              MetaInfo.IsUnicode);
-                                colQuery += string.Concat((!first ? ", " : " "), TypeMapper.Quote(column.Name), " = ",
-                                                          GetParameterString(parameter));
+                                var dbFunction = curValue as DatabaseFunction;
+                                if (dbFunction == null)
+                                {
+                                    IDbDataParameter parameter = AddParameter(command.Parameters, ref counter, curValue,
+                                                                              column.FieldDescription.CustomProperty.
+                                                                                  MetaInfo.IsUnicode);
+                                    colQuery += string.Concat((!first ? ", " : " "), TypeMapper.Quote(column.Name),
+                                                              " = ",
+                                                              GetParameterString(parameter));
+                                }
+                                else
+                                {
+                                    colQuery += string.Concat((!first ? ", " : " "), TypeMapper.Quote(column.Name),
+                                                              " = ",
+                                                              dbFunction.Function);
+                                }
+
+                                first = false;
                             }
                             else
                             {
-                                colQuery += string.Concat((!first ? ", " : " "), TypeMapper.Quote(column.Name), " = ",
-                                                          dbFunction.Function);
+                                colQuery += string.Concat((!first ? ", " : " "), TypeMapper.Quote(column.Name),
+                                                          " = null");
+                                first = false;
                             }
-
-                            first = false;
                         }
-                        else
+
+                        /*
+                         * Primary Keys and so on ...
+                         */
+                        if (primaryId != null)
                         {
-                            colQuery += string.Concat((!first ? ", " : " "), TypeMapper.Quote(column.Name), " = null");
-                            first = false;
+                            IDbDataParameter primary1 = CreateParameter("primary1", primaryId.Value,
+                                                                        primaryId.FieldDescription.CustomProperty.
+                                                                            MetaInfo.
+                                                                            IsUnicode);
+                            command.Parameters.Add(primary1);
+
+                            if (parentObject != null)
+                            {
+                                IDbDataParameter primary2 = CreateParameter("primary2", parentObject.Value,
+                                                                            parentObject.FieldDescription.CustomProperty
+                                                                                .
+                                                                                MetaInfo.IsUnicode);
+                                command.Parameters.Add(primary2);
+
+                                query += string.Concat(colQuery, " WHERE ", ConcatedSchema, TypeMapper.Quote(tableName),
+                                                       ".",
+                                                       TypeMapper.Quote(primaryId.Name), "=",
+                                                       GetParameterString(primary1), " AND ",
+                                                       ConcatedSchema, TypeMapper.Quote(tableName), ".",
+                                                       TypeMapper.Quote(parentObject.Name), "=",
+                                                       GetParameterString(primary2));
+                            }
+                            else
+                                query += string.Concat(colQuery, " WHERE ", ConcatedSchema, TypeMapper.Quote(tableName),
+                                                       ".",
+                                                       TypeMapper.Quote(primaryId.Name), "=",
+                                                       GetParameterString(primary1));
                         }
-                    }
 
-                    /*
-				     * Primary Keys and so on ...
-				     */
-                    if (primaryId != null)
-                    {
-                        IDbDataParameter primary1 = CreateParameter("primary1", primaryId.Value,
-                                                                    primaryId.FieldDescription.CustomProperty.MetaInfo.
-                                                                        IsUnicode);
-                        command.Parameters.Add(primary1);
 
-                        if (parentObject != null)
+                        if (hasToCheckUpdate)
                         {
-                            IDbDataParameter primary2 = CreateParameter("primary2", parentObject.Value,
-                                                                        parentObject.FieldDescription.CustomProperty.
-                                                                            MetaInfo.IsUnicode);
-                            command.Parameters.Add(primary2);
+                            IDbDataParameter checkUpdateParam = CreateParameter("checkUpdate", checkUpdate, false);
+                            command.Parameters.Add(checkUpdateParam);
 
-                            query += string.Concat(colQuery, " WHERE ", ConcatedSchema, TypeMapper.Quote(tableName), ".",
-                                                   TypeMapper.Quote(primaryId.Name), "=", GetParameterString(primary1), " AND ",
-                                                   ConcatedSchema, TypeMapper.Quote(tableName), ".", TypeMapper.Quote(parentObject.Name), "=",
-                                                   GetParameterString(primary2));
+                            query += string.Concat(" AND ", TypeMapper.Quote(DBConst.LastUpdateField), "=",
+                                                   GetParameterString(checkUpdateParam));
                         }
-                        else
-                            query += string.Concat(colQuery, " WHERE ", ConcatedSchema, TypeMapper.Quote(tableName), ".",
-                                                   TypeMapper.Quote(primaryId.Name), "=", GetParameterString(primary1));
+
+                        /*
+                        * SQL ausführen
+                        */
+                        command.CommandText = query;
+                        int rows = ExecuteNonQuery(command);
+
+                        /*
+                         * Update fehlgeschlagen
+                         */
+                        if (rows == 0)
+                        {
+                            var exc = new DirtyObjectException("The object " + primaryId + " type " + tableName +
+                                                               " has been modified by an other person.") { Source = query };
+                            ErrorMessage(exc);
+                            throw exc;
+                        }
                     }
-
-
-                    if (hasToCheckUpdate)
+                    finally
                     {
-                        IDbDataParameter checkUpdateParam = CreateParameter("checkUpdate", checkUpdate, false);
-                        command.Parameters.Add(checkUpdateParam);
-
-                        query += string.Concat(" AND ", TypeMapper.Quote(DBConst.LastUpdateField), "=",
-                                               GetParameterString(checkUpdateParam));
-                    }
-
-                    /*
-				    * SQL ausführen
-				    */
-                    command.CommandText = query;
-                    int rows = ExecuteNonQuery(command);
-
-                    /*
-				     * Update fehlgeschlagen
-				     */
-                    if (rows == 0)
-                    {
-                        var exc = new DirtyObjectException("The object " + primaryId + " type " + tableName +
-                                                     " has been modified by an other person.") {Source = query};
-                        ErrorMessage(exc);
-                        throw exc;
+                        command.DisposeSafe();
                     }
                 }
 
@@ -2134,39 +2166,48 @@ namespace AdFactum.Data.Internal
                                 Dictionary<string, FieldDescription> fieldTemplates, IDictionary globalParameter)
         {
             IDbCommand command = CreateCommand();
-            IDictionary virtualAlias = new HybridDictionary();
-            int index = 1;
 
-            /*
-			 * CreateSQL
-			 */
-            string fromClause = PrivateFromClause(projection, null, command.Parameters, fieldTemplates, globalParameter,
-                                                  virtualAlias, ref index);
+            try
+            {
+                IDictionary virtualAlias = new HybridDictionary();
+                int index = 1;
 
-            IDbDataParameter parameter = CreateParameter("PrimaryKey", id, false);
-            command.Parameters.Add(parameter);
-            string virtualWhere = PrivateVirtualWhereClause(fieldTemplates, globalParameter, virtualAlias,
-                                                            command.Parameters, ref index);
-            string query = string.Concat("SELECT ", projection.GetColumns((ICondition)null, null), " "
-                                         , BuildVirtualFields(fieldTemplates, globalParameter, virtualAlias)
-                                         , BuildSelectFunctionFields(fieldTemplates, globalParameter)
-                                         , " FROM "
-                                         , fromClause
-                                         , " WHERE "
-                                         , projection.PrimaryKeyColumns, " = ", GetParameterString(parameter),
-                                         (virtualWhere.Length != 0 ? " AND " + virtualWhere : ""));
+                /*
+                 * CreateSQL
+                 */
+                string fromClause = PrivateFromClause(projection, null, command.Parameters, fieldTemplates,
+                                                      globalParameter,
+                                                      virtualAlias, ref index);
 
-            string grouping = projection.GetGrouping();
-            if (!string.IsNullOrEmpty(grouping))
-                query = string.Concat(query, " GROUP BY ", grouping);
+                IDbDataParameter parameter = CreateParameter("PrimaryKey", id, false);
+                command.Parameters.Add(parameter);
+                string virtualWhere = PrivateVirtualWhereClause(fieldTemplates, globalParameter, virtualAlias,
+                                                                command.Parameters, ref index);
+                string query = string.Concat("SELECT ", projection.GetColumns((ICondition)null, null), " "
+                                             , BuildVirtualFields(fieldTemplates, globalParameter, virtualAlias)
+                                             , BuildSelectFunctionFields(fieldTemplates, globalParameter)
+                                             , " FROM "
+                                             , fromClause
+                                             , " WHERE "
+                                             , projection.PrimaryKeyColumns, " = ", GetParameterString(parameter),
+                                             (virtualWhere.Length != 0 ? " AND " + virtualWhere : ""));
 
-            command.CommandText = query;
+                string grouping = projection.GetGrouping();
+                if (!string.IsNullOrEmpty(grouping))
+                    query = string.Concat(query, " GROUP BY ", grouping);
 
-            /*
-			 * Execute
-			 */
-            var result = PrivateSelect(command, fieldTemplates, 0, int.MaxValue);
-            return result.FirstOrDefault();
+                command.CommandText = query;
+
+                /*
+                 * Execute
+                 */
+                var result = PrivateSelect(command, fieldTemplates, 0, int.MaxValue);
+                return result.FirstOrDefault();
+            }
+            finally
+            {
+                command.DisposeSafe();
+            }
         }
 
         /// <summary>
@@ -2187,59 +2228,72 @@ namespace AdFactum.Data.Internal
 			*/
             IDbCommand command = CreateCommand();
 
-            IDbDataParameter parameter = CreateParameter("primaryKey", id, false);
-            command.Parameters.Add(parameter);
-
-            string linkFields = string.Concat(
-                TypeMapper.Quote(DBConst.LinkIdField), ",",
-                TypeMapper.Quote(DBConst.ParentObjectField), ",",
-                TypeMapper.Quote(DBConst.PropertyField), ",",
-                TypeMapper.Quote(DBConst.LinkedToField));
-
-            string sql = string.Concat("SELECT ", linkFields, " FROM ", ConcatedSchema, TypeMapper.Quote(derivedTableName)
-                                       , " WHERE ", TypeMapper.Quote(DBConst.ParentObjectField), " = ", GetParameterString(parameter),
-                                       " ORDER BY ", TypeMapper.Quote(DBConst.LinkIdField));
-
-            command.CommandText = sql;
-            IDataReader reader = ExecuteReader(command);
-
             try
             {
-                var projection = ReflectionHelper.GetProjection(parentType, null);
-                Type parentPrimaryKeyType = projection.GetPrimaryKeyDescription().ContentType;
+                IDbDataParameter parameter = CreateParameter("primaryKey", id, false);
+                command.Parameters.Add(parameter);
 
-                /*
-                * Add child listings
-                */
-                var resultHash = new SortedList();
-                Dictionary<string, int> fieldIndexDict;
-                Dictionary<int, string> indexFieldDict;
-                GetColumns(reader, null, out fieldIndexDict, out indexFieldDict);
-                while (reader.Read())
+                string linkFields = string.Concat(
+                    TypeMapper.Quote(DBConst.LinkIdField), ",",
+                    TypeMapper.Quote(DBConst.ParentObjectField), ",",
+                    TypeMapper.Quote(DBConst.PropertyField), ",",
+                    TypeMapper.Quote(DBConst.LinkedToField));
+
+                string sql = string.Concat("SELECT ", linkFields, " FROM ", ConcatedSchema,
+                                           TypeMapper.Quote(derivedTableName)
+                                           , " WHERE ", TypeMapper.Quote(DBConst.ParentObjectField), " = ",
+                                           GetParameterString(parameter),
+                                           " ORDER BY ", TypeMapper.Quote(DBConst.LinkIdField));
+
+                command.CommandText = sql;
+                IDataReader reader = ExecuteReader(command);
+
+                try
                 {
-                    object linkId = ConvertSourceToTargetType(reader.GetValue(0), linkIdType);
+                    var projection = ReflectionHelper.GetProjection(parentType, null);
+                    Type parentPrimaryKeyType = projection.GetPrimaryKeyDescription().ContentType;
 
-                    var listlink = new ListLink(
-                        null,
-                        linkId, parentType,
-                        TypeMapper.ConvertToType(parentPrimaryKeyType, reader.GetValue(fieldIndexDict[DBConst.ParentObjectField])),
-                        // Parent Id
+                    /*
+                    * Add child listings
+                    */
+                    var resultHash = new SortedList();
+                    Dictionary<string, int> fieldIndexDict;
+                    Dictionary<int, string> indexFieldDict;
+                    GetColumns(reader, null, out fieldIndexDict, out indexFieldDict);
+                    while (reader.Read())
+                    {
+                        object linkId = ConvertSourceToTargetType(reader.GetValue(0), linkIdType);
 
-                        TypeMapper.ConvertToType(linkedPrimaryKeyType, reader.GetValue(fieldIndexDict[DBConst.PropertyField])),
-                        // Property
+                        var listlink = new ListLink(
+                            null,
+                            linkId, parentType,
+                            TypeMapper.ConvertToType(parentPrimaryKeyType,
+                                                     reader.GetValue(fieldIndexDict[DBConst.ParentObjectField])),
+                            // Parent Id
 
-                        (string) ConvertSourceToTargetType(reader.GetValue(fieldIndexDict[DBConst.LinkedToField]), typeof (string))); 
+                            TypeMapper.ConvertToType(linkedPrimaryKeyType,
+                                                     reader.GetValue(fieldIndexDict[DBConst.PropertyField])),
+                            // Property
+
+                            (string)
+                            ConvertSourceToTargetType(reader.GetValue(fieldIndexDict[DBConst.LinkedToField]),
+                                                      typeof(string)));
                         // Link To
 
-                    resultHash.Add(linkId, listlink);
-                }
+                        resultHash.Add(linkId, listlink);
+                    }
 
-                return resultHash;
+                    return resultHash;
+                }
+                finally
+                {
+                    reader.Close();
+                    reader.Dispose();
+                }
             }
             finally
             {
-                reader.Close();
-                reader.Dispose();
+                command.DisposeSafe();
             }
         }
 
@@ -2260,57 +2314,69 @@ namespace AdFactum.Data.Internal
             */
             IDbCommand command = CreateCommand();
 
-
-            IDbDataParameter parameter = CreateParameter("primaryKey", objectId, false);
-            command.Parameters.Add(parameter);
-
-            string linkFields = string.Concat(
-                 TypeMapper.Quote(DBConst.ParentObjectField), ",",
-                 TypeMapper.Quote(DBConst.PropertyField), ",",
-                 TypeMapper.Quote(DBConst.LinkedToField));
-
-            string sql = string.Concat("SELECT ", linkFields, " FROM ", ConcatedSchema, TypeMapper.Quote(derivedTableName)
-                                       , " WHERE ", TypeMapper.Quote(DBConst.ParentObjectField), " = ", GetParameterString(parameter));
-
-            command.CommandText = sql;
-            IDataReader reader = ExecuteReader(command);
-
             try
             {
-                var projection = ReflectionHelper.GetProjection(parentType, null);
-                Type parentPrimaryKeyType = projection.GetPrimaryKeyDescription().ContentType;
+                IDbDataParameter parameter = CreateParameter("primaryKey", objectId, false);
+                command.Parameters.Add(parameter);
 
-                /*
-                * Add child listings
-                */
-                IList list = new ArrayList();
-                Dictionary<string, int> fieldIndexDict;
-                Dictionary<int, string> indexFieldDict;
-                GetColumns(reader, null, out fieldIndexDict, out indexFieldDict);
-                while (reader.Read())
+                string linkFields = string.Concat(
+                    TypeMapper.Quote(DBConst.ParentObjectField), ",",
+                    TypeMapper.Quote(DBConst.PropertyField), ",",
+                    TypeMapper.Quote(DBConst.LinkedToField));
+
+                string sql = string.Concat("SELECT ", linkFields, " FROM ", ConcatedSchema,
+                                           TypeMapper.Quote(derivedTableName)
+                                           , " WHERE ", TypeMapper.Quote(DBConst.ParentObjectField), " = ",
+                                           GetParameterString(parameter));
+
+                command.CommandText = sql;
+                IDataReader reader = ExecuteReader(command);
+
+                try
                 {
-                    var listlink = new ListLink(
-                        null, 
-                        (string) ConvertSourceToTargetType(reader.GetValue(fieldIndexDict[DBConst.LinkedToField]),typeof (string)), 
-                        // Link To
-                        
-                        parentType,
-                        TypeMapper.ConvertToType(parentPrimaryKeyType, reader.GetValue(fieldIndexDict[DBConst.ParentObjectField])),
-                        // Parent Id
+                    var projection = ReflectionHelper.GetProjection(parentType, null);
+                    Type parentPrimaryKeyType = projection.GetPrimaryKeyDescription().ContentType;
 
-                        TypeMapper.ConvertToType(linkedPrimaryKeyType, reader.GetValue(fieldIndexDict[DBConst.PropertyField]))
-                        // Property
-                        );
+                    /*
+                    * Add child listings
+                    */
+                    IList list = new ArrayList();
+                    Dictionary<string, int> fieldIndexDict;
+                    Dictionary<int, string> indexFieldDict;
+                    GetColumns(reader, null, out fieldIndexDict, out indexFieldDict);
+                    while (reader.Read())
+                    {
+                        var listlink = new ListLink(
+                            null,
+                            (string)
+                            ConvertSourceToTargetType(reader.GetValue(fieldIndexDict[DBConst.LinkedToField]),
+                                                      typeof(string)),
+                            // Link To
 
-                    list.Add(listlink);
+                            parentType,
+                            TypeMapper.ConvertToType(parentPrimaryKeyType,
+                                                     reader.GetValue(fieldIndexDict[DBConst.ParentObjectField])),
+                            // Parent Id
+
+                            TypeMapper.ConvertToType(linkedPrimaryKeyType,
+                                                     reader.GetValue(fieldIndexDict[DBConst.PropertyField]))
+                            // Property
+                            );
+
+                        list.Add(listlink);
+                    }
+
+                    return list;
                 }
-
-                return list;
+                finally
+                {
+                    reader.Close();
+                    reader.Dispose();
+                }
             }
             finally
             {
-                reader.Close();
-                reader.Dispose();
+                command.DisposeSafe();
             }
         }
 
@@ -2322,55 +2388,71 @@ namespace AdFactum.Data.Internal
         /// <param name="fieldTemplates">Field description.</param>
         public virtual void Delete(String tableName, Object id, Dictionary<string, FieldDescription> fieldTemplates)
         {
-            IDbCommand command;
+            IDbCommand command = null;
             IDbDataParameter parameter;
 
             foreach (var entry in fieldTemplates)
             {
-                FieldDescription field = entry.Value;
-                if (!field.FieldType.Equals(typeof (ListLink)))
-                    continue;
+                try
+                {
+                    FieldDescription field = entry.Value;
+                    if (!field.FieldType.Equals(typeof(ListLink)))
+                        continue;
 
-                String complexMember = entry.Key;
+                    String complexMember = entry.Key;
 
+                    /*
+                     * Delete childs on table
+                     */
+                    command = CreateCommand();
+                    parameter = CreateParameter("PrimaryKey", id, false);
+                    command.Parameters.Add(parameter);
+
+                    string subTable = string.Concat(ConcatedSchema,
+                                                    TypeMapper.Quote(CreateChildTableName(tableName, complexMember)));
+                    string subQuery = string.Concat("DELETE FROM ", subTable, " WHERE ", subTable, ".",
+                                                    TypeMapper.Quote(DBConst.ParentObjectField), "=",
+                                                    GetParameterString(parameter));
+
+                    command.CommandText = subQuery;
+                    ExecuteNonQuery(command);
+                }
+                finally
+                {
+                    command.DisposeSafe();
+                }
+            }
+            try
+            {
                 /*
-				 * Delete childs on table
-				 */
+                 * Build query
+                 */
                 command = CreateCommand();
                 parameter = CreateParameter("PrimaryKey", id, false);
                 command.Parameters.Add(parameter);
 
-                string subTable = string.Concat(ConcatedSchema, TypeMapper.Quote(CreateChildTableName(tableName, complexMember)));
-                string subQuery = string.Concat("DELETE FROM ", subTable, " WHERE ", subTable, ".",
-                                                TypeMapper.Quote(DBConst.ParentObjectField), "=", GetParameterString(parameter));
+                string primaryKey = GetPrimaryKeyColumn(fieldTemplates);
 
-                command.CommandText = subQuery;
-                ExecuteNonQuery(command);
+                string table = string.Concat(ConcatedSchema, TypeMapper.Quote(tableName));
+                string query = string.Concat("DELETE FROM ", table, " WHERE ", table, ".", TypeMapper.Quote(primaryKey),
+                                             "=",
+                                             GetParameterString(parameter));
+                command.CommandText = query;
+
+                /*
+                 * Execute query
+                 */
+                int rows = ExecuteNonQuery(command);
+                if ((rows == 0) && (SqlTracer != null) && (SqlTracer.TraceErrorEnabled))
+                {
+                    SqlTracer.ErrorMessage(
+                        string.Concat("The row with ", id.ToString(), " could not be deleted (table: ", tableName, ")"),
+                        "BasePersister");
+                }
             }
-
-            /*
-			 * Build query
-			 */
-            command = CreateCommand();
-            parameter = CreateParameter("PrimaryKey", id, false);
-            command.Parameters.Add(parameter);
-
-            string primaryKey = GetPrimaryKeyColumn(fieldTemplates);
-
-            string table = string.Concat(ConcatedSchema, TypeMapper.Quote(tableName));
-            string query = string.Concat("DELETE FROM ", table, " WHERE ", table, ".", TypeMapper.Quote(primaryKey), "=",
-                                         GetParameterString(parameter));
-            command.CommandText = query;
-
-            /*
-			 * Execute query
-			 */
-            int rows = ExecuteNonQuery(command);
-            if ((rows == 0) && (SqlTracer != null) && (SqlTracer.TraceErrorEnabled))
+            finally
             {
-                SqlTracer.ErrorMessage(
-                    string.Concat("The row with ", id.ToString(), " could not be deleted (table: ", tableName, ")"),
-                    "BasePersister");
+                command.DisposeSafe();
             }
         }
 
@@ -2386,48 +2468,60 @@ namespace AdFactum.Data.Internal
                                        OrderBy orderBy)
         {
             IDbCommand command = CreateCommand();
-            IDictionary virtualAlias = new HybridDictionary();
 
-            int index = 1;
-            string withClause = PrivateWithClause(projection, whereClause, command.Parameters, null, null, virtualAlias,
-                                                  ref index);
-            string fromClause = PrivateFromClause(projection, whereClause, command.Parameters, null, null, virtualAlias,
-                                                  ref index);
-            string query = string.Concat(withClause, "SELECT ", projection.PrimaryKeyColumns, " FROM ", fromClause);
-
-            /*
-			 * Query bauen
-			 */
-            query += PrivateCompleteWhereClause(projection, null, whereClause, null, virtualAlias, command.Parameters,
-                                                ref index);
-
-            string grouping = projection.GetGrouping();
-            if (!string.IsNullOrEmpty(grouping))
-                query = string.Concat(query, " GROUP BY ", grouping);
-
-            query += PrivateCompleteHavingClause(projection, null, whereClause, null, virtualAlias, command.Parameters,
-                                                 ref index);
-            query += (orderBy != null ? string.Concat(" ORDER BY ", orderBy.Columns, " ", orderBy.Ordering) : "");
-
-            /*
-			 * Die IDs selektieren und Objekt laden
-			 */
-            command.CommandText = query;
-
-            var ids = new ArrayList();
-            IDataReader reader = ExecuteReader(command);
             try
             {
-                while (reader.Read())
-                    ids.Add(ConvertSourceToTargetType(reader.GetValue(0), typeof(Guid)));
+                IDictionary virtualAlias = new HybridDictionary();
+
+                int index = 1;
+                string withClause = PrivateWithClause(projection, whereClause, command.Parameters, null, null,
+                                                      virtualAlias,
+                                                      ref index);
+                string fromClause = PrivateFromClause(projection, whereClause, command.Parameters, null, null,
+                                                      virtualAlias,
+                                                      ref index);
+                string query = string.Concat(withClause, "SELECT ", projection.PrimaryKeyColumns, " FROM ", fromClause);
+
+                /*
+                 * Query bauen
+                 */
+                query += PrivateCompleteWhereClause(projection, null, whereClause, null, virtualAlias,
+                                                    command.Parameters,
+                                                    ref index);
+
+                string grouping = projection.GetGrouping();
+                if (!string.IsNullOrEmpty(grouping))
+                    query = string.Concat(query, " GROUP BY ", grouping);
+
+                query += PrivateCompleteHavingClause(projection, null, whereClause, null, virtualAlias,
+                                                     command.Parameters,
+                                                     ref index);
+                query += (orderBy != null ? string.Concat(" ORDER BY ", orderBy.Columns, " ", orderBy.Ordering) : "");
+
+                /*
+                 * Die IDs selektieren und Objekt laden
+                 */
+                command.CommandText = query;
+
+                var ids = new ArrayList();
+                IDataReader reader = ExecuteReader(command);
+                try
+                {
+                    while (reader.Read())
+                        ids.Add(ConvertSourceToTargetType(reader.GetValue(0), typeof(Guid)));
+                }
+                finally
+                {
+                    reader.Close();
+                    reader.Dispose();
+                }
+
+                return ids;
             }
             finally
             {
-                reader.Close();
-                reader.Dispose();
+                command.DisposeSafe();
             }
-
-            return ids;
         }
 
         /// <summary>
@@ -2443,24 +2537,34 @@ namespace AdFactum.Data.Internal
 			 * Do selection
 			 */
             IDbCommand command = CreateCommand();
-            IDbDataParameter parameter = CreateParameter("PrimaryKey", id, false);
-            command.Parameters.Add(parameter);
 
-            string query = string.Concat("SELECT ", TypeMapper.Quote(primaryKeyColumn), " FROM ", ConcatedSchema, TypeMapper.Quote(tableName),
-                                         " WHERE ", TypeMapper.Quote(primaryKeyColumn), "=", GetParameterString(parameter));
-
-            command.CommandText = query;
-
-            IDataReader reader = ExecuteReader(command);
             try
             {
-                bool result = reader.Read();
-                return result;
+                IDbDataParameter parameter = CreateParameter("PrimaryKey", id, false);
+                command.Parameters.Add(parameter);
+
+                string query = string.Concat("SELECT ", TypeMapper.Quote(primaryKeyColumn), " FROM ", ConcatedSchema,
+                                             TypeMapper.Quote(tableName),
+                                             " WHERE ", TypeMapper.Quote(primaryKeyColumn), "=",
+                                             GetParameterString(parameter));
+
+                command.CommandText = query;
+
+                IDataReader reader = ExecuteReader(command);
+                try
+                {
+                    bool result = reader.Read();
+                    return result;
+                }
+                finally
+                {
+                    reader.Close();
+                    reader.Dispose();
+                }
             }
-            finally 
+            finally
             {
-                reader.Close();
-                reader.Dispose();
+                command.DisposeSafe();
             }
         }
 
@@ -2495,18 +2599,26 @@ namespace AdFactum.Data.Internal
         {
             IDbCommand command = CreateCommand(selectSql);
 
-            if (selectParameter != null)
+            try
             {
-                IDictionaryEnumerator enumerator = selectParameter.GetEnumerator();
-                while (enumerator.MoveNext())
+                if (selectParameter != null)
                 {
-                    IDbDataParameter parameter = CreateParameter(((string)enumerator.Key).Replace("@", ""), enumerator.Value, false);
-                    command.Parameters.Add(parameter);
+                    IDictionaryEnumerator enumerator = selectParameter.GetEnumerator();
+                    while (enumerator.MoveNext())
+                    {
+                        IDbDataParameter parameter = CreateParameter(((string)enumerator.Key).Replace("@", ""),
+                                                                     enumerator.Value, false);
+                        command.Parameters.Add(parameter);
+                    }
                 }
-            }
 
-            List<PersistentProperties> result = PrivateSelect(command, fieldTemplates, 0, int.MaxValue);
-            return result;
+                List<PersistentProperties> result = PrivateSelect(command, fieldTemplates, 0, int.MaxValue);
+                return result;
+            }
+            finally
+            {
+                command.DisposeSafe();
+            }
         }
 
         /// <summary>
@@ -2558,37 +2670,48 @@ namespace AdFactum.Data.Internal
             IDictionary virtualAlias = new HybridDictionary();
 
             IDbCommand command = CreateCommand();
-            string grouping = projection.GetGrouping();
 
-            string withClause = PrivateWithClause(projection, whereClause, command.Parameters, null, null, virtualAlias,
-                                                  ref index);
-            string tables = PrivateFromClause(projection, whereClause, command.Parameters, fieldTemplates,
-                                              globalParameter, virtualAlias, ref index);
-            string query = string.Concat(withClause, "SELECT COUNT(", string.IsNullOrEmpty(grouping) ? "*" : "count(*)",
-                                         ") FROM ", tables,
-                                         PrivateCompleteWhereClause(projection, null, whereClause, globalParameter,
-                                                                    virtualAlias, command.Parameters, ref index));
-
-            if (!string.IsNullOrEmpty(grouping))
-                query = string.Concat(query, " GROUP BY ", grouping);
-
-            query += PrivateCompleteHavingClause(projection, fieldTemplates, whereClause, globalParameter, virtualAlias,
-                                                 command.Parameters, ref index);
-
-            command.CommandText = query;
-
-            IDataReader reader = ExecuteReader(command);
             try
             {
-                if (reader.Read())
-                    numberOfRows = (int)ConvertSourceToTargetType(reader.GetValue(0), typeof(Int32));
+                string grouping = projection.GetGrouping();
 
-                return numberOfRows;
+                string withClause = PrivateWithClause(projection, whereClause, command.Parameters, null, null,
+                                                      virtualAlias,
+                                                      ref index);
+                string tables = PrivateFromClause(projection, whereClause, command.Parameters, fieldTemplates,
+                                                  globalParameter, virtualAlias, ref index);
+                string query = string.Concat(withClause, "SELECT COUNT(",
+                                             string.IsNullOrEmpty(grouping) ? "*" : "count(*)",
+                                             ") FROM ", tables,
+                                             PrivateCompleteWhereClause(projection, null, whereClause, globalParameter,
+                                                                        virtualAlias, command.Parameters, ref index));
+
+                if (!string.IsNullOrEmpty(grouping))
+                    query = string.Concat(query, " GROUP BY ", grouping);
+
+                query += PrivateCompleteHavingClause(projection, fieldTemplates, whereClause, globalParameter,
+                                                     virtualAlias,
+                                                     command.Parameters, ref index);
+
+                command.CommandText = query;
+
+                IDataReader reader = ExecuteReader(command);
+                try
+                {
+                    if (reader.Read())
+                        numberOfRows = (int)ConvertSourceToTargetType(reader.GetValue(0), typeof(Int32));
+
+                    return numberOfRows;
+                }
+                finally
+                {
+                    reader.Close();
+                    reader.Dispose();
+                }
             }
-            finally 
+            finally
             {
-                reader.Close();
-                reader.Dispose();
+                command.DisposeSafe();
             }
         }
 
@@ -2696,7 +2819,7 @@ namespace AdFactum.Data.Internal
 
             while (enumParam.MoveNext())
             {
-                var parameter = (IDbDataParameter) enumParam.Current;
+                var parameter = (IDbDataParameter)enumParam.Current;
                 string paramValue = TypeMapper.GetParamValueAsSQLString(parameter.Value);
 
                 /*
@@ -2741,11 +2864,11 @@ namespace AdFactum.Data.Internal
             var keyGroupConstraints = new Hashtable();
             int constraintNumber = (uniqueConstraintCount[tableName] == null)
                                        ? 1
-                                       : (int) uniqueConstraintCount[tableName];
+                                       : (int)uniqueConstraintCount[tableName];
 
             foreach (DictionaryEntry entry in fieldTemplates)
             {
-                var field = (FieldDescription) entry.Value;
+                var field = (FieldDescription)entry.Value;
 
                 /*
 				 * Is there a unique field?
@@ -2773,15 +2896,15 @@ namespace AdFactum.Data.Internal
                     IEnumerator enumerator = field.CustomProperty.MetaInfo.UniqueKeyGroups.GetEnumerator();
                     while (enumerator.MoveNext())
                     {
-                        var group = (KeyGroup) enumerator.Current;
+                        var group = (KeyGroup)enumerator.Current;
                         if (group.Number > 0)
                         {
                             if (keyGroupConstraints[group.Number] == null)
                                 keyGroupConstraints[group.Number] = new SortedList();
 
-                            int position = ((SortedList) keyGroupConstraints[group.Number]).Count;
+                            int position = ((SortedList)keyGroupConstraints[group.Number]).Count;
                             if (group.Ordering > 0) position = group.Ordering;
-                            ((SortedList) keyGroupConstraints[group.Number]).Add(position, constraint);
+                            ((SortedList)keyGroupConstraints[group.Number]).Add(position, constraint);
                         }
                     }
                 }
@@ -2857,7 +2980,7 @@ namespace AdFactum.Data.Internal
 
                     int constraintNumber = (uniqueConstraintCount[tableName] == null)
                                                ? 1
-                                               : (int) uniqueConstraintCount[tableName];
+                                               : (int)uniqueConstraintCount[tableName];
 
                     string constraint = string.Concat(TypeMapper.Quote(fieldForKey), ", ", TypeMapper.Quote(fieldForGlobalParameter));
                     if (ContainedInUniqueIdentifierList(uniqueConstraints, tableName, constraint))
@@ -2903,8 +3026,8 @@ namespace AdFactum.Data.Internal
         /// Updates the Linked Fields - that a subroutine of the UpdatedLinkedObjects method
         /// </summary>
         private void UpdatedLinkedFields<TKey>(
-            IEnumerator<KeyValuePair<string, Dictionary<TKey, IModification>>> enumerator, 
-            string tableName, 
+            IEnumerator<KeyValuePair<string, Dictionary<TKey, IModification>>> enumerator,
+            string tableName,
             Field primaryId)
         {
             var propertyList = enumerator.Current.Value;
@@ -2924,8 +3047,8 @@ namespace AdFactum.Data.Internal
                         Insert(childTable, dictionaryLink.Fields(this), dictionaryLink.GetTemplates());
 
                         // It's important to check, if the key != null. 
-                        // If true, it is a dictionary link which means, that the content may be changed.
-                        // If false, it is a list link. List items can only be deleted or inserted, but never updated.
+                    // If true, it is a dictionary link which means, that the content may be changed.
+                    // If false, it is a list link. List items can only be deleted or inserted, but never updated.
                     else if (dictionaryLink.IsModified && dictionaryLink.Key != null)
                         Update(childTable, dictionaryLink.Fields(this), dictionaryLink.GetTemplates());
 
@@ -2952,7 +3075,7 @@ namespace AdFactum.Data.Internal
             {
                 var field = de.Value as FieldDescription;
                 if ((field != null) && (field.IsPrimary))
-                    return (string) de.Key;
+                    return (string)de.Key;
             }
 
             return string.Empty;
@@ -2975,50 +3098,60 @@ namespace AdFactum.Data.Internal
         {
             IDbCommand command = CreateCommand();
 
-            int index = 1;
-            IDictionary virtualAlias = new HybridDictionary();
-            string withClause = PrivateWithClause(projection, whereClause, command.Parameters, null, null, virtualAlias,
-                                                  ref index);
+            try
+            {
+                int index = 1;
+                IDictionary virtualAlias = new HybridDictionary();
+                string withClause = PrivateWithClause(projection, whereClause, command.Parameters, null, null,
+                                                      virtualAlias,
+                                                      ref index);
 
-            string fromClause = PrivateFromClause(projection, whereClause, command.Parameters, fieldTemplates,
-                                                  globalParameter, virtualAlias, ref index);
-            string virtualFields = BuildVirtualFields(fieldTemplates, globalParameter, virtualAlias);
-            string selectFunctions = BuildSelectFunctionFields(fieldTemplates, globalParameter);
+                string fromClause = PrivateFromClause(projection, whereClause, command.Parameters, fieldTemplates,
+                                                      globalParameter, virtualAlias, ref index);
+                string virtualFields = BuildVirtualFields(fieldTemplates, globalParameter, virtualAlias);
+                string selectFunctions = BuildSelectFunctionFields(fieldTemplates, globalParameter);
 
-            /*
-             * SQL Bauen
-             */
+                /*
+                 * SQL Bauen
+                 */
 
-            String query = string.Concat(withClause
-                                         , distinct ? "SELECT DISTINCT " : "SELECT ",
-                                         projection.GetColumns(whereClause, additonalColumns), " "
-                                         , virtualFields
-                                         , selectFunctions
-                                         , BuildJoinFields(whereClause)
-                                         , " FROM "
-                                         , fromClause);
+                String query = string.Concat(withClause
+                                             , distinct ? "SELECT DISTINCT " : "SELECT ",
+                                             projection.GetColumns(whereClause, additonalColumns), " "
+                                             , virtualFields
+                                             , selectFunctions
+                                             , BuildJoinFields(whereClause)
+                                             , " FROM "
+                                             , fromClause);
 
-            /*
-             * Query bauen
-             */
-            query += PrivateCompleteWhereClause(projection, fieldTemplates, whereClause, globalParameter, virtualAlias,
-                                                command.Parameters, ref index);
+                /*
+                 * Query bauen
+                 */
+                query += PrivateCompleteWhereClause(projection, fieldTemplates, whereClause, globalParameter,
+                                                    virtualAlias,
+                                                    command.Parameters, ref index);
 
-            string grouping = projection.GetGrouping();
-            if (!string.IsNullOrEmpty(grouping))
-                query = string.Concat(query, " GROUP BY ", grouping);
+                string grouping = projection.GetGrouping();
+                if (!string.IsNullOrEmpty(grouping))
+                    query = string.Concat(query, " GROUP BY ", grouping);
 
-            query += PrivateCompleteHavingClause(projection, fieldTemplates, whereClause, globalParameter, virtualAlias,
-                                                 command.Parameters, ref index);
-            query += (orderBy != null ? string.Concat(" ORDER BY ", orderBy.Columns, " ", orderBy.Ordering) : "");
+                query += PrivateCompleteHavingClause(projection, fieldTemplates, whereClause, globalParameter,
+                                                     virtualAlias,
+                                                     command.Parameters, ref index);
+                query += (orderBy != null ? string.Concat(" ORDER BY ", orderBy.Columns, " ", orderBy.Ordering) : "");
 
-            /*
-             * Die IDs selektieren und Objekt laden
-             */
-            command.CommandText = query;
+                /*
+                 * Die IDs selektieren und Objekt laden
+                 */
+                command.CommandText = query;
 
-            List<PersistentProperties> result = PrivateSelect(command, fieldTemplates, 0, int.MaxValue);
-            return result;
+                List<PersistentProperties> result = PrivateSelect(command, fieldTemplates, 0, int.MaxValue);
+                return result;
+            }
+            finally
+            {
+                command.DisposeSafe();
+            }
         }
 
         /// <summary>
@@ -3040,44 +3173,55 @@ namespace AdFactum.Data.Internal
                                            IDictionary globalParameter, bool distinct)
         {
             IDbCommand command = CreateCommand();
-            IDictionary virtualAlias = new HybridDictionary();
 
-            int index = 1;
-            string withClause = PrivateWithClause(projection, whereClause, command.Parameters, null, null, virtualAlias,
-                                                  ref index);
-            string tables = PrivateFromClause(projection, whereClause, command.Parameters, fieldTemplates,
-                                              globalParameter, virtualAlias, ref index);
+            try
+            {
+                IDictionary virtualAlias = new HybridDictionary();
 
-            /*
-             * SQL Bauen
-             */
-            String query = string.Concat(withClause, distinct ? "SELECT DISTINCT " : "SELECT ",
-                                         projection.GetColumns(whereClause, additionalColumns), " "
-                                         , BuildVirtualFields(fieldTemplates, globalParameter, virtualAlias)
-                                         , BuildSelectFunctionFields(fieldTemplates, globalParameter)
-                                         , " FROM " + tables);
+                int index = 1;
+                string withClause = PrivateWithClause(projection, whereClause, command.Parameters, null, null,
+                                                      virtualAlias,
+                                                      ref index);
+                string tables = PrivateFromClause(projection, whereClause, command.Parameters, fieldTemplates,
+                                                  globalParameter, virtualAlias, ref index);
 
-            /*
-             * Query bauen
-             */
-            query += PrivateCompleteWhereClause(projection, fieldTemplates, whereClause, globalParameter, virtualAlias,
-                                                command.Parameters, ref index);
+                /*
+                 * SQL Bauen
+                 */
+                String query = string.Concat(withClause, distinct ? "SELECT DISTINCT " : "SELECT ",
+                                             projection.GetColumns(whereClause, additionalColumns), " "
+                                             , BuildVirtualFields(fieldTemplates, globalParameter, virtualAlias)
+                                             , BuildSelectFunctionFields(fieldTemplates, globalParameter)
+                                             , " FROM " + tables);
 
-            string grouping = projection.GetGrouping();
-            if (!string.IsNullOrEmpty(grouping))
-                query = string.Concat(query, " GROUP BY ", grouping);
+                /*
+                 * Query bauen
+                 */
+                query += PrivateCompleteWhereClause(projection, fieldTemplates, whereClause, globalParameter,
+                                                    virtualAlias,
+                                                    command.Parameters, ref index);
 
-            query += PrivateCompleteHavingClause(projection, fieldTemplates, whereClause, globalParameter, virtualAlias,
-                                                 command.Parameters, ref index);
-            query += (orderBy != null ? " ORDER BY " + orderBy.Columns + " " + orderBy.Ordering : "");
+                string grouping = projection.GetGrouping();
+                if (!string.IsNullOrEmpty(grouping))
+                    query = string.Concat(query, " GROUP BY ", grouping);
 
-            /*
-             * Die IDs selektieren und Objekt laden
-             */
-            command.CommandText = query;
+                query += PrivateCompleteHavingClause(projection, fieldTemplates, whereClause, globalParameter,
+                                                     virtualAlias,
+                                                     command.Parameters, ref index);
+                query += (orderBy != null ? " ORDER BY " + orderBy.Columns + " " + orderBy.Ordering : "");
 
-            List<PersistentProperties> result = PrivateSelect(command, fieldTemplates, minLine, maxLine);
-            return result;
+                /*
+                 * Die IDs selektieren und Objekt laden
+                 */
+                command.CommandText = query;
+
+                List<PersistentProperties> result = PrivateSelect(command, fieldTemplates, minLine, maxLine);
+                return result;
+            }
+            finally
+            {
+                command.DisposeSafe();
+            }
         }
 
         /// <summary>
@@ -3096,41 +3240,53 @@ namespace AdFactum.Data.Internal
         {
             IDbCommand command = CreateCommand();
 
-            Field primary1 = link.ParentObject;
-
-            IDbDataParameter primaryKeyParameter1 = CreateParameter("PrimaryKey1", primary1.Value,
-                                                                    primary1.FieldDescription.CustomProperty.MetaInfo.
-                                                                        IsUnicode);
-            command.Parameters.Add(primaryKeyParameter1);
-
-            Field primary2 = link.Key ?? link.Property;
-
-            IDbDataParameter primaryKeyParameter2 = CreateParameter("PrimaryKey2", primary2.Value ?? primary2.OldValue,
-                                                                    primary2.FieldDescription.CustomProperty.MetaInfo.
-                                                                        IsUnicode);
-            command.Parameters.Add(primaryKeyParameter2);
-
-            /*
-			 * Build query
-			 */
-            string query = string.Concat("DELETE FROM ", ConcatedSchema, TypeMapper.Quote(tableName),
-                                         " WHERE ", ConcatedSchema, TypeMapper.Quote(tableName), ".", TypeMapper.Quote(primary1.Name), "=",
-                                         GetParameterString(primaryKeyParameter1),
-                                         " AND ", ConcatedSchema, TypeMapper.Quote(tableName), ".", TypeMapper.Quote(primary2.Name), "=",
-                                         GetParameterString(primaryKeyParameter2));
-
-            /*
-			 * Execute query
-			 */
-            command.CommandText = query;
-            int rows = ExecuteNonQuery(command);
-            if ((rows == 0) && (SqlTracer != null) && (SqlTracer.TraceErrorEnabled))
+            try
             {
-                SqlTracer.ErrorMessage(
-                    string.Concat("The row with ", primary1.Value.ToString(), "/", primary2.Value.ToString(),
-                                  " could not be deleted (table: ", tableName, ")"), "BasePersister");
+
+                Field primary1 = link.ParentObject;
+
+                IDbDataParameter primaryKeyParameter1 = CreateParameter("PrimaryKey1", primary1.Value,
+                                                                        primary1.FieldDescription.CustomProperty.
+                                                                            MetaInfo.
+                                                                            IsUnicode);
+                command.Parameters.Add(primaryKeyParameter1);
+
+                Field primary2 = link.Key ?? link.Property;
+
+                IDbDataParameter primaryKeyParameter2 = CreateParameter("PrimaryKey2",
+                                                                        primary2.Value ?? primary2.OldValue,
+                                                                        primary2.FieldDescription.CustomProperty.
+                                                                            MetaInfo.
+                                                                            IsUnicode);
+                command.Parameters.Add(primaryKeyParameter2);
+
+                /*
+                 * Build query
+                 */
+                string query = string.Concat("DELETE FROM ", ConcatedSchema, TypeMapper.Quote(tableName),
+                                             " WHERE ", ConcatedSchema, TypeMapper.Quote(tableName), ".",
+                                             TypeMapper.Quote(primary1.Name), "=",
+                                             GetParameterString(primaryKeyParameter1),
+                                             " AND ", ConcatedSchema, TypeMapper.Quote(tableName), ".",
+                                             TypeMapper.Quote(primary2.Name), "=",
+                                             GetParameterString(primaryKeyParameter2));
+
+                /*
+                 * Execute query
+                 */
+                command.CommandText = query;
+                int rows = ExecuteNonQuery(command);
+                if ((rows == 0) && (SqlTracer != null) && (SqlTracer.TraceErrorEnabled))
+                {
+                    SqlTracer.ErrorMessage(
+                        string.Concat("The row with ", primary1.Value.ToString(), "/", primary2.Value.ToString(),
+                                      " could not be deleted (table: ", tableName, ")"), "BasePersister");
+                }
+            }
+            finally
+            {
+                command.DisposeSafe();
             }
         }
-
     }
 }

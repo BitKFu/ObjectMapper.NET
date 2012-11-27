@@ -61,9 +61,6 @@ namespace AdFactum.Data.Interfaces
         /// </summary>
         string GetParameterString(IDbDataParameter parameter);
 
-        /// <summary> True, if the command shall not disposed after execution </summary>
-        bool DontDisposeCommand { get; set; }
-
         /// <summary> Returns the database schema </summary>
         string DatabaseSchema { get; }
 

@@ -234,27 +234,35 @@ namespace AdFactum.Data.Access
         {
             IDbCommand command = CreateCommand();
 
-            /*
-			 * Die IDs selektieren und Objekt laden
-			 */
-            string businessSql = selectSql;
-
-            if (selectParameter != null)
+            try
             {
-                IDictionaryEnumerator enumerator = selectParameter.GetEnumerator();
-                while (enumerator.MoveNext())
+                /*
+                 * Die IDs selektieren und Objekt laden
+                 */
+                string businessSql = selectSql;
+
+                if (selectParameter != null)
                 {
-                    businessSql = businessSql.Replace((string) enumerator.Key, "?");
-                    IDbDataParameter parameter = CreateParameter(((string) enumerator.Key).Replace("@", string.Empty),
-                                                                 enumerator.Value, false);
-                    command.Parameters.Add(parameter);
+                    IDictionaryEnumerator enumerator = selectParameter.GetEnumerator();
+                    while (enumerator.MoveNext())
+                    {
+                        businessSql = businessSql.Replace((string)enumerator.Key, "?");
+                        IDbDataParameter parameter =
+                            CreateParameter(((string)enumerator.Key).Replace("@", string.Empty),
+                                            enumerator.Value, false);
+                        command.Parameters.Add(parameter);
+                    }
                 }
+
+                command.CommandText = businessSql;
+
+                List<PersistentProperties> result = PrivateSelect(command, fieldTemplates, 0, int.MaxValue);
+                return result;
             }
-
-            command.CommandText = businessSql;
-
-            List<PersistentProperties> result = PrivateSelect(command, fieldTemplates, 0, int.MaxValue);
-            return result;
+            finally
+            {
+                command.DisposeSafe();
+            }
         }
 
         /// <summary>

@@ -13,11 +13,6 @@ namespace AdFactum.Data.Interfaces
     public interface ILinqQueryProvider : IQueryProvider
     {
         /// <summary>
-        /// Don't Dispose the command object after executing the command
-        /// </summary>
-        bool DontDisposeCommand { get; set; }
-
-        /// <summary>
         /// Returns the Linq Persister
         /// </summary>
         IDbCommand PreCompile(Expression expression);

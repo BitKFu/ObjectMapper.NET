@@ -229,63 +229,79 @@ namespace AdFactum.Data.Oracle
 		{
 			IDbCommand command = CreateCommand();
 
-			int index = 1;
-			IDictionary virtualAlias = new HybridDictionary();
-
-			/*
-			 * Build outer tables
-			 */
-            int    rowHint = ( ((maxLine - minLine + 1)/15)+1)*15;
-
-			/*
-		 	 * Build inner tables
-		 	 */
-
-            string hint = PrivateHintClause(projection, whereClause, command.Parameters, null, null, virtualAlias,
-                                            ref index);
-
-            string withClause = PrivateWithClause(projection, whereClause, command.Parameters, null, null, virtualAlias, ref index);
-            string innerTableStr = PrivateFromClause(projection, whereClause, command.Parameters, fieldTemplates, globalParameter, virtualAlias, ref index);
-            string innerWhere = PrivateCompleteWhereClause(projection, fieldTemplates, whereClause, globalParameter, virtualAlias, command.Parameters, ref index);
-
-			string businessSql = string.Concat("SELECT ", projection.GetColumns(whereClause, null), " ", 
-			                                   BuildVirtualFields(fieldTemplates, globalParameter, virtualAlias),
-			                                   BuildSelectFunctionFields(fieldTemplates, globalParameter),
-			                                   " FROM ", innerTableStr, innerWhere);
-
-            string grouping = projection.GetGrouping();
-            if (!string.IsNullOrEmpty(grouping))
-                businessSql = string.Concat(businessSql, " GROUP BY ", grouping);
-
-            businessSql += PrivateCompleteHavingClause(projection, fieldTemplates, whereClause, globalParameter, virtualAlias, command.Parameters, ref index);
-            if (orderBy != null)
+            try
             {
-                businessSql += string.Concat(" ORDER BY ", orderBy.Columns, " ", orderBy.Ordering);
 
-                bool isView = (orderBy.ObjectType != null) && Table.GetTableInstance(orderBy.ObjectType).IsView;
-                if (!distinct && !isView)
-                    businessSql += string.Concat(", ", orderBy.TableName, ".ROWID ", orderBy.Ordering);
+                int index = 1;
+                IDictionary virtualAlias = new HybridDictionary();
+
+                /*
+                 * Build outer tables
+                 */
+                int rowHint = (((maxLine - minLine + 1) / 15) + 1) * 15;
+
+                /*
+                 * Build inner tables
+                 */
+
+                string hint = PrivateHintClause(projection, whereClause, command.Parameters, null, null, virtualAlias,
+                                                ref index);
+
+                string withClause = PrivateWithClause(projection, whereClause, command.Parameters, null, null,
+                                                      virtualAlias, ref index);
+                string innerTableStr = PrivateFromClause(projection, whereClause, command.Parameters, fieldTemplates,
+                                                         globalParameter, virtualAlias, ref index);
+                string innerWhere = PrivateCompleteWhereClause(projection, fieldTemplates, whereClause, globalParameter,
+                                                               virtualAlias, command.Parameters, ref index);
+
+                string businessSql = string.Concat("SELECT ", projection.GetColumns(whereClause, null), " ",
+                                                   BuildVirtualFields(fieldTemplates, globalParameter, virtualAlias),
+                                                   BuildSelectFunctionFields(fieldTemplates, globalParameter),
+                                                   " FROM ", innerTableStr, innerWhere);
+
+                string grouping = projection.GetGrouping();
+                if (!string.IsNullOrEmpty(grouping))
+                    businessSql = string.Concat(businessSql, " GROUP BY ", grouping);
+
+                businessSql += PrivateCompleteHavingClause(projection, fieldTemplates, whereClause, globalParameter,
+                                                           virtualAlias, command.Parameters, ref index);
+                if (orderBy != null)
+                {
+                    businessSql += string.Concat(" ORDER BY ", orderBy.Columns, " ", orderBy.Ordering);
+
+                    bool isView = (orderBy.ObjectType != null) && Table.GetTableInstance(orderBy.ObjectType).IsView;
+                    if (!distinct && !isView)
+                        businessSql += string.Concat(", ", orderBy.TableName, ".ROWID ", orderBy.Ordering);
+                }
+
+                /*
+                * Build outer Select 
+                */
+                string outerSql = string.Concat(withClause,
+                                                distinct
+                                                    ? string.Concat("SELECT ", hint, " DISTINCT ")
+                                                    : string.Concat("SELECT ", hint)
+                                                , " * "
+                                                , " FROM "
+                                                , " (SELECT /*+ FIRST_ROWS(", rowHint.ToString(),
+                                                ")*/ IQ.*, ROWNUM AS Z_R_N FROM (", businessSql
+                                                , ") IQ WHERE ROWNUM <= :maxLine) ", "PAGE", " WHERE Z_R_N >= :minLine ");
+
+                IDbDataParameter parameter = CreateParameter("maxLine", maxLine, false);
+                command.Parameters.Add(parameter);
+
+                parameter = CreateParameter("minLine", minLine, false);
+                command.Parameters.Add(parameter);
+
+                command.CommandText = outerSql;
+
+                List<PersistentProperties> result = PrivateSelect(command, fieldTemplates, 0, int.MaxValue);
+                return result;
             }
-
-            /*
-			* Build outer Select 
-			*/
-            string outerSql = string.Concat(withClause, distinct ? string.Concat("SELECT ", hint, " DISTINCT ") : string.Concat("SELECT ", hint)
-                                            , " * "
-                                            , " FROM "
-                                            , " (SELECT /*+ FIRST_ROWS(", rowHint.ToString(), ")*/ IQ.*, ROWNUM AS Z_R_N FROM (", businessSql
-                                            , ") IQ WHERE ROWNUM <= :maxLine) ", "PAGE", " WHERE Z_R_N >= :minLine ");
-
-			IDbDataParameter parameter = CreateParameter("maxLine", maxLine, false);
-			command.Parameters.Add(parameter);
-
-			parameter = CreateParameter("minLine", minLine, false);
-			command.Parameters.Add(parameter);
-
-			command.CommandText = outerSql;
-
-            List<PersistentProperties> result = PrivateSelect(command, fieldTemplates, 0, int.MaxValue);
-			return result;
+            finally
+            {
+                command.DisposeSafe();
+            }
 		}
 
 		/// <summary>
@@ -625,23 +641,31 @@ namespace AdFactum.Data.Oracle
 	    {
             int autoId = -1;
             IDbCommand command = CreateCommand();
-            command.CommandText = string.Concat("SELECT ", tableName, "_SEQ.CURRVAL FROM DUAL");
 
-            IDataReader reader = ExecuteReader(command);
             try
             {
-                if (reader.Read())
+                command.CommandText = string.Concat("SELECT ", tableName, "_SEQ.CURRVAL FROM DUAL");
+
+                IDataReader reader = ExecuteReader(command);
+                try
                 {
-                    object lastId = reader.GetValue(0);
-                    if (lastId != DBNull.Value)
-                        autoId = (int) ConvertSourceToTargetType(reader.GetValue(0), typeof (Int32));
+                    if (reader.Read())
+                    {
+                        object lastId = reader.GetValue(0);
+                        if (lastId != DBNull.Value)
+                            autoId = (int)ConvertSourceToTargetType(reader.GetValue(0), typeof(Int32));
+                    }
+                    return autoId;
                 }
-                return autoId;
+                finally
+                {
+                    reader.Close();
+                    reader.Dispose();
+                }
             }
             finally
             {
-                reader.Close();
-                reader.Dispose();
+                command.DisposeSafe();
             }
 	    }
 
@@ -735,40 +759,51 @@ namespace AdFactum.Data.Oracle
             IDictionary virtualAlias = new HybridDictionary();
 
             IDbCommand command = CreateCommand();
-            string grouping = projection.GetGrouping();
 
-            string hint = PrivateHintClause(projection, whereClause, command.Parameters, null, null, virtualAlias,
-                                            ref index);
-
-            string withClause = PrivateWithClause(projection, whereClause, command.Parameters, null, null, virtualAlias,
-                                                  ref index);
-            string tables = PrivateFromClause(projection, whereClause, command.Parameters, fieldTemplates,
-                                              globalParameter, virtualAlias, ref index);
-            string query = string.Concat(withClause, "SELECT ", hint, " COUNT(", string.IsNullOrEmpty(grouping) ? "*" : "count(*)",
-                                         ") FROM ", tables,
-                                         PrivateCompleteWhereClause(projection, null, whereClause, globalParameter,
-                                                                    virtualAlias, command.Parameters, ref index));
-
-            if (!string.IsNullOrEmpty(grouping))
-                query = string.Concat(query, " GROUP BY ", grouping);
-
-            query += PrivateCompleteHavingClause(projection, fieldTemplates, whereClause, globalParameter, virtualAlias,
-                                                 command.Parameters, ref index);
-
-            command.CommandText = query;
-
-            IDataReader reader = ExecuteReader(command);
             try
             {
-                if (reader.Read())
-                    numberOfRows = (int)ConvertSourceToTargetType(reader.GetValue(0), typeof(Int32));
+                string grouping = projection.GetGrouping();
 
-                return numberOfRows;
+                string hint = PrivateHintClause(projection, whereClause, command.Parameters, null, null, virtualAlias,
+                                                ref index);
+
+                string withClause = PrivateWithClause(projection, whereClause, command.Parameters, null, null,
+                                                      virtualAlias,
+                                                      ref index);
+                string tables = PrivateFromClause(projection, whereClause, command.Parameters, fieldTemplates,
+                                                  globalParameter, virtualAlias, ref index);
+                string query = string.Concat(withClause, "SELECT ", hint, " COUNT(",
+                                             string.IsNullOrEmpty(grouping) ? "*" : "count(*)",
+                                             ") FROM ", tables,
+                                             PrivateCompleteWhereClause(projection, null, whereClause, globalParameter,
+                                                                        virtualAlias, command.Parameters, ref index));
+
+                if (!string.IsNullOrEmpty(grouping))
+                    query = string.Concat(query, " GROUP BY ", grouping);
+
+                query += PrivateCompleteHavingClause(projection, fieldTemplates, whereClause, globalParameter,
+                                                     virtualAlias,
+                                                     command.Parameters, ref index);
+
+                command.CommandText = query;
+
+                IDataReader reader = ExecuteReader(command);
+                try
+                {
+                    if (reader.Read())
+                        numberOfRows = (int)ConvertSourceToTargetType(reader.GetValue(0), typeof(Int32));
+
+                    return numberOfRows;
+                }
+                finally
+                {
+                    reader.Close();
+                    reader.Dispose();
+                }
             }
-            finally 
+            finally
             {
-                reader.Close();
-                reader.Dispose();
+                command.DisposeSafe();
             }
         }
 
@@ -789,53 +824,66 @@ namespace AdFactum.Data.Oracle
         {
             IDbCommand command = CreateCommand();
 
-            int index = 1;
-            IDictionary virtualAlias = new HybridDictionary();
-            string withClause = PrivateWithClause(projection, whereClause, command.Parameters, null, null, virtualAlias,
-                                                  ref index);
+            try
+            {
+                int index = 1;
+                IDictionary virtualAlias = new HybridDictionary();
+                string withClause = PrivateWithClause(projection, whereClause, command.Parameters, null, null,
+                                                      virtualAlias,
+                                                      ref index);
 
-            string hint = PrivateHintClause(projection, whereClause, command.Parameters, null, null, virtualAlias,
-                                            ref index);
+                string hint = PrivateHintClause(projection, whereClause, command.Parameters, null, null, virtualAlias,
+                                                ref index);
 
-            string fromClause = PrivateFromClause(projection, whereClause, command.Parameters, fieldTemplates,
-                                                  globalParameter, virtualAlias, ref index);
-            string virtualFields = BuildVirtualFields(fieldTemplates, globalParameter, virtualAlias);
-            string selectFunctions = BuildSelectFunctionFields(fieldTemplates, globalParameter);
+                string fromClause = PrivateFromClause(projection, whereClause, command.Parameters, fieldTemplates,
+                                                      globalParameter, virtualAlias, ref index);
+                string virtualFields = BuildVirtualFields(fieldTemplates, globalParameter, virtualAlias);
+                string selectFunctions = BuildSelectFunctionFields(fieldTemplates, globalParameter);
 
-            /*
-             * SQL Bauen
-             */
+                /*
+                 * SQL Bauen
+                 */
 
-            String query = string.Concat(withClause
-                                         , distinct ? string.Concat("SELECT ", hint, " DISTINCT ") : string.Concat("SELECT ", hint),
-                                         projection.GetColumns(whereClause, additonalColumns), " "
-                                         , virtualFields
-                                         , selectFunctions
-                                         , BuildJoinFields(whereClause)
-                                         , " FROM "
-                                         , fromClause);
+                String query = string.Concat(withClause
+                                             ,
+                                             distinct
+                                                 ? string.Concat("SELECT ", hint, " DISTINCT ")
+                                                 : string.Concat("SELECT ", hint),
+                                             projection.GetColumns(whereClause, additonalColumns), " "
+                                             , virtualFields
+                                             , selectFunctions
+                                             , BuildJoinFields(whereClause)
+                                             , " FROM "
+                                             , fromClause);
 
-            /*
-             * Query bauen
-             */
-            query += PrivateCompleteWhereClause(projection, fieldTemplates, whereClause, globalParameter, virtualAlias,
-                                                command.Parameters, ref index);
+                /*
+                 * Query bauen
+                 */
+                query += PrivateCompleteWhereClause(projection, fieldTemplates, whereClause, globalParameter,
+                                                    virtualAlias,
+                                                    command.Parameters, ref index);
 
-            string grouping = projection.GetGrouping();
-            if (!string.IsNullOrEmpty(grouping))
-                query = string.Concat(query, " GROUP BY ", grouping);
+                string grouping = projection.GetGrouping();
+                if (!string.IsNullOrEmpty(grouping))
+                    query = string.Concat(query, " GROUP BY ", grouping);
 
-            query += PrivateCompleteHavingClause(projection, fieldTemplates, whereClause, globalParameter, virtualAlias,
-                                                 command.Parameters, ref index);
-            query += (orderBy != null ? string.Concat(" ORDER BY ", orderBy.Columns, " ", orderBy.Ordering) : "");
+                query += PrivateCompleteHavingClause(projection, fieldTemplates, whereClause, globalParameter,
+                                                     virtualAlias,
+                                                     command.Parameters, ref index);
+                query += (orderBy != null ? string.Concat(" ORDER BY ", orderBy.Columns, " ", orderBy.Ordering) : "");
 
-            /*
-             * Die IDs selektieren und Objekt laden
-             */
-            command.CommandText = query;
+                /*
+                 * Die IDs selektieren und Objekt laden
+                 */
+                command.CommandText = query;
 
-            List<PersistentProperties> result = PrivateSelect(command, fieldTemplates, 0, int.MaxValue);
-            return result;
+                List<PersistentProperties> result = PrivateSelect(command, fieldTemplates, 0, int.MaxValue);
+                return result;
+            }
+            finally
+            {
+                command.DisposeSafe();
+            }
         }
 
         /// <summary>
@@ -850,57 +898,70 @@ namespace AdFactum.Data.Oracle
                                        OrderBy orderBy)
         {
             IDbCommand command = CreateCommand();
-            IDictionary virtualAlias = new HybridDictionary();
 
-            int index = 1;
-            string withClause = PrivateWithClause(projection, whereClause, command.Parameters, null, null, virtualAlias,
-                                                  ref index);
-            string hint = PrivateHintClause(projection, whereClause, command.Parameters, null, null, virtualAlias,
-                                            ref index);
-            string fromClause = PrivateFromClause(projection, whereClause, command.Parameters, null, null, virtualAlias,
-                                                  ref index);
-
-            // WorkItem 64803: Fix the primary id column name. If a with clause is used, the Schema name must not be taken
-            var idColumns = string.IsNullOrEmpty(withClause)
-                ? projection.PrimaryKeyColumns
-                : string.Concat(Condition.QUOTE_OPEN, projection.TableName(DatabaseType.Oracle),
-                                Condition.QUOTE_CLOSE, ".",
-                                Condition.QUOTE_OPEN, projection.GetPrimaryKeyDescription().Name, Condition.QUOTE_CLOSE);
-
-            string query = string.Concat(withClause, "SELECT ", hint, idColumns, " FROM ", fromClause);
-
-            /*
-			 * Query bauen
-			 */
-            query += PrivateCompleteWhereClause(projection, null, whereClause, null, virtualAlias, command.Parameters,
-                                                ref index);
-
-            string grouping = projection.GetGrouping();
-            if (!string.IsNullOrEmpty(grouping))
-                query = string.Concat(query, " GROUP BY ", grouping);
-
-            query += PrivateCompleteHavingClause(projection, null, whereClause, null, virtualAlias, command.Parameters,
-                                                 ref index);
-            query += (orderBy != null ? string.Concat(" ORDER BY ", orderBy.Columns, " ", orderBy.Ordering) : "");
-
-            /*
-			 * Die IDs selektieren und Objekt laden
-			 */
-            command.CommandText = query;
-
-            var ids = new ArrayList();
-            IDataReader reader = ExecuteReader(command);
             try
             {
-                while (reader.Read())
-                    ids.Add(ConvertSourceToTargetType(reader.GetValue(0), typeof(Guid)));
+                IDictionary virtualAlias = new HybridDictionary();
 
-                return ids;
+                int index = 1;
+                string withClause = PrivateWithClause(projection, whereClause, command.Parameters, null, null,
+                                                      virtualAlias,
+                                                      ref index);
+                string hint = PrivateHintClause(projection, whereClause, command.Parameters, null, null, virtualAlias,
+                                                ref index);
+                string fromClause = PrivateFromClause(projection, whereClause, command.Parameters, null, null,
+                                                      virtualAlias,
+                                                      ref index);
+
+                // WorkItem 64803: Fix the primary id column name. If a with clause is used, the Schema name must not be taken
+                var idColumns = string.IsNullOrEmpty(withClause)
+                                    ? projection.PrimaryKeyColumns
+                                    : string.Concat(Condition.QUOTE_OPEN, projection.TableName(DatabaseType.Oracle),
+                                                    Condition.QUOTE_CLOSE, ".",
+                                                    Condition.QUOTE_OPEN, projection.GetPrimaryKeyDescription().Name,
+                                                    Condition.QUOTE_CLOSE);
+
+                string query = string.Concat(withClause, "SELECT ", hint, idColumns, " FROM ", fromClause);
+
+                /*
+                 * Query bauen
+                 */
+                query += PrivateCompleteWhereClause(projection, null, whereClause, null, virtualAlias,
+                                                    command.Parameters,
+                                                    ref index);
+
+                string grouping = projection.GetGrouping();
+                if (!string.IsNullOrEmpty(grouping))
+                    query = string.Concat(query, " GROUP BY ", grouping);
+
+                query += PrivateCompleteHavingClause(projection, null, whereClause, null, virtualAlias,
+                                                     command.Parameters,
+                                                     ref index);
+                query += (orderBy != null ? string.Concat(" ORDER BY ", orderBy.Columns, " ", orderBy.Ordering) : "");
+
+                /*
+                 * Die IDs selektieren und Objekt laden
+                 */
+                command.CommandText = query;
+
+                var ids = new ArrayList();
+                IDataReader reader = ExecuteReader(command);
+                try
+                {
+                    while (reader.Read())
+                        ids.Add(ConvertSourceToTargetType(reader.GetValue(0), typeof(Guid)));
+
+                    return ids;
+                }
+                finally
+                {
+                    reader.Close();
+                    reader.Dispose();
+                }
             }
-            finally 
+            finally
             {
-                reader.Close();
-                reader.Dispose();
+                command.DisposeSafe();
             }
         }
     }

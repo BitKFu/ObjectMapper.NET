@@ -98,6 +98,7 @@ namespace ObjectMapper.NUnits.Common.Tests
                     if (counter>0)
                     {
                         reader.Close();
+                        reader.Dispose();
                         command.Dispose();
                         NpgsqlConnection.ClearAllPools();
                         persister.Execute("drop database " + Connection.DatabaseName + ";");

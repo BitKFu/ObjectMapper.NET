@@ -287,41 +287,53 @@ namespace AdFactum.Data.SqlServer
 
 
             IDbCommand command = CreateCommand();
-            IDictionary virtualAlias = new HybridDictionary();
 
-            int index = 1;
-            string withClause = PrivateWithClause(projection, whereClause, command.Parameters, null, null, virtualAlias, ref index);
-            string tables = PrivateFromClause(projection, whereClause, command.Parameters, fieldTemplates, globalParameter, virtualAlias, ref index);
+            try
+            {
+                IDictionary virtualAlias = new HybridDictionary();
 
-            /*
-             * SQL Bauen
-             */
-            String query = string.Concat(withClause, distinct ? "SELECT DISTINCT " : "SELECT "
-                                         , "TOP ", maxLine, " "
-                                         , projection.GetColumns(whereClause, additionalColumns), " "
-                                         , BuildVirtualFields(fieldTemplates, globalParameter, virtualAlias)
-                                         , BuildSelectFunctionFields(fieldTemplates, globalParameter)
-                                         , " FROM " + tables);
+                int index = 1;
+                string withClause = PrivateWithClause(projection, whereClause, command.Parameters, null, null,
+                                                      virtualAlias, ref index);
+                string tables = PrivateFromClause(projection, whereClause, command.Parameters, fieldTemplates,
+                                                  globalParameter, virtualAlias, ref index);
 
-            /*
-             * Query bauen
-             */
-            query += PrivateCompleteWhereClause(projection, fieldTemplates, whereClause, globalParameter, virtualAlias, command.Parameters, ref index);
+                /*
+                 * SQL Bauen
+                 */
+                String query = string.Concat(withClause, distinct ? "SELECT DISTINCT " : "SELECT "
+                                             , "TOP ", maxLine, " "
+                                             , projection.GetColumns(whereClause, additionalColumns), " "
+                                             , BuildVirtualFields(fieldTemplates, globalParameter, virtualAlias)
+                                             , BuildSelectFunctionFields(fieldTemplates, globalParameter)
+                                             , " FROM " + tables);
 
-            string grouping = projection.GetGrouping();
-            if (!string.IsNullOrEmpty(grouping))
-                query = string.Concat(query, " GROUP BY ", grouping);
+                /*
+                 * Query bauen
+                 */
+                query += PrivateCompleteWhereClause(projection, fieldTemplates, whereClause, globalParameter,
+                                                    virtualAlias, command.Parameters, ref index);
 
-            query += PrivateCompleteHavingClause(projection, fieldTemplates, whereClause, globalParameter, virtualAlias, command.Parameters, ref index);
-            query += (orderBy != null ? " ORDER BY " + orderBy.Columns + " " + orderBy.Ordering : "");
+                string grouping = projection.GetGrouping();
+                if (!string.IsNullOrEmpty(grouping))
+                    query = string.Concat(query, " GROUP BY ", grouping);
 
-            /*
-             * Die IDs selektieren und Objekt laden
-             */
-            command.CommandText = query;
+                query += PrivateCompleteHavingClause(projection, fieldTemplates, whereClause, globalParameter,
+                                                     virtualAlias, command.Parameters, ref index);
+                query += (orderBy != null ? " ORDER BY " + orderBy.Columns + " " + orderBy.Ordering : "");
 
-            List<PersistentProperties> result = PrivateSelect(command, fieldTemplates, minLine, maxLine);
-            return result;
+                /*
+                 * Die IDs selektieren und Objekt laden
+                 */
+                command.CommandText = query;
+
+                List<PersistentProperties> result = PrivateSelect(command, fieldTemplates, minLine, maxLine);
+                return result;
+            }
+            finally
+            {
+                command.DisposeSafe();
+            }
         }
 
 

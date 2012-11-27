@@ -25,24 +25,32 @@ namespace AdFactum.Data.SqlServer
         {
             int autoId = -1;
             IDbCommand command = CreateCommand();
-            command.CommandText = "SELECT @@IDENTITY";
 
-            IDataReader reader = ExecuteReader(command);
             try
             {
-                if (reader.Read())
-                {
-                    object lastId = reader.GetValue(0);
-                    if (lastId != DBNull.Value)
-                        autoId = (int)ConvertSourceToTargetType(reader.GetValue(0), typeof(Int32));
-                }
+                command.CommandText = "SELECT @@IDENTITY";
 
-                return autoId;
+                IDataReader reader = ExecuteReader(command);
+                try
+                {
+                    if (reader.Read())
+                    {
+                        object lastId = reader.GetValue(0);
+                        if (lastId != DBNull.Value)
+                            autoId = (int)ConvertSourceToTargetType(reader.GetValue(0), typeof(Int32));
+                    }
+
+                    return autoId;
+                }
+                finally
+                {
+                    reader.Close();
+                    reader.Dispose();
+                }
             }
-            finally 
+            finally
             {
-                reader.Close();
-                reader.Dispose();
+                command.DisposeSafe();
             }
         }
 

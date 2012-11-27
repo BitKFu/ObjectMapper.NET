@@ -28,8 +28,6 @@ namespace AdFactum.Data.Postgres
         /// </summary>
         public const string CONNECTION_STRING = "Server={0};Port={1};User Id={2};Password={3};Database={4};";
 
-        private Queue<IDbCommand> commandsToDispose = new Queue<IDbCommand>();
-
         /// <summary>
         /// Constructor
         /// </summary>
@@ -476,43 +474,5 @@ namespace AdFactum.Data.Postgres
             List<PersistentProperties> result = PrivateSelect(command, fieldTemplates, 0, int.MaxValue);
             return result;
         }
-
-        /// <summary>
-        /// Executes the secure db call.
-        /// </summary>
-        /// <param name="command">The command.</param>
-        /// <param name="nonQuery">if set to <c>true</c> [non query].</param>
-        /// <returns></returns>
-        protected override object ExecuteSecureDbCall(IDbCommand command, bool nonQuery)
-        {
-            DontDisposeCommand = true;
-            commandsToDispose.Enqueue(command);
-
-            var result = base.ExecuteSecureDbCall(command, nonQuery);
-            return result;
-        }
-
-        /// <summary>
-        /// Commits a transaction
-        /// </summary>
-        public override void Commit()
-        {
-            while (commandsToDispose.Count>0)
-                commandsToDispose.Dequeue().Dispose();
-
-            base.Commit();
-        }
-
-        /// <summary>
-        /// Rollback the changes, if no commit has been done.
-        /// </summary>
-        public override void Rollback()
-        {
-            while (commandsToDispose.Count > 0)
-                commandsToDispose.Dequeue().Dispose();
-
-            base.Rollback();
-        }
-        
     }
 }

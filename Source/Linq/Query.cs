@@ -245,13 +245,6 @@ namespace AdFactum.Data.Linq
             }
         }
 
-        /// <summary> True, if the command shall not be disposed </summary>
-        public bool DontDisposeCommand
-        {
-            get { return Persister.DontDisposeCommand; }
-            set { Persister.DontDisposeCommand = value; }
-        }
-
         #endregion
 
         #region IOrderedQueryable<T> Members

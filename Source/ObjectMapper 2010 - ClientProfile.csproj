@@ -157,6 +157,7 @@
     <Compile Include="Internal\BaseIntegrityChecker.cs" />
     <Compile Include="Internal\BaseRepository.cs" />
     <Compile Include="Internal\BaseSchemaWriter.cs" />
+    <Compile Include="Internal\CommandExtensions.cs" />
     <Compile Include="Internal\PersistentProperties.cs" />
     <Compile Include="Linq\Expressions\DbExpressionComparer.cs" />
     <Compile Include="Linq\Expressions\DbExpressionExtensions.cs" />

@@ -151,55 +151,68 @@ namespace AdFactum.Data.SqlServer
 
             IDbCommand command = CreateCommand();
 
-            int index = 1;
-            IDictionary virtualAlias = new HybridDictionary();
+            try
+            {
 
-            /*
-			 * Build outer tables
-			 */
-            string orderByString;
-            if (orderBy != null)
-                orderByString = string.Concat(" ORDER BY ", orderBy.GetColumn(false), " ", orderBy.Ordering);
-            else
-                orderByString = string.Concat(" ORDER BY ", projection.PrimaryKeyColumns);
+                int index = 1;
+                IDictionary virtualAlias = new HybridDictionary();
 
-            /*
-			 * Build inner tables
-			 */
-            string withClause = PrivateWithClause(projection, whereClause, command.Parameters, null, null, virtualAlias, ref index);
-            string innerTableStr = PrivateFromClause(projection, whereClause, command.Parameters, fieldTemplates, globalParameter, virtualAlias, ref index);
-            string innerWhere = PrivateCompleteWhereClause(projection, fieldTemplates, whereClause, globalParameter, virtualAlias, command.Parameters, ref index);
+                /*
+                 * Build outer tables
+                 */
+                string orderByString;
+                if (orderBy != null)
+                    orderByString = string.Concat(" ORDER BY ", orderBy.GetColumn(false), " ", orderBy.Ordering);
+                else
+                    orderByString = string.Concat(" ORDER BY ", projection.PrimaryKeyColumns);
 
-            string businessSql = string.Concat("SELECT ", projection.GetColumns(whereClause, null), 
-                                               BuildVirtualFields(fieldTemplates, globalParameter, virtualAlias),
-                                               BuildSelectFunctionFields(fieldTemplates, globalParameter),
-                                               ", ROW_NUMBER() OVER(", orderByString, ") as Z_R_N ",
-                                               " FROM ", innerTableStr, innerWhere);
+                /*
+                 * Build inner tables
+                 */
+                string withClause = PrivateWithClause(projection, whereClause, command.Parameters, null, null,
+                                                      virtualAlias, ref index);
+                string innerTableStr = PrivateFromClause(projection, whereClause, command.Parameters, fieldTemplates,
+                                                         globalParameter, virtualAlias, ref index);
+                string innerWhere = PrivateCompleteWhereClause(projection, fieldTemplates, whereClause, globalParameter,
+                                                               virtualAlias, command.Parameters, ref index);
 
-            string grouping = projection.GetGrouping();
-            if (!string.IsNullOrEmpty(grouping))
-                businessSql = string.Concat(businessSql, " GROUP BY ", grouping);
-            businessSql += PrivateCompleteHavingClause(projection, fieldTemplates, whereClause, globalParameter, virtualAlias, command.Parameters, ref index);
+                string businessSql = string.Concat("SELECT ", projection.GetColumns(whereClause, null),
+                                                   BuildVirtualFields(fieldTemplates, globalParameter, virtualAlias),
+                                                   BuildSelectFunctionFields(fieldTemplates, globalParameter),
+                                                   ", ROW_NUMBER() OVER(", orderByString, ") as Z_R_N ",
+                                                   " FROM ", innerTableStr, innerWhere);
 
-            /*
-			* Build outer Select 
-			*/
-            string outerSql = string.Concat(withClause, distinct ? "SELECT DISTINCT " : "SELECT ", projection.ColumnsOnly
-                                            , " FROM ("
-                                            , businessSql
-                                            , ") "
-                                            , " PAGE"
-                                            , " WHERE Z_R_N BETWEEN @minLine AND @maxLine ");
+                string grouping = projection.GetGrouping();
+                if (!string.IsNullOrEmpty(grouping))
+                    businessSql = string.Concat(businessSql, " GROUP BY ", grouping);
+                businessSql += PrivateCompleteHavingClause(projection, fieldTemplates, whereClause, globalParameter,
+                                                           virtualAlias, command.Parameters, ref index);
 
-            IDbDataParameter parameter = CreateParameter("minLine", minLine, false);
-            command.Parameters.Add(parameter);
+                /*
+                * Build outer Select 
+                */
+                string outerSql = string.Concat(withClause, distinct ? "SELECT DISTINCT " : "SELECT ",
+                                                projection.ColumnsOnly
+                                                , " FROM ("
+                                                , businessSql
+                                                , ") "
+                                                , " PAGE"
+                                                , " WHERE Z_R_N BETWEEN @minLine AND @maxLine ");
 
-            parameter = CreateParameter("maxLine", maxLine, false);
-            command.Parameters.Add(parameter);
-            command.CommandText = outerSql;
+                IDbDataParameter parameter = CreateParameter("minLine", minLine, false);
+                command.Parameters.Add(parameter);
 
-            List<PersistentProperties> result = PrivateSelect(command, fieldTemplates, 0, int.MaxValue);
-            return result;
+                parameter = CreateParameter("maxLine", maxLine, false);
+                command.Parameters.Add(parameter);
+                command.CommandText = outerSql;
+
+                List<PersistentProperties> result = PrivateSelect(command, fieldTemplates, 0, int.MaxValue);
+                return result;
+            }
+            finally
+            {
+                command.DisposeSafe();
+            }
         }
 
     }

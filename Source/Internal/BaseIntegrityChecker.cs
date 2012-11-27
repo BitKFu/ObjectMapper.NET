@@ -94,224 +94,238 @@ namespace AdFactum.Data.Internal
             string sql = string.Concat("SELECT * FROM ", ConcatedSchema, TypeMapper.Quote(info.TableName));
 
             IDataReader reader;
+            IDbCommand sqlCommand = null;
             try
             {
-                IDbCommand sqlCommand = NativePersister.CreateCommand();
-                sqlCommand.CommandText = sql;
-                reader = sqlCommand.ExecuteReader();
-            }
-            catch (Exception)
-            {
-                info.TableExists = false;
-                return resultList;
-            }
 
-            /*
-			 * Get all columns of the table
-			 */
-            Dictionary<string, int> fieldIndexDict;
-            Dictionary<int, string> indexFieldDict;
-            NativePersister.GetColumns(reader, info.Fields, out fieldIndexDict, out indexFieldDict);
-
-            DataTable schemaTable = GetSchemaTable(reader);
-
-            Dictionary<string, FieldDescription> fields = info.Fields;
-            reader.Close();
-            reader.Dispose();
-
-            /*
-			 * Enumerate all fields of the object
-			 */
-            var fieldEnumerator = fields.GetEnumerator();
-            while (fieldEnumerator.MoveNext())
-            {
-                var fieldDescription = fieldEnumerator.Current.Value;
-                if (fieldDescription == null)
-                    continue;
+                try
+                {
+                    sqlCommand = NativePersister.CreateCommand();
+                    sqlCommand.CommandText = sql;
+                    reader = sqlCommand.ExecuteReader();
+                }
+                catch (Exception)
+                {
+                    info.TableExists = false;
+                    return resultList;
+                }
 
                 /*
-				 * we want to validate a field
-				 */
-                if ((fieldDescription.FieldType.Equals(typeof(Field)))
-                    || (fieldDescription.FieldType.Equals(typeof(Link)))
-                    || (fieldDescription.FieldType.Equals(typeof(SpecializedLink))))
+                 * Get all columns of the table
+                 */
+                Dictionary<string, int> fieldIndexDict;
+                Dictionary<int, string> indexFieldDict;
+                NativePersister.GetColumns(reader, info.Fields, out fieldIndexDict, out indexFieldDict);
+
+                DataTable schemaTable = GetSchemaTable(reader);
+
+                Dictionary<string, FieldDescription> fields = info.Fields;
+                reader.Close();
+                reader.Dispose();
+
+                /*
+                 * Enumerate all fields of the object
+                 */
+                var fieldEnumerator = fields.GetEnumerator();
+                while (fieldEnumerator.MoveNext())
                 {
-                    /*
-                     * If there are no property informations, than continue;
-                     */
-                    if (fieldDescription.CustomProperty == null)
-                        continue;
-
-                    PropertyMetaInfo metaInfo = fieldDescription.CustomProperty.MetaInfo;
-
-                    /*
-                     * Fields that have a select function aren't persistent
-                     */
-                    if (metaInfo.SelectFunction.IsNotNullOrEmpty())
+                    var fieldDescription = fieldEnumerator.Current.Value;
+                    if (fieldDescription == null)
                         continue;
 
                     /*
-                     * Check missing properties
+                     * we want to validate a field
                      */
-                    if (fieldIndexDict.ContainsKey(fieldEnumerator.Current.Key) == false)
+                    if ((fieldDescription.FieldType.Equals(typeof(Field)))
+                        || (fieldDescription.FieldType.Equals(typeof(Link)))
+                        || (fieldDescription.FieldType.Equals(typeof(SpecializedLink))))
                     {
-                        info.MismatchedFields.Add(new FieldIntegrity(fieldDescription));
-                        continue;
-                    }
-
-                    /*
-                     * Get Column
-                     */
-                    bool uniqueFailure = false;
-                    bool requiredFailure = false;
-                    bool typeFailure = false;
-                    bool fieldIsShorter = false;
-                    bool fieldIsLonger = false;
-
-                    DataRow[] row = schemaTable.Select(string.Concat("ColumnName='", fieldEnumerator.Current.Key, "'"));
-                    if (row.Length == 0)
-                        continue;
-
-                    DataRow columnDescription = row[0];
-
-
-                    /*
-                         * Check for GeneralLink Attribute and the required #typ field
+                        /*
+                         * If there are no property informations, than continue;
                          */
-                    if (metaInfo.IsGeneralLinked)
-                    {
-                        string typeField = string.Concat(fieldEnumerator.Current.Key, DBConst.TypAddition);
-                        if (!fieldIndexDict.ContainsKey(typeField))
-                        {
-                            var typeFieldDescription =
-                                new FieldDescription(typeField, fieldDescription.ParentType, typeof(string), false);
-                            info.MismatchedFields.Add(new FieldIntegrity(typeFieldDescription));
-                        }
-                    }
+                        if (fieldDescription.CustomProperty == null)
+                            continue;
 
-                    /*
-        				 * Check all
-						 */
-                    if (columnDescription["IsUnique"] != DBNull.Value)
-                    {
-                        uniqueFailure = ((bool)columnDescription["IsUnique"] != metaInfo.IsUnique);
+                        PropertyMetaInfo metaInfo = fieldDescription.CustomProperty.MetaInfo;
 
                         /*
-                             * Check if we really have an unique failure
-                             * When using combined unique keys, .NET does not retrieve the correct value
-                             */
-                        if (uniqueFailure && metaInfo.IsUnique)
-                        {
-                            bool hasDefaultGroup = false;
-                            foreach (KeyGroup group in metaInfo.UniqueKeyGroups)
-                                if (group.Number == 0)
-                                {
-                                    hasDefaultGroup = true;
-                                    break;
-                                }
+                         * Fields that have a select function aren't persistent
+                         */
+                        if (metaInfo.SelectFunction.IsNotNullOrEmpty())
+                            continue;
 
-                            if (!hasDefaultGroup)
-                                uniqueFailure = false;
+                        /*
+                         * Check missing properties
+                         */
+                        if (fieldIndexDict.ContainsKey(fieldEnumerator.Current.Key) == false)
+                        {
+                            info.MismatchedFields.Add(new FieldIntegrity(fieldDescription));
+                            continue;
+                        }
+
+                        /*
+                         * Get Column
+                         */
+                        bool uniqueFailure = false;
+                        bool requiredFailure = false;
+                        bool typeFailure = false;
+                        bool fieldIsShorter = false;
+                        bool fieldIsLonger = false;
+
+                        DataRow[] row =
+                            schemaTable.Select(string.Concat("ColumnName='", fieldEnumerator.Current.Key, "'"));
+                        if (row.Length == 0)
+                            continue;
+
+                        DataRow columnDescription = row[0];
+
+
+                        /*
+                             * Check for GeneralLink Attribute and the required #typ field
+                             */
+                        if (metaInfo.IsGeneralLinked)
+                        {
+                            string typeField = string.Concat(fieldEnumerator.Current.Key, DBConst.TypAddition);
+                            if (!fieldIndexDict.ContainsKey(typeField))
+                            {
+                                var typeFieldDescription =
+                                    new FieldDescription(typeField, fieldDescription.ParentType, typeof(string), false);
+                                info.MismatchedFields.Add(new FieldIntegrity(typeFieldDescription));
+                            }
+                        }
+
+                        /*
+                             * Check all
+                             */
+                        if (columnDescription["IsUnique"] != DBNull.Value)
+                        {
+                            uniqueFailure = ((bool)columnDescription["IsUnique"] != metaInfo.IsUnique);
+
+                            /*
+                                 * Check if we really have an unique failure
+                                 * When using combined unique keys, .NET does not retrieve the correct value
+                                 */
+                            if (uniqueFailure && metaInfo.IsUnique)
+                            {
+                                bool hasDefaultGroup = false;
+                                foreach (KeyGroup group in metaInfo.UniqueKeyGroups)
+                                    if (group.Number == 0)
+                                    {
+                                        hasDefaultGroup = true;
+                                        break;
+                                    }
+
+                                if (!hasDefaultGroup)
+                                    uniqueFailure = false;
+                            }
+                        }
+
+                        if (columnDescription["AllowDBNull"] != DBNull.Value)
+                        {
+                            bool primaryKey = metaInfo.IsPrimaryKey;
+                            bool typeRequires = TypeMapper.GetStringForDDL(fieldDescription).IndexOf("NOT NULL") >= 0;
+                            bool required = metaInfo.IsRequiered || primaryKey || typeRequires;
+                            requiredFailure = ((bool)columnDescription["AllowDBNull"] == required);
+                        }
+
+                        Type checkType =
+                            TypeMapper.GetTypeForDatabase(TypeHelper.GetBaseType(fieldDescription.ContentType));
+                        if (columnDescription["DataType"] != DBNull.Value)
+                        {
+                            typeFailure = (columnDescription["DataType"] != checkType);
+
+                            // correct char to string type failure
+                            if (typeFailure && columnDescription["DataType"] == typeof(string) &&
+                                checkType == typeof(char))
+                                typeFailure = false;
+                        }
+
+                        int size = metaInfo.IsUnicode
+                                       ? CalculateUnicodeSize((int)columnDescription["ColumnSize"])
+                                       : CalculateSize((int)columnDescription["ColumnSize"]);
+
+                        if (fieldDescription.ContentType.Equals(typeof(string)))
+                            fieldIsShorter = (metaInfo.Length < size);
+
+                        if (fieldDescription.ContentType.Equals(typeof(string)))
+                            fieldIsLonger = (metaInfo.Length > size);
+
+                        if (uniqueFailure || requiredFailure || typeFailure || fieldIsShorter || fieldIsLonger)
+                        {
+                            var fieldIntegrity = new FieldIntegrity(fieldDescription, uniqueFailure, requiredFailure,
+                                                                    typeFailure, fieldIsShorter, fieldIsLonger);
+                            info.MismatchedFields.Add(fieldIntegrity);
                         }
                     }
 
-                    if (columnDescription["AllowDBNull"] != DBNull.Value)
-                    {
-                        bool primaryKey = metaInfo.IsPrimaryKey;
-                        bool typeRequires = TypeMapper.GetStringForDDL(fieldDescription).IndexOf("NOT NULL") >= 0;
-                        bool required = metaInfo.IsRequiered || primaryKey || typeRequires;
-                        requiredFailure = ((bool)columnDescription["AllowDBNull"] == required);
-                    }
-
-                    Type checkType = TypeMapper.GetTypeForDatabase(TypeHelper.GetBaseType(fieldDescription.ContentType));
-                    if (columnDescription["DataType"] != DBNull.Value)
-                    {
-                        typeFailure = (columnDescription["DataType"] != checkType);
-
-                        // correct char to string type failure
-                        if (typeFailure && columnDescription["DataType"] == typeof(string) &&
-                            checkType == typeof(char))
-                            typeFailure = false;
-                    }
-
-                    int size = metaInfo.IsUnicode
-                                   ? CalculateUnicodeSize((int) columnDescription["ColumnSize"])
-                                   : CalculateSize((int)columnDescription["ColumnSize"]);
-
-                    if (fieldDescription.ContentType.Equals(typeof(string)))
-                        fieldIsShorter = (metaInfo.Length < size);
-
-                    if (fieldDescription.ContentType.Equals(typeof(string)))
-                        fieldIsLonger = (metaInfo.Length > size);
-
-                    if (uniqueFailure || requiredFailure || typeFailure || fieldIsShorter || fieldIsLonger)
-                    {
-                        var fieldIntegrity = new FieldIntegrity(fieldDescription, uniqueFailure, requiredFailure,
-                                                                typeFailure, fieldIsShorter, fieldIsLonger);
-                        info.MismatchedFields.Add(fieldIntegrity);
-                    }
-                }
-
-                /*
-				 * We want to validate a link
-				 */
-                if (fieldDescription.FieldType.Equals(typeof(ListLink)))
-                {
-                    string subTable = string.Concat(Table.GetTableInstance(info.ObjectType).DefaultName, "_",
-                                                    fieldEnumerator.Current.Key);
-                    Type linkedPrimaryKey = fieldDescription.CustomProperty.MetaInfo.LinkedPrimaryKeyType;
-                    bool generalLinked = fieldDescription.CustomProperty.MetaInfo.IsGeneralLinked;
-
-                    if (fieldDescription.ContentType.IsListType())
-                        resultList.AddRange(
-                            CheckIntegrity(new IntegrityInfo(subTable,
-                                                             ListLink.GetListTemplates(info.ObjectType, generalLinked,
-                                                                                       linkedPrimaryKey))));
-                    else if (fieldDescription.ContentType.IsDictionaryType())
-                        resultList.AddRange(
-                            CheckIntegrity(new IntegrityInfo(subTable,
-                                                             ListLink.GetHashTemplates(typeof(string), info.ObjectType,
-                                                                                       generalLinked, linkedPrimaryKey))));
-                }
-            }
-
-            /*
-			 * Enumerate all table columns
-			 */
-            var columnEnumerator = fieldIndexDict.GetEnumerator();
-            while (columnEnumerator.MoveNext())
-            {
-                var column = columnEnumerator.Current.Key;
-                bool remove = !fields.ContainsKey(column);
-
-                if (!remove)
-                {
-                    var fieldDescription = fields[column];
-                    remove = fieldDescription.FieldType.Equals(typeof(ListLink));
-                }
-                else
-                {
                     /*
-                     * Check for GeneralLink attributes
+                     * We want to validate a link
                      */
-                    if (column.EndsWith(DBConst.TypAddition))
+                    if (fieldDescription.FieldType.Equals(typeof(ListLink)))
                     {
-                        string mainColumn = column.Substring(0, column.Length - DBConst.TypAddition.Length);
-                        var mainField = fields[mainColumn];
-                        remove = !((mainField != null)
-                                   && (mainField.CustomProperty != null)
-                                   && (mainField.CustomProperty.MetaInfo.IsGeneralLinked));
+                        string subTable = string.Concat(Table.GetTableInstance(info.ObjectType).DefaultName, "_",
+                                                        fieldEnumerator.Current.Key);
+                        Type linkedPrimaryKey = fieldDescription.CustomProperty.MetaInfo.LinkedPrimaryKeyType;
+                        bool generalLinked = fieldDescription.CustomProperty.MetaInfo.IsGeneralLinked;
+
+                        if (fieldDescription.ContentType.IsListType())
+                            resultList.AddRange(
+                                CheckIntegrity(new IntegrityInfo(subTable,
+                                                                 ListLink.GetListTemplates(info.ObjectType,
+                                                                                           generalLinked,
+                                                                                           linkedPrimaryKey))));
+                        else if (fieldDescription.ContentType.IsDictionaryType())
+                            resultList.AddRange(
+                                CheckIntegrity(new IntegrityInfo(subTable,
+                                                                 ListLink.GetHashTemplates(typeof(string),
+                                                                                           info.ObjectType,
+                                                                                           generalLinked,
+                                                                                           linkedPrimaryKey))));
                     }
                 }
 
                 /*
-				 * Check unmatched properties
-				 */
-                if (remove)
-                    info.MismatchedFields.Add(new FieldIntegrity(column));
-            }
+                 * Enumerate all table columns
+                 */
+                var columnEnumerator = fieldIndexDict.GetEnumerator();
+                while (columnEnumerator.MoveNext())
+                {
+                    var column = columnEnumerator.Current.Key;
+                    bool remove = !fields.ContainsKey(column);
 
-            return resultList;
+                    if (!remove)
+                    {
+                        var fieldDescription = fields[column];
+                        remove = fieldDescription.FieldType.Equals(typeof(ListLink));
+                    }
+                    else
+                    {
+                        /*
+                         * Check for GeneralLink attributes
+                         */
+                        if (column.EndsWith(DBConst.TypAddition))
+                        {
+                            string mainColumn = column.Substring(0, column.Length - DBConst.TypAddition.Length);
+                            var mainField = fields[mainColumn];
+                            remove = !((mainField != null)
+                                       && (mainField.CustomProperty != null)
+                                       && (mainField.CustomProperty.MetaInfo.IsGeneralLinked));
+                        }
+                    }
+
+                    /*
+                     * Check unmatched properties
+                     */
+                    if (remove)
+                        info.MismatchedFields.Add(new FieldIntegrity(column));
+                }
+
+                return resultList;
+            }
+            finally
+            {
+                sqlCommand.DisposeSafe();
+            }
         }
 
         /// <summary>
