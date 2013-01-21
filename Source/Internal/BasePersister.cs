@@ -1358,13 +1358,16 @@ namespace AdFactum.Data.Internal
         {
             IDbCommand command = CreateCommand(execSql);
 
+            SqlStopwatch stopwatch = new SqlStopwatch(SqlTracer);
+            int count = 1;
             try
             {
-                int count = ExecuteNonQuery(command);
+                count = ExecuteNonQuery(command);
                 return count;
             }
             finally
             {
+                stopwatch.Stop(command, CreateSql(command), count);
                 command.DisposeSafe();
             }
         }
@@ -1378,10 +1381,12 @@ namespace AdFactum.Data.Internal
         public int ExecuteWithParameter(string execSql, params object[] parameter)
         {
             IDbCommand command = CreateCommand(execSql);
+            SqlStopwatch stopwatch = new SqlStopwatch(SqlTracer);
 
+            int count = 1;
             try
             {
-                int count = 1;
+                
                 foreach (object curValue in parameter)
                 {
                     AddParameter(command.Parameters, ref count, curValue, false);
@@ -1392,6 +1397,7 @@ namespace AdFactum.Data.Internal
             }
             finally
             {
+                stopwatch.Stop(command, CreateSql(command), count);
                 command.DisposeSafe();
             }
         }
