@@ -306,7 +306,7 @@ namespace AdFactum.Data.Access
         /// </summary>
         /// <param name="command">The command.</param>
         /// <returns></returns>
-        protected override string CreateSql(IDbCommand command)
+        public override string CreateSql(IDbCommand command)
         {
             if (command == null)
                 return string.Empty;

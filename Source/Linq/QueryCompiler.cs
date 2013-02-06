@@ -5,6 +5,7 @@ using System.Data;
 using System.Linq;
 using System.Linq.Expressions;
 using AdFactum.Data.Interfaces;
+using AdFactum.Data.Internal;
 using AdFactum.Data.Linq.Expressions;
 using AdFactum.Data.Linq.Translation;
 using AdFactum.Data.Util;
@@ -251,9 +252,18 @@ namespace AdFactum.Data.Linq
 
             IDbCommand command;
             localProvider = localProvider.RebindStatement(mapper, args, out command);
-            var result = localProvider.ExecuteCommand<TResult>(command);
-
-            return result;
+            
+            SqlStopwatch stopwatch = new SqlStopwatch(mapper.Persister.SqlTracer);
+            try
+            {
+                var result = localProvider.ExecuteCommand<TResult>(command);
+                return result;
+            }
+            finally
+            {
+                stopwatch.Stop(command, ((INativePersister)mapper.Persister).CreateSql(command), 0);
+                command.DisposeSafe();
+            }
         }
 
         /// <summary>

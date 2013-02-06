@@ -2825,7 +2825,7 @@ namespace AdFactum.Data.Internal
         /// </summary>
         /// <param name="command">The command.</param>
         /// <returns></returns>
-        protected virtual string CreateSql(IDbCommand command)
+        public virtual string CreateSql(IDbCommand command)
         {
             if (command == null)
                 return string.Empty;

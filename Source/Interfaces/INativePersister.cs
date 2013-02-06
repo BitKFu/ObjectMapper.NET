@@ -100,5 +100,13 @@ namespace AdFactum.Data
 
 	        out Dictionary<string, int> fieldIndexDict,
 	        out Dictionary<int, string> indexFieldDict);
+
+
+        /// <summary>
+        /// Creates an SQL Command from a given command 
+        /// </summary>
+        /// <param name="command">Command</param>
+        /// <returns></returns>
+        string CreateSql(IDbCommand command);
 	}
 }
