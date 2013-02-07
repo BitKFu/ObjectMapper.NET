@@ -176,7 +176,16 @@ namespace AdFactum.Data.Linq
             IDbCommand command = PreCompile(expression);
             ReplaceSqlParamter(command);
 
-            return ExecuteCommand<TResult>(command);
+            SqlStopwatch stopwatch = new SqlStopwatch(Mapper.Persister.SqlTracer);
+            try
+            {
+                return ExecuteCommand<TResult>(command);
+            }
+            finally
+            {
+                stopwatch.Stop(command, ((INativePersister)Mapper.Persister).CreateSql(command), 0);
+                command.DisposeSafe();
+            }
         }
 
         /// <summary>
