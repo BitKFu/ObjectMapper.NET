@@ -93,6 +93,7 @@
     <Compile Include="BusinessEntities\CharacterBlob.cs" />
     <Compile Include="BusinessEntities\Core\BaseVO.cs" />
     <Compile Include="Common.Tests\CountTest.cs" />
+    <Compile Include="Common.Tests\DeleteTest.cs" />
     <Compile Include="Common.Tests\ManyToManyTest.cs" />
     <Compile Include="Common.Tests\ObjectMapperSetup.cs" />
     <Compile Include="BusinessEntities\Country.cs" />

@@ -24,7 +24,7 @@ namespace ObjectMapper2LinqPadDeployment
 
                 string deploymentPath = string.Format(Path.Combine(
                     Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
-                    @"LINQPad\Drivers\DataContext\3.5\ObjectMapper2LinqPad ({0})\"), publicKeyToken);
+                    @"LINQPad\Drivers\DataContext\4.0\ObjectMapper2LinqPad ({0})\"), publicKeyToken);
 
                 Console.WriteLine("Output path: " + deploymentPath);
 

@@ -2797,6 +2797,9 @@ namespace AdFactum.Data
         /// <param name="tempHash">Temporary object cache is used to handle circular dependencies.</param>
         internal void PrivateDelete(PersistentObject po, int hierarchyLevel, ObjectHash tempHash)
         {
+            if (po == null)
+                return;
+
             po.IsDeleted = true;
             
             po.DeleteAllLinks(this, hierarchyLevel, tempHash, false);
