@@ -933,9 +933,11 @@ namespace AdFactum.Data.Internal
                 if (valueList != null)
                 {
                     IEnumerator valueEnumerator = valueList.GetEnumerator();
+                    int valueIndex = -1;
                     while (valueEnumerator.MoveNext())
                     {
                         object curValue = valueEnumerator.Current;
+                        valueIndex++;
 
                         if (conditionString.Contains(Condition.ParameterValue))
                         {
@@ -975,7 +977,7 @@ namespace AdFactum.Data.Internal
                             /*
                              * set the bind Parameter
                              */
-                            if (condition.UseBindParameter)
+                            if (condition.GetUseBindParamter(valueIndex))
                             {
                                 IDbDataParameter parameter = AddParameter(parameterCollection, ref index, curValue,
                                                                           condition.Field.FieldDescription.
@@ -997,7 +999,7 @@ namespace AdFactum.Data.Internal
                     var vfd = (VirtualFieldDescription)condition.Field.FieldDescription;
                     object curValue = globalParameter[vfd.GlobalParameter];
 
-                    if (condition.UseBindParameter)
+                    if (condition.GetUseBindParamter(-1))
                     {
                         IDbDataParameter parameter = AddParameter(parameterCollection, ref index, curValue,
                                                                   condition.Field.FieldDescription.CustomProperty.

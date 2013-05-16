@@ -362,7 +362,7 @@ namespace AdFactum.Data.Queries
 		/// <summary>
 		/// Returns the list of tables which are needed to fulfill the condition	
 		/// </summary>
-		public Set Tables
+		public virtual Set Tables
 		{
 			get
 			{
@@ -545,7 +545,7 @@ namespace AdFactum.Data.Queries
 		/// Adds a field to the conditions
 		/// </summary>
 		/// <param name="condition">field condition</param>
-		public void Add(ICondition condition)
+		public virtual void Add(ICondition condition)
 		{
 			ICondition[] tempConditions = AdditionalConditions;
 			ICondition[] newConditions = new ICondition[tempConditions.Length + 1];
@@ -560,7 +560,7 @@ namespace AdFactum.Data.Queries
 		/// Add several conditions
 		/// </summary>
 		/// <param name="Add">field conditions</param>
-		public void Add(ICondition[] Add)
+        public virtual void Add(ICondition[] Add)
 		{
 			ICondition[] tempConditions = AdditionalConditions;
 			ICondition[] newConditions = new ICondition[tempConditions.Length + Add.Length];
@@ -667,9 +667,19 @@ namespace AdFactum.Data.Queries
 	    /// </summary>
 	    public bool UseBindParameter
 	    {
-	        get { return useBindParameter; }
 	        set { useBindParameter = value; }
 	    }
+
+        /// <summary>
+        /// Tells if bind parameters shall be used for a given value at the defined index
+        /// </summary>
+        /// <param name="valueIndex">index of the value</param>
+        /// <returns></returns>
+        public virtual bool GetUseBindParamter(int valueIndex)
+        {
+            // In base condition we return true for every index
+            return useBindParameter;
+        }
 
 	    #endregion
 

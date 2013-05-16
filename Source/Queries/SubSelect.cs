@@ -217,8 +217,16 @@ namespace AdFactum.Data.Queries
 	    /// <value><c>true</c> if [use bind parameter]; otherwise, <c>false</c>.</value>
 	    bool ICondition.UseBindParameter
 	    {
-	        get { return false; }
 	        set {  }
+	    }
+
+	    /// <summary>
+	    /// Tells if bind parameters shall be used for a given value at the defined index
+	    /// </summary>
+	    /// <param name="valueIndex">index of the value</param>
+	    public bool GetUseBindParamter(int valueIndex)
+	    {
+	        return false;
 	    }
 
 
