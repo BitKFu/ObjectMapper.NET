@@ -20,7 +20,7 @@ namespace ObjectMapper.NUnits.Common.Tests
         /// <summary>
         /// Insert Test Data
         /// </summary>
-        private void InsertTestData ()
+        private void InsertTestData()
         {
             /*
              * Insert some test contacts
@@ -38,10 +38,35 @@ namespace ObjectMapper.NUnits.Common.Tests
         }
 
         /// <summary>
+        /// Test the concatenation function with one central where clause
+        /// </summary>
+        [Test]
+        public void TestLinqConcat()
+        {
+            InsertTestData();
+
+            using (AdFactum.Data.ObjectMapper mapper = OBM.CreateMapper(Connection))
+            {
+                /*
+                 * Select objects with WHERE
+                 */
+                var tableContact = mapper.Query<Contact>();
+                var contacts = from contact in tableContact where contact.FirstName == "Fritz" select contact;
+
+                var c1 = contacts.AsQueryable();
+                var c2 = contacts.AsQueryable();
+                var c3 = contacts.AsQueryable();
+
+                var trippleIt = c1.Concat(c2).Concat(c3).Count();
+                Assert.AreEqual(3, trippleIt);
+            }
+        }
+
+        /// <summary>
         /// Test simple linq conditions
         /// </summary>
         [Test]
-        public void TestLinqSimpleConditions ()
+        public void TestLinqSimpleConditions()
         {
             InsertTestData();
 
@@ -82,7 +107,7 @@ namespace ObjectMapper.NUnits.Common.Tests
         /// Tests simple linq binding features
         /// </summary>
         [Test]
-        public void TestLinqProjections ()
+        public void TestLinqProjections()
         {
             InsertTestData();
 

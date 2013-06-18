@@ -584,13 +584,19 @@ namespace AdFactum.Data.Linq.Translation
 
             AliasedExpression outerProjection = VisitSource(outerSource);
 
-            AddFromClauseMapping(outerKey.Parameters[0],outerProjection);
+            ParameterExpression outerKeyParameter;
+            outerKey = RebindPredicate(outerKey, out outerKeyParameter);
+            AddFromClauseMapping(outerKeyParameter, outerProjection);
+
             LambdaExpression predicateLambda = Expression.Lambda(innerKey.Body.Equal(outerKey.Body), innerKey.Parameters[0]);
             MethodCallExpression callToWhere = Expression.Call(typeof (Enumerable), "Where", new[] {args[1]}, innerSource, predicateLambda);
             AliasedExpression group = VisitSource(callToWhere);
 
-            AddFromClauseMapping(resultSelector.Parameters[0], outerProjection);
-            AddFromClauseMapping(resultSelector.Parameters[1], group);
+            ParameterExpression resultParameter1;
+            ParameterExpression resultParameter2;
+            resultSelector = RebindPredicate(resultSelector, out resultParameter1, out resultParameter2);
+            AddFromClauseMapping(resultParameter1, outerProjection);
+            AddFromClauseMapping(resultParameter2, group);
             Expression resultExpr = Visit(resultSelector.Body);
 
             Alias alias = Alias.Generate(AliasType.Select);
@@ -612,16 +618,28 @@ namespace AdFactum.Data.Linq.Translation
                                               LambdaExpression outerKey, LambdaExpression innerKey,
                                               LambdaExpression resultSelector)
         {
+            // Rebind Join Key
+            ParameterExpression outerFromParameter;
+            ParameterExpression innerFromParameter;
+            outerKey = RebindPredicate(outerKey, out outerFromParameter);
+            innerKey = RebindPredicate(innerKey, out innerFromParameter);
+            
             AliasedExpression outerProjection = VisitSource(outerSource);
             AliasedExpression innerProjection = VisitSource(innerSource);
-            AddFromClauseMapping(outerKey.Parameters[0], outerProjection);
+
+            AddFromClauseMapping(outerFromParameter, outerProjection);
             Expression outerKeyExpr = Visit(outerKey.Body);
 
-            AddFromClauseMapping(innerKey.Parameters[0], innerProjection);
+            AddFromClauseMapping(innerFromParameter, innerProjection);
             Expression innerKeyExpr = Visit(innerKey.Body);
 
-            AddFromClauseMapping(resultSelector.Parameters[0], outerProjection);
-            AddFromClauseMapping(resultSelector.Parameters[1], innerProjection);
+            // Rebind Result Selector
+            ParameterExpression outerProjectionKey;
+            ParameterExpression innerProjectionKey;
+            resultSelector = RebindPredicate(resultSelector, out outerProjectionKey, out innerProjectionKey);
+
+            AddFromClauseMapping(outerProjectionKey, outerProjection);
+            AddFromClauseMapping(innerProjectionKey, innerProjection);
 
             Expression resultExpr = Visit(resultSelector.Body);
             var join = new JoinExpression(resultType, GetProjection(resultType), JoinType.InnerJoin, outerProjection, innerProjection,
@@ -651,7 +669,9 @@ namespace AdFactum.Data.Linq.Translation
         /// </summary>
         private Expression BindWhere(Type resultType, Expression source, LambdaExpression predicate)
         {
-            ParameterExpression fromIdentifier = predicate.Parameters.First();
+            // Copy Lambda Expression (this has to be done, because the where clause could be used with multiple select clauses)
+            ParameterExpression fromIdentifier;
+            predicate = RebindPredicate(predicate, out fromIdentifier);
 
             AliasedExpression from = VisitSource(source);
             AddFromClauseMapping(fromIdentifier, StripExpression(from));
@@ -664,6 +684,29 @@ namespace AdFactum.Data.Linq.Translation
             return new SelectExpression(resultType, alias, columns, null, from, where);
         }
 
+        /// <summary>
+        /// Rebind the predicate and extract the new from identifier
+        /// </summary>
+        private LambdaExpression RebindPredicate(LambdaExpression predicate, out ParameterExpression newFromIdentifier)
+        {
+            ParameterExpression fromIdentifier = predicate.Parameters.First();
+            newFromIdentifier = Expression.Parameter(fromIdentifier.Type, fromIdentifier.Name);
+            predicate = (LambdaExpression) ExpressionReplacer.ReplaceAll(predicate, new Expression[] { fromIdentifier }, new Expression[] { newFromIdentifier });
+            return predicate;
+        }
+        
+        /// <summary>
+        /// Rebind the predicate and extract the new from identifier
+        /// </summary>
+        private LambdaExpression RebindPredicate(LambdaExpression predicate, out ParameterExpression newFromIdentifier, out ParameterExpression newFromIdentifier1)
+        {
+            ParameterExpression fromIdentifier = predicate.Parameters[0];
+            ParameterExpression fromIdentifier1 = predicate.Parameters[1];
+            newFromIdentifier = Expression.Parameter(fromIdentifier.Type, fromIdentifier.Name);
+            newFromIdentifier1 = Expression.Parameter(fromIdentifier1.Type, fromIdentifier1.Name);
+            predicate = (LambdaExpression) ExpressionReplacer.ReplaceAll(predicate, new Expression[] { fromIdentifier, fromIdentifier1 }, new Expression[] { newFromIdentifier, newFromIdentifier1 });
+            return predicate;
+        }
 
         /// <summary>
         /// This method is used to bind the distinct keyword
@@ -719,7 +762,9 @@ namespace AdFactum.Data.Linq.Translation
         private Expression BindSelectMany(Type resultType, Expression source, LambdaExpression collectionSelector,
                                           LambdaExpression resultSelector)
         {
-            ParameterExpression fromIdentifier = collectionSelector.Parameters[0];
+            ParameterExpression fromIdentifier;
+            collectionSelector = RebindPredicate(collectionSelector, out fromIdentifier);
+
             AliasedExpression fromLeft = VisitSource(source);
             AddFromClauseMapping(fromIdentifier, fromLeft);
 
@@ -767,8 +812,13 @@ namespace AdFactum.Data.Linq.Translation
                                     : defaultIfEmpty != null ? JoinType.OuterApply : JoinType.CrossApply;
 
             var join = new JoinExpression(resultType, GetProjection(resultType), joinType, fromLeft, fromRight, null);
-            AddFromClauseMapping(resultSelector.Parameters[0], fromLeft);
-            AddFromClauseMapping(resultSelector.Parameters[1], fromRight);
+
+            ParameterExpression resultParameter1;
+            ParameterExpression resultParameter2;
+            resultSelector = RebindPredicate(resultSelector, out resultParameter1, out resultParameter2);
+
+            AddFromClauseMapping(resultParameter1, fromLeft);
+            AddFromClauseMapping(resultParameter2, fromRight);
 
             Alias alias = Alias.Generate(AliasType.Select);
             //var resultColumns = join; 
@@ -859,7 +909,9 @@ namespace AdFactum.Data.Linq.Translation
             Expression argExpr = null;
             if (argument != null)
             {
-                AddFromClauseMapping(argument.Parameters[0], projection);
+                ParameterExpression argumentParameter;
+                argument = RebindPredicate(argument, out argumentParameter);
+                AddFromClauseMapping(argumentParameter, projection);
                 argExpr = this.Visit(argument.Body);
             }
             else if (!hasPredicateArg || useAlternateArg)
@@ -893,7 +945,9 @@ namespace AdFactum.Data.Linq.Translation
                 // would be legal to add to the columns in the select expression that has the corresponding group-by clause.
                 if (argument != null)
                 {
-                    AddFromClauseMapping(argument.Parameters[0], info.Element);
+                    ParameterExpression argumentParameter;
+                    argument = RebindPredicate(argument, out argumentParameter);
+                    AddFromClauseMapping(argumentParameter, info.Element);
                     argExpr = this.Visit(argument.Body);
                 }
                 else if (!hasPredicateArg || useAlternateArg)
@@ -1135,12 +1189,13 @@ namespace AdFactum.Data.Linq.Translation
         private Expression BindFirst(Type resultType, Expression source, LambdaExpression predicate, string kind,
                                      bool isRoot)
         {
-            ParameterExpression fromIdentifier = predicate != null ? predicate.Parameters.First() : null;
             AliasedExpression from = VisitSource(source);
 
             Expression where = null;
             if (predicate != null)
             {
+                ParameterExpression fromIdentifier;
+                predicate = RebindPredicate(predicate, out fromIdentifier);
                 AddFromClauseMapping(fromIdentifier, from);
                 where = Visit(predicate);
             }
@@ -1173,12 +1228,14 @@ namespace AdFactum.Data.Linq.Translation
         protected virtual Expression BindOrderBy(Type resultType, Expression source, LambdaExpression selector,
                                                  Ordering ordering)
         {
-            ParameterExpression fromIdentifier = selector.Parameters.First();
 
             List<OrderExpression> myThenBys = ThenBys;
             ThenBys = null;
 
             AliasedExpression from = VisitSource(source);
+
+            ParameterExpression fromIdentifier;
+            selector = RebindPredicate(selector, out fromIdentifier);
             AddFromClauseMapping(fromIdentifier, StripExpression(from));
 
             LambdaExpression visitedSelector = (LambdaExpression) Visit(selector);
@@ -1190,8 +1247,11 @@ namespace AdFactum.Data.Linq.Translation
                 {
                     OrderExpression tb = myThenBys[i];
                     var lambda = (LambdaExpression) tb.Expression;
-                    fromIdentifier = lambda.Parameters[0];
-                    AddFromClauseMapping(fromIdentifier, from);
+                    
+                    ParameterExpression lambdaIdentifier;
+                    lambda = RebindPredicate(lambda, out lambdaIdentifier);
+                    AddFromClauseMapping(lambdaIdentifier, from);
+
                     orderings.Add(new OrderExpression(tb.Ordering, Visit(lambda.Body)));
                 }
             }
@@ -1224,7 +1284,10 @@ namespace AdFactum.Data.Linq.Translation
         {
             // Visit the Source
             AliasedExpression projection = VisitSource(source);
-            AddFromClauseMapping(keySelector.Parameters[0], projection);
+
+            ParameterExpression keySelectorParameter;
+            keySelector = RebindPredicate(keySelector, out keySelectorParameter);
+            AddFromClauseMapping(keySelectorParameter, projection);
 
             // Place the projection into the FROM Mapping
             Expression keyExpr = Visit(keySelector.Body);
@@ -1234,7 +1297,9 @@ namespace AdFactum.Data.Linq.Translation
             Expression elemExpr = projection;
             if (elementSelector != null)
             {
-                AddFromClauseMapping(elementSelector.Parameters[0], projection);
+                ParameterExpression elementSelectorParameter;
+                elementSelector = RebindPredicate(elementSelector, out elementSelectorParameter);
+                AddFromClauseMapping(elementSelectorParameter, projection);
                 elemExpr = Visit(elementSelector.Body);
             }
 
@@ -1243,11 +1308,12 @@ namespace AdFactum.Data.Linq.Translation
                 //, projection.Select.Alias, projection.Select.Alias);
             List<Expression> groupExprs = new List<Expression>{keyExpr}; // keyProjection.Select(c => c.Expression).ToList();}
 
-            // make duplicate of source query as basis of element subquery by visiting the source again
+            // make duplicate of source query as basis of element sub query by visiting the source again
             AliasedExpression subqueryBasis = VisitSource(source);
 
-            // recompute key columns for group expressions relative to subquery (need these for doing the correlation predicate)
-            AddFromClauseMapping(keySelector.Parameters[0], subqueryBasis);
+            // re-compute key columns for group expressions relative to sub query (need these for doing the correlation predicate)
+            keySelector = RebindPredicate(keySelector, out keySelectorParameter);
+            AddFromClauseMapping(keySelectorParameter, subqueryBasis);
             Expression subqueryKey = Visit(keySelector.Body);
 
             //// Turn it into a select expression
@@ -1269,7 +1335,9 @@ namespace AdFactum.Data.Linq.Translation
             Expression subqueryElemExpr = subqueryBasis;
             if (elementSelector != null)
             {
-                AddFromClauseMapping(elementSelector.Parameters[0], subqueryBasis);
+                ParameterExpression elementSelectorParameter;
+                elementSelector = RebindPredicate(elementSelector, out elementSelectorParameter);
+                AddFromClauseMapping(elementSelectorParameter, subqueryBasis);
                 subqueryElemExpr = Visit(elementSelector.Body);
             }
 
@@ -1291,9 +1359,14 @@ namespace AdFactum.Data.Linq.Translation
             {
                 Expression saveGroupElement = currentGroupElement;
                 currentGroupElement = elementSubquery;
+
+                ParameterExpression resultParameter1;
+                ParameterExpression resultParameter2;
+                resultSelector = RebindPredicate(resultSelector, out resultParameter1, out resultParameter2);
+                
                 // compute result expression based on key & element-subquery
-                AddFromClauseMapping(resultSelector.Parameters[0], keyExpr as AliasedExpression);
-                AddFromClauseMapping(resultSelector.Parameters[1], projection);
+                AddFromClauseMapping(resultParameter1, keyExpr as AliasedExpression);
+                AddFromClauseMapping(resultParameter2, projection);
                 resultExpr = Visit(resultSelector.Body);
                 currentGroupElement = saveGroupElement;
 
@@ -1403,9 +1476,10 @@ namespace AdFactum.Data.Linq.Translation
         /// </summary>
         private Expression BindSelect(Type resultType, Expression source, LambdaExpression selector)
         {
-            ParameterExpression fromIdentifier = selector.Parameters.First();
-            AliasedExpression from = VisitSource(source);
+            ParameterExpression fromIdentifier;
+            selector = RebindPredicate(selector, out fromIdentifier);
 
+            AliasedExpression from = VisitSource(source);
             AddFromClauseMapping(fromIdentifier, from);
 
             var where = (Expression) null;
