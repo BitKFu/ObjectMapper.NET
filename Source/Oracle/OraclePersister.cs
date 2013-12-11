@@ -15,8 +15,8 @@ using AdFactum.Data.Linq.Language;
 using AdFactum.Data.Linq.Translation;
 using AdFactum.Data.Queries;
 using AdFactum.Data.Util;
-using Oracle.DataAccess.Client;
-using Oracle.DataAccess.Types;
+using Oracle.ManagedDataAccess.Client;
+using Oracle.ManagedDataAccess.Types;
 
 namespace AdFactum.Data.Oracle
 {
@@ -377,7 +377,7 @@ namespace AdFactum.Data.Oracle
 			const int BUFFER_SIZE = 2048;
             var buffer = value as byte[];
 		    object convertedValue = null;
-            var dbType = (OracleDbType)TypeMapper.GetEnumForDatabase(type, isUnicode);
+            var dbType = (OracleDbType)TypeMapper.GetEnumForDatabase(type, value.SizeOf(), isUnicode);
 
             if (buffer == null)
             {
@@ -500,7 +500,7 @@ namespace AdFactum.Data.Oracle
 		{
             if (!type.IsListType())
             {
-                IDbDataParameter parameter = new OracleParameter(":" + parameterName, (OracleDbType)TypeMapper.GetEnumForDatabase(type, isUnicode))
+                IDbDataParameter parameter = new OracleParameter(":" + parameterName, (OracleDbType)TypeMapper.GetEnumForDatabase(type, value.SizeOf(), isUnicode))
                                                  {
                                                      Value = TypeMapper.ConvertValueToDbType(value),
                                                      Direction = ParameterDirection.Input
@@ -536,7 +536,7 @@ namespace AdFactum.Data.Oracle
                 /*
                  * Special handling for arrays
                  */
-                var parameter = new OracleParameter(":" + parameterName, (OracleDbType)TypeMapper.GetEnumForDatabase(parameterType, isUnicode))
+                var parameter = new OracleParameter(":" + parameterName, (OracleDbType)TypeMapper.GetEnumForDatabase(parameterType, value.SizeOf(), isUnicode))
                                     {
                                         Direction = ParameterDirection.Input,
                                         CollectionType = OracleCollectionType.PLSQLAssociativeArray,

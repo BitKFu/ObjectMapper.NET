@@ -134,7 +134,7 @@ namespace AdFactum.Data.Access
         /// <param name="type">The type.</param>
         /// <param name="isUnicode">if set to <c>true</c> [is unicode].</param>
         /// <returns></returns>
-        public override Enum GetEnumForDatabase(Type type, bool isUnicode)
+        public override Enum GetEnumForDatabase(Type type, int size, bool isUnicode)
 		{
 			OleDbType result = OleDbType.LongVarBinary;
             type = TypeHelper.GetBaseType(type);

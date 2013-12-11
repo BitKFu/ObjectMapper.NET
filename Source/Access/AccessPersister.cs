@@ -435,7 +435,7 @@ namespace AdFactum.Data.Access
         {
             IDbDataParameter parameter = new OleDbParameter(
                 "?p" + numberOfParameter.ToString("00"), 
-                (OleDbType) TypeMapper.GetEnumForDatabase(type, isUnicode))
+                (OleDbType) TypeMapper.GetEnumForDatabase(type, value.SizeOf(), isUnicode))
                                              {
                                                  Value = TypeMapper.ConvertValueToDbType(value)
                                              };
@@ -451,7 +451,7 @@ namespace AdFactum.Data.Access
         public override IDbDataParameter CreateParameter(string parameterName, Type type, object value, bool isUnicode)
         {
             IDbDataParameter parameter = new OleDbParameter("?" + parameterName,
-                                                            (OleDbType) TypeMapper.GetEnumForDatabase(type, isUnicode))
+                                                            (OleDbType) TypeMapper.GetEnumForDatabase(type, value.SizeOf(), isUnicode))
                                              {Value = TypeMapper.ConvertValueToDbType(value)};
 
             return parameter;

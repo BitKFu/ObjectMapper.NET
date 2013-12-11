@@ -242,7 +242,7 @@ namespace AdFactum.Data.Postgres
         {
             var buffer = value as byte[];
             object convertedValue = null;
-            var dbType = (NpgsqlDbType)TypeMapper.GetEnumForDatabase(type, isUnicode);
+            var dbType = (NpgsqlDbType)TypeMapper.GetEnumForDatabase(type, value.SizeOf(), isUnicode);
 
             if (buffer == null)
             {
@@ -352,7 +352,7 @@ namespace AdFactum.Data.Postgres
         /// </summary>
         public override IDbDataParameter CreateParameter(string parameterName, Type type, object value, bool isUnicode)
         {
-            IDbDataParameter parameter = new NpgsqlParameter(":" + parameterName, (NpgsqlDbType)TypeMapper.GetEnumForDatabase(type, isUnicode))
+            IDbDataParameter parameter = new NpgsqlParameter(":" + parameterName, (NpgsqlDbType)TypeMapper.GetEnumForDatabase(type, value.SizeOf(), isUnicode))
             {
                 Value = TypeMapper.ConvertValueToDbType(value),
                 Direction = ParameterDirection.Input

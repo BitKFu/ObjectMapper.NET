@@ -383,7 +383,7 @@ namespace AdFactum.Data.SqlServer
         public override IDbDataParameter AddParameter(IDataParameterCollection parameters, ref int numberOfParameter, Type type, object value, bool isUnicode)
         {
             object convertedValue = TypeMapper.ConvertValueToDbType(value);
-            var dbType = (SqlDbType)TypeMapper.GetEnumForDatabase(type, isUnicode);
+            var dbType = (SqlDbType)TypeMapper.GetEnumForDatabase(type, value.SizeOf(), isUnicode);
 		    
             /*
 			 * look if a parameter with the same value exists.
@@ -411,7 +411,7 @@ namespace AdFactum.Data.SqlServer
             if (!parameterName.StartsWith("@"))
                 parameterName = string.Concat("@", parameterName);
 
-            IDbDataParameter parameter = new SqlParameter(parameterName, (SqlDbType)TypeMapper.GetEnumForDatabase(type, isUnicode))
+            IDbDataParameter parameter = new SqlParameter(parameterName, (SqlDbType)TypeMapper.GetEnumForDatabase(type, value.SizeOf(), isUnicode))
                                              {Value = TypeMapper.ConvertValueToDbType(value)};
 
             return parameter;

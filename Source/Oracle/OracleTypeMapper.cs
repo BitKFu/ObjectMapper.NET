@@ -7,7 +7,7 @@ using System.IO;
 using System.Text;
 using AdFactum.Data.Internal;
 using AdFactum.Data.Util;
-using Oracle.DataAccess.Client;
+using Oracle.ManagedDataAccess.Client;
 
 namespace AdFactum.Data.Oracle
 {
@@ -178,7 +178,7 @@ namespace AdFactum.Data.Oracle
         /// <param name="type">The type.</param>
         /// <param name="isUnicode">if set to <c>true</c> [is unicode].</param>
         /// <returns></returns>
-        public override Enum GetEnumForDatabase(Type type, bool isUnicode)
+        public override Enum GetEnumForDatabase(Type type, int size, bool isUnicode)
 		{
 			OracleDbType result = OracleDbType.Blob;
             type = TypeHelper.GetBaseType(type);
@@ -199,6 +199,10 @@ namespace AdFactum.Data.Oracle
 					}
 				}
 			}
+
+            // Check if, CLOB is needed
+            if (result == OracleDbType.Varchar2 && size >= 4000)
+                result = OracleDbType.Clob;
 
             /*
              * Switch to unicode

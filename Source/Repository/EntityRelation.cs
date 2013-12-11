@@ -70,7 +70,12 @@ namespace AdFactum.Data.Repository
 			/// <summary>
 			/// Linked Cascade
 			/// </summary>
-			LinkedCascade
+			LinkedCascade,
+
+            /// <summary>
+            /// No Association
+            /// </summary>
+            None
 		}
 
 		#endregion

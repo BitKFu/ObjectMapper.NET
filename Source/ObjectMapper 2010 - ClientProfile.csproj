@@ -94,11 +94,8 @@
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Oracle.DataAccess">
-      <Name>Oracle.DataAccess</Name>
-      <HintPath>c:\oracle\product\10.1.0\Client_1\bin\Oracle.DataAccess.dll</HintPath>
-      <AssemblyFolderKey>hklm\dn\odp.net</AssemblyFolderKey>
-      <Private>False</Private>
+    <Reference Include="Oracle.ManagedDataAccess, Version=4.121.1.0, Culture=neutral, PublicKeyToken=89b483f429c47342, processorArchitecture=MSIL">
+      <HintPath>..\3dParty\Oracle.ManagedDataAccess.dll</HintPath>
     </Reference>
     <Reference Include="System">
       <Name>System</Name>
@@ -156,10 +153,12 @@
     <Compile Include="Interfaces\ILinqPersister.cs" />
     <Compile Include="Interfaces\ILinqQueryProvider.cs" />
     <Compile Include="Interfaces\ISchemaWriter.cs" />
+    <Compile Include="Internal\BaseExtensions.cs" />
     <Compile Include="Internal\BaseIntegrityChecker.cs" />
     <Compile Include="Internal\BaseRepository.cs" />
     <Compile Include="Internal\BaseSchemaWriter.cs" />
     <Compile Include="Internal\CommandExtensions.cs" />
+    <Compile Include="Internal\OracleCommandExtensions.cs" />
     <Compile Include="Internal\PersistentProperties.cs" />
     <Compile Include="Linq\Expressions\DbExpressionComparer.cs" />
     <Compile Include="Linq\Expressions\DbExpressionExtensions.cs" />

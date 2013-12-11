@@ -153,6 +153,8 @@ namespace AdFactum.Data.Internal
 
                     var relation = new EntityRelation();
                     relation.Initialize(versionInfo, mapper, description);
+                    if (relation.OrmRelation == EntityRelation.OrmType.None)
+                        continue;
 
                     if (definedRelations.ContainsKey(relation.UniqueIdentifierKey))
                     {
