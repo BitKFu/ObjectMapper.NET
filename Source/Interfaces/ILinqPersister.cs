@@ -42,14 +42,14 @@ namespace AdFactum.Data.Interfaces
         /// <param name="numberOfParameter">The number of parameter.</param>
         /// <param name="value">The value.</param>
         /// <param name="type">Type of the value object</param>
-        /// <param name="isUnicode">if set to <c>true</c> [is unicode].</param>
+        /// <param name="metaInfo">property meta information</param>
         /// <returns></returns>
-        IDbDataParameter AddParameter(IDataParameterCollection parameters, ref int numberOfParameter, Type type, object value, bool isUnicode);
+        IDbDataParameter AddParameter(IDataParameterCollection parameters, ref int numberOfParameter, Type type, object value, PropertyMetaInfo metaInfo);
 
         /// <summary>
         /// Creates a named the parameter.
         /// </summary>
-        IDbDataParameter CreateParameter(string parameterName, Type type, object value, bool isUnicode);
+        IDbDataParameter CreateParameter(string parameterName, Type type, object value, PropertyMetaInfo metaInfo);
 
         /// <summary>
         /// Creates a named parameter from an existing parameter as a copy

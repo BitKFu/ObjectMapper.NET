@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data;
 using Oracle.ManagedDataAccess.Client;
 
 namespace AdFactum.Data.Internal

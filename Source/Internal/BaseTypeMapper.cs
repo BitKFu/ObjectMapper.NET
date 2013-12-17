@@ -147,10 +147,10 @@ namespace AdFactum.Data.Internal
         /// <summary>
         /// Gets the enum for database.
         /// </summary>
-        /// <param name="type">The type.</param>
-        /// <param name="isUnicode">if set to <c>true</c> [is unicode].</param>
+        /// <param name="type">the type</param>
+        /// <param name="metaInfo">property meta information</param>
         /// <returns></returns>
-        public abstract Enum GetEnumForDatabase(Type type, int size, bool isUnicode);
+        public abstract Enum GetEnumForDatabase(Type type, PropertyMetaInfo metaInfo);
 
         /// <summary>
         /// Converts the source to a database specific type and returns it.

@@ -202,10 +202,10 @@ namespace AdFactum.Data.SqlServer
                                                 , " PAGE"
                                                 , " WHERE Z_R_N BETWEEN @minLine AND @maxLine ");
 
-                IDbDataParameter parameter = CreateParameter("minLine", minLine, false);
+                IDbDataParameter parameter = CreateParameter("minLine", minLine, null);
                 command.Parameters.Add(parameter);
 
-                parameter = CreateParameter("maxLine", maxLine, false);
+                parameter = CreateParameter("maxLine", maxLine, null);
                 command.Parameters.Add(parameter);
                 command.CommandText = outerSql;
 

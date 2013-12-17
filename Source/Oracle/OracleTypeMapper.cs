@@ -176,9 +176,9 @@ namespace AdFactum.Data.Oracle
         /// Gets the enum for database.
         /// </summary>
         /// <param name="type">The type.</param>
-        /// <param name="isUnicode">if set to <c>true</c> [is unicode].</param>
+        /// <param name="metaInfo">property meta information</param>
         /// <returns></returns>
-        public override Enum GetEnumForDatabase(Type type, int size, bool isUnicode)
+        public override Enum GetEnumForDatabase(Type type, PropertyMetaInfo metaInfo)
 		{
 			OracleDbType result = OracleDbType.Blob;
             type = TypeHelper.GetBaseType(type);
@@ -201,13 +201,13 @@ namespace AdFactum.Data.Oracle
 			}
 
             // Check if, CLOB is needed
-            if (result == OracleDbType.Varchar2 && size >= 4000)
+            if (result == OracleDbType.Varchar2 && metaInfo != null &&  metaInfo.Length == int.MaxValue)
                 result = OracleDbType.Clob;
 
             /*
              * Switch to unicode
              */
-            if (isUnicode)
+            if (metaInfo != null && metaInfo.IsUnicode)
             {
                 switch (result)
                 {

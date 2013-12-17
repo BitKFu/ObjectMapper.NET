@@ -1773,11 +1773,11 @@ namespace AdFactum.Data.Linq.Language
             IDbDataParameter param;
             if (!expression.Alias.Generated)
             {
-                param = LinqPersister.CreateParameter(expression.Alias.Name, expression.Type, expression.Value, false);
+                param = LinqPersister.CreateParameter(expression.Alias.Name, expression.Type, expression.Value, null);
                 Command.Parameters.Add(param);
             }
             else
-                param = LinqPersister.AddParameter(Command.Parameters, ref counter, expression.Type, expression.Value, false);
+                param = LinqPersister.AddParameter(Command.Parameters, ref counter, expression.Type, expression.Value, null);
 
             NumberOfParameters = counter;
             WriteSql(param.ParameterName);

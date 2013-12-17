@@ -589,7 +589,7 @@ namespace AdFactum.Data.Linq
                     {
                         if (!first) replaceWith += ", ";
                         IDbDataParameter dbParameter = persister.AddParameter(newCommand.Parameters, ref localCounter,
-                                                                              parameter.GetType(), parameter, false);
+                                                                              parameter.GetType(), parameter, null);
                         replaceWith += persister.GetParameterString(dbParameter);
                         first = false;
                     }

@@ -251,7 +251,7 @@ namespace AdFactum.Data.Access
                         businessSql = businessSql.Replace((string)enumerator.Key, "?");
                         IDbDataParameter parameter =
                             CreateParameter(((string)enumerator.Key).Replace("@", string.Empty),
-                                            enumerator.Value, false);
+                                            enumerator.Value, null);
                         command.Parameters.Add(parameter);
                     }
                 }
@@ -431,11 +431,11 @@ namespace AdFactum.Data.Access
         /// Creates the parameter.
         /// </summary>
         public override IDbDataParameter AddParameter(IDataParameterCollection parameters, ref int numberOfParameter,
-                                                      Type type, object value, bool isUnicode)
+                                                      Type type, object value, PropertyMetaInfo metaInfo)
         {
             IDbDataParameter parameter = new OleDbParameter(
                 "?p" + numberOfParameter.ToString("00"), 
-                (OleDbType) TypeMapper.GetEnumForDatabase(type, value.SizeOf(), isUnicode))
+                (OleDbType) TypeMapper.GetEnumForDatabase(type, metaInfo))
                                              {
                                                  Value = TypeMapper.ConvertValueToDbType(value)
                                              };
@@ -448,10 +448,10 @@ namespace AdFactum.Data.Access
         /// <summary>
         /// Creates the parameter.
         /// </summary>
-        public override IDbDataParameter CreateParameter(string parameterName, Type type, object value, bool isUnicode)
+        public override IDbDataParameter CreateParameter(string parameterName, Type type, object value, PropertyMetaInfo metaInfo)
         {
             IDbDataParameter parameter = new OleDbParameter("?" + parameterName,
-                                                            (OleDbType) TypeMapper.GetEnumForDatabase(type, value.SizeOf(), isUnicode))
+                                                            (OleDbType) TypeMapper.GetEnumForDatabase(type, metaInfo))
                                              {Value = TypeMapper.ConvertValueToDbType(value)};
 
             return parameter;

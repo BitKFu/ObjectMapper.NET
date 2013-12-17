@@ -477,8 +477,7 @@ namespace AdFactum.Data.Internal
                         if (TypeMapper.ConvertValueToDbType(curValue) != DBNull.Value)
                         {
                             IDbDataParameter parameter = AddParameter(parameterCollection, ref index, curValue,
-                                                                      vfd.GlobalJoinField.CustomProperty.MetaInfo.
-                                                                          IsUnicode);
+                                                                      vfd.GlobalJoinField.CustomProperty.MetaInfo);
                             join1.Append(string.Concat(identifier, ".", Condition.QUOTE_OPEN, vfd.GlobalJoinField.Name,
                                                        Condition.QUOTE_CLOSE, "=", GetParameterString(parameter), " "));
 
@@ -487,7 +486,7 @@ namespace AdFactum.Data.Internal
                              */
                             if ((vfd.GlobalJoinField.IsPrimary) && (join2 != null))
                             {
-                                parameter = AddParameter(parameterCollection, ref index, curValue, false);
+                                parameter = AddParameter(parameterCollection, ref index, curValue, null);
 
                                 join2.Append(" AND ");
                                 join2.Append(string.Concat(identifier, "lt.", DBConst.ParentObjectField, "=",
@@ -571,8 +570,7 @@ namespace AdFactum.Data.Internal
                                 {
                                     result.Append(" (");
                                     IDbDataParameter parameter = AddParameter(parameterCollection, ref index, curValue,
-                                                                              vfd.GlobalJoinField.CustomProperty.
-                                                                                  MetaInfo.IsUnicode);
+                                                                              vfd.GlobalJoinField.CustomProperty.MetaInfo);
 
                                     result.Append(string.Concat(identifier, ".", Condition.QUOTE_OPEN,
                                                                 vfd.GlobalJoinField.Name, Condition.QUOTE_CLOSE, "=",
@@ -586,8 +584,7 @@ namespace AdFactum.Data.Internal
                                 else
                                 {
                                     IDbDataParameter parameter = AddParameter(parameterCollection, ref index, curValue,
-                                                                              vfd.GlobalJoinField.CustomProperty.
-                                                                                  MetaInfo.IsUnicode);
+                                                                              vfd.GlobalJoinField.CustomProperty.MetaInfo);
                                     result.Append(string.Concat(identifier, ".", Condition.QUOTE_OPEN,
                                                                 vfd.GlobalJoinField.Name, Condition.QUOTE_CLOSE, "=",
                                                                 GetParameterString(parameter)));
@@ -669,7 +666,7 @@ namespace AdFactum.Data.Internal
         /// Privates the with clause.
         /// </summary>
         /// <param name="projection">The projection.</param>
-        /// <param name="whereClause">The where clause.</param>
+        /// <param name="hintClause">The hint clause.</param>
         /// <param name="parameters">The parameters.</param>
         /// <param name="fieldTemplates">The field templates.</param>
         /// <param name="globalParameter">The global parameter.</param>
@@ -728,7 +725,7 @@ namespace AdFactum.Data.Internal
                     if ((globalParameter != null) && (globalParameter.Contains(curValue)))
                         curValue = globalParameter[curValue];
 
-                    IDbDataParameter parameter = AddParameter(parameters, ref index, curValue, false);
+                    IDbDataParameter parameter = AddParameter(parameters, ref index, curValue, null);
                     conditionString = conditionString.ReplaceFirst(Condition.ParameterValue, GetParameterString(parameter));
                 }
             }
@@ -981,7 +978,7 @@ namespace AdFactum.Data.Internal
                             {
                                 IDbDataParameter parameter = AddParameter(parameterCollection, ref index, curValue,
                                                                           condition.Field.FieldDescription.
-                                                                              CustomProperty.MetaInfo.IsUnicode);
+                                                                              CustomProperty.MetaInfo);
                                 conditionString = conditionString.ReplaceFirst(Condition.ParameterValue,
                                                         prefix + GetParameterString(parameter));
                             }
@@ -1002,8 +999,7 @@ namespace AdFactum.Data.Internal
                     if (condition.GetUseBindParamter(-1))
                     {
                         IDbDataParameter parameter = AddParameter(parameterCollection, ref index, curValue,
-                                                                  condition.Field.FieldDescription.CustomProperty.
-                                                                      MetaInfo.IsUnicode);
+                                                                  condition.Field.FieldDescription.CustomProperty.MetaInfo);
                         conditionString = conditionString.ReplaceFirst(Condition.GlobalJoin, GetParameterString(parameter));
                     }
                     else
@@ -1187,7 +1183,7 @@ namespace AdFactum.Data.Internal
         /// Creates the parameter.
         /// </summary>
         public abstract IDbDataParameter AddParameter(IDataParameterCollection parameters, ref int numberOfParameter,
-                                                      Type type, object value, bool isUnicode);
+                                                      Type type, object value, PropertyMetaInfo metaInfo);
 
         /// <summary>
         /// Creates an parameter
@@ -1195,12 +1191,12 @@ namespace AdFactum.Data.Internal
         /// <param name="parameters"></param>
         /// <param name="numberOfParameter"></param>
         /// <param name="value"></param>
-        /// <param name="isUnicode"></param>
+        /// <param name="metaInfo"></param>
         /// <returns></returns>
         public virtual IDbDataParameter AddParameter(IDataParameterCollection parameters, ref int numberOfParameter,
-                                                      object value, bool isUnicode)
+                                                      object value, PropertyMetaInfo metaInfo)
         {
-            return AddParameter(parameters, ref numberOfParameter, value.GetType(), value, isUnicode);
+            return AddParameter(parameters, ref numberOfParameter, value.GetType(), value, metaInfo);
         }
 
         /// <summary>
@@ -1211,14 +1207,14 @@ namespace AdFactum.Data.Internal
         /// <summary>
         /// Creates the parameter.
         /// </summary>
-        public abstract IDbDataParameter CreateParameter(string parameterName, Type type, object value, bool isUnicode);
+        public abstract IDbDataParameter CreateParameter(string parameterName, Type type, object value, PropertyMetaInfo metaInfo);
 
         /// <summary>
         /// Creates the parameter.
         /// </summary>
-        public IDbDataParameter CreateParameter(string parameterName, object value, bool isUnicode)
+        public IDbDataParameter CreateParameter(string parameterName, object value, PropertyMetaInfo metaInfo)
         {
-            return CreateParameter(parameterName, value.GetType(), value, isUnicode);
+            return CreateParameter(parameterName, value.GetType(), value, metaInfo);
         }
 
         /// <summary>
@@ -1391,7 +1387,7 @@ namespace AdFactum.Data.Internal
                 
                 foreach (object curValue in parameter)
                 {
-                    AddParameter(command.Parameters, ref count, curValue, false);
+                    AddParameter(command.Parameters, ref count, curValue, null);
                 }
 
                 count = ExecuteNonQuery(command);
@@ -1834,8 +1830,7 @@ namespace AdFactum.Data.Internal
                         if (dbFunction == null)
                         {
                             IDbDataParameter parameter = AddParameter(command.Parameters, ref counter, curValue,
-                                                                      column.FieldDescription.CustomProperty.MetaInfo.
-                                                                          IsUnicode);
+                                                                      column.FieldDescription.CustomProperty.MetaInfo);
                             valQuery += (!first ? ", " : " ") + GetParameterString(parameter);
                         }
                         else
@@ -2051,8 +2046,7 @@ namespace AdFactum.Data.Internal
                                 if (dbFunction == null)
                                 {
                                     IDbDataParameter parameter = AddParameter(command.Parameters, ref counter, curValue,
-                                                                              column.FieldDescription.CustomProperty.
-                                                                                  MetaInfo.IsUnicode);
+                                                                              column.FieldDescription.CustomProperty.MetaInfo);
                                     colQuery += string.Concat((!first ? ", " : " "), TypeMapper.Quote(column.Name),
                                                               " = ",
                                                               GetParameterString(parameter));
@@ -2080,17 +2074,13 @@ namespace AdFactum.Data.Internal
                         if (primaryId != null)
                         {
                             IDbDataParameter primary1 = CreateParameter("primary1", primaryId.Value,
-                                                                        primaryId.FieldDescription.CustomProperty.
-                                                                            MetaInfo.
-                                                                            IsUnicode);
+                                                                        primaryId.FieldDescription.CustomProperty.MetaInfo);
                             command.Parameters.Add(primary1);
 
                             if (parentObject != null)
                             {
                                 IDbDataParameter primary2 = CreateParameter("primary2", parentObject.Value,
-                                                                            parentObject.FieldDescription.CustomProperty
-                                                                                .
-                                                                                MetaInfo.IsUnicode);
+                                                                            parentObject.FieldDescription.CustomProperty.MetaInfo);
                                 command.Parameters.Add(primary2);
 
                                 query += string.Concat(colQuery, " WHERE ", ConcatedSchema, TypeMapper.Quote(tableName),
@@ -2111,7 +2101,7 @@ namespace AdFactum.Data.Internal
 
                         if (hasToCheckUpdate)
                         {
-                            IDbDataParameter checkUpdateParam = CreateParameter("checkUpdate", checkUpdate, false);
+                            IDbDataParameter checkUpdateParam = CreateParameter("checkUpdate", checkUpdate, null);
                             command.Parameters.Add(checkUpdateParam);
 
                             query += string.Concat(" AND ", TypeMapper.Quote(DBConst.LastUpdateField), "=",
@@ -2171,7 +2161,7 @@ namespace AdFactum.Data.Internal
                                                       globalParameter,
                                                       virtualAlias, ref index);
 
-                IDbDataParameter parameter = CreateParameter("PrimaryKey", id, false);
+                IDbDataParameter parameter = CreateParameter("PrimaryKey", id, null);
                 command.Parameters.Add(parameter);
                 string virtualWhere = PrivateVirtualWhereClause(fieldTemplates, globalParameter, virtualAlias,
                                                                 command.Parameters, ref index);
@@ -2225,7 +2215,7 @@ namespace AdFactum.Data.Internal
             int rows = 0;
             try
             {
-                IDbDataParameter parameter = CreateParameter("primaryKey", id, false);
+                IDbDataParameter parameter = CreateParameter("primaryKey", id, null);
                 command.Parameters.Add(parameter);
 
                 string linkFields = string.Concat(
@@ -2315,7 +2305,7 @@ namespace AdFactum.Data.Internal
             int rows=0;
             try
             {
-                IDbDataParameter parameter = CreateParameter("primaryKey", objectId, false);
+                IDbDataParameter parameter = CreateParameter("primaryKey", objectId, null);
                 command.Parameters.Add(parameter);
 
                 string linkFields = string.Concat(
@@ -2408,7 +2398,7 @@ namespace AdFactum.Data.Internal
                      * Delete childs on table
                      */
                     command = CreateCommand();
-                    parameter = CreateParameter("PrimaryKey", id, false);
+                    parameter = CreateParameter("PrimaryKey", id, null);
                     command.Parameters.Add(parameter);
 
                     string subTable = string.Concat(ConcatedSchema,
@@ -2435,7 +2425,7 @@ namespace AdFactum.Data.Internal
                  * Build query
                  */
                 command = CreateCommand();
-                parameter = CreateParameter("PrimaryKey", id, false);
+                parameter = CreateParameter("PrimaryKey", id, null);
                 command.Parameters.Add(parameter);
 
                 string primaryKey = GetPrimaryKeyColumn(fieldTemplates);
@@ -2553,7 +2543,7 @@ namespace AdFactum.Data.Internal
 
             try
             {
-                IDbDataParameter parameter = CreateParameter("PrimaryKey", id, false);
+                IDbDataParameter parameter = CreateParameter("PrimaryKey", id, null);
                 command.Parameters.Add(parameter);
 
                 string query = string.Concat("SELECT ", TypeMapper.Quote(primaryKeyColumn), " FROM ", ConcatedSchema,
@@ -2621,7 +2611,7 @@ namespace AdFactum.Data.Internal
                     while (enumerator.MoveNext())
                     {
                         IDbDataParameter parameter = CreateParameter(((string)enumerator.Key).Replace("@", ""),
-                                                                     enumerator.Value, false);
+                                                                     enumerator.Value, null);
                         command.Parameters.Add(parameter);
                     }
                 }
@@ -3275,18 +3265,14 @@ namespace AdFactum.Data.Internal
                 Field primary1 = link.ParentObject;
 
                 IDbDataParameter primaryKeyParameter1 = CreateParameter("PrimaryKey1", primary1.Value,
-                                                                        primary1.FieldDescription.CustomProperty.
-                                                                            MetaInfo.
-                                                                            IsUnicode);
+                                                                        primary1.FieldDescription.CustomProperty.MetaInfo);
                 command.Parameters.Add(primaryKeyParameter1);
 
                 Field primary2 = link.Key ?? link.Property;
 
                 IDbDataParameter primaryKeyParameter2 = CreateParameter("PrimaryKey2",
                                                                         primary2.Value ?? primary2.OldValue,
-                                                                        primary2.FieldDescription.CustomProperty.
-                                                                            MetaInfo.
-                                                                            IsUnicode);
+                                                                        primary2.FieldDescription.CustomProperty.MetaInfo);
                 command.Parameters.Add(primaryKeyParameter2);
 
                 /*

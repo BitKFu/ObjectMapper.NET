@@ -378,12 +378,12 @@ namespace AdFactum.Data.SqlServer
         /// <param name="numberOfParameter">The number of parameter.</param>
         /// <param name="type">Type of the value object</param>
         /// <param name="value">The value.</param>
-        /// <param name="isUnicode">if set to <c>true</c> [is unicode].</param>
+        /// <param name="metaInfo">property meta information</param>
         /// <returns></returns>
-        public override IDbDataParameter AddParameter(IDataParameterCollection parameters, ref int numberOfParameter, Type type, object value, bool isUnicode)
+        public override IDbDataParameter AddParameter(IDataParameterCollection parameters, ref int numberOfParameter, Type type, object value, PropertyMetaInfo metaInfo)
         {
             object convertedValue = TypeMapper.ConvertValueToDbType(value);
-            var dbType = (SqlDbType)TypeMapper.GetEnumForDatabase(type, value.SizeOf(), isUnicode);
+            var dbType = (SqlDbType)TypeMapper.GetEnumForDatabase(type, metaInfo);
 		    
             /*
 			 * look if a parameter with the same value exists.
@@ -406,12 +406,12 @@ namespace AdFactum.Data.SqlServer
         /// <summary>
         /// Creates the parameter.
         /// </summary>
-        public override IDbDataParameter CreateParameter(string parameterName, Type type, object value, bool isUnicode)
+        public override IDbDataParameter CreateParameter(string parameterName, Type type, object value, PropertyMetaInfo metaInfo)
         {
             if (!parameterName.StartsWith("@"))
                 parameterName = string.Concat("@", parameterName);
 
-            IDbDataParameter parameter = new SqlParameter(parameterName, (SqlDbType)TypeMapper.GetEnumForDatabase(type, value.SizeOf(), isUnicode))
+            IDbDataParameter parameter = new SqlParameter(parameterName, (SqlDbType)TypeMapper.GetEnumForDatabase(type, metaInfo))
                                              {Value = TypeMapper.ConvertValueToDbType(value)};
 
             return parameter;

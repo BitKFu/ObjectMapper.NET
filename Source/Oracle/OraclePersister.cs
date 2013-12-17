@@ -289,10 +289,10 @@ namespace AdFactum.Data.Oracle
                                                 ")*/ IQ.*, ROWNUM AS Z_R_N FROM (", businessSql
                                                 , ") IQ WHERE ROWNUM <= :maxLine) ", "PAGE", " WHERE Z_R_N >= :minLine ");
 
-                IDbDataParameter parameter = CreateParameter("maxLine", maxLine, false);
+                IDbDataParameter parameter = CreateParameter("maxLine", maxLine, null);
                 command.Parameters.Add(parameter);
 
-                parameter = CreateParameter("minLine", minLine, false);
+                parameter = CreateParameter("minLine", minLine, null);
                 command.Parameters.Add(parameter);
 
                 command.CommandText = outerSql;
@@ -370,14 +370,14 @@ namespace AdFactum.Data.Oracle
         /// <param name="numberOfParameter">The number of parameter.</param>
         /// <param name="type"></param>
         /// <param name="value">The value.</param>
-        /// <param name="isUnicode">if set to <c>true</c> [is unicode].</param>
+        /// <param name="metaInfo">property meta information</param>
         /// <returns></returns>
-        public override IDbDataParameter AddParameter(IDataParameterCollection parameters, ref int numberOfParameter, Type type, object value, bool isUnicode)
+        public override IDbDataParameter AddParameter(IDataParameterCollection parameters, ref int numberOfParameter, Type type, object value, PropertyMetaInfo metaInfo)
 		{
 			const int BUFFER_SIZE = 2048;
             var buffer = value as byte[];
 		    object convertedValue = null;
-            var dbType = (OracleDbType)TypeMapper.GetEnumForDatabase(type, value.SizeOf(), isUnicode);
+            var dbType = (OracleDbType)TypeMapper.GetEnumForDatabase(type, metaInfo);
 
             if (buffer == null)
             {
@@ -496,11 +496,11 @@ namespace AdFactum.Data.Oracle
         /// <summary>
         /// Creates the parameter.
         /// </summary>
-        public override IDbDataParameter CreateParameter(string parameterName, Type type, object value, bool isUnicode)
+        public override IDbDataParameter CreateParameter(string parameterName, Type type, object value, PropertyMetaInfo metaInfo)
 		{
             if (!type.IsListType())
             {
-                IDbDataParameter parameter = new OracleParameter(":" + parameterName, (OracleDbType)TypeMapper.GetEnumForDatabase(type, value.SizeOf(), isUnicode))
+                IDbDataParameter parameter = new OracleParameter(":" + parameterName, (OracleDbType)TypeMapper.GetEnumForDatabase(type, metaInfo))
                                                  {
                                                      Value = TypeMapper.ConvertValueToDbType(value),
                                                      Direction = ParameterDirection.Input
@@ -536,7 +536,7 @@ namespace AdFactum.Data.Oracle
                 /*
                  * Special handling for arrays
                  */
-                var parameter = new OracleParameter(":" + parameterName, (OracleDbType)TypeMapper.GetEnumForDatabase(parameterType, value.SizeOf(), isUnicode))
+                var parameter = new OracleParameter(":" + parameterName, (OracleDbType)TypeMapper.GetEnumForDatabase(parameterType, metaInfo))
                                     {
                                         Direction = ParameterDirection.Input,
                                         CollectionType = OracleCollectionType.PLSQLAssociativeArray,

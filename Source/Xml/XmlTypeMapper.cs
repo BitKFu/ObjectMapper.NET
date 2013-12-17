@@ -42,9 +42,9 @@ namespace AdFactum.Data.Xml
         /// Gets the enum for database.
         /// </summary>
         /// <param name="type">The type.</param>
-        /// <param name="isUnicode">if set to <c>true</c> [is unicode].</param>
+        /// <param name="metaInfo">property meta information</param>
         /// <returns></returns>
-        public override Enum GetEnumForDatabase(Type type, int size, bool isUnicode)
+        public override Enum GetEnumForDatabase(Type type, PropertyMetaInfo metaInfo)
         {
             return null;
         }

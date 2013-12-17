@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
+using AdFactum.Data.Internal;
 
 namespace AdFactum.Data
 {
@@ -63,9 +64,9 @@ namespace AdFactum.Data
         /// <param name="numberOfParameter">The number of parameter.</param>
         /// <param name="type">The type.</param>
         /// <param name="value">The value.</param>
-        /// <param name="isUnicode">if set to <c>true</c> [is unicode].</param>
+        /// <param name="metaInfo">property meta information</param>
         /// <returns></returns>
-        IDbDataParameter AddParameter(IDataParameterCollection parameters, ref int numberOfParameter, Type type, object value, bool isUnicode);
+        IDbDataParameter AddParameter(IDataParameterCollection parameters, ref int numberOfParameter, Type type, object value, PropertyMetaInfo metaInfo);
 
         /// <summary>
         /// Creates the parameter.
@@ -73,9 +74,9 @@ namespace AdFactum.Data
         /// <param name="parameterName">Name of the parameter.</param>
         /// <param name="type">The type.</param>
         /// <param name="value">The value.</param>
-        /// <param name="isUnicode">if set to <c>true</c> [is unicode].</param>
+        /// <param name="metaInfo">property meta information</param>
         /// <returns></returns>
-        IDbDataParameter CreateParameter(string parameterName, Type type, object value, bool isUnicode);
+        IDbDataParameter CreateParameter(string parameterName, Type type, object value, PropertyMetaInfo metaInfo);
 
         /// <summary>
         /// Gets the parameter string.

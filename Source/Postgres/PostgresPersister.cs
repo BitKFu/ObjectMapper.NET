@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Runtime.InteropServices;
 using AdFactum.Data.Interfaces;
 using AdFactum.Data.Internal;
 using AdFactum.Data.Linq.Expressions;
@@ -238,11 +239,11 @@ namespace AdFactum.Data.Postgres
         /// <summary>
         /// Creates the parameter.
         /// </summary>
-        public override IDbDataParameter AddParameter(IDataParameterCollection parameters, ref int numberOfParameter, Type type, object value, bool isUnicode)
+        public override IDbDataParameter AddParameter(IDataParameterCollection parameters, ref int numberOfParameter, Type type, object value, PropertyMetaInfo metaInfo)
         {
             var buffer = value as byte[];
             object convertedValue = null;
-            var dbType = (NpgsqlDbType)TypeMapper.GetEnumForDatabase(type, value.SizeOf(), isUnicode);
+            var dbType = (NpgsqlDbType)TypeMapper.GetEnumForDatabase(type, metaInfo);
 
             if (buffer == null)
             {
@@ -350,9 +351,9 @@ namespace AdFactum.Data.Postgres
         /// <summary>
         /// Creates the parameter.
         /// </summary>
-        public override IDbDataParameter CreateParameter(string parameterName, Type type, object value, bool isUnicode)
+        public override IDbDataParameter CreateParameter(string parameterName, Type type, object value, PropertyMetaInfo metaInfo)
         {
-            IDbDataParameter parameter = new NpgsqlParameter(":" + parameterName, (NpgsqlDbType)TypeMapper.GetEnumForDatabase(type, value.SizeOf(), isUnicode))
+            IDbDataParameter parameter = new NpgsqlParameter(":" + parameterName, (NpgsqlDbType)TypeMapper.GetEnumForDatabase(type, metaInfo))
             {
                 Value = TypeMapper.ConvertValueToDbType(value),
                 Direction = ParameterDirection.Input
