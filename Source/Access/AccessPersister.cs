@@ -7,6 +7,7 @@ using System.Data.OleDb;
 using System.Diagnostics;
 using System.Linq.Expressions;
 using System.Text;
+using System.Threading;
 using AdFactum.Data.Exceptions;
 using AdFactum.Data.Interfaces;
 using AdFactum.Data.Internal;
@@ -214,11 +215,12 @@ namespace AdFactum.Data.Access
         public virtual void Connect(string connectionString)
         {
             Connection = new OleDbConnection {ConnectionString = connectionString};
-            Connection.Open();
+            SavelyOpenConnection();
 
             if (SqlTracer != null)
                 SqlTracer.OpenConnection(((OleDbConnection) Connection).ServerVersion, Connection.ConnectionString);
         }
+
 
         /// <summary>
         /// Returns a list with value objects that matches the search criteria.

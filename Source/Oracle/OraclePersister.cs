@@ -8,6 +8,7 @@ using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
+using System.Threading;
 using AdFactum.Data.Interfaces;
 using AdFactum.Data.Internal;
 using AdFactum.Data.Linq.Expressions;
@@ -201,7 +202,7 @@ namespace AdFactum.Data.Oracle
         {
             Debug.Assert(Connection == null, "The Connection has already established");
             Connection = new OracleConnection {ConnectionString = connectionString};
-            Connection.Open();
+            SavelyOpenConnection();
 
             if (SqlTracer != null)
                 SqlTracer.OpenConnection(((OracleConnection)Connection).ServerVersion, Connection.ConnectionString);

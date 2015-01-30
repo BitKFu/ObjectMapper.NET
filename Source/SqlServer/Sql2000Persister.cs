@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Data;
 using System.Data.SqlClient;
+using System.Threading;
 using AdFactum.Data.Interfaces;
 using AdFactum.Data.Internal;
 using AdFactum.Data.Queries;
@@ -224,7 +225,7 @@ namespace AdFactum.Data.SqlServer
         public virtual void Connect(string connectionString)
         {
             Connection = new SqlConnection {ConnectionString = connectionString};
-            Connection.Open();
+            SavelyOpenConnection();
 
             if (SqlTracer != null)
                 SqlTracer.OpenConnection(((SqlConnection) Connection).ServerVersion, Connection.ConnectionString);
@@ -255,7 +256,7 @@ namespace AdFactum.Data.SqlServer
             String connectionString = String.Format(CONNECTION_STRING, database, server, user, password) + additionalConnectionParameters;
 
             Connection = new SqlConnection {ConnectionString = connectionString};
-            Connection.Open();
+            SavelyOpenConnection();
 
             if (SqlTracer != null)
                 SqlTracer.OpenConnection(((SqlConnection) Connection).ServerVersion, Connection.ConnectionString);

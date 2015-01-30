@@ -9,6 +9,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using AdFactum.Data.Exceptions;
 using AdFactum.Data.Fields;
 using AdFactum.Data.Interfaces;
@@ -178,6 +179,25 @@ namespace AdFactum.Data.Internal
 			 */
             var rows = (int)ExecuteSecureDbCall(command, true);
             return rows;
+        }
+
+        /// <summary>
+        /// Tries to safely opens the connection
+        /// </summary>
+        protected virtual void SavelyOpenConnection()
+        {
+            bool retry;
+            var tries = 0;
+            do
+            {
+                Connection.Open();
+                while (Connection.State == ConnectionState.Connecting)
+                    Thread.Sleep(100);
+
+                retry = (Connection.State != ConnectionState.Open && tries++ < 1);
+                if (retry)
+                    Connection.Close();
+            } while (retry);
         }
 
         /// <summary>

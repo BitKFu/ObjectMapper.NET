@@ -8,6 +8,7 @@ using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Runtime.InteropServices;
+using System.Threading;
 using AdFactum.Data.Interfaces;
 using AdFactum.Data.Internal;
 using AdFactum.Data.Linq.Expressions;
@@ -90,7 +91,7 @@ namespace AdFactum.Data.Postgres
         {
             Debug.Assert(Connection == null, "The Connection has already established");
             Connection = new NpgsqlConnection (connectionString);
-            Connection.Open();
+            SavelyOpenConnection();
 
             if (SqlTracer != null)
                 SqlTracer.OpenConnection(((NpgsqlConnection)Connection).ServerVersion, Connection.ConnectionString);
