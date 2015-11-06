@@ -278,12 +278,12 @@ namespace AdFactum.Data.Postgres
         public override object ConvertValueToDbType(object value)
         {
             if (value is TimeSpan)
-                return new NpgsqlInterval((TimeSpan)value);
+                return new NpgsqlTimeSpan((TimeSpan)value);
 
             if (value is DateTime)
             {
                 var dt = (DateTime)value;
-                return new NpgsqlTimeStamp(dt.Year, dt.Month, dt.Day, dt.Hour, dt.Minute, dt.Second);
+                return new NpgsqlTimeSpan(dt.Year, dt.Month, dt.Day, dt.Hour, dt.Minute, dt.Second);
             }
 
             if (value is Enum) 
@@ -305,8 +305,8 @@ namespace AdFactum.Data.Postgres
         {
             if (returnType.Equals(typeof(TimeSpan)))
             {
-                if (value is NpgsqlInterval)
-                    return ((NpgsqlInterval)value).Time;
+                if (value is NpgsqlTimeSpan)
+                    return ((NpgsqlTimeSpan)value).Time;
             }                
 
             return base.ConvertToType(returnType, value);
