@@ -3,7 +3,7 @@
 	<description>The .NET Persistence Framework for Oracle, Microsoft SQL Server, Microsoft Access and XML Files.</description>
 
 	<!-- load nant contrib tasks-->
-	<loadtasks assembly="C:\Program Files\nantcontrib-0.85\bin\NAnt.Contrib.Tasks.dll"/>
+	<loadtasks assembly="C:\App\nantcontrib-0.92\bin\NAnt.Contrib.Tasks.dll"/>
 	
 	<property name="ProgramDir" value = "C:\Program Files"/>
 
@@ -26,13 +26,13 @@
   	<property name="build.dir"            	value="..\Output"/>
   	<property name="build.dir.build"      	value="."/>
 	<property name="build.file.changelog" 	value="${build.dir.build}\changelog.txt"/>
-	<property name="innosetup" 		value="c:\Programme\Inno Setup 5\iscc"/>
+	<property name="innosetup" 		value="C:\App\Inno Setup 5\iscc"/>
 	<property name="cvs.root" 		value=":ssh;username=Jachman;hostname=objectmapper.cvs.sourceforge.net;privatekey='E:\BuildSystem\GerhardStephan.ppk':/cvsroot/objectmapper" />
 
 	<attrib file="${build.number}" readonly="true"/>
 	<loadfile file="${build.number}" property="build.version" />
 
-  	<property name="release.dir.root"     	value="D:\Release\ObjectMapper .NET"/>
+  	<property name="release.dir.root"     	value="C:\Release\ObjectMapper .NET"/>
   	<property name="release.dir.temp"     	value="${release.dir.root}"/>
   	<property name="release.dir.release"  	value="${release.dir.root}\Release"/>
   	<property name="release.dir.current" 	value="${release.dir.release} ${build.version}"/>
@@ -230,8 +230,8 @@
 	******************************************************  -->
   <target name="settings_2008" description="set all settings">
     <property name="visual.studio"        value="${visual.studio.2008}"/>
-    <property name="framework.dir"        value="C:\WINDOWS\Microsoft.NET\Framework\v3.5"/>
-    <property name="solution.file"        value ="ObjectMapper .NET 2008.sln" />
+	<property name="framework.dir"        value="C:\Program Files (x86)\MSBuild\14.0\Bin"/>
+    <property name="solution.file"        value ="ObjectMapper .NET 2010.sln" />
     <call target="settings"/>
   </target>
 
@@ -435,13 +435,13 @@
     <!-- 
 		___________________________________________________
 		Copy the documentation files to the release directory
-		:::::::::::::::::::::::::::::::::::::::::::::::::::	-->
+		:::::::::::::::::::::::::::::::::::::::::::::::::::	
 		<copy todir="${release.dir.doc}" overwrite="true">
 			<fileset basedir="${build.dir.doc}">
 				<include name="**"/>
 			</fileset>
 		</copy>
-
+-->
 		<!-- 
 		___________________________________________________
 		Copy the Changelog to the release directory
