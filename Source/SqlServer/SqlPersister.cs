@@ -1,7 +1,10 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Data;
+using System.Data.SqlClient;
+using AdFactum.Data.Interfaces;
 using AdFactum.Data.Internal;
 using AdFactum.Data.Queries;
 using AdFactum.Data.Util;
@@ -11,124 +14,63 @@ namespace AdFactum.Data.SqlServer
     /// <summary>
     /// Defines a sql server persister.
     /// </summary>
-    public class SqlPersister : Sql2000Persister
+    public class SqlPersister : BaseSqlPersister
     {
-
-        #region Public Constructors
-
         /// <summary>
-        /// Base Constructor
+        /// Connection String to a Microsoft SQL Server
         /// </summary>
+        private const string CONNECTION_STRING = "Persist Security Info=False;Integrated Security=False;Initial Catalog={0};Data Source={1};User Id={2};Password={3};";
+        private const string CONNECTION_STRING_TRUSTED = "Persist Security Info=False;Integrated Security=SSPI;Initial Catalog={0};Data Source={1};";
+
         public SqlPersister()
         {
+            TypeMapper = new SqlTypeMapper();
         }
 
         /// <summary>
-        /// Constructor to connect with a Microsoft SQL Server using a Connection String
+        /// Returns the Schema Writer
         /// </summary>
-        /// <param name="connectionString"></param>
-        public SqlPersister(string connectionString)
-            :base(connectionString)
+        /// <value></value>
+        public override ISchemaWriter Schema
         {
+            get
+            {
+                return new SqlSchemaWriter(TypeMapper, DatabaseSchema);
+            }
         }
 
         /// <summary>
-        /// Constructor to connect with a Microsoft SQL Server
+        /// Returns the Integrity Checker
         /// </summary>
-        /// <param name="database">Database Name</param>
-        /// <param name="server">Server Name</param>
-        public SqlPersister(string database, string server)
-            : base(database, server)
+        /// <value></value>
+        public override IIntegrity Integrity
         {
+            get
+            {
+                return new SqlIntegrityChecker(this, TypeMapper, DatabaseSchema);
+            }
         }
 
         /// <summary>
-        /// Constructor to connect with a Microsoft SQL Server on a special username
+        /// Returns the repository class
         /// </summary>
-        /// <param name="database">Database Name</param>
-        /// <param name="server">Server name</param>
-        /// <param name="user">User</param>
-        /// <param name="password">Password</param>
-        public SqlPersister(string database, string server, string user, string password)
-            : base(database, server, user, password)
+        /// <value></value>
+        public override IRepository Repository
         {
+            get
+            {
+                return new SqlRepository(SqlTracer);
+            }
         }
 
         /// <summary>
-        /// Constructor to connect with a Microsoft SQL Server
+        /// Gets the concatinator.
         /// </summary>
-        /// <param name="database">Database Name</param>
-        /// <param name="server">Server Name</param>
-        /// <param name="tracer">Tracer object for sql output</param>
-        public SqlPersister(string database, string server, ISqlTracer tracer)
-            : base(database, server, tracer)
+        /// <value>The concatinator.</value>
+        public override string Concatinator
         {
+            get { return " + "; }
         }
-
-        /// <summary>
-        /// Constructor to connect with a Microsoft SQL Server on a special username
-        /// </summary>
-        /// <param name="database">Database Name</param>
-        /// <param name="server">Server name</param>
-        /// <param name="user">User</param>
-        /// <param name="password">Password</param>
-        /// <param name="tracer">Tracer object for sql output</param>
-        public SqlPersister(string database, string server, string user, string password, ISqlTracer tracer)
-            : base(database, server, user, password, tracer)
-        {
-        }
-
-        /// <summary>
-        /// Constructor to connect with a Microsoft SQL Server
-        /// </summary>
-        /// <param name="database">Database Name</param>
-        /// <param name="server">Server Name</param>
-        /// <param name="additionalConnectionParameters">Additional connection parameters</param>
-        public SqlPersister(string database, string server, string additionalConnectionParameters)
-            : base(database, server, additionalConnectionParameters)
-        {
-        }
-
-        /// <summary>
-        /// Constructor to connect with a Microsoft SQL Server on a special username
-        /// </summary>
-        /// <param name="database">Database Name</param>
-        /// <param name="server">Server name</param>
-        /// <param name="user">User</param>
-        /// <param name="password">Password</param>
-        /// <param name="additionalConnectionParameters">Additional connection parameters</param>
-        public SqlPersister(string database, string server, string user, string password, string additionalConnectionParameters)
-            : base(database, server, user, password, additionalConnectionParameters)
-        {
-        }
-
-        /// <summary>
-        /// Constructor to connect with a Microsoft SQL Server
-        /// </summary>
-        /// <param name="database">Database Name</param>
-        /// <param name="server">Server Name</param>
-        /// <param name="additionalConnectionParameters">Additional connection parameters</param>
-        /// <param name="tracer">Tracer object for sql output</param>
-        public SqlPersister(string database, string server, string additionalConnectionParameters, ISqlTracer tracer)
-            : base(database, server, additionalConnectionParameters, tracer)
-        {
-        }
-
-        /// <summary>
-        /// Constructor to connect with a Microsoft SQL Server on a special username
-        /// </summary>
-        /// <param name="database">Database Name</param>
-        /// <param name="server">Server name</param>
-        /// <param name="user">User</param>
-        /// <param name="password">Password</param>
-        /// <param name="additionalConnectionParameters">Additional connection parameters</param>
-        /// <param name="tracer">Tracer object for sql output</param>
-        public SqlPersister(string database, string server, string user, string password, string additionalConnectionParameters, ISqlTracer tracer)
-            : base(database, server, user, password, additionalConnectionParameters, tracer)
-        {
-        }
-
-        #endregion
 
         /// <summary>
         /// Executes a page select and returns value objects that matches the search criteria and line number is within the min and max values.
@@ -220,5 +162,166 @@ namespace AdFactum.Data.SqlServer
             }
         }
 
+        /// <summary>
+        /// Connects to a Microsoft SQL Server
+        /// </summary>
+        /// <param name="database">Database Name</param>
+        /// <param name="server">Server Name</param>
+        public virtual void Connect(string database, string server)
+        {
+            Connect(database, server, "");
+        }
+
+        /// <summary>
+        /// Connects to a Microsoft SQL Server
+        /// </summary>
+        /// <param name="database">Database Name</param>
+        /// <param name="server">Server Name</param>
+        /// <param name="additionalConnectionParameters">Additional connection parameters</param>
+        public virtual void Connect(string database, string server, string additionalConnectionParameters)
+        {
+            String connectionString = String.Format(CONNECTION_STRING_TRUSTED, database, server) + additionalConnectionParameters;
+            Connect(connectionString);
+        }
+
+        /// <summary>
+        /// Connects to a Microsoft SQL Server using an Connection String
+        /// </summary>
+        /// <param name="connectionString"></param>
+        public virtual void Connect(string connectionString)
+        {
+            Connection = new SqlConnection {ConnectionString = connectionString};
+            SavelyOpenConnection();
+
+            if (SqlTracer != null)
+                SqlTracer.OpenConnection(((SqlConnection) Connection).ServerVersion, Connection.ConnectionString);
+        }
+
+        /// <summary>
+        /// Connects to a Microsoft SQL Server on a special username
+        /// </summary>
+        /// <param name="database">Database Name</param>
+        /// <param name="server">Server name</param>
+        /// <param name="user">User</param>
+        /// <param name="password">Password</param>
+        public virtual void Connect(string database, string server, string user, string password)
+        {
+            Connect(database, server, user, password, "");
+        }
+
+        /// <summary>
+        /// Connects to a Microsoft SQL Server on a special username
+        /// </summary>
+        /// <param name="database">Database Name</param>
+        /// <param name="server">Server name</param>
+        /// <param name="user">User</param>
+        /// <param name="password">Password</param>
+        /// <param name="additionalConnectionParameters">Additional connection parameters</param>
+        public virtual void Connect(string database, string server, string user, string password, string additionalConnectionParameters)
+        {
+            var connectionString = String.Format(CONNECTION_STRING, database, server, user, password) + additionalConnectionParameters;
+            Connect(connectionString);
+        }
+
+        /// <summary>
+        /// Creates the command object.
+        /// </summary>
+        /// <param name="sql">The SQL.</param>
+        /// <returns></returns>
+        public override IDbCommand CreateCommand(string sql)
+        {
+            var command = new SqlCommand(sql, (SqlConnection) Connection)
+            {
+                Transaction = (SqlTransaction) Transaction
+            };
+
+            return command;
+        }
+
+        /// <summary>
+        /// Creates the command.
+        /// </summary>
+        /// <returns></returns>
+        public override IDbCommand CreateCommand()
+        {
+            var command = new SqlCommand
+            {
+                Connection = (SqlConnection) Connection, 
+                Transaction = (SqlTransaction) Transaction
+            };
+            return command;
+        }
+
+        /// <summary>
+        /// Creates the parameter.
+        /// </summary>
+        /// <param name="parameters">The parameters.</param>
+        /// <param name="numberOfParameter">The number of parameter.</param>
+        /// <param name="type">Type of the value object</param>
+        /// <param name="value">The value.</param>
+        /// <param name="metaInfo">property meta information</param>
+        /// <returns></returns>
+        public override IDbDataParameter AddParameter(IDataParameterCollection parameters, ref int numberOfParameter, Type type, object value, PropertyMetaInfo metaInfo)
+        {
+            object convertedValue = TypeMapper.ConvertValueToDbType(value);
+            var dbType = (SqlDbType)TypeMapper.GetEnumForDatabase(type, metaInfo);
+		    
+            /*
+			 * look if a parameter with the same value exists.
+			 */
+            IEnumerator parameterEnum = parameters.GetEnumerator();
+            while (parameterEnum.MoveNext())
+            {
+                var current = (SqlParameter) parameterEnum.Current;
+                if ( (current.Value.Equals(convertedValue)) && (current.SqlDbType.Equals(dbType)) )
+                    return current;
+            }
+
+            var parameter = new SqlParameter("@p" + numberOfParameter.ToString("00"), dbType) {Value = convertedValue};
+            parameters.Add(parameter);
+            numberOfParameter++;
+
+            return parameter;
+        }
+
+        /// <summary>
+        /// Creates the parameter.
+        /// </summary>
+        public override IDbDataParameter CreateParameter(string parameterName, Type type, object value, PropertyMetaInfo metaInfo)
+        {
+            if (!parameterName.StartsWith("@"))
+                parameterName = string.Concat("@", parameterName);
+
+            IDbDataParameter parameter = new SqlParameter(parameterName, (SqlDbType)TypeMapper.GetEnumForDatabase(type, metaInfo))
+            {Value = TypeMapper.ConvertValueToDbType(value)};
+
+            return parameter;
+        }
+
+        /// <summary>
+        /// Creates the parameter from an existing parameter, but replaces the value
+        /// </summary>
+        public override IDbDataParameter CreateParameter(IDbDataParameter copyFrom, object value)
+        {
+            var copy = (SqlParameter) copyFrom;
+
+            string parameterName = copy.ParameterName;
+            if (!parameterName.StartsWith("@"))
+                parameterName = string.Concat("@", parameterName);
+
+            IDbDataParameter parameter = new SqlParameter(parameterName, copy.SqlDbType)
+            {Value = TypeMapper.ConvertValueToDbType(value)};
+
+            return parameter;
+        }
+
+        /// <summary>
+        /// Creates the data adapter.
+        /// </summary>
+        /// <returns></returns>
+        protected override IDbDataAdapter CreateDataAdapter()
+        {
+            return new SqlDataAdapter();
+        }
     }
 }

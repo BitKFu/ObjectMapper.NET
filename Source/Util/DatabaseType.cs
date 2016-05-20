@@ -1,3 +1,5 @@
+using System;
+
 namespace AdFactum.Data.Util
 {
 	/// <summary>
@@ -28,6 +30,7 @@ namespace AdFactum.Data.Util
         /// <summary>
         /// Using an Sql Server 2000
         /// </summary>
+        [Obsolete("Not supported anymore", true)]
         SqlServer2000,
 
         /// <summary>
@@ -39,7 +42,12 @@ namespace AdFactum.Data.Util
         /// <summary>
         /// Postgres Database
         /// </summary>
-        Postgres
+        Postgres,
 #endif
+
+        /// <summary>
+        /// Reliable SQL Server connection used for aszure db
+        /// </summary>
+        ReliableSqlServer
     }
 }

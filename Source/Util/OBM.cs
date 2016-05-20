@@ -68,8 +68,8 @@ namespace AdFactum.Data.Util
 			        persister = OpenSqlConnection(connection, tracer);
 			        break;
 
-                case DatabaseType.SqlServer2000:
-			        persister = OpenSql2000Connection(connection, tracer);
+                case DatabaseType.ReliableSqlServer:
+			        persister = OpenReliableSqlConnection(connection, tracer);
 			        break;
 
                 case DatabaseType.Xml:
@@ -125,16 +125,16 @@ namespace AdFactum.Data.Util
             return sqlDb;
         }
 
-        /// <summary>
+	    /// <summary>
         /// Opens an Sql Database Connection 
         /// </summary>
         /// <param name="connection">Database connection</param>
         /// <param name="tracer">Trace object</param>
-        private static IPersister OpenSql2000Connection(DatabaseConnection connection, ISqlTracer tracer)
+        private static IPersister OpenReliableSqlConnection(DatabaseConnection connection, ISqlTracer tracer)
         {
-            var sqlDb = new Sql2000Persister {SqlTracer = tracer};
+            var sqlDb = new ReliableSqlPersister {SqlTracer = tracer};
 
-            if (connection.DatabaseName != "")
+	        if (connection.DatabaseName != "")
             {
                 if (connection.TrustedConnection)
                     sqlDb.Connect(connection.DatabaseName, connection.ServerName);

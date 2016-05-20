@@ -29,7 +29,7 @@ namespace ObjectMapper.NUnits.Common.Tests
             /*
              * Recreate the SQL Server Database
              */
-            if (Connection.DatabaseType == DatabaseType.SqlServer || Connection.DatabaseType == DatabaseType.SqlServer2000)
+            if (Connection.DatabaseType == DatabaseType.SqlServer)
             {
                 SqlConnection.ClearAllPools();
 
