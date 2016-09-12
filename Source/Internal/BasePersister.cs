@@ -1765,9 +1765,9 @@ namespace AdFactum.Data.Internal
                             primaryKey = field;
 
                         /*
-                         * Beim LastUpdate Feld das Datum setzen
+                         * Beim LastUpdate Feld das Datum setzen (sofern es noch nicht gesetzt ist)
                          */
-                        if (field.Name.Equals(DBConst.LastUpdateField))
+                        if (field.Name.Equals(DBConst.LastUpdateField) && field.Value == null)
                         {
                             DateTime now = DateTime.Now;
                             field.Value = new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second);
