@@ -140,7 +140,7 @@ namespace ObjectMapper.NUnits.Common.Tests
         public void UnloadCaches()
         {
 #if DEBUG
-            BaseCache.OutputAllCacheInfos();
+            //BaseCache.OutputAllCacheInfos();
 #endif
         }
     }

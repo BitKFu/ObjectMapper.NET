@@ -214,12 +214,21 @@ namespace AdFactum.Data.Access
         /// </summary>
         public virtual void Connect(string connectionString)
         {
-            Connection = new OleDbConnection {ConnectionString = connectionString};
+            Connection = AccessConnectionCache.Get.GetFreeConnection(connectionString);
             SavelyOpenConnection();
 
             if (SqlTracer != null)
                 SqlTracer.OpenConnection(((OleDbConnection) Connection).ServerVersion, Connection.ConnectionString);
         }
+
+        #region Overrides of BasePersister
+
+        protected override void Dispose(bool disposing)
+        {
+            AccessConnectionCache.Get.FreeConnection(Connection);
+        }
+
+        #endregion
 
 
         /// <summary>

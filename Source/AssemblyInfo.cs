@@ -18,7 +18,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyCompanyAttribute("TimePunch KG")]
 [assembly: AssemblyProductAttribute("ObjectMapper .NET")]
 [assembly: AssemblyCopyrightAttribute("(c) by Gerhard Stephan")]
-[assembly: AssemblyVersionAttribute("4.5.0.8")]
+[assembly: AssemblyVersionAttribute("4.6.0.0")]
 [assembly: AssemblyDelaySignAttribute(false)]
 [assembly: AssemblyKeyFileAttribute("..\\..\\ObjectMapper.snk")]
 [assembly: CLSCompliantAttribute(true)]

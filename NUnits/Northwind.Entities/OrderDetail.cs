@@ -7,7 +7,7 @@ namespace ObjectMapper.NUnits.Northwind.Entities
     /// <summary>
     /// Order Details
     /// </summary>
-    [Table("Order_Details")]
+    [Table("Order Details")]
     [Table("OrderDetails", DatabaseType.Postgres)]    
     [Table("Order Details", DatabaseType.SqlServer)]
     [Table("Order Details", DatabaseType.Access)]    

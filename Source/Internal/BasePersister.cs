@@ -186,6 +186,9 @@ namespace AdFactum.Data.Internal
         /// </summary>
         protected virtual void SavelyOpenConnection()
         {
+            if (Connection.State == ConnectionState.Open)
+                return;
+
             bool retry;
             var tries = 0;
             do
