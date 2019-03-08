@@ -39,18 +39,47 @@ namespace AdFactum.Data.Access
         {
             lock (Connections)
             {
-                var connection = Connections.FirstOrDefault(c => c.ConnectionString == connectionString && !c.IsInUse);
-                if (connection != null)
+                var again = false;
+                Connection connection;
+
+                do
                 {
-                    connection.IsInUse = true;
-                    return connection.AccessConnection;
-                }
-                else
-                {
-                    connection = new Connection(new OleDbConnection(connectionString), connectionString);
-                    Connections.Add(connection);
-                    return connection.AccessConnection;
-                }
+                    again = false;
+                    connection = Connections.FirstOrDefault(c => c.ConnectionString == connectionString && !c.IsInUse);
+                    if (connection != null)
+                    {
+                        // Check if the state is open
+                        if (connection.AccessConnection.State.HasFlag(ConnectionState.Open) &&
+                            !connection.AccessConnection.State.HasFlag(ConnectionState.Broken))
+                        {
+                            connection.IsInUse = true;
+                        }
+                        else
+                        {
+                            // If the state is not open, remove it from the list and try a new one
+                            try
+                            {
+                                connection.AccessConnection.Dispose();
+                            }
+                            catch (Exception)
+                            {
+                                // Ignore exceptions
+                            }
+                            finally
+                            {
+                                Connections.Remove(connection);
+                                again = true;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        connection = new Connection(new OleDbConnection(connectionString), connectionString);
+                        Connections.Add(connection);
+                    }
+                } while (again);
+
+                return connection.AccessConnection;
             }
         }
 
