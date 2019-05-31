@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <RootNamespace>AdFactum.Data</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="EnterpriseLibrary.TransientFaultHandling.Data.NetCore" Version="6.0.1312" />
+    <PackageReference Include="Npgsql" Version="4.0.7" />
+    <PackageReference Include="Oracle.ManagedDataAccess.Core" Version="2.19.3" />
+  </ItemGroup>
+
+</Project>
