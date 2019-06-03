@@ -49,14 +49,15 @@
     <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <OutputPath>..\output\.NET2010\debug\</OutputPath>
+    <OutputPath>..\..\output\debug\netframework4.6.2\</OutputPath>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
     <BaseAddress>285212672</BaseAddress>
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
     <ConfigurationOverrideFile>
     </ConfigurationOverrideFile>
     <DefineConstants>DEBUG;VS2005, VS2008, VS2010</DefineConstants>
-    <DocumentationFile>ObjectMapper.xml</DocumentationFile>
+    <DocumentationFile>
+    </DocumentationFile>
     <DebugSymbols>true</DebugSymbols>
     <FileAlignment>4096</FileAlignment>
     <NoStdLib>false</NoStdLib>
@@ -73,14 +74,15 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <OutputPath>..\output\.NET2010\release\</OutputPath>
+    <OutputPath>..\..\output\release\netframework4.6.2\</OutputPath>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
     <BaseAddress>285212672</BaseAddress>
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
     <ConfigurationOverrideFile>
     </ConfigurationOverrideFile>
     <DefineConstants>VS2005, VS2008, VS2010</DefineConstants>
-    <DocumentationFile>ObjectMapper.xml</DocumentationFile>
+    <DocumentationFile>
+    </DocumentationFile>
     <DebugSymbols>false</DebugSymbols>
     <FileAlignment>4096</FileAlignment>
     <NoStdLib>false</NoStdLib>
@@ -130,14 +132,10 @@
   <ItemGroup>
     <Compile Include="Access\AccessConnectionCache.cs" />
     <Compile Include="Access\AccessIntegrityChecker.cs" />
-    <Compile Include="Access\AccessPersister.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="Access\AccessPersister.cs" />
     <Compile Include="Access\AccessRepository.cs" />
     <Compile Include="Access\AccessSchemaWriter.cs" />
-    <Compile Include="Access\AccessTypeMapper.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="Access\AccessTypeMapper.cs" />
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -556,6 +554,7 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>

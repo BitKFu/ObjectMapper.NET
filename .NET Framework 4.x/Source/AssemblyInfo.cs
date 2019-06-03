@@ -17,7 +17,7 @@ using System.Runtime.InteropServices;
     " and XML Files.")]
 [assembly: AssemblyCompanyAttribute("TimePunch KG")]
 [assembly: AssemblyProductAttribute("ObjectMapper .NET")]
-[assembly: AssemblyCopyrightAttribute("(c) by Gerhard Stephan")]
+[assembly: AssemblyCopyrightAttribute("(c) by TimePunch KG")]
 [assembly: AssemblyVersionAttribute("4.6.0.1")]
 [assembly: AssemblyDelaySignAttribute(false)]
 [assembly: AssemblyKeyFileAttribute("..\\..\\ObjectMapper.snk")]
