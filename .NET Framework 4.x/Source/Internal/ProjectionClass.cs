@@ -14,9 +14,6 @@ using AdFactum.Data.Linq.Translation;
 using AdFactum.Data.Projection.Attributes;
 using AdFactum.Data.Queries;
 using AdFactum.Data.Util;
-#if VS2008
-
-#endif
 
 namespace AdFactum.Data.Internal
 {

@@ -742,11 +742,7 @@ namespace AdFactum.Data.Linq.Expressions
         /// <returns></returns>
         private static bool MembersMatch(MemberInfo a, string propertyName)
         {
-#if VS2010
             return a.Name == propertyName;
-#else
-            return a.Name.Substring(4) == propertyName;
-#endif
         }
 
         /// <summary>

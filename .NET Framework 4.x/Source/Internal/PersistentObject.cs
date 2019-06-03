@@ -10,9 +10,6 @@ using AdFactum.Data.Linq;
 using AdFactum.Data.Linq.Expressions;
 using AdFactum.Data.Queries;
 using AdFactum.Data.Util;
-#if VS2008
-
-#endif
 
 namespace AdFactum.Data.Internal
 {

@@ -3099,8 +3099,7 @@ namespace AdFactum.Data
 
         #endregion
 
-        #region LINQ Members for VS2008
-#if VS2008
+        #region LINQ Members
 
         /// <summary>
         /// Creates a new query object
@@ -3122,7 +3121,7 @@ namespace AdFactum.Data
         {
             return new Query<T>(this, tableName);
         }
-#endif
+
         #endregion
     }
 }

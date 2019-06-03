@@ -1498,7 +1498,6 @@ namespace AdFactum.Data.Linq.Translation
         /// <returns></returns>
         protected override Expression VisitConstant(ConstantExpression c)
         {
-#if VS2010
             var constExpression = c.Value as ConstantExpression;
             if (constExpression != null)
                 return Visit(constExpression);
@@ -1506,7 +1505,6 @@ namespace AdFactum.Data.Linq.Translation
             var methodCallExpression = c.Value as MethodCallExpression;
             if (methodCallExpression != null)
                 return Visit(methodCallExpression);
-#endif
 
             var provider = c.Value as ILinqQueryProvider;
             if (provider != null && Level == 0)

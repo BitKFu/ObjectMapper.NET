@@ -7,6 +7,8 @@
     <PackageId>ObjectMapper.NET_Standard</PackageId>
     <Authors>Gerhard Stephan</Authors>
     <Company>TimePunch KG</Company>
+    <Version>1.0.1</Version>
+    <AssemblyVersion>1.0.1.0</AssemblyVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
