@@ -4,11 +4,12 @@
     <TargetFramework>netstandard2.1</TargetFramework>
     <RootNamespace>AdFactum.Data</RootNamespace>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <PackageId>ObjectMapper.NET_Standard</PackageId>
+    <PackageId>ObjectMapper.NET_Standard21</PackageId>
     <Authors>Gerhard Stephan</Authors>
     <Company>TimePunch KG</Company>
-    <Version>1.0.1</Version>
-    <AssemblyVersion>1.0.1.0</AssemblyVersion>
+    <Version>4.7.0.0</Version>
+    <AssemblyVersion>4.7.0.0</AssemblyVersion>
+    <AssemblyName>ObjectMapper</AssemblyName>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -21,8 +22,8 @@
 
   <ItemGroup>
     <PackageReference Include="EnterpriseLibrary.TransientFaultHandling.Data.NetCore" Version="6.0.1312" />
-    <PackageReference Include="Npgsql" Version="4.0.7" />
-    <PackageReference Include="Oracle.ManagedDataAccess.Core" Version="2.19.3" />
+    <PackageReference Include="Npgsql" Version="5.0.0" />
+    <PackageReference Include="Oracle.ManagedDataAccess.Core" Version="2.19.100" />
   </ItemGroup>
 
 </Project>

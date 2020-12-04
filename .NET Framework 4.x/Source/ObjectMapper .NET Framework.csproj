@@ -27,7 +27,7 @@
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
     <OldToolsVersion>3.5</OldToolsVersion>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <SignAssembly>true</SignAssembly>
     <TargetFrameworkProfile />
     <PublishUrl>publish\</PublishUrl>
@@ -98,6 +98,9 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=1.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.Bcl.AsyncInterfaces.1.1.0\lib\net461\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Practices.EnterpriseLibrary.TransientFaultHandling, Version=6.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\EnterpriseLibrary.TransientFaultHandling.6.0.1304.0\lib\portable-net45+win+wp8\Microsoft.Practices.EnterpriseLibrary.TransientFaultHandling.dll</HintPath>
       <Private>True</Private>
@@ -106,16 +109,17 @@
       <HintPath>..\packages\EnterpriseLibrary.TransientFaultHandling.Data.6.0.1304.1\lib\NET45\Microsoft.Practices.EnterpriseLibrary.TransientFaultHandling.Data.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Npgsql, Version=3.1.0.0, Culture=neutral, PublicKeyToken=5d8b90d52f46fda7, processorArchitecture=MSIL">
-      <HintPath>..\packages\Npgsql.3.1.0\lib\net451\Npgsql.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Npgsql, Version=5.0.0.0, Culture=neutral, PublicKeyToken=5d8b90d52f46fda7, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Npgsql.5.0.0\lib\netstandard2.0\Npgsql.dll</HintPath>
     </Reference>
-    <Reference Include="Oracle.ManagedDataAccess">
-      <HintPath>..\packages\Oracle.ManagedDataAccess.12.1.24160419\lib\net40\Oracle.ManagedDataAccess.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Oracle.ManagedDataAccess, Version=4.122.19.1, Culture=neutral, PublicKeyToken=89b483f429c47342, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Oracle.ManagedDataAccess.19.10.0\lib\net40\Oracle.ManagedDataAccess.dll</HintPath>
     </Reference>
     <Reference Include="System">
       <Name>System</Name>
+    </Reference>
+    <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Buffers.4.5.0\lib\netstandard2.0\System.Buffers.dll</HintPath>
     </Reference>
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -124,12 +128,721 @@
       <Name>System.Data</Name>
     </Reference>
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Memory, Version=4.0.1.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Memory.4.5.3\lib\netstandard2.0\System.Memory.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Numerics.Vectors, Version=4.1.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Numerics.Vectors.4.5.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.5.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Runtime.CompilerServices.Unsafe.4.6.0\lib\netstandard2.0\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Text.Encodings.Web, Version=4.0.4.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Text.Encodings.Web.4.6.0\lib\netstandard2.0\System.Text.Encodings.Web.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Text.Json, Version=4.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Text.Json.4.6.0\lib\net461\System.Text.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Threading.Channels, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Threading.Channels.4.7.0\lib\netstandard2.0\System.Threading.Channels.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Threading.Tasks.Extensions.4.5.3\lib\netstandard2.0\System.Threading.Tasks.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.ValueTuple.4.5.0\lib\net461\System.ValueTuple.dll</HintPath>
+    </Reference>
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml">
       <Name>System.XML</Name>
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Attributes\BackLinkAttribute.cs">
+      <Link>Attributes\BackLinkAttribute.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Attributes\BindPropertyToAttribute.cs">
+      <Link>Attributes\BindPropertyToAttribute.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Attributes\ColumnAttribute.cs">
+      <Link>Attributes\ColumnAttribute.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Attributes\DatabaseFunction.cs">
+      <Link>Attributes\DatabaseFunction.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Attributes\ForeignKeyAttribute.cs">
+      <Link>Attributes\ForeignKeyAttribute.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Attributes\GeneralLinkAttribute.cs">
+      <Link>Attributes\GeneralLinkAttribute.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Attributes\IgnoreAttribute.cs">
+      <Link>Attributes\IgnoreAttribute.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Attributes\InsertFunctionAttribute.cs">
+      <Link>Attributes\InsertFunctionAttribute.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Attributes\OneToManyAttribute.cs">
+      <Link>Attributes\OneToManyAttribute.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Attributes\PrimaryKeyAttribute.cs">
+      <Link>Attributes\PrimaryKeyAttribute.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Attributes\PropertyLengthAttribute.cs">
+      <Link>Attributes\PropertyLengthAttribute.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Attributes\PropertyNameAttribute.cs">
+      <Link>Attributes\PropertyNameAttribute.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Attributes\RequiredAttribute.cs">
+      <Link>Attributes\RequiredAttribute.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Attributes\SelectFunctionAttribute.cs">
+      <Link>Attributes\SelectFunctionAttribute.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Attributes\StaticDataAttribute.cs">
+      <Link>Attributes\StaticDataAttribute.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Attributes\TableAttribute.cs">
+      <Link>Attributes\TableAttribute.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Attributes\UnicodeAttribute.cs">
+      <Link>Attributes\UnicodeAttribute.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Attributes\UniqueAttribute.cs">
+      <Link>Attributes\UniqueAttribute.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Attributes\UpdateFunctionAttribute.cs">
+      <Link>Attributes\UpdateFunctionAttribute.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Attributes\ValidSinceAttribute.cs">
+      <Link>Attributes\ValidSinceAttribute.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Attributes\ValidUntilAttribute.cs">
+      <Link>Attributes\ValidUntilAttribute.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Attributes\ViewAttribute.cs">
+      <Link>Attributes\ViewAttribute.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Attributes\VirtualLinkAttribute.cs">
+      <Link>Attributes\VirtualLinkAttribute.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Attributes\WeakReferencedAttribute.cs">
+      <Link>Attributes\WeakReferencedAttribute.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\AutoIncValueObject.cs">
+      <Link>AutoIncValueObject.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Core.Attributes\KeyGroupAttribute.cs">
+      <Link>Core.Attributes\KeyGroupAttribute.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Core.Attributes\PositionAttribute.cs">
+      <Link>Core.Attributes\PositionAttribute.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Exceptions\DirtyObjectException.cs">
+      <Link>Exceptions\DirtyObjectException.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Exceptions\MapperBaseException.cs">
+      <Link>Exceptions\MapperBaseException.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Exceptions\MissingSetterException.cs">
+      <Link>Exceptions\MissingSetterException.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Exceptions\NoDataFoundException.cs">
+      <Link>Exceptions\NoDataFoundException.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Exceptions\NoOpenTransactionException.cs">
+      <Link>Exceptions\NoOpenTransactionException.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Exceptions\NoPrimaryKeyFoundException.cs">
+      <Link>Exceptions\NoPrimaryKeyFoundException.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Exceptions\PersisterDoesNotSupportRepositoryException.cs">
+      <Link>Exceptions\PersisterDoesNotSupportRepositoryException.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Exceptions\SqlCoreException.cs">
+      <Link>Exceptions\SqlCoreException.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Exceptions\TransactionAlreadyOpenException.cs">
+      <Link>Exceptions\TransactionAlreadyOpenException.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Exceptions\VersionHasAlreadyReleasedException.cs">
+      <Link>Exceptions\VersionHasAlreadyReleasedException.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Exceptions\WrongTypeException.cs">
+      <Link>Exceptions\WrongTypeException.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\FieldDescriptions\FieldDescription.cs">
+      <Link>FieldDescriptions\FieldDescription.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\FieldDescriptions\VirtualFieldDescription.cs">
+      <Link>FieldDescriptions\VirtualFieldDescription.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Fields\Field.cs">
+      <Link>Fields\Field.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Fields\Link.cs">
+      <Link>Fields\Link.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Fields\ListLink.cs">
+      <Link>Fields\ListLink.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Fields\OneToManyLink.cs">
+      <Link>Fields\OneToManyLink.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Fields\SpecializedLink.cs">
+      <Link>Fields\SpecializedLink.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Fields\UnmatchedField.cs">
+      <Link>Fields\UnmatchedField.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Fields\VirtualField.cs">
+      <Link>Fields\VirtualField.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\GenericValueObject.cs">
+      <Link>GenericValueObject.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Interfaces\IAggregate.cs">
+      <Link>Interfaces\IAggregate.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Interfaces\ICondition.cs">
+      <Link>Interfaces\ICondition.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Interfaces\ICreateObject.cs">
+      <Link>Interfaces\ICreateObject.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Interfaces\IGenericValueObject.cs">
+      <Link>Interfaces\IGenericValueObject.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Interfaces\IIntegrity.cs">
+      <Link>Interfaces\IIntegrity.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Interfaces\ILinqPersister.cs">
+      <Link>Interfaces\ILinqPersister.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Interfaces\ILinqQueryProvider.cs">
+      <Link>Interfaces\ILinqQueryProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Interfaces\IMarkedValueObject.cs">
+      <Link>Interfaces\IMarkedValueObject.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Interfaces\IModification.cs">
+      <Link>Interfaces\IModification.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Interfaces\INativePersister.cs">
+      <Link>Interfaces\INativePersister.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Interfaces\IObjectFactory.cs">
+      <Link>Interfaces\IObjectFactory.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Interfaces\IObjectHash.cs">
+      <Link>Interfaces\IObjectHash.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Interfaces\IPersister.cs">
+      <Link>Interfaces\IPersister.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Interfaces\IRepository.cs">
+      <Link>Interfaces\IRepository.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Interfaces\ISchemaWriter.cs">
+      <Link>Interfaces\ISchemaWriter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Interfaces\ISqlTracer.cs">
+      <Link>Interfaces\ISqlTracer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Interfaces\ITransactionContext.cs">
+      <Link>Interfaces\ITransactionContext.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Interfaces\ITypeMapper.cs">
+      <Link>Interfaces\ITypeMapper.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Interfaces\IValueObject.cs">
+      <Link>Interfaces\IValueObject.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Internal\BaseCache.cs">
+      <Link>Internal\BaseCache.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Internal\BaseExtensions.cs">
+      <Link>Internal\BaseExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Internal\BaseIntegrityChecker.cs">
+      <Link>Internal\BaseIntegrityChecker.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Internal\BaseRepository.cs">
+      <Link>Internal\BaseRepository.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Internal\BaseSchemaWriter.cs">
+      <Link>Internal\BaseSchemaWriter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Internal\BaseTypeMapper.cs">
+      <Link>Internal\BaseTypeMapper.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Internal\Cache.cs">
+      <Link>Internal\Cache.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Internal\CommandExtensions.cs">
+      <Link>Internal\CommandExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Internal\ConstraintSaveList.cs">
+      <Link>Internal\ConstraintSaveList.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Internal\HashCondition.cs">
+      <Link>Internal\HashCondition.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Internal\HashEntry.cs">
+      <Link>Internal\HashEntry.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Internal\ObjectHash.cs">
+      <Link>Internal\ObjectHash.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Internal\OracleCommandExtensions.cs">
+      <Link>Internal\OracleCommandExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Internal\PersistentObject.cs">
+      <Link>Internal\PersistentObject.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Internal\PersistentProperties.cs">
+      <Link>Internal\PersistentProperties.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Internal\ProjectionClass.cs">
+      <Link>Internal\ProjectionClass.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Internal\Property.cs">
+      <Link>Internal\Property.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Internal\PropertyMetaInfo.cs">
+      <Link>Internal\PropertyMetaInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Internal\Set.cs">
+      <Link>Internal\Set.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Internal\Table.cs">
+      <Link>Internal\Table.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Internal\TypeHelper.cs">
+      <Link>Internal\TypeHelper.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Internal\ValidatorType.cs">
+      <Link>Internal\ValidatorType.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Expressions\Alias.cs">
+      <Link>Linq\Expressions\Alias.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Expressions\DbExpressionComparer.cs">
+      <Link>Linq\Expressions\DbExpressionComparer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Expressions\DbExpressionExtensions.cs">
+      <Link>Linq\Expressions\DbExpressionExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Expressions\DbExpressionFinder.cs">
+      <Link>Linq\Expressions\DbExpressionFinder.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Expressions\DbExpressions.cs">
+      <Link>Linq\Expressions\DbExpressions.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Expressions\DbPackedExpressionVisitor.cs">
+      <Link>Linq\Expressions\DbPackedExpressionVisitor.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Expressions\ExpressionComparer.cs">
+      <Link>Linq\Expressions\ExpressionComparer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Expressions\ExpressionExtensions.cs">
+      <Link>Linq\Expressions\ExpressionExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Expressions\ExpressionVisitorBackpack.cs">
+      <Link>Linq\Expressions\ExpressionVisitorBackpack.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Expressions\Retriever.cs">
+      <Link>Linq\Expressions\Retriever.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Expressions\TableExpression.cs">
+      <Link>Linq\Expressions\TableExpression.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Linq\ExpressionVisitor.cs">
+      <Link>Linq\ExpressionVisitor.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Grouping.cs">
+      <Link>Linq\Grouping.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Linq\ILinqQuery.cs">
+      <Link>Linq\ILinqQuery.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Language\LinqMethodInspector.cs">
+      <Link>Linq\Language\LinqMethodInspector.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Language\OracleExpressionWriter.cs">
+      <Link>Linq\Language\OracleExpressionWriter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Language\PostgresExpressionWriter.cs">
+      <Link>Linq\Language\PostgresExpressionWriter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Language\SqlExpressionWriter.cs">
+      <Link>Linq\Language\SqlExpressionWriter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Linq\LinkBridge.cs">
+      <Link>Linq\LinkBridge.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Query.cs">
+      <Link>Linq\Query.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Linq\QueryCompiler.cs">
+      <Link>Linq\QueryCompiler.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Translation\AggregateChecker.cs">
+      <Link>Linq\Translation\AggregateChecker.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Translation\AggregateRewriter.cs">
+      <Link>Linq\Translation\AggregateRewriter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Translation\AliasReWriter.cs">
+      <Link>Linq\Translation\AliasReWriter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Translation\ColumnFinder.cs">
+      <Link>Linq\Translation\ColumnFinder.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Translation\ColumnGatherer.cs">
+      <Link>Linq\Translation\ColumnGatherer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Translation\ColumnProjector.cs">
+      <Link>Linq\Translation\ColumnProjector.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Translation\CrossApplyRewriter.cs">
+      <Link>Linq\Translation\CrossApplyRewriter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Translation\CrossJoinRewriter.cs">
+      <Link>Linq\Translation\CrossJoinRewriter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Translation\DeclaredAliasGatherer.cs">
+      <Link>Linq\Translation\DeclaredAliasGatherer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Translation\ExpressionReplacer.cs">
+      <Link>Linq\Translation\ExpressionReplacer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Translation\ExpressionTypeFinder.cs">
+      <Link>Linq\Translation\ExpressionTypeFinder.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Translation\FromExpressionFinder.cs">
+      <Link>Linq\Translation\FromExpressionFinder.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Translation\GroupingBinder.cs">
+      <Link>Linq\Translation\GroupingBinder.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Translation\OracleOrderByRewriter.cs">
+      <Link>Linq\Translation\OracleOrderByRewriter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Translation\OracleTakeToRowNumberRewriter.cs">
+      <Link>Linq\Translation\OracleTakeToRowNumberRewriter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Translation\OrderByRewriter.cs">
+      <Link>Linq\Translation\OrderByRewriter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Translation\OriginPropertyFinder.cs">
+      <Link>Linq\Translation\OriginPropertyFinder.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Translation\ParameterBinder.cs">
+      <Link>Linq\Translation\ParameterBinder.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Translation\PartialEvaluator.cs">
+      <Link>Linq\Translation\PartialEvaluator.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Translation\PostgresOrderByRewriter.cs">
+      <Link>Linq\Translation\PostgresOrderByRewriter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Translation\QueryProviderFinder.cs">
+      <Link>Linq\Translation\QueryProviderFinder.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Translation\RebindToSelection.cs">
+      <Link>Linq\Translation\RebindToSelection.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Translation\RedundanceRemover.cs">
+      <Link>Linq\Translation\RedundanceRemover.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Translation\RedundantJoinRemover.cs">
+      <Link>Linq\Translation\RedundantJoinRemover.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Translation\RedundantSubqueryGatherer.cs">
+      <Link>Linq\Translation\RedundantSubqueryGatherer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Translation\RedundantSubqueryRemover.cs">
+      <Link>Linq\Translation\RedundantSubqueryRemover.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Translation\ReferencedAliasGatherer.cs">
+      <Link>Linq\Translation\ReferencedAliasGatherer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Translation\ReferingColumnChecker.cs">
+      <Link>Linq\Translation\ReferingColumnChecker.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Translation\SkipToRowNumberRewriter.cs">
+      <Link>Linq\Translation\SkipToRowNumberRewriter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Translation\SortAccessJoins.cs">
+      <Link>Linq\Translation\SortAccessJoins.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Translation\SqlIdRewriter.cs">
+      <Link>Linq\Translation\SqlIdRewriter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Translation\SqlOrderByRewriter.cs">
+      <Link>Linq\Translation\SqlOrderByRewriter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Translation\SubqueryMerger.cs">
+      <Link>Linq\Translation\SubqueryMerger.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Translation\SubqueryRemover.cs">
+      <Link>Linq\Translation\SubqueryRemover.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Translation\TableExpressionFinder.cs">
+      <Link>Linq\Translation\TableExpressionFinder.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Translation\TypeChecker.cs">
+      <Link>Linq\Translation\TypeChecker.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Translation\UpdateProjection.cs">
+      <Link>Linq\Translation\UpdateProjection.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Util\ScopedDictionary.cs">
+      <Link>Linq\Util\ScopedDictionary.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\MarkedAutoIncValueObject.cs">
+      <Link>MarkedAutoIncValueObject.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\MarkedValueObject.cs">
+      <Link>MarkedValueObject.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Oracle\OracleIntegrityChecker.cs">
+      <Link>Oracle\OracleIntegrityChecker.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Oracle\OraclePersister.cs">
+      <Link>Oracle\OraclePersister.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Oracle\OracleRepository.cs">
+      <Link>Oracle\OracleRepository.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Oracle\OracleRepositoryPersister.cs">
+      <Link>Oracle\OracleRepositoryPersister.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Oracle\OracleRepositorySchemaWriter.cs">
+      <Link>Oracle\OracleRepositorySchemaWriter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Oracle\OracleSchemaWriter.cs">
+      <Link>Oracle\OracleSchemaWriter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Oracle\OracleTypeMapper.cs">
+      <Link>Oracle\OracleTypeMapper.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Postgres\PostgresIntegrityChecker.cs">
+      <Link>Postgres\PostgresIntegrityChecker.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Postgres\PostgresPersister.cs">
+      <Link>Postgres\PostgresPersister.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Postgres\PostgresRepository.cs">
+      <Link>Postgres\PostgresRepository.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Postgres\PostgresSchemaWriter.cs">
+      <Link>Postgres\PostgresSchemaWriter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Postgres\PostgresTypeMapper.cs">
+      <Link>Postgres\PostgresTypeMapper.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Projection.Attributes\AvgAttribute.cs">
+      <Link>Projection.Attributes\AvgAttribute.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Projection.Attributes\CountAttribute.cs">
+      <Link>Projection.Attributes\CountAttribute.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Projection.Attributes\FirstAttribute.cs">
+      <Link>Projection.Attributes\FirstAttribute.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Projection.Attributes\GroupByAttribute.cs">
+      <Link>Projection.Attributes\GroupByAttribute.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Projection.Attributes\LastAttribute.cs">
+      <Link>Projection.Attributes\LastAttribute.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Projection.Attributes\MaxAttribute.cs">
+      <Link>Projection.Attributes\MaxAttribute.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Projection.Attributes\MinAttribute.cs">
+      <Link>Projection.Attributes\MinAttribute.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Projection.Attributes\ProjectOntoPropertyAttribute.cs">
+      <Link>Projection.Attributes\ProjectOntoPropertyAttribute.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Projection.Attributes\SumAttribute.cs">
+      <Link>Projection.Attributes\SumAttribute.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Queries\AndCondition.cs">
+      <Link>Queries\AndCondition.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Queries\CollectionJoin.cs">
+      <Link>Queries\CollectionJoin.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Queries\Condition.cs">
+      <Link>Queries\Condition.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Queries\ConditionClause.cs">
+      <Link>Queries\ConditionClause.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Queries\ConditionList.cs">
+      <Link>Queries\ConditionList.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Queries\ConditionOperator.cs">
+      <Link>Queries\ConditionOperator.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Queries\HintCondition.cs">
+      <Link>Queries\HintCondition.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Queries\InCondition.cs">
+      <Link>Queries\InCondition.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Queries\Join.cs">
+      <Link>Queries\Join.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Queries\NotInCondition.cs">
+      <Link>Queries\NotInCondition.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Queries\OrCondition.cs">
+      <Link>Queries\OrCondition.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Queries\OrderBy.cs">
+      <Link>Queries\OrderBy.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Queries\Ordering.cs">
+      <Link>Queries\Ordering.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Queries\Parenthesize.cs">
+      <Link>Queries\Parenthesize.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Queries\QueryOperator.cs">
+      <Link>Queries\QueryOperator.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Queries\SubSelect.cs">
+      <Link>Queries\SubSelect.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Queries\TableReplacement.cs">
+      <Link>Queries\TableReplacement.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Queries\Union.cs">
+      <Link>Queries\Union.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Queries\UnionAll.cs">
+      <Link>Queries\UnionAll.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Queries\WithClause.cs">
+      <Link>Queries\WithClause.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Repository\EntityInfo.cs">
+      <Link>Repository\EntityInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Repository\EntityPredicate.cs">
+      <Link>Repository\EntityPredicate.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Repository\EntityRelation.cs">
+      <Link>Repository\EntityRelation.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Repository\FieldIntegrity.cs">
+      <Link>Repository\FieldIntegrity.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Repository\IntegrityInfo.cs">
+      <Link>Repository\IntegrityInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Repository\SelectReplacement.cs">
+      <Link>Repository\SelectReplacement.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Repository\Tablespace.cs">
+      <Link>Repository\Tablespace.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Repository\TableStorage.cs">
+      <Link>Repository\TableStorage.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Repository\VersionInfo.cs">
+      <Link>Repository\VersionInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\SqlServer\BaseSqlPersister.cs">
+      <Link>SqlServer\BaseSqlPersister.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\SqlServer\BaseSqlTypeMapper.cs">
+      <Link>SqlServer\BaseSqlTypeMapper.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\SqlServer\MicrosoftBasedPersister.cs">
+      <Link>SqlServer\MicrosoftBasedPersister.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\SqlServer\ReliableSqlPersister.cs">
+      <Link>SqlServer\ReliableSqlPersister.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\SqlServer\SqlIntegrityChecker.cs">
+      <Link>SqlServer\SqlIntegrityChecker.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\SqlServer\SqlPersister.cs">
+      <Link>SqlServer\SqlPersister.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\SqlServer\SqlRepository.cs">
+      <Link>SqlServer\SqlRepository.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\SqlServer\SqlSchemaWriter.cs">
+      <Link>SqlServer\SqlSchemaWriter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\SqlServer\SqlTypeMapper.cs">
+      <Link>SqlServer\SqlTypeMapper.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\TransactionContext.cs">
+      <Link>TransactionContext.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Transactions.cs">
+      <Link>Transactions.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Util\CollectionChildCondition.cs">
+      <Link>Util\CollectionChildCondition.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Util\CollectionParentCondition.cs">
+      <Link>Util\CollectionParentCondition.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Util\DatabaseConnection.cs">
+      <Link>Util\DatabaseConnection.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Util\DBConst.cs">
+      <Link>Util\DBConst.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Util\ExpressionOverride.cs">
+      <Link>Util\ExpressionOverride.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Util\HierarchyLevel.cs">
+      <Link>Util\HierarchyLevel.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Util\LinqProviderHelper.cs">
+      <Link>Util\LinqProviderHelper.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Util\ListAdapter.cs">
+      <Link>Util\ListAdapter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Util\NativeListEnumerator.cs">
+      <Link>Util\NativeListEnumerator.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Util\ReflectionHelper.cs">
+      <Link>Util\ReflectionHelper.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Util\SqlFile.cs">
+      <Link>Util\SqlFile.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Util\SqlStopwatch.cs">
+      <Link>Util\SqlStopwatch.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Util\UltraFastDictionary.cs">
+      <Link>Util\UltraFastDictionary.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Util\UniversalFactory.cs">
+      <Link>Util\UniversalFactory.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\ValueObject.cs">
+      <Link>ValueObject.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Xml\XmlPersister.cs">
+      <Link>Xml\XmlPersister.cs</Link>
+    </Compile>
+    <Compile Include="..\..\.NET Standard 2.x\Source\Xml\XmlTypeMapper.cs">
+      <Link>Xml\XmlTypeMapper.cs</Link>
+    </Compile>
     <Compile Include="Access\AccessConnectionCache.cs" />
     <Compile Include="Access\AccessIntegrityChecker.cs" />
     <Compile Include="Access\AccessPersister.cs" />
@@ -139,401 +852,24 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Attributes\BackLinkAttribute.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Attributes\BindPropertyToAttribute.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Attributes\ColumnAttribute.cs" />
-    <Compile Include="Attributes\OneToManyAttribute.cs" />
-    <Compile Include="Attributes\UnicodeAttribute.cs" />
-    <Compile Include="Core.Attributes\KeyGroupAttribute.cs" />
-    <Compile Include="Core.Attributes\PositionAttribute.cs" />
-    <Compile Include="Attributes\PrimaryKeyAttribute.cs" />
-    <Compile Include="Attributes\DatabaseFunction.cs" />
-    <Compile Include="Attributes\ForeignKeyAttribute.cs" />
-    <Compile Include="Attributes\GeneralLinkAttribute.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Attributes\IgnoreAttribute.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Attributes\InsertFunctionAttribute.cs" />
-    <Compile Include="Exceptions\NoDataFoundException.cs" />
-    <Compile Include="Fields\OneToManyLink.cs" />
-    <Compile Include="Interfaces\IAggregate.cs" />
-    <Compile Include="Interfaces\IIntegrity.cs" />
-    <Compile Include="Interfaces\ILinqPersister.cs" />
-    <Compile Include="Interfaces\ILinqQueryProvider.cs" />
-    <Compile Include="Interfaces\ISchemaWriter.cs" />
-    <Compile Include="Internal\BaseExtensions.cs" />
-    <Compile Include="Internal\BaseIntegrityChecker.cs" />
-    <Compile Include="Internal\BaseRepository.cs" />
-    <Compile Include="Internal\BaseSchemaWriter.cs" />
-    <Compile Include="Internal\CommandExtensions.cs" />
-    <Compile Include="Internal\OracleCommandExtensions.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Internal\PersistentProperties.cs" />
-    <Compile Include="Linq\Expressions\DbExpressionComparer.cs" />
-    <Compile Include="Linq\Expressions\DbExpressionExtensions.cs" />
-    <Compile Include="Linq\Expressions\DbExpressionFinder.cs" />
-    <Compile Include="Linq\Expressions\ExpressionComparer.cs" />
-    <Compile Include="Linq\Expressions\ExpressionVisitorBackpack.cs" />
-    <Compile Include="Linq\Expressions\TableExpression.cs" />
     <Compile Include="Linq\Language\AccessExpressionWriter.cs" />
-    <Compile Include="Linq\Language\OracleExpressionWriter.cs" />
-    <Compile Include="Linq\Language\PostgresExpressionWriter.cs" />
-    <Compile Include="Linq\QueryCompiler.cs" />
-    <Compile Include="Linq\Translation\AggregateChecker.cs" />
-    <Compile Include="Linq\Expressions\Alias.cs" />
-    <Compile Include="Linq\Translation\AggregateRewriter.cs" />
-    <Compile Include="Linq\Translation\AliasReWriter.cs" />
-    <Compile Include="Linq\Translation\ColumnFinder.cs" />
-    <Compile Include="Linq\Translation\ColumnGatherer.cs" />
-    <Compile Include="Linq\Translation\ColumnProjector.cs" />
-    <Compile Include="Linq\Expressions\DbExpressions.cs" />
     <Compile Include="Linq\Expressions\DbExpressionVisitor.cs" />
-    <Compile Include="Linq\Expressions\ExpressionExtensions.cs" />
-    <Compile Include="Linq\ExpressionVisitor.cs" />
-    <Compile Include="Linq\Grouping.cs" />
-    <Compile Include="Linq\ILinqQuery.cs" />
-    <Compile Include="Linq\LinkBridge.cs" />
     <Compile Include="Linq\LinqExtensions.cs" />
-    <Compile Include="Linq\Language\LinqMethodInspector.cs" />
-    <Compile Include="Linq\Expressions\DbPackedExpressionVisitor.cs" />
-    <Compile Include="Linq\Translation\PostgresOrderByRewriter.cs" />
-    <Compile Include="Linq\Translation\CrossApplyRewriter.cs" />
-    <Compile Include="Linq\Translation\CrossJoinRewriter.cs" />
-    <Compile Include="Linq\Translation\DeclaredAliasGatherer.cs" />
-    <Compile Include="Linq\Translation\ExpressionReplacer.cs" />
-    <Compile Include="Linq\Translation\ExpressionTypeFinder.cs" />
-    <Compile Include="Linq\Translation\FromExpressionFinder.cs" />
-    <Compile Include="Linq\Translation\GroupingBinder.cs" />
     <Compile Include="Linq\Translation\MemberBinder.cs" />
-    <Compile Include="Linq\Translation\OracleOrderByRewriter.cs" />
-    <Compile Include="Linq\Translation\OracleTakeToRowNumberRewriter.cs" />
-    <Compile Include="Linq\Translation\OrderByRewriter.cs" />
-    <Compile Include="Linq\Query.cs" />
-    <Compile Include="Linq\Translation\OriginPropertyFinder.cs" />
-    <Compile Include="Linq\Translation\ParameterBinder.cs" />
-    <Compile Include="Linq\Translation\PartialEvaluator.cs" />
     <Compile Include="Linq\Translation\QueryBinder.cs" />
-    <Compile Include="Linq\Translation\QueryProviderFinder.cs" />
-    <Compile Include="Linq\Translation\RebindToSelection.cs" />
-    <Compile Include="Linq\Translation\RedundanceRemover.cs" />
-    <Compile Include="Linq\Translation\RedundantJoinRemover.cs" />
-    <Compile Include="Linq\Translation\RedundantSubqueryGatherer.cs" />
-    <Compile Include="Linq\Translation\RedundantSubqueryRemover.cs" />
-    <Compile Include="Linq\Expressions\Retriever.cs" />
-    <Compile Include="Linq\Language\SqlExpressionWriter.cs" />
-    <Compile Include="Linq\Translation\ReferencedAliasGatherer.cs" />
-    <Compile Include="Linq\Translation\ReferingColumnChecker.cs" />
-    <Compile Include="Linq\Translation\SkipToRowNumberRewriter.cs" />
-    <Compile Include="Linq\Translation\SortAccessJoins.cs" />
-    <Compile Include="Linq\Translation\SqlIdRewriter.cs" />
-    <Compile Include="Linq\Translation\SqlOrderByRewriter.cs" />
-    <Compile Include="Linq\Translation\SubqueryMerger.cs" />
-    <Compile Include="Linq\Translation\SubqueryRemover.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Linq\Translation\TableExpressionFinder.cs" />
-    <Compile Include="Linq\Translation\TypeChecker.cs" />
-    <Compile Include="Linq\Translation\UpdateProjection.cs" />
-    <Compile Include="Linq\Util\ScopedDictionary.cs" />
-    <Compile Include="Oracle\OracleIntegrityChecker.cs" />
-    <Compile Include="Oracle\OracleRepository.cs" />
-    <Compile Include="Oracle\OracleRepositorySchemaWriter.cs" />
-    <Compile Include="Oracle\OracleSchemaWriter.cs" />
-    <Compile Include="Postgres\PostgresIntegrityChecker.cs" />
-    <Compile Include="Postgres\PostgresPersister.cs" />
-    <Compile Include="Postgres\PostgresRepository.cs" />
-    <Compile Include="Postgres\PostgresSchemaWriter.cs" />
-    <Compile Include="Postgres\PostgresTypeMapper.cs" />
-    <Compile Include="Projection.Attributes\AvgAttribute.cs" />
-    <Compile Include="Projection.Attributes\CountAttribute.cs" />
-    <Compile Include="Projection.Attributes\FirstAttribute.cs" />
-    <Compile Include="Projection.Attributes\GroupByAttribute.cs" />
-    <Compile Include="Projection.Attributes\LastAttribute.cs" />
-    <Compile Include="Projection.Attributes\MaxAttribute.cs" />
-    <Compile Include="Projection.Attributes\MinAttribute.cs" />
-    <Compile Include="Projection.Attributes\ProjectOntoPropertyAttribute.cs" />
-    <Compile Include="Attributes\PropertyLengthAttribute.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Attributes\PropertyNameAttribute.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Attributes\RequiredAttribute.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Attributes\SelectFunctionAttribute.cs" />
-    <Compile Include="Attributes\StaticDataAttribute.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Attributes\TableAttribute.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Attributes\UniqueAttribute.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Attributes\UpdateFunctionAttribute.cs" />
-    <Compile Include="Attributes\ValidSinceAttribute.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Attributes\ValidUntilAttribute.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Attributes\ViewAttribute.cs" />
-    <Compile Include="Attributes\VirtualLinkAttribute.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Attributes\WeakReferencedAttribute.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="AutoIncValueObject.cs" />
-    <Compile Include="Exceptions\DirtyObjectException.cs" />
-    <Compile Include="Exceptions\MapperBaseException.cs" />
-    <Compile Include="Exceptions\MissingSetterException.cs" />
-    <Compile Include="Exceptions\NoOpenTransactionException.cs" />
-    <Compile Include="Exceptions\NoPrimaryKeyFoundException.cs" />
-    <Compile Include="Exceptions\PersisterDoesNotSupportRepositoryException.cs" />
-    <Compile Include="Exceptions\SqlCoreException.cs" />
-    <Compile Include="Exceptions\TransactionAlreadyOpenException.cs" />
-    <Compile Include="Exceptions\VersionHasAlreadyReleasedException.cs" />
-    <Compile Include="Exceptions\WrongTypeException.cs" />
-    <Compile Include="FieldDescriptions\FieldDescription.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="FieldDescriptions\VirtualFieldDescription.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Fields\Field.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Fields\Link.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Fields\ListLink.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Fields\SpecializedLink.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Fields\UnmatchedField.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Fields\VirtualField.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="GenericValueObject.cs" />
-    <Compile Include="Interfaces\ICondition.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Interfaces\ICreateObject.cs" />
-    <Compile Include="Interfaces\IGenericValueObject.cs" />
-    <Compile Include="Interfaces\IMarkedValueObject.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Interfaces\IModification.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Interfaces\INativePersister.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Interfaces\IObjectFactory.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Interfaces\IObjectHash.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Interfaces\IPersister.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Interfaces\IRepository.cs" />
-    <Compile Include="Interfaces\ISqlTracer.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Interfaces\ITransactionContext.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Interfaces\ITypeMapper.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Interfaces\IValueObject.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Internal\BaseCache.cs" />
     <Compile Include="Internal\BasePersister.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Internal\BaseTypeMapper.cs" />
-    <Compile Include="Internal\Cache.cs" />
-    <Compile Include="Internal\ConstraintSaveList.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Internal\HashCondition.cs" />
-    <Compile Include="Internal\HashEntry.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Internal\ProjectionClass.cs" />
-    <Compile Include="Internal\PropertyMetaInfo.cs" />
-    <Compile Include="MarkedAutoIncValueObject.cs" />
-    <Compile Include="Projection.Attributes\SumAttribute.cs" />
-    <Compile Include="Queries\ConditionClause.cs" />
-    <Compile Include="Queries\HintCondition.cs" />
-    <Compile Include="Queries\UnionAll.cs" />
-    <Compile Include="Queries\WithClause.cs" />
-    <Compile Include="Repository\SelectReplacement.cs" />
-    <Compile Include="SqlServer\BaseSqlPersister.cs" />
-    <Compile Include="SqlServer\BaseSqlTypeMapper.cs" />
-    <Compile Include="SqlServer\MicrosoftBasedPersister.cs" />
-    <Compile Include="SqlServer\ReliableSqlPersister.cs" />
-    <Compile Include="SqlServer\SqlIntegrityChecker.cs" />
-    <Compile Include="SqlServer\SqlRepository.cs" />
-    <Compile Include="SqlServer\SqlSchemaWriter.cs" />
-    <Compile Include="Util\ExpressionOverride.cs" />
-    <Compile Include="Util\LinqProviderHelper.cs" />
-    <Compile Include="Util\HierarchyLevel.cs" />
-    <Compile Include="Internal\ObjectHash.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Internal\PersistentObject.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Internal\Property.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Internal\Set.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Internal\Table.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Internal\TypeHelper.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Internal\ValidatorType.cs" />
-    <Compile Include="MarkedValueObject.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ObjectMapper.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Oracle\OraclePersister.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Oracle\OracleRepositoryPersister.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Oracle\OracleTypeMapper.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Queries\AndCondition.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Queries\CollectionJoin.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Queries\Condition.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Queries\ConditionList.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Queries\ConditionOperator.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Queries\InCondition.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Queries\Join.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Queries\NotInCondition.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Queries\OrCondition.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Queries\OrderBy.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Queries\Ordering.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Queries\Parenthesize.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Queries\QueryOperator.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Queries\SubSelect.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Queries\TableReplacement.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Queries\Union.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Repository\EntityInfo.cs" />
-    <Compile Include="Repository\EntityPredicate.cs" />
-    <Compile Include="Repository\EntityRelation.cs" />
-    <Compile Include="Repository\FieldIntegrity.cs" />
-    <Compile Include="Repository\IntegrityInfo.cs" />
-    <Compile Include="Repository\Tablespace.cs" />
-    <Compile Include="Repository\TableStorage.cs" />
-    <Compile Include="Repository\VersionInfo.cs" />
-    <Compile Include="SqlServer\SqlPersister.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="SqlServer\SqlTypeMapper.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="TransactionContext.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Transactions.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Util\CollectionChildCondition.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Util\CollectionParentCondition.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Util\DatabaseConnection.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Util\DatabaseType.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Util\DBConst.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Util\ListAdapter.cs" />
-    <Compile Include="Util\NativeListEnumerator.cs" />
     <Compile Include="Util\OBM.cs" />
-    <Compile Include="Util\ReflectionHelper.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Util\SqlFile.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Util\SqlStopwatch.cs" />
-    <Compile Include="Util\UltraFastDictionary.cs" />
-    <Compile Include="Util\UniversalFactory.cs" />
-    <Compile Include="ValueObject.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Xml\XmlPersister.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Xml\XmlTypeMapper.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="App.config" />
     <None Include="ObjectMapper.snk" />
     <None Include="packages.config" />
   </ItemGroup>
