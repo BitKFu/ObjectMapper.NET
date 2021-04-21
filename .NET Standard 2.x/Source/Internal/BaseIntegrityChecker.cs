@@ -232,10 +232,10 @@ namespace AdFactum.Data.Internal
                             TypeMapper.GetTypeForDatabase(TypeHelper.GetBaseType(fieldDescription.ContentType));
                         if (columnDescription["DataType"] != DBNull.Value)
                         {
-                            typeFailure = (columnDescription["DataType"] != checkType);
+                            typeFailure = (Type)columnDescription["DataType"] != checkType;
 
                             // correct char to string type failure
-                            if (typeFailure && columnDescription["DataType"] == typeof(string) &&
+                            if (typeFailure && (Type)columnDescription["DataType"] == typeof(string) &&
                                 checkType == typeof(char))
                                 typeFailure = false;
                         }
