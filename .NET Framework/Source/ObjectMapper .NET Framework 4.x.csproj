@@ -1,23 +1,25 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <ProjectGuid>{2AE4020F-A2CA-4BDC-BE7F-F309975D76EB}</ProjectGuid>
+    <TargetFramework>net472</TargetFramework>
+    <Deterministic>true</Deterministic>
     <RootNamespace>AdFactum.Data</RootNamespace>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <PackageId>ObjectMapper.NET_Standard20</PackageId>
+    <AssemblyName>ObjectMapper</AssemblyName>
+    <PackageId>ObjectMapper.NET_net472</PackageId>
+    <Version>4.8.0.0</Version>
     <Authors>Gerhard Stephan</Authors>
     <Company>TimePunch KG</Company>
-    <Version>4.8.0.0</Version>
-    <AssemblyVersion>4.8.0.0</AssemblyVersion>
-    <AssemblyName>ObjectMapper</AssemblyName>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>ObjectMapper.snk</AssemblyOriginatorKeyFile>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
-
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <OutputPath>..\..\output\debug</OutputPath>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <OutputPath>..\..\output\release\</OutputPath>
   </PropertyGroup>
-
   <ItemGroup>
     <Compile Include="..\..\.NET Standard 2.x\Source\Attributes\BackLinkAttribute.cs" Link="Attributes\BackLinkAttribute.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source\Attributes\BindPropertyToAttribute.cs" Link="Attributes\BindPropertyToAttribute.cs" />
@@ -89,7 +91,6 @@
     <Compile Include="..\..\.NET Standard 2.x\Source\Internal\BaseCache.cs" Link="Internal\BaseCache.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source\Internal\BaseExtensions.cs" Link="Internal\BaseExtensions.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source\Internal\BaseIntegrityChecker.cs" Link="Internal\BaseIntegrityChecker.cs" />
-    <Compile Include="..\..\.NET Standard 2.x\Source\Internal\BasePersister.cs" Link="Internal\BasePersister.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source\Internal\BaseRepository.cs" Link="Internal\BaseRepository.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source\Internal\BaseSchemaWriter.cs" Link="Internal\BaseSchemaWriter.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source\Internal\BaseTypeMapper.cs" Link="Internal\BaseTypeMapper.cs" />
@@ -103,6 +104,7 @@
     <Compile Include="..\..\.NET Standard 2.x\Source\Internal\PersistentObject.cs" Link="Internal\PersistentObject.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source\Internal\PersistentProperties.cs" Link="Internal\PersistentProperties.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source\Internal\ProjectionClass.cs" Link="Internal\ProjectionClass.cs" />
+    <Compile Include="..\..\.NET Standard 2.x\Source\Internal\Property.cs" Link="Internal\Property.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source\Internal\PropertyMetaInfo.cs" Link="Internal\PropertyMetaInfo.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source\Internal\Set.cs" Link="Internal\Set.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source\Internal\Table.cs" Link="Internal\Table.cs" />
@@ -113,7 +115,6 @@
     <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Expressions\DbExpressionExtensions.cs" Link="Linq\Expressions\DbExpressionExtensions.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Expressions\DbExpressionFinder.cs" Link="Linq\Expressions\DbExpressionFinder.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Expressions\DbExpressions.cs" Link="Linq\Expressions\DbExpressions.cs" />
-    <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Expressions\DbExpressionVisitor.cs" Link="Linq\Expressions\DbExpressionVisitor.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Expressions\DbPackedExpressionVisitor.cs" Link="Linq\Expressions\DbPackedExpressionVisitor.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Expressions\ExpressionComparer.cs" Link="Linq\Expressions\ExpressionComparer.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Expressions\ExpressionExtensions.cs" Link="Linq\Expressions\ExpressionExtensions.cs" />
@@ -128,7 +129,6 @@
     <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Language\PostgresExpressionWriter.cs" Link="Linq\Language\PostgresExpressionWriter.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Language\SqlExpressionWriter.cs" Link="Linq\Language\SqlExpressionWriter.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source\Linq\LinkBridge.cs" Link="Linq\LinkBridge.cs" />
-    <Compile Include="..\..\.NET Standard 2.x\Source\Linq\LinqExtensions.cs" Link="Linq\LinqExtensions.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Query.cs" Link="Linq\Query.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source\Linq\QueryCompiler.cs" Link="Linq\QueryCompiler.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Translation\AggregateChecker.cs" Link="Linq\Translation\AggregateChecker.cs" />
@@ -144,7 +144,6 @@
     <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Translation\ExpressionTypeFinder.cs" Link="Linq\Translation\ExpressionTypeFinder.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Translation\FromExpressionFinder.cs" Link="Linq\Translation\FromExpressionFinder.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Translation\GroupingBinder.cs" Link="Linq\Translation\GroupingBinder.cs" />
-    <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Translation\MemberBinder.cs" Link="Linq\Translation\MemberBinder.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Translation\OracleOrderByRewriter.cs" Link="Linq\Translation\OracleOrderByRewriter.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Translation\OracleTakeToRowNumberRewriter.cs" Link="Linq\Translation\OracleTakeToRowNumberRewriter.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Translation\OrderByRewriter.cs" Link="Linq\Translation\OrderByRewriter.cs" />
@@ -152,7 +151,6 @@
     <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Translation\ParameterBinder.cs" Link="Linq\Translation\ParameterBinder.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Translation\PartialEvaluator.cs" Link="Linq\Translation\PartialEvaluator.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Translation\PostgresOrderByRewriter.cs" Link="Linq\Translation\PostgresOrderByRewriter.cs" />
-    <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Translation\QueryBinder.cs" Link="Linq\Translation\QueryBinder.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Translation\QueryProviderFinder.cs" Link="Linq\Translation\QueryProviderFinder.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Translation\RebindToSelection.cs" Link="Linq\Translation\RebindToSelection.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Translation\RedundanceRemover.cs" Link="Linq\Translation\RedundanceRemover.cs" />
@@ -173,7 +171,6 @@
     <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Util\ScopedDictionary.cs" Link="Linq\Util\ScopedDictionary.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source\MarkedAutoIncValueObject.cs" Link="MarkedAutoIncValueObject.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source\MarkedValueObject.cs" Link="MarkedValueObject.cs" />
-    <Compile Include="..\..\.NET Standard 2.x\Source\ObjectMapper.cs" Link="ObjectMapper.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source\Oracle\OracleIntegrityChecker.cs" Link="Oracle\OracleIntegrityChecker.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source\Oracle\OraclePersister.cs" Link="Oracle\OraclePersister.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source\Oracle\OracleRepository.cs" Link="Oracle\OracleRepository.cs" />
@@ -227,6 +224,7 @@
     <Compile Include="..\..\.NET Standard 2.x\Source\SqlServer\BaseSqlPersister.cs" Link="SqlServer\BaseSqlPersister.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source\SqlServer\BaseSqlTypeMapper.cs" Link="SqlServer\BaseSqlTypeMapper.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source\SqlServer\MicrosoftBasedPersister.cs" Link="SqlServer\MicrosoftBasedPersister.cs" />
+    <Compile Include="..\..\.NET Standard 2.x\Source\SqlServer\ReliableSqlPersister.cs" Link="SqlServer\ReliableSqlPersister.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source\SqlServer\SqlIntegrityChecker.cs" Link="SqlServer\SqlIntegrityChecker.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source\SqlServer\SqlPersister.cs" Link="SqlServer\SqlPersister.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source\SqlServer\SqlRepository.cs" Link="SqlServer\SqlRepository.cs" />
@@ -252,7 +250,14 @@
     <Compile Include="..\..\.NET Standard 2.x\Source\Xml\XmlPersister.cs" Link="Xml\XmlPersister.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source\Xml\XmlTypeMapper.cs" Link="Xml\XmlTypeMapper.cs" />
   </ItemGroup>
-
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
   <ItemGroup>
     <Folder Include="Attributes\" />
     <Folder Include="Core.Attributes\" />
@@ -260,25 +265,40 @@
     <Folder Include="FieldDescriptions\" />
     <Folder Include="Fields\" />
     <Folder Include="Interfaces\" />
-    <Folder Include="Linq\Expressions\" />
-    <Folder Include="Linq\Language\" />
     <Folder Include="Linq\Util\" />
-    <Folder Include="Linq\Translation\" />
-    <Folder Include="Xml\" />
-    <Folder Include="SqlServer\" />
-    <Folder Include="Queries\" />
-    <Folder Include="Projection.Attributes\" />
-    <Folder Include="Postgres\" />
-    <Folder Include="Repository\" />
     <Folder Include="Oracle\" />
+    <Folder Include="Postgres\" />
+    <Folder Include="Projection.Attributes\" />
+    <Folder Include="Properties\" />
+    <Folder Include="Queries\" />
+    <Folder Include="Repository\" />
+    <Folder Include="SqlServer\" />
+    <Folder Include="Xml\" />
   </ItemGroup>
-
   <ItemGroup>
+    <PackageReference Include="EnterpriseLibrary.TransientFaultHandling" Version="6.0.1304" />
+    <PackageReference Include="EnterpriseLibrary.TransientFaultHandling.Data" Version="6.0.1304.1" />
+    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="5.0.0" />
     <PackageReference Include="Npgsql" Version="5.0.4" />
-    <PackageReference Include="Oracle.ManagedDataAccess.Core" Version="2.19.100" />
-    <PackageReference Include="System.Data.SqlClient" Version="4.8.2" />
-    <PackageReference Include="System.Reflection.Emit" Version="4.7.0" />
-    <PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.7.0" />
+    <PackageReference Include="Oracle.ManagedDataAccess" Version="19.11.0" />
+    <PackageReference Include="System.Buffers" Version="4.5.1" />
+    <PackageReference Include="System.Memory" Version="4.5.4" />
+    <PackageReference Include="System.Numerics.Vectors" Version="4.5.0" />
+    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="5.0.0" />
+    <PackageReference Include="System.Text.Encodings.Web" Version="5.0.1" />
+    <PackageReference Include="System.Text.Json" Version="5.0.2" />
+    <PackageReference Include="System.Threading.Channels" Version="5.0.0" />
+    <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.5.4" />
   </ItemGroup>
-
+  <ItemGroup>
+    <Compile Update="Internal\BasePersister.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="ObjectMapper.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Util\DatabaseType.cs">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
 </Project>

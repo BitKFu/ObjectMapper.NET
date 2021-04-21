@@ -100,7 +100,7 @@ namespace AdFactum.Data.Linq.Expressions
                     pre = "J";
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException("type");
+                    throw new ArgumentOutOfRangeException(nameof(type));
             }
         }
 
