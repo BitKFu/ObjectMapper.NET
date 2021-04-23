@@ -127,7 +127,6 @@
     <Compile Include="..\..\.NET Standard 2.x\Source\Linq\ILinqQuery.cs" Link="Linq\ILinqQuery.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Language\LinqMethodInspector.cs" Link="Linq\Language\LinqMethodInspector.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source.Oracle\Linq\Language\OracleExpressionWriter.cs" Link="Linq\Language\OracleExpressionWriter.cs" />
-    <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Language\PostgresExpressionWriter.cs" Link="Linq\Language\PostgresExpressionWriter.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Language\SqlExpressionWriter.cs" Link="Linq\Language\SqlExpressionWriter.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source\Linq\LinkBridge.cs" Link="Linq\LinkBridge.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Query.cs" Link="Linq\Query.cs" />
@@ -172,11 +171,6 @@
     <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Util\ScopedDictionary.cs" Link="Linq\Util\ScopedDictionary.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source\MarkedAutoIncValueObject.cs" Link="MarkedAutoIncValueObject.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source\MarkedValueObject.cs" Link="MarkedValueObject.cs" />
-    <Compile Include="..\..\.NET Standard 2.x\Source\Postgres\PostgresIntegrityChecker.cs" Link="Postgres\PostgresIntegrityChecker.cs" />
-    <Compile Include="..\..\.NET Standard 2.x\Source\Postgres\PostgresPersister.cs" Link="Postgres\PostgresPersister.cs" />
-    <Compile Include="..\..\.NET Standard 2.x\Source\Postgres\PostgresRepository.cs" Link="Postgres\PostgresRepository.cs" />
-    <Compile Include="..\..\.NET Standard 2.x\Source\Postgres\PostgresSchemaWriter.cs" Link="Postgres\PostgresSchemaWriter.cs" />
-    <Compile Include="..\..\.NET Standard 2.x\Source\Postgres\PostgresTypeMapper.cs" Link="Postgres\PostgresTypeMapper.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source\Projection.Attributes\AvgAttribute.cs" Link="Projection.Attributes\AvgAttribute.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source\Projection.Attributes\CountAttribute.cs" Link="Projection.Attributes\CountAttribute.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source\Projection.Attributes\FirstAttribute.cs" Link="Projection.Attributes\FirstAttribute.cs" />
@@ -260,7 +254,6 @@
     <Folder Include="Fields\" />
     <Folder Include="Interfaces\" />
     <Folder Include="Linq\Util\" />
-    <Folder Include="Postgres\" />
     <Folder Include="Projection.Attributes\" />
     <Folder Include="Properties\" />
     <Folder Include="Queries\" />
@@ -272,7 +265,6 @@
     <PackageReference Include="EnterpriseLibrary.TransientFaultHandling" Version="6.0.1304" />
     <PackageReference Include="EnterpriseLibrary.TransientFaultHandling.Data" Version="6.0.1304.1" />
     <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="5.0.0" />
-    <PackageReference Include="Npgsql" Version="5.0.4" />
     <PackageReference Include="System.Buffers" Version="4.5.1" />
     <PackageReference Include="System.Memory" Version="4.5.4" />
     <PackageReference Include="System.Numerics.Vectors" Version="4.5.0" />

@@ -34,6 +34,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ObjectMapper .NET Oracle St
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ObjectMapper .NET Oracle Standard", ".NET Standard 2.x\Source.Oracle\ObjectMapper .NET Oracle Standard.csproj", "{17FFAC62-3386-43A9-AFB0-68181FCA5364}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Source.Postgres", "Source.Postgres", "{D18596E1-23EB-4528-BE08-DE1EB687769E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ObjectMapper .NET Postgres Standard", ".NET Standard 2.x\Source.Postgres\ObjectMapper .NET Postgres Standard.csproj", "{1D3A1297-BEAC-4A4F-8FD5-9CB09E7D425D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ObjectMapper .NET Postgres Standard 2.0", ".NET Standard 2.0\Source.Postgres\ObjectMapper .NET Postgres Standard 2.0.csproj", "{6ADD0CA3-A7DA-4F06-8111-35822CB5D5FC}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ObjectMapper .NET Postgres Framework 4.x", ".NET Framework\Source.Postgres\ObjectMapper .NET Postgres Framework 4.x.csproj", "{FA8D2B35-44E4-4839-8272-20AF5682481A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -92,6 +100,18 @@ Global
 		{17FFAC62-3386-43A9-AFB0-68181FCA5364}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{17FFAC62-3386-43A9-AFB0-68181FCA5364}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{17FFAC62-3386-43A9-AFB0-68181FCA5364}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1D3A1297-BEAC-4A4F-8FD5-9CB09E7D425D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1D3A1297-BEAC-4A4F-8FD5-9CB09E7D425D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1D3A1297-BEAC-4A4F-8FD5-9CB09E7D425D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1D3A1297-BEAC-4A4F-8FD5-9CB09E7D425D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6ADD0CA3-A7DA-4F06-8111-35822CB5D5FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6ADD0CA3-A7DA-4F06-8111-35822CB5D5FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6ADD0CA3-A7DA-4F06-8111-35822CB5D5FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6ADD0CA3-A7DA-4F06-8111-35822CB5D5FC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FA8D2B35-44E4-4839-8272-20AF5682481A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FA8D2B35-44E4-4839-8272-20AF5682481A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FA8D2B35-44E4-4839-8272-20AF5682481A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FA8D2B35-44E4-4839-8272-20AF5682481A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -110,9 +130,12 @@ Global
 		{B2E6C3E9-BBD4-455B-B6BA-754FEDF8813D} = {F6AAFD81-6DD5-47D4-B234-07E33682569F}
 		{6CE9FA0D-C76F-416F-BDD7-A105077AF8B9} = {F6AAFD81-6DD5-47D4-B234-07E33682569F}
 		{17FFAC62-3386-43A9-AFB0-68181FCA5364} = {F6AAFD81-6DD5-47D4-B234-07E33682569F}
+		{1D3A1297-BEAC-4A4F-8FD5-9CB09E7D425D} = {D18596E1-23EB-4528-BE08-DE1EB687769E}
+		{6ADD0CA3-A7DA-4F06-8111-35822CB5D5FC} = {D18596E1-23EB-4528-BE08-DE1EB687769E}
+		{FA8D2B35-44E4-4839-8272-20AF5682481A} = {D18596E1-23EB-4528-BE08-DE1EB687769E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		EnterpriseLibraryConfigurationToolBinariesPathV6 = packages\EnterpriseLibrary.TransientFaultHandling.6.0.1304.0\lib\portable-net45+win+wp8
 		SolutionGuid = {0AD4F66A-5E0B-48E1-B45A-A5F570D1C702}
+		EnterpriseLibraryConfigurationToolBinariesPathV6 = packages\EnterpriseLibrary.TransientFaultHandling.6.0.1304.0\lib\portable-net45+win+wp8
 	EndGlobalSection
 EndGlobal

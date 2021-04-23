@@ -2,7 +2,6 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <RootNamespace>ObjectMapper_.NET_Oracle_Stanard_2_0</RootNamespace>
     <RootNamespace>AdFactum.Data</RootNamespace>
     <AssemblyName>ObjectMapper.Oracle</AssemblyName>
     <SignAssembly>true</SignAssembly>
@@ -28,6 +27,7 @@
     <Compile Include="..\..\.NET Standard 2.x\Source.Oracle\Linq\Language\OracleExpressionWriter.cs" Link="Linq\Language\OracleExpressionWriter.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source.Oracle\Linq\Translation\OracleOrderByRewriter.cs" Link="Linq\Translation\OracleOrderByRewriter.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source.Oracle\Linq\Translation\OracleTakeToRowNumberRewriter.cs" Link="Linq\Translation\OracleTakeToRowNumberRewriter.cs" />
+    <Compile Include="..\..\.NET Standard 2.x\Source.Oracle\OracleOBM.cs" Link="OracleOBM.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source.Oracle\Oracle\OracleIntegrityChecker.cs" Link="Oracle\OracleIntegrityChecker.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source.Oracle\Oracle\OraclePersister.cs" Link="Oracle\OraclePersister.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source.Oracle\Oracle\OracleRepository.cs" Link="Oracle\OracleRepository.cs" />

@@ -6,7 +6,7 @@ namespace AdFactum.Data
 	/// <summary>
 	/// This class is used for simple connection mangement
 	/// </summary>
-	public partial class OracleOBM
+	public class OracleOBM
     {
 		/// <summary>
 		/// Initialize the oracle objectmapper

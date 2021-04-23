@@ -4,10 +4,6 @@ using AdFactum.Data.Access;
 using AdFactum.Data.SqlServer;
 using AdFactum.Data.Xml;
 
-#if !CLIENT_PROFILE
-using AdFactum.Data.Postgres;
-#endif
-
 namespace AdFactum.Data.Util
 {
 	/// <summary>
@@ -122,24 +118,6 @@ namespace AdFactum.Data.Util
             }
             return sqlDb;
         }
-
-
-#if !CLIENT_PROFILE
-
-        /// <summary>
-        /// Opens an Postgres Connection
-        /// </summary>
-        /// <param name="connection"></param>
-        /// <param name="tracer"></param>
-        /// <returns></returns>
-        private static IPersister OpenPostgresConnection(DatabaseConnection connection, ISqlTracer tracer)
-        {
-            var postgresDb = new PostgresPersister {SqlTracer = tracer};
-            postgresDb.Connect(connection.ServerName, connection.UserName, connection.Password, connection.DatabaseName);
-            return postgresDb;
-        }
-
-#endif
 
 		/// <summary>
 		/// Opens an Access Databaseconnection 

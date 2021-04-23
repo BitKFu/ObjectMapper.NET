@@ -128,7 +128,6 @@
     <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Grouping.cs" Link="Linq\Grouping.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source\Linq\ILinqQuery.cs" Link="Linq\ILinqQuery.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Language\LinqMethodInspector.cs" Link="Linq\Language\LinqMethodInspector.cs" />
-    <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Language\PostgresExpressionWriter.cs" Link="Linq\Language\PostgresExpressionWriter.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Language\SqlExpressionWriter.cs" Link="Linq\Language\SqlExpressionWriter.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source\Linq\LinkBridge.cs" Link="Linq\LinkBridge.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source\Linq\LinqExtensions.cs" Link="Linq\LinqExtensions.cs" />
@@ -175,11 +174,6 @@
     <Compile Include="..\..\.NET Standard 2.x\Source\MarkedAutoIncValueObject.cs" Link="MarkedAutoIncValueObject.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source\MarkedValueObject.cs" Link="MarkedValueObject.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source\ObjectMapper.cs" Link="ObjectMapper.cs" />
-    <Compile Include="..\..\.NET Standard 2.x\Source\Postgres\PostgresIntegrityChecker.cs" Link="Postgres\PostgresIntegrityChecker.cs" />
-    <Compile Include="..\..\.NET Standard 2.x\Source\Postgres\PostgresPersister.cs" Link="Postgres\PostgresPersister.cs" />
-    <Compile Include="..\..\.NET Standard 2.x\Source\Postgres\PostgresRepository.cs" Link="Postgres\PostgresRepository.cs" />
-    <Compile Include="..\..\.NET Standard 2.x\Source\Postgres\PostgresSchemaWriter.cs" Link="Postgres\PostgresSchemaWriter.cs" />
-    <Compile Include="..\..\.NET Standard 2.x\Source\Postgres\PostgresTypeMapper.cs" Link="Postgres\PostgresTypeMapper.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source\Projection.Attributes\AvgAttribute.cs" Link="Projection.Attributes\AvgAttribute.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source\Projection.Attributes\CountAttribute.cs" Link="Projection.Attributes\CountAttribute.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source\Projection.Attributes\FirstAttribute.cs" Link="Projection.Attributes\FirstAttribute.cs" />
@@ -262,12 +256,10 @@
     <Folder Include="SqlServer\" />
     <Folder Include="Queries\" />
     <Folder Include="Projection.Attributes\" />
-    <Folder Include="Postgres\" />
     <Folder Include="Repository\" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Npgsql" Version="5.0.4" />
     <PackageReference Include="System.Data.SqlClient" Version="4.8.2" />
     <PackageReference Include="System.Reflection.Emit" Version="4.7.0" />
     <PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.7.0" />
