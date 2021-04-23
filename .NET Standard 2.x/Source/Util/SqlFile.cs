@@ -51,16 +51,13 @@ namespace AdFactum.Data.Util
         /// <summary>
 		/// Rückgabe der Liste mit nicht ausführbaren SQL Befehlen
 		/// </summary>
-		public IList SqlFailures
-		{
-			get { return sqlFailures; }
-		}
+		public IList SqlFailures => sqlFailures;
 
-		/// <summary>
+        /// <summary>
 		/// Liest die Datei ein und hängt die gesammelten SQL Befehle in
 		/// ein Array
 		/// </summary>
-		private void Read()
+		protected virtual void Read()
 		{
 			string sqlCommand = "";
 			string line;
@@ -109,17 +106,13 @@ namespace AdFactum.Data.Util
         /// <param name="database">The database.</param>
         /// <param name="sqlFileFailedDelegate">The SQL file failed delegate.</param>
         /// <returns>True, if the execution succeeded</returns>
-        public void ExecuteScript(INativePersister database, SqlFileFailed sqlFileFailedDelegate)
+        public virtual void ExecuteScript(INativePersister database, SqlFileFailed sqlFileFailedDelegate)
         {
             foreach (string sql in sqlCommands)
             {
                 try
                 {
-                    // Oracle Persister always needs a ; at the end
-                    string command = (database is Oracle.OraclePersister && !sql.EndsWith(";"))
-                                         ? sql + ";"
-                                         : sql;
-                    database.Execute(command);
+                    database.Execute(sql);
                 }
                 catch (SqlCoreException exc)
                 {

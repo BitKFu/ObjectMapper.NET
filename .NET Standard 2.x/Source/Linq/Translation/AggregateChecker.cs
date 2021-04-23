@@ -6,14 +6,14 @@ namespace AdFactum.Data.Linq.Translation
     /// <summary>
     /// Determines if a SelectExpression contains any aggregate expressions
     /// </summary>
-    class AggregateChecker : DbExpressionVisitor
+    public class AggregateChecker : DbExpressionVisitor
     {
         bool hasAggregate;
         private AggregateChecker()
         {
         }
 
-        internal static bool HasAggregates(SelectExpression expression)
+        public static bool HasAggregates(SelectExpression expression)
         {
             var checker = new AggregateChecker();
             checker.Visit(expression);

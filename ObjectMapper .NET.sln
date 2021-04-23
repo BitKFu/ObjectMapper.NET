@@ -26,6 +26,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Utils", "Tutorials\Utils\Ut
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IntegrationTests", "Tutorials\IntegrationTests\IntegrationTests.csproj", "{3A9155B9-32B4-4508-8C52-94116B327136}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Source.Oracle", "Source.Oracle", "{F6AAFD81-6DD5-47D4-B234-07E33682569F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ObjectMapper .NET Oracle Framework 4.x", ".NET Framework\Source.Oracle\ObjectMapper .NET Oracle Framework 4.x.csproj", "{B2E6C3E9-BBD4-455B-B6BA-754FEDF8813D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ObjectMapper .NET Oracle Standard 2.0", ".NET Standard 2.0\Source.Oracle\ObjectMapper .NET Oracle Standard 2.0.csproj", "{6CE9FA0D-C76F-416F-BDD7-A105077AF8B9}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ObjectMapper .NET Oracle Standard", ".NET Standard 2.x\Source.Oracle\ObjectMapper .NET Oracle Standard.csproj", "{17FFAC62-3386-43A9-AFB0-68181FCA5364}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -72,6 +80,18 @@ Global
 		{3A9155B9-32B4-4508-8C52-94116B327136}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3A9155B9-32B4-4508-8C52-94116B327136}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3A9155B9-32B4-4508-8C52-94116B327136}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B2E6C3E9-BBD4-455B-B6BA-754FEDF8813D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B2E6C3E9-BBD4-455B-B6BA-754FEDF8813D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B2E6C3E9-BBD4-455B-B6BA-754FEDF8813D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B2E6C3E9-BBD4-455B-B6BA-754FEDF8813D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6CE9FA0D-C76F-416F-BDD7-A105077AF8B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6CE9FA0D-C76F-416F-BDD7-A105077AF8B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6CE9FA0D-C76F-416F-BDD7-A105077AF8B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6CE9FA0D-C76F-416F-BDD7-A105077AF8B9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{17FFAC62-3386-43A9-AFB0-68181FCA5364}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{17FFAC62-3386-43A9-AFB0-68181FCA5364}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{17FFAC62-3386-43A9-AFB0-68181FCA5364}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{17FFAC62-3386-43A9-AFB0-68181FCA5364}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -87,6 +107,9 @@ Global
 		{CA232E42-43DB-4208-A4CA-3F497AC31764} = {FF9FE6F7-DEDA-499E-927E-A5B9C3577C77}
 		{07D45246-7835-4535-9F29-F3D69EC85671} = {FF9FE6F7-DEDA-499E-927E-A5B9C3577C77}
 		{3A9155B9-32B4-4508-8C52-94116B327136} = {FF9FE6F7-DEDA-499E-927E-A5B9C3577C77}
+		{B2E6C3E9-BBD4-455B-B6BA-754FEDF8813D} = {F6AAFD81-6DD5-47D4-B234-07E33682569F}
+		{6CE9FA0D-C76F-416F-BDD7-A105077AF8B9} = {F6AAFD81-6DD5-47D4-B234-07E33682569F}
+		{17FFAC62-3386-43A9-AFB0-68181FCA5364} = {F6AAFD81-6DD5-47D4-B234-07E33682569F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		EnterpriseLibraryConfigurationToolBinariesPathV6 = packages\EnterpriseLibrary.TransientFaultHandling.6.0.1304.0\lib\portable-net45+win+wp8

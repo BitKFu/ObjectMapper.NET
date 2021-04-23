@@ -1,6 +1,6 @@
 using System;
+using System.Collections.Generic;
 using AdFactum.Data.Access;
-using AdFactum.Data.Oracle;
 using AdFactum.Data.SqlServer;
 using AdFactum.Data.Xml;
 
@@ -15,7 +15,15 @@ namespace AdFactum.Data.Util
 	/// </summary>
 	public class OBM
     {
-        #region ObjectMapper
+        public static Dictionary<DatabaseType, Func<DatabaseConnection, ISqlTracer, IPersister>> connectionMapping = new Dictionary<DatabaseType, Func<DatabaseConnection, ISqlTracer, IPersister>>();
+
+        static OBM()
+        {
+            connectionMapping.Add(DatabaseType.Access, OpenAccessConnection);
+            connectionMapping.Add(DatabaseType.SqlServer, OpenSqlConnection);
+            connectionMapping.Add(DatabaseType.ReliableSqlServer, OpenReliableSqlConnection);
+            connectionMapping.Add(DatabaseType.Xml, OpenXmlConnection);
+        }
 
         /// <summary>
         /// Creates the mapper using the standard factory and persister of the tutorial.
@@ -45,8 +53,6 @@ namespace AdFactum.Data.Util
             return mapper;
         }
 
-#endregion
-
         #region Persister Management
 
         /// <summary>
@@ -57,41 +63,13 @@ namespace AdFactum.Data.Util
 		/// <returns>Database dependend persister</returns>
 		public static IPersister GetPersister(DatabaseConnection connection, ISqlTracer tracer)
 		{
-			IPersister persister ;
-
             // Set the global SQL Casing
             DBConst.GlobalCasing = connection.SqlCasing;
 
-			switch (connection.DatabaseType)
-			{
-			    case DatabaseType.SqlServer:
-			        persister = OpenSqlConnection(connection, tracer);
-			        break;
+            if (!connectionMapping.TryGetValue(connection.DatabaseType, out var openConnectionFunc))
+                throw new ArgumentOutOfRangeException(nameof(connection), connection.DatabaseType, "This value is not supported.");
 
-                case DatabaseType.ReliableSqlServer:
-			        persister = OpenReliableSqlConnection(connection, tracer);
-			        break;
-
-                case DatabaseType.Xml:
-			        persister = OpenXmlConnection(connection);
-			        break;
-                case DatabaseType.Access:
-					persister = OpenAccessConnection(connection, tracer);
-					break;
-
-				case DatabaseType.Oracle:
-					persister = OpenOracleConnection(connection, tracer);
-					break;
-
-#if !CLIENT_PROFILE
-                case DatabaseType.Postgres:
-			        persister = OpenPostgresConnection(connection, tracer);
-			        break;
-#endif
-                default:
-					throw new ArgumentOutOfRangeException("connection", connection.DatabaseType, "This value is not supported.");
-			}
-  
+            var persister = openConnectionFunc(connection, tracer);
 			return persister;
         }
 
@@ -99,8 +77,9 @@ namespace AdFactum.Data.Util
         /// Opens the XML connection.
         /// </summary>
         /// <param name="connection">The connection.</param>
+        /// <param name="tracer">Trace object</param>
         /// <returns></returns>
-	    private static IPersister OpenXmlConnection(DatabaseConnection connection)
+	    private static IPersister OpenXmlConnection(DatabaseConnection connection, ISqlTracer tracer)
 	    {
             var persister = new XmlPersister(connection.DataSet, connection.XmlFile, connection.XsdFile);
             return persister;
@@ -144,19 +123,6 @@ namespace AdFactum.Data.Util
             return sqlDb;
         }
 
-		/// <summary>
-		/// Opens an Oracle Connection 
-		/// </summary>
-		/// <param name="connection">Database connection</param>
-		/// <param name="tracer">Trace object</param>
-		private static IPersister OpenOracleConnection(DatabaseConnection connection, ISqlTracer tracer)
-		{
-			var oracleDb = new OraclePersister {SqlTracer = tracer};
-		    oracleDb.Connect(connection.UserName, connection.Password, connection.DbAlias);
-            if (!string.IsNullOrEmpty(connection.DatabaseSchema))
-                oracleDb.DatabaseSchema = connection.DatabaseSchema;
-			return oracleDb;
-		}
 
 #if !CLIENT_PROFILE
 

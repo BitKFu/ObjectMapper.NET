@@ -1,17 +1,22 @@
 using System;
-using AdFactum.Data.Oracle;
+using System.Collections.Generic;
 using AdFactum.Data.SqlServer;
 using AdFactum.Data.Xml;
-using AdFactum.Data.Postgres;
 
 namespace AdFactum.Data.Util
 {
-	/// <summary>
-	/// This class is used for simple connection management
-	/// </summary>
-	public class OBM
+    /// <summary>
+    /// This class is used for simple connection mangement
+    /// </summary>
+    public class OBM
     {
-        #region ObjectMapper
+        public static Dictionary<DatabaseType, Func<DatabaseConnection, ISqlTracer, IPersister>> connectionMapping = new Dictionary<DatabaseType, Func<DatabaseConnection, ISqlTracer, IPersister>>();
+
+        static OBM()
+        {
+            connectionMapping.Add(DatabaseType.SqlServer, OpenSqlConnection);
+            connectionMapping.Add(DatabaseType.Xml, OpenXmlConnection);
+        }
 
         /// <summary>
         /// Creates the mapper using the standard factory and persister of the tutorial.
@@ -41,8 +46,6 @@ namespace AdFactum.Data.Util
             return mapper;
         }
 
-#endregion
-
         #region Persister Management
 
         /// <summary>
@@ -52,58 +55,39 @@ namespace AdFactum.Data.Util
 		/// <param name="tracer">Trace Object</param>
 		/// <returns>Database dependend persister</returns>
 		public static IPersister GetPersister(DatabaseConnection connection, ISqlTracer tracer)
-		{
-			IPersister persister ;
-
+        {
             // Set the global SQL Casing
             DBConst.GlobalCasing = connection.SqlCasing;
 
-			switch (connection.DatabaseType)
-			{
-			    case DatabaseType.SqlServer:
-			        persister = OpenSqlConnection(connection, tracer);
-			        break;
+            if (!connectionMapping.TryGetValue(connection.DatabaseType, out var openConnectionFunc))
+                throw new ArgumentOutOfRangeException(nameof(connection), connection.DatabaseType, "This value is not supported.");
 
-                case DatabaseType.Xml:
-			        persister = OpenXmlConnection(connection);
-			        break;
-
-                case DatabaseType.Oracle:
-					persister = OpenOracleConnection(connection, tracer);
-					break;
-
-                case DatabaseType.Postgres:
-			        persister = OpenPostgresConnection(connection, tracer);
-			        break;
-
-                default:
-					throw new ArgumentOutOfRangeException("connection", connection.DatabaseType, "This value is not supported.");
-			}
-  
-			return persister;
+            var persister = openConnectionFunc(connection, tracer);
+            return persister;
         }
 
         /// <summary>
         /// Opens the XML connection.
         /// </summary>
         /// <param name="connection">The connection.</param>
+        /// <param name="tracer">Trace object</param>
         /// <returns></returns>
-	    private static IPersister OpenXmlConnection(DatabaseConnection connection)
-	    {
+	    private static IPersister OpenXmlConnection(DatabaseConnection connection, ISqlTracer tracer)
+        {
             var persister = new XmlPersister(connection.DataSet, connection.XmlFile, connection.XsdFile);
             return persister;
-	    }
+        }
 
-	    /// <summary>
+        /// <summary>
         /// Opens an Sql Database Connection 
         /// </summary>
         /// <param name="connection">Database connection</param>
         /// <param name="tracer">Trace object</param>
         private static IPersister OpenSqlConnection(DatabaseConnection connection, ISqlTracer tracer)
         {
-            var sqlDb = new SqlPersister {SqlTracer = tracer};
+            var sqlDb = new SqlPersister { SqlTracer = tracer };
 
-	        if (connection.DatabaseName != "")
+            if (connection.DatabaseName != "")
             {
                 if (connection.TrustedConnection)
                     sqlDb.Connect(connection.DatabaseName, connection.ServerName);
@@ -113,32 +97,6 @@ namespace AdFactum.Data.Util
             return sqlDb;
         }
 
-		/// <summary>
-		/// Opens an Oracle Connection 
-		/// </summary>
-		/// <param name="connection">Database connection</param>
-		/// <param name="tracer">Trace object</param>
-		private static IPersister OpenOracleConnection(DatabaseConnection connection, ISqlTracer tracer)
-		{
-			var oracleDb = new OraclePersister {SqlTracer = tracer};
-		    oracleDb.Connect(connection.UserName, connection.Password, connection.DbAlias);
-            if (!string.IsNullOrEmpty(connection.DatabaseSchema))
-                oracleDb.DatabaseSchema = connection.DatabaseSchema;
-			return oracleDb;
-		}
-
-        /// <summary>
-        /// Opens an Postgres Connection
-        /// </summary>
-        /// <param name="connection"></param>
-        /// <param name="tracer"></param>
-        /// <returns></returns>
-        private static IPersister OpenPostgresConnection(DatabaseConnection connection, ISqlTracer tracer)
-        {
-            var postgresDb = new PostgresPersister {SqlTracer = tracer};
-            postgresDb.Connect(connection.ServerName, connection.UserName, connection.Password, connection.DatabaseName);
-            return postgresDb;
-        }
 
         #endregion
 
@@ -149,14 +107,14 @@ namespace AdFactum.Data.Util
         /// </summary>
         public class ThreadTransaction : IDisposable
         {
-            private ITransactionContext     transactionContext;
-            private ISqlTracer              sqlTracer;
-            private IObjectFactory          objectFactory;
+            private ITransactionContext transactionContext;
+            private ISqlTracer sqlTracer;
+            private IObjectFactory objectFactory;
 
             /// <summary>
             /// Initializes a new instance of the <see cref="ThreadTransaction"/> class.
             /// </summary>
-            public ThreadTransaction ()
+            public ThreadTransaction()
             {
                 ObjectFactory = new UniversalFactory();
             }
@@ -235,10 +193,10 @@ namespace AdFactum.Data.Util
             }
         }
 
-	    /// <summary>
-	    /// </summary>
-	    /// <value>The thread transaction.</value>
-	    [ThreadStatic] public static ThreadTransaction CurrentTransaction;
+        /// <summary>
+        /// </summary>
+        /// <value>The thread transaction.</value>
+        [ThreadStatic] public static ThreadTransaction CurrentTransaction;
 
         /// <summary>
         /// Gets or sets the SQL tracer.
@@ -271,7 +229,7 @@ namespace AdFactum.Data.Util
                 CurrentTransaction.ObjectFactory = value;
             }
         }
-        
+
         #endregion
 
         #region Nested Transactions

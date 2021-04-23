@@ -1076,7 +1076,7 @@ namespace AdFactum.Data.Linq.Expressions
         /// <summary>
         /// Initializes a new instance of the <see cref="SelectExpression"/> class.
         /// </summary>
-        internal SelectExpression(Type type, ProjectionClass projection, Alias alias, ReadOnlyCollection<ColumnDeclaration> columns, Expression selector, AliasedExpression from, Expression where, ReadOnlyCollection<OrderExpression> orderBy, ReadOnlyCollection<Expression> groupBy, Expression skip, Expression take, bool isDistinct, bool isReverse, SelectResultType selectResult, string sqlId, string hint, Expression defaultIfEmpty) 
+        public SelectExpression(Type type, ProjectionClass projection, Alias alias, ReadOnlyCollection<ColumnDeclaration> columns, Expression selector, AliasedExpression from, Expression where, ReadOnlyCollection<OrderExpression> orderBy, ReadOnlyCollection<Expression> groupBy, Expression skip, Expression take, bool isDistinct, bool isReverse, SelectResultType selectResult, string sqlId, string hint, Expression defaultIfEmpty) 
             : base(DbExpressionType.SelectExpression, type, alias, projection)
         {
             Columns = columns;

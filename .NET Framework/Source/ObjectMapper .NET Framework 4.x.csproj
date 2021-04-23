@@ -13,6 +13,8 @@
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>ObjectMapper.snk</AssemblyOriginatorKeyFile>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageProjectUrl>https://sourceforge.net/projects/objectmapper/</PackageProjectUrl>
+    <PackageLicenseExpression>MS-PL</PackageLicenseExpression>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <OutputPath>..\..\output\debug</OutputPath>
@@ -100,7 +102,6 @@
     <Compile Include="..\..\.NET Standard 2.x\Source\Internal\HashCondition.cs" Link="Internal\HashCondition.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source\Internal\HashEntry.cs" Link="Internal\HashEntry.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source\Internal\ObjectHash.cs" Link="Internal\ObjectHash.cs" />
-    <Compile Include="..\..\.NET Standard 2.x\Source\Internal\OracleCommandExtensions.cs" Link="Internal\OracleCommandExtensions.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source\Internal\PersistentObject.cs" Link="Internal\PersistentObject.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source\Internal\PersistentProperties.cs" Link="Internal\PersistentProperties.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source\Internal\ProjectionClass.cs" Link="Internal\ProjectionClass.cs" />
@@ -125,7 +126,7 @@
     <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Grouping.cs" Link="Linq\Grouping.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source\Linq\ILinqQuery.cs" Link="Linq\ILinqQuery.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Language\LinqMethodInspector.cs" Link="Linq\Language\LinqMethodInspector.cs" />
-    <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Language\OracleExpressionWriter.cs" Link="Linq\Language\OracleExpressionWriter.cs" />
+    <Compile Include="..\..\.NET Standard 2.x\Source.Oracle\Linq\Language\OracleExpressionWriter.cs" Link="Linq\Language\OracleExpressionWriter.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Language\PostgresExpressionWriter.cs" Link="Linq\Language\PostgresExpressionWriter.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Language\SqlExpressionWriter.cs" Link="Linq\Language\SqlExpressionWriter.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source\Linq\LinkBridge.cs" Link="Linq\LinkBridge.cs" />
@@ -144,8 +145,8 @@
     <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Translation\ExpressionTypeFinder.cs" Link="Linq\Translation\ExpressionTypeFinder.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Translation\FromExpressionFinder.cs" Link="Linq\Translation\FromExpressionFinder.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Translation\GroupingBinder.cs" Link="Linq\Translation\GroupingBinder.cs" />
-    <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Translation\OracleOrderByRewriter.cs" Link="Linq\Translation\OracleOrderByRewriter.cs" />
-    <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Translation\OracleTakeToRowNumberRewriter.cs" Link="Linq\Translation\OracleTakeToRowNumberRewriter.cs" />
+    <Compile Include="..\..\.NET Standard 2.x\Source.Oracle\Linq\Translation\OracleOrderByRewriter.cs" Link="Linq\Translation\OracleOrderByRewriter.cs" />
+    <Compile Include="..\..\.NET Standard 2.x\Source.Oracle\Linq\Translation\OracleTakeToRowNumberRewriter.cs" Link="Linq\Translation\OracleTakeToRowNumberRewriter.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Translation\OrderByRewriter.cs" Link="Linq\Translation\OrderByRewriter.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Translation\OriginPropertyFinder.cs" Link="Linq\Translation\OriginPropertyFinder.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Translation\ParameterBinder.cs" Link="Linq\Translation\ParameterBinder.cs" />
@@ -171,13 +172,6 @@
     <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Util\ScopedDictionary.cs" Link="Linq\Util\ScopedDictionary.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source\MarkedAutoIncValueObject.cs" Link="MarkedAutoIncValueObject.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source\MarkedValueObject.cs" Link="MarkedValueObject.cs" />
-    <Compile Include="..\..\.NET Standard 2.x\Source\Oracle\OracleIntegrityChecker.cs" Link="Oracle\OracleIntegrityChecker.cs" />
-    <Compile Include="..\..\.NET Standard 2.x\Source\Oracle\OraclePersister.cs" Link="Oracle\OraclePersister.cs" />
-    <Compile Include="..\..\.NET Standard 2.x\Source\Oracle\OracleRepository.cs" Link="Oracle\OracleRepository.cs" />
-    <Compile Include="..\..\.NET Standard 2.x\Source\Oracle\OracleRepositoryPersister.cs" Link="Oracle\OracleRepositoryPersister.cs" />
-    <Compile Include="..\..\.NET Standard 2.x\Source\Oracle\OracleRepositorySchemaWriter.cs" Link="Oracle\OracleRepositorySchemaWriter.cs" />
-    <Compile Include="..\..\.NET Standard 2.x\Source\Oracle\OracleSchemaWriter.cs" Link="Oracle\OracleSchemaWriter.cs" />
-    <Compile Include="..\..\.NET Standard 2.x\Source\Oracle\OracleTypeMapper.cs" Link="Oracle\OracleTypeMapper.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source\Postgres\PostgresIntegrityChecker.cs" Link="Postgres\PostgresIntegrityChecker.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source\Postgres\PostgresPersister.cs" Link="Postgres\PostgresPersister.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source\Postgres\PostgresRepository.cs" Link="Postgres\PostgresRepository.cs" />
@@ -266,7 +260,6 @@
     <Folder Include="Fields\" />
     <Folder Include="Interfaces\" />
     <Folder Include="Linq\Util\" />
-    <Folder Include="Oracle\" />
     <Folder Include="Postgres\" />
     <Folder Include="Projection.Attributes\" />
     <Folder Include="Properties\" />
@@ -280,7 +273,6 @@
     <PackageReference Include="EnterpriseLibrary.TransientFaultHandling.Data" Version="6.0.1304.1" />
     <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="5.0.0" />
     <PackageReference Include="Npgsql" Version="5.0.4" />
-    <PackageReference Include="Oracle.ManagedDataAccess" Version="19.11.0" />
     <PackageReference Include="System.Buffers" Version="4.5.1" />
     <PackageReference Include="System.Memory" Version="4.5.4" />
     <PackageReference Include="System.Numerics.Vectors" Version="4.5.0" />

@@ -98,6 +98,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\.NET Framework\Source.Oracle\ObjectMapper .NET Oracle Framework 4.x.csproj">
+      <Project>{B2E6C3E9-BBD4-455B-B6BA-754FEDF8813D}</Project>
+      <Name>ObjectMapper .NET Oracle Framework 4.x</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\.NET Framework\Source\ObjectMapper .NET Framework 4.x.csproj">
       <Project>{2ae4020f-a2ca-4bdc-be7f-f309975d76eb}</Project>
       <Name>ObjectMapper .NET Framework 4.x</Name>
