@@ -8,18 +8,19 @@
     <AssemblyOriginatorKeyFile>ObjectMapper.snk</AssemblyOriginatorKeyFile>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 
-    <PackageId>ObjectMapper.NET_Postgres_Standard21</PackageId>
+    <PackageId>ObjectMapper.NET_Postgres</PackageId>
     <Authors>Gerhard Stephan</Authors>
     <Company>TimePunch KG</Company>
     <Version>4.8.0.0</Version>
     <AssemblyVersion>4.8.0.0</AssemblyVersion>
+    <RepositoryUrl>https://sourceforge.net/projects/objectmapper/</RepositoryUrl>
 
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <OutputPath>..\..\output\debug.Postgres</OutputPath>
+    <OutputPath>..\..\output\debug.postgres</OutputPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <OutputPath>..\..\output\release.Postgres\</OutputPath>
+    <OutputPath>..\..\output\release.postgres\</OutputPath>
   </PropertyGroup>
 
   <ItemGroup>

@@ -16,10 +16,10 @@
 
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <OutputPath>..\..\output\debug.Postgres</OutputPath>
+    <OutputPath>..\..\output\debug.postgres</OutputPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <OutputPath>..\..\output\release.Postgres\</OutputPath>
+    <OutputPath>..\..\output\release.postgres\</OutputPath>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\..\.NET Standard 2.x\Source.Postgres\Linq\Language\PostgresExpressionWriter.cs" Link="Linq\Language\PostgresExpressionWriter.cs" />

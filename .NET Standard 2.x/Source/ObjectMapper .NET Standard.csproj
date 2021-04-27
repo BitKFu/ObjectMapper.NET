@@ -4,7 +4,7 @@
     <TargetFramework>netstandard2.1</TargetFramework>
     <RootNamespace>AdFactum.Data</RootNamespace>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <PackageId>ObjectMapper.NET_Standard21</PackageId>
+    <PackageId>ObjectMapper.NET</PackageId>
     <Authors>Gerhard Stephan</Authors>
     <Company>TimePunch KG</Company>
     <Version>4.8.0.0</Version>
@@ -14,6 +14,7 @@
     <AssemblyOriginatorKeyFile>ObjectMapper.snk</AssemblyOriginatorKeyFile>
     <PackageProjectUrl>https://sourceforge.net/projects/objectmapper/</PackageProjectUrl>
     <PackageLicenseExpression>MS-PL</PackageLicenseExpression>
+    <RepositoryUrl>https://sourceforge.net/projects/objectmapper/</RepositoryUrl>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
