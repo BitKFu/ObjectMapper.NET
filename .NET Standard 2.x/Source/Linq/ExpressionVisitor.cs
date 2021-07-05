@@ -14,7 +14,7 @@ namespace AdFactum.Data.Linq
     public abstract class ExpressionVisitor
     {
 #if TRACE
-        protected static int Deep = 1;
+        protected int Deep = 1;
 #endif
 
         /// <summary>
