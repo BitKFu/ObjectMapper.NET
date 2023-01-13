@@ -8,11 +8,11 @@
     <AssemblyOriginatorKeyFile>ObjectMapper.snk</AssemblyOriginatorKeyFile>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 
-    <PackageId>ObjectMapper.NET_Postgres_Standard21</PackageId>
+    <PackageId>ObjectMapper.NET_Postgres</PackageId>
     <Authors>Gerhard Stephan</Authors>
     <Company>TimePunch KG</Company>
-    <Version>4.8.1.0</Version>
-    <AssemblyVersion>4.8.1.0</AssemblyVersion>
+    <Version>4.9.1.0</Version>
+    <AssemblyVersion>4.9.1.0</AssemblyVersion>
     <RepositoryUrl>https://sourceforge.net/projects/objectmapper/</RepositoryUrl>
 
   </PropertyGroup>

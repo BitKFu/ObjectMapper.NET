@@ -114,6 +114,7 @@ namespace AdFactum.Data.SqlServer
                 /*
                  * Build inner tables
                  */
+                string hint = PrivateHintClause(projection, whereClause, command.Parameters, null, null, virtualAlias, ref index);
                 string withClause = PrivateWithClause(projection, whereClause, command.Parameters, null, null,
                                                       virtualAlias, ref index);
                 string innerTableStr = PrivateFromClause(projection, whereClause, command.Parameters, fieldTemplates,
@@ -141,9 +142,10 @@ namespace AdFactum.Data.SqlServer
                                                 , " FROM ("
                                                 , businessSql
                                                 , ") "
+                                                , string.IsNullOrEmpty(hint) ? string.Empty : hint 
                                                 , " PAGE"
-                                                , " WHERE Z_R_N BETWEEN @minLine AND @maxLine ");
-
+                                                , " WHERE Z_R_N BETWEEN @minLine AND @maxLine");
+                
                 IDbDataParameter parameter = CreateParameter("minLine", minLine, null);
                 command.Parameters.Add(parameter);
 

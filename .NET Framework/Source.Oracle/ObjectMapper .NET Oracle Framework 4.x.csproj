@@ -11,8 +11,8 @@
     <PackageId>ObjectMapper.NET_Oracle_net472</PackageId>
     <Authors>Gerhard Stephan</Authors>
     <Company>TimePunch KG</Company>
-    <Version>4.8.1.0</Version>
-    <AssemblyVersion>4.8.1.0</AssemblyVersion>
+    <Version>4.9.1.0</Version>
+    <AssemblyVersion>4.9.1.0</AssemblyVersion>
 
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

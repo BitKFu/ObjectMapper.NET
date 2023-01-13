@@ -7,7 +7,8 @@
     <RootNamespace>AdFactum.Data</RootNamespace>
     <AssemblyName>ObjectMapper</AssemblyName>
     <PackageId>ObjectMapper.NET_net472</PackageId>
-    <Version>4.8.1.0</Version>
+    <Version>4.9.1.0</Version>
+    <AssemblyVersion>4.9.1.0</AssemblyVersion>
     <Authors>Gerhard Stephan</Authors>
     <Company>TimePunch KG</Company>
     <SignAssembly>true</SignAssembly>

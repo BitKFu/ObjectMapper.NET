@@ -2497,6 +2497,7 @@ namespace AdFactum.Data.Internal
                 IDictionary virtualAlias = new HybridDictionary();
 
                 int index = 1;
+                string hint = PrivateHintClause(projection, whereClause, command.Parameters, null, null, virtualAlias, ref index);
                 string withClause = PrivateWithClause(projection, whereClause, command.Parameters, null, null,
                                                       virtualAlias,
                                                       ref index);
@@ -2504,6 +2505,9 @@ namespace AdFactum.Data.Internal
                                                       virtualAlias,
                                                       ref index);
                 string query = string.Concat(withClause, "SELECT ", projection.PrimaryKeyColumns, " FROM ", fromClause);
+
+                if (!string.IsNullOrEmpty(hint))
+                    query += " " + hint + " ";
 
                 /*
                  * Query bauen
@@ -2703,6 +2707,8 @@ namespace AdFactum.Data.Internal
             {
                 string grouping = projection.GetGrouping();
 
+                string hint = PrivateHintClause(projection, whereClause, command.Parameters, null, null, virtualAlias, ref index);
+
                 string withClause = PrivateWithClause(projection, whereClause, command.Parameters, null, null,
                                                       virtualAlias,
                                                       ref index);
@@ -2711,6 +2717,7 @@ namespace AdFactum.Data.Internal
                 string query = string.Concat(withClause, "SELECT COUNT(",
                                              string.IsNullOrEmpty(grouping) ? "*" : "count(*)",
                                              ") FROM ", tables,
+                                             string.IsNullOrEmpty(hint) ? string.Empty : " " + hint + " ",
                                              PrivateCompleteWhereClause(projection, null, whereClause, globalParameter,
                                                                         virtualAlias, command.Parameters, ref index));
 
@@ -2720,7 +2727,6 @@ namespace AdFactum.Data.Internal
                 query += PrivateCompleteHavingClause(projection, fieldTemplates, whereClause, globalParameter,
                                                      virtualAlias,
                                                      command.Parameters, ref index);
-
                 command.CommandText = query;
 
                 IDataReader reader = ExecuteReader(command);
@@ -3136,6 +3142,7 @@ namespace AdFactum.Data.Internal
             {
                 int index = 1;
                 IDictionary virtualAlias = new HybridDictionary();
+                string hint = PrivateHintClause(projection, whereClause, command.Parameters, null, null, virtualAlias, ref index);
                 string withClause = PrivateWithClause(projection, whereClause, command.Parameters, null, null,
                                                       virtualAlias,
                                                       ref index);
@@ -3149,7 +3156,7 @@ namespace AdFactum.Data.Internal
                  * SQL Bauen
                  */
 
-                String query = string.Concat(withClause
+                string query = string.Concat(withClause
                                              , distinct ? "SELECT DISTINCT " : "SELECT ",
                                              projection.GetColumns(whereClause, additonalColumns), " "
                                              , virtualFields
@@ -3157,6 +3164,9 @@ namespace AdFactum.Data.Internal
                                              , BuildJoinFields(whereClause)
                                              , " FROM "
                                              , fromClause);
+
+                if (!string.IsNullOrEmpty(hint))
+                    query += " " + hint + " ";
 
                 /*
                  * Query bauen
@@ -3217,6 +3227,8 @@ namespace AdFactum.Data.Internal
                 IDictionary virtualAlias = new HybridDictionary();
 
                 int index = 1;
+                string hint = PrivateHintClause(projection, whereClause, command.Parameters, null, null, virtualAlias, ref index);
+
                 string withClause = PrivateWithClause(projection, whereClause, command.Parameters, null, null,
                                                       virtualAlias,
                                                       ref index);
@@ -3231,6 +3243,9 @@ namespace AdFactum.Data.Internal
                                              , BuildVirtualFields(fieldTemplates, globalParameter, virtualAlias)
                                              , BuildSelectFunctionFields(fieldTemplates, globalParameter)
                                              , " FROM " + tables);
+                
+                if (!string.IsNullOrEmpty(hint))
+                    query += " " + hint + " ";
 
                 /*
                  * Query bauen
@@ -3247,6 +3262,7 @@ namespace AdFactum.Data.Internal
                                                      virtualAlias,
                                                      command.Parameters, ref index);
                 query += (orderBy != null ? " ORDER BY " + orderBy.Columns + " " + orderBy.Ordering : "");
+
 
                 /*
                  * Die IDs selektieren und Objekt laden

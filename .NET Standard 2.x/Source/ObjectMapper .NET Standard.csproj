@@ -4,11 +4,11 @@
     <TargetFramework>netstandard2.1</TargetFramework>
     <RootNamespace>AdFactum.Data</RootNamespace>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <PackageId>ObjectMapper.NET_Standard21</PackageId>
+    <PackageId>ObjectMapper.NET</PackageId>
     <Authors>Gerhard Stephan</Authors>
     <Company>TimePunch KG</Company>
-    <Version>4.8.1.0</Version>
-    <AssemblyVersion>4.8.1.0</AssemblyVersion>
+    <Version>4.9.1.0</Version>
+    <AssemblyVersion>4.9.1.0</AssemblyVersion>
     <AssemblyName>ObjectMapper</AssemblyName>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>ObjectMapper.snk</AssemblyOriginatorKeyFile>
