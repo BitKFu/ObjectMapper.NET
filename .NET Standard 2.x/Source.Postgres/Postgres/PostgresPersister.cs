@@ -452,7 +452,7 @@ namespace AdFactum.Data.Postgres
                                                       virtualAlias,
                                                       ref index);
                 string tables = PrivateFromClause(projection, whereClause, command.Parameters, fieldTemplates,
-                                                  globalParameter, virtualAlias, ref index);
+                                                  globalParameter, virtualAlias, ref index, null);
 
                 /*
                  * SQL Bauen

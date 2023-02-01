@@ -286,7 +286,7 @@ namespace AdFactum.Data.Access
         /// <param name="tupel">The tupel.</param>
         /// <param name="joins">The joins.</param>
         /// <returns></returns>
-        protected override string GetVirtualJoinPart(Set.Tupel tupel, List<string> joins)
+        protected override string GetVirtualJoinPart(Set.Tupel tupel, string hint, List<string> joins)
         {
             var result = new StringBuilder();
             result.Append('(', joins.Count);

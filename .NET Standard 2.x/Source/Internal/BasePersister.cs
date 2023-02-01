@@ -765,11 +765,12 @@ namespace AdFactum.Data.Internal
         /// <param name="globalParameter">Global Parameters</param>
         /// <param name="virtualAlias">The virtual alias.</param>
         /// <param name="index">The index.</param>
+        /// <param name="hint">hint clause</param>
         /// <returns></returns>
         protected string PrivateFromClause(ProjectionClass projection, ICondition whereClause,
                                            IDataParameterCollection parameters,
                                            Dictionary<string, FieldDescription> fieldTemplates,
-                                           IDictionary globalParameter, IDictionary virtualAlias, ref int index)
+                                           IDictionary globalParameter, IDictionary virtualAlias, ref int index, string hint)
         {
             var result = new StringBuilder();
             var innerTables = new Set();
@@ -797,7 +798,7 @@ namespace AdFactum.Data.Internal
 
                 List<string> joins = PrivateVirtualFromClause(tupel.Key, fieldTemplates, globalParameter, virtualAlias,
                                                               parameters, ref index);
-                string join = GetVirtualJoinPart(tupel, joins);
+                string join = GetVirtualJoinPart(tupel, hint, joins);
 
                 result.Append(join);
                 first = false;
@@ -819,12 +820,13 @@ namespace AdFactum.Data.Internal
         /// <summary>
         /// Gets the virtual join STMT.
         /// </summary>
-        /// <param name="tupel">The tupel.</param>
-        /// <param name="joins">The joins.</param>
         /// <returns></returns>
-        protected virtual string GetVirtualJoinPart(Set.Tupel tupel, List<string> joins)
+        protected virtual string GetVirtualJoinPart(Set.Tupel tupel, string hint, List<string> joins)
         {
             string join = tupel.TupelString();
+
+            if (!string.IsNullOrEmpty(hint))
+                join += $" {hint} ";
 
             foreach (string part in joins)
                 join += part;
@@ -2182,7 +2184,7 @@ namespace AdFactum.Data.Internal
                  */
                 string fromClause = PrivateFromClause(projection, null, command.Parameters, fieldTemplates,
                                                       globalParameter,
-                                                      virtualAlias, ref index);
+                                                      virtualAlias, ref index, null);
 
                 IDbDataParameter parameter = CreateParameter("PrimaryKey", id, null);
                 command.Parameters.Add(parameter);
@@ -2497,12 +2499,13 @@ namespace AdFactum.Data.Internal
                 IDictionary virtualAlias = new HybridDictionary();
 
                 int index = 1;
+                string hint = PrivateHintClause(projection, whereClause, command.Parameters, null, null, virtualAlias, ref index);
                 string withClause = PrivateWithClause(projection, whereClause, command.Parameters, null, null,
                                                       virtualAlias,
                                                       ref index);
                 string fromClause = PrivateFromClause(projection, whereClause, command.Parameters, null, null,
                                                       virtualAlias,
-                                                      ref index);
+                                                      ref index, hint);
                 string query = string.Concat(withClause, "SELECT ", projection.PrimaryKeyColumns, " FROM ", fromClause);
 
                 /*
@@ -2703,11 +2706,13 @@ namespace AdFactum.Data.Internal
             {
                 string grouping = projection.GetGrouping();
 
+                string hint = PrivateHintClause(projection, whereClause, command.Parameters, null, null, virtualAlias, ref index);
+
                 string withClause = PrivateWithClause(projection, whereClause, command.Parameters, null, null,
                                                       virtualAlias,
                                                       ref index);
                 string tables = PrivateFromClause(projection, whereClause, command.Parameters, fieldTemplates,
-                                                  globalParameter, virtualAlias, ref index);
+                                                  globalParameter, virtualAlias, ref index, hint);
                 string query = string.Concat(withClause, "SELECT COUNT(",
                                              string.IsNullOrEmpty(grouping) ? "*" : "count(*)",
                                              ") FROM ", tables,
@@ -2720,7 +2725,6 @@ namespace AdFactum.Data.Internal
                 query += PrivateCompleteHavingClause(projection, fieldTemplates, whereClause, globalParameter,
                                                      virtualAlias,
                                                      command.Parameters, ref index);
-
                 command.CommandText = query;
 
                 IDataReader reader = ExecuteReader(command);
@@ -3134,12 +3138,13 @@ namespace AdFactum.Data.Internal
             {
                 int index = 1;
                 IDictionary virtualAlias = new HybridDictionary();
+                string hint = PrivateHintClause(projection, whereClause, command.Parameters, null, null, virtualAlias, ref index);
                 string withClause = PrivateWithClause(projection, whereClause, command.Parameters, null, null,
                                                       virtualAlias,
                                                       ref index);
 
                 string fromClause = PrivateFromClause(projection, whereClause, command.Parameters, fieldTemplates,
-                                                      globalParameter, virtualAlias, ref index);
+                                                      globalParameter, virtualAlias, ref index, hint);
                 string virtualFields = BuildVirtualFields(fieldTemplates, globalParameter, virtualAlias);
                 string selectFunctions = BuildSelectFunctionFields(fieldTemplates, globalParameter);
 
@@ -3147,7 +3152,7 @@ namespace AdFactum.Data.Internal
                  * SQL Bauen
                  */
 
-                String query = string.Concat(withClause
+                string query = string.Concat(withClause
                                              , distinct ? "SELECT DISTINCT " : "SELECT ",
                                              projection.GetColumns(whereClause, additonalColumns), " "
                                              , virtualFields
@@ -3215,11 +3220,13 @@ namespace AdFactum.Data.Internal
                 IDictionary virtualAlias = new HybridDictionary();
 
                 int index = 1;
+                string hint = PrivateHintClause(projection, whereClause, command.Parameters, null, null, virtualAlias, ref index);
+
                 string withClause = PrivateWithClause(projection, whereClause, command.Parameters, null, null,
                                                       virtualAlias,
                                                       ref index);
                 string tables = PrivateFromClause(projection, whereClause, command.Parameters, fieldTemplates,
-                                                  globalParameter, virtualAlias, ref index);
+                                                  globalParameter, virtualAlias, ref index, hint);
 
                 /*
                  * SQL Bauen
@@ -3229,7 +3236,7 @@ namespace AdFactum.Data.Internal
                                              , BuildVirtualFields(fieldTemplates, globalParameter, virtualAlias)
                                              , BuildSelectFunctionFields(fieldTemplates, globalParameter)
                                              , " FROM " + tables);
-
+                
                 /*
                  * Query bauen
                  */

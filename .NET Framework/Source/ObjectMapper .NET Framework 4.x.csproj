@@ -7,8 +7,8 @@
     <RootNamespace>AdFactum.Data</RootNamespace>
     <AssemblyName>ObjectMapper</AssemblyName>
     <PackageId>ObjectMapper.NET_net472</PackageId>
-    <Version>4.9.1.0</Version>
-    <AssemblyVersion>4.9.1.0</AssemblyVersion>
+    <Version>4.9.3.0</Version>
+    <AssemblyVersion>4.9.3.0</AssemblyVersion>
     <Authors>Gerhard Stephan</Authors>
     <Company>TimePunch KG</Company>
     <SignAssembly>true</SignAssembly>
@@ -95,6 +95,7 @@
     <Compile Include="..\..\.NET Standard 2.x\Source\Internal\BaseCache.cs" Link="Internal\BaseCache.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source\Internal\BaseExtensions.cs" Link="Internal\BaseExtensions.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source\Internal\BaseIntegrityChecker.cs" Link="Internal\BaseIntegrityChecker.cs" />
+    <Compile Include="..\..\.NET Standard 2.x\Source\Internal\BasePersister.cs" Link="Internal\BasePersister.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source\Internal\BaseRepository.cs" Link="Internal\BaseRepository.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source\Internal\BaseSchemaWriter.cs" Link="Internal\BaseSchemaWriter.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source\Internal\BaseTypeMapper.cs" Link="Internal\BaseTypeMapper.cs" />
@@ -277,9 +278,6 @@
     <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.5.4" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Update="Internal\BasePersister.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Update="ObjectMapper.cs">
       <SubType>Code</SubType>
     </Compile>

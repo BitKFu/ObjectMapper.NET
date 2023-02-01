@@ -118,7 +118,7 @@ namespace AdFactum.Data.SqlServer
                 string withClause = PrivateWithClause(projection, whereClause, command.Parameters, null, null,
                                                       virtualAlias, ref index);
                 string innerTableStr = PrivateFromClause(projection, whereClause, command.Parameters, fieldTemplates,
-                                                         globalParameter, virtualAlias, ref index);
+                                                         globalParameter, virtualAlias, ref index, hint);
                 string innerWhere = PrivateCompleteWhereClause(projection, fieldTemplates, whereClause, globalParameter,
                                                                virtualAlias, command.Parameters, ref index);
 
@@ -142,7 +142,6 @@ namespace AdFactum.Data.SqlServer
                                                 , " FROM ("
                                                 , businessSql
                                                 , ") "
-                                                , string.IsNullOrEmpty(hint) ? string.Empty : hint 
                                                 , " PAGE"
                                                 , " WHERE Z_R_N BETWEEN @minLine AND @maxLine");
                 

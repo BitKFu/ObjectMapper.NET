@@ -253,7 +253,7 @@ namespace AdFactum.Data.Oracle
                 string withClause = PrivateWithClause(projection, whereClause, command.Parameters, null, null,
                                                       virtualAlias, ref index);
                 string innerTableStr = PrivateFromClause(projection, whereClause, command.Parameters, fieldTemplates,
-                                                         globalParameter, virtualAlias, ref index);
+                                                         globalParameter, virtualAlias, ref index, null);
                 string innerWhere = PrivateCompleteWhereClause(projection, fieldTemplates, whereClause, globalParameter,
                                                                virtualAlias, command.Parameters, ref index);
 
@@ -779,7 +779,7 @@ namespace AdFactum.Data.Oracle
                                                       virtualAlias,
                                                       ref index);
                 string tables = PrivateFromClause(projection, whereClause, command.Parameters, fieldTemplates,
-                                                  globalParameter, virtualAlias, ref index);
+                                                  globalParameter, virtualAlias, ref index, null);
                 string query = string.Concat(withClause, "SELECT ", hint, " COUNT(",
                                              string.IsNullOrEmpty(grouping) ? "*" : "count(*)",
                                              ") FROM ", tables,
@@ -847,7 +847,7 @@ namespace AdFactum.Data.Oracle
                                                 ref index);
 
                 string fromClause = PrivateFromClause(projection, whereClause, command.Parameters, fieldTemplates,
-                                                      globalParameter, virtualAlias, ref index);
+                                                      globalParameter, virtualAlias, ref index, null);
                 string virtualFields = BuildVirtualFields(fieldTemplates, globalParameter, virtualAlias);
                 string selectFunctions = BuildSelectFunctionFields(fieldTemplates, globalParameter);
 
@@ -926,7 +926,7 @@ namespace AdFactum.Data.Oracle
                                                 ref index);
                 string fromClause = PrivateFromClause(projection, whereClause, command.Parameters, null, null,
                                                       virtualAlias,
-                                                      ref index);
+                                                      ref index, null);
 
                 // WorkItem 64803: Fix the primary id column name. If a with clause is used, the Schema name must not be taken
                 var idColumns = string.IsNullOrEmpty(withClause)
