@@ -89,8 +89,7 @@ namespace AdFactum.Data.SqlServer
         {
             // Use the TOP SQL of the base class, if the minLine is 1 or less
             if (minLine <= 1)
-                return base.PageSelect(projection, additionalColumns, whereClause, orderBy, minLine, maxLine,
-                                       fieldTemplates, globalParameter, distinct);
+                return TopPageSelect(projection, additionalColumns, whereClause, orderBy, maxLine, fieldTemplates, globalParameter, distinct);
 
             SqlStopwatch stopwatch = new SqlStopwatch(SqlTracer);
             IDbCommand command = CreateCommand();
@@ -162,6 +161,83 @@ namespace AdFactum.Data.SqlServer
                 command.DisposeSafe();
             }
         }
+
+        /// <summary>
+        /// Pages the select.
+        /// </summary>
+        /// <param name="projection">The projection.</param>
+        /// <param name="additionalColumns">The additional columns.</param>
+        /// <param name="whereClause">The where clause.</param>
+        /// <param name="orderBy">The order by.</param>
+        /// <param name="maxLine">The max line.</param>
+        /// <param name="fieldTemplates">The field templates.</param>
+        /// <param name="globalParameter">The global parameter.</param>
+        /// <param name="distinct">if set to <c>true</c> [distinct].</param>
+        /// <returns></returns>
+        protected virtual List<PersistentProperties> TopPageSelect(ProjectionClass projection, string additionalColumns, ICondition whereClause,
+                                           OrderBy orderBy, int maxLine,
+                                           Dictionary<string, FieldDescription> fieldTemplates,
+                                           IDictionary globalParameter, bool distinct)
+        {
+            SqlStopwatch stopwatch = new SqlStopwatch(SqlTracer);
+            IDbCommand command = CreateCommand();
+
+            int rows = 0;
+            try
+            {
+                IDictionary virtualAlias = new HybridDictionary();
+
+                int index = 1;
+                string hint = PrivateHintClause(projection, whereClause, command.Parameters, null, null, virtualAlias, ref index);
+
+                string withClause = PrivateWithClause(projection, whereClause, command.Parameters, null, null,
+                                                      virtualAlias,
+                                                      ref index);
+                string tables = PrivateFromClause(projection, whereClause, command.Parameters, fieldTemplates,
+                                                  globalParameter, virtualAlias, ref index, hint);
+
+                /*
+                 * SQL Bauen
+                 */
+                String query = string.Concat(withClause, distinct ? "SELECT DISTINCT " : "SELECT ",
+                                             $"TOP {maxLine} ", 
+                                             projection.GetColumns(whereClause, additionalColumns), " "
+                                             , BuildVirtualFields(fieldTemplates, globalParameter, virtualAlias)
+                                             , BuildSelectFunctionFields(fieldTemplates, globalParameter)
+                                             , " FROM " + tables);
+
+                /*
+                 * Query bauen
+                 */
+                query += PrivateCompleteWhereClause(projection, fieldTemplates, whereClause, globalParameter,
+                                                    virtualAlias,
+                                                    command.Parameters, ref index);
+
+                string grouping = projection.GetGrouping();
+                if (!string.IsNullOrEmpty(grouping))
+                    query = string.Concat(query, " GROUP BY ", grouping);
+
+                query += PrivateCompleteHavingClause(projection, fieldTemplates, whereClause, globalParameter,
+                                                     virtualAlias,
+                                                     command.Parameters, ref index);
+                query += (orderBy != null ? " ORDER BY " + orderBy.Columns + " " + orderBy.Ordering : "");
+
+                /*
+                 * Die IDs selektieren und Objekt laden
+                 */
+                command.CommandText = query;
+
+                List<PersistentProperties> result = PrivateSelect(command, fieldTemplates, 0, int.MaxValue);
+                rows = result.Count;
+                return result;
+            }
+            finally
+            {
+                stopwatch.Stop(command, CreateSql(command), rows);
+                command.DisposeSafe();
+            }
+        }
+
 
         /// <summary>
         /// Connects to a Microsoft SQL Server

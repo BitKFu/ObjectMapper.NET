@@ -7,14 +7,14 @@
     <PackageId>ObjectMapper.NET</PackageId>
     <Authors>Gerhard Stephan</Authors>
     <Company>TimePunch KG</Company>
-    <Version>4.9.3.0</Version>
-    <AssemblyVersion>4.9.3.0</AssemblyVersion>
+    <Version>4.9.4.0</Version>
+    <AssemblyVersion>4.9.4.0</AssemblyVersion>
     <AssemblyName>ObjectMapper</AssemblyName>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>ObjectMapper.snk</AssemblyOriginatorKeyFile>
-    <PackageProjectUrl>https://sourceforge.net/projects/objectmapper/</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/BitKFu/ObjectMapper.NET</PackageProjectUrl>
     <PackageLicenseExpression>MS-PL</PackageLicenseExpression>
-    <RepositoryUrl>https://sourceforge.net/projects/objectmapper/</RepositoryUrl>
+    <RepositoryUrl>https://github.com/BitKFu/ObjectMapper.NET</RepositoryUrl>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">

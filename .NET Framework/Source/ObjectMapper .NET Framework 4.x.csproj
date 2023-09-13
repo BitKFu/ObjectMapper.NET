@@ -7,15 +7,16 @@
     <RootNamespace>AdFactum.Data</RootNamespace>
     <AssemblyName>ObjectMapper</AssemblyName>
     <PackageId>ObjectMapper.NET_net472</PackageId>
-    <Version>4.9.3.0</Version>
-    <AssemblyVersion>4.9.3.0</AssemblyVersion>
+    <Version>4.9.4.0</Version>
+    <AssemblyVersion>4.9.4.0</AssemblyVersion>
     <Authors>Gerhard Stephan</Authors>
     <Company>TimePunch KG</Company>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>ObjectMapper.snk</AssemblyOriginatorKeyFile>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <PackageProjectUrl>https://sourceforge.net/projects/objectmapper/</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/BitKFu/ObjectMapper.NET</PackageProjectUrl>
     <PackageLicenseExpression>MS-PL</PackageLicenseExpression>
+    <RepositoryUrl>https://github.com/BitKFu/ObjectMapper.NET</RepositoryUrl>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <OutputPath>..\..\output\debug</OutputPath>

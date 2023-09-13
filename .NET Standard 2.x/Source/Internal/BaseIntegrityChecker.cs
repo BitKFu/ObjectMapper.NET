@@ -79,6 +79,8 @@ namespace AdFactum.Data.Internal
             return result;
         }
 
+        protected virtual string GetIntegritySql(string schema, string tableName) => string.Concat("SELECT TOP 1 * FROM ", ConcatedSchema, TypeMapper.Quote(tableName));
+
         /// <summary>
         /// Gets the integrity of an object type.
         /// </summary>
@@ -91,7 +93,7 @@ namespace AdFactum.Data.Internal
             /*
 			 * Check if the table does exist
 			 */
-            string sql = string.Concat("SELECT * FROM ", ConcatedSchema, TypeMapper.Quote(info.TableName));
+            string sql = GetIntegritySql(ConcatedSchema, info.TableName);
 
             IDataReader reader;
             IDbCommand sqlCommand = null;
@@ -113,10 +115,7 @@ namespace AdFactum.Data.Internal
                 /*
                  * Get all columns of the table
                  */
-                Dictionary<string, int> fieldIndexDict;
-                Dictionary<int, string> indexFieldDict;
-                NativePersister.GetColumns(reader, info.Fields, out fieldIndexDict, out indexFieldDict);
-
+                NativePersister.GetColumns(reader, info.Fields, out var fieldIndexDict, out _);
                 DataTable schemaTable = GetSchemaTable(reader);
 
                 Dictionary<string, FieldDescription> fields = info.Fields;

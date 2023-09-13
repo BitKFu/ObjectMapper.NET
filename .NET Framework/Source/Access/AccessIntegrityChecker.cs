@@ -18,6 +18,16 @@ namespace AdFactum.Data.Access
         {
         }
 
+
+        /// <summary>
+        /// Gets the integrity URL for Microsoft Access
+        /// </summary>
+        /// <param name="schema"></param>
+        /// <param name="tableName"></param>
+        /// <returns></returns>
+        protected override string GetIntegritySql(string schema, string tableName) => string.Concat("SELECT * FROM ", ConcatedSchema, TypeMapper.Quote(tableName));
+
+
         /// <summary>
         /// Gets the integrity of an object type.
         /// </summary>
