@@ -87,6 +87,10 @@ namespace AdFactum.Data.SqlServer
         /// <returns>List of value objects</returns>
         protected override List<PersistentProperties> PageSelect(ProjectionClass projection, string additionalColumns, ICondition whereClause, OrderBy orderBy, int minLine, int maxLine, Dictionary<string, FieldDescription> fieldTemplates, IDictionary globalParameter, bool distinct)
         {
+            // If we don't have a min / max line than do not page at all
+            if (minLine <= 1 && maxLine >= int.MaxValue - 1)
+                return Select(projection, additionalColumns, whereClause, orderBy, fieldTemplates, globalParameter, distinct);
+
             // Use the TOP SQL of the base class, if the minLine is 1 or less
             if (minLine <= 1)
                 return TopPageSelect(projection, additionalColumns, whereClause, orderBy, maxLine, fieldTemplates, globalParameter, distinct);

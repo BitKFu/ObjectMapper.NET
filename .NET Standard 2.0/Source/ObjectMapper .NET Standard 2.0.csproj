@@ -7,8 +7,8 @@
     <PackageId>ObjectMapper.NET_Standard20</PackageId>
     <Authors>Gerhard Stephan</Authors>
     <Company>TimePunch KG</Company>
-    <Version>4.9.4.0</Version>
-    <AssemblyVersion>4.9.4.0</AssemblyVersion>
+    <Version>4.9.5.0</Version>
+    <AssemblyVersion>4.9.5.0</AssemblyVersion>
     <AssemblyName>ObjectMapper</AssemblyName>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>ObjectMapper.snk</AssemblyOriginatorKeyFile>
