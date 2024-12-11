@@ -5,6 +5,12 @@ using AdFactum.Data.Util;
 
 namespace AdFactum.Data
 {
+    public enum DeleteCascade
+    {
+        No,
+        Yes
+    }
+
     /// <summary>
     /// The foreign key attribute can be used to force logical keys.
     /// </summary>
@@ -17,6 +23,8 @@ namespace AdFactum.Data
 
         private readonly string foreignKeyProperty;
         private string foreignKeyColumn;
+
+        private DeleteCascade deleteCascade;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ForeignKeyAttribute"/> class.
@@ -32,7 +40,8 @@ namespace AdFactum.Data
         /// </summary>
         /// <param name="foreignKeyTableParam">The foreign key table param.</param>
         /// <param name="foreignKeyColumnParam">The foreign key column param.</param>
-        public ForeignKeyAttribute(string foreignKeyTableParam, string foreignKeyColumnParam)
+        /// <param name="deleteCascadeParam">true, if the related data shall be deleted too</param>
+        public ForeignKeyAttribute(string foreignKeyTableParam, string foreignKeyColumnParam, DeleteCascade deleteCascadeParam = DeleteCascade.No)
             :base(0,0)
         {
             foreignKeyType = null;
@@ -40,6 +49,8 @@ namespace AdFactum.Data
             
             foreignKeyProperty = null;
             foreignKeyColumn = foreignKeyColumnParam;
+
+            deleteCascade = deleteCascadeParam;
         }
 
         /// <summary>
@@ -48,8 +59,9 @@ namespace AdFactum.Data
         /// <param name="keyGroupParameter">The key group parameter.</param>
         /// <param name="foreignKeyTableParam">The foreign key table param.</param>
         /// <param name="foreignKeyColumnParam">The foreign key column param.</param>
-        public ForeignKeyAttribute(int keyGroupParameter, string foreignKeyTableParam, string foreignKeyColumnParam)
-            : this(keyGroupParameter, 0, foreignKeyTableParam, foreignKeyColumnParam)
+        /// <param name="deleteCascadeParam">true, if the related data shall be deleted too</param>
+        public ForeignKeyAttribute(int keyGroupParameter, string foreignKeyTableParam, string foreignKeyColumnParam, DeleteCascade deleteCascadeParam = DeleteCascade.No)
+            : this(keyGroupParameter, 0, foreignKeyTableParam, foreignKeyColumnParam, deleteCascadeParam)
         {
         }
 
@@ -60,7 +72,8 @@ namespace AdFactum.Data
         /// <param name="orderInKeyGroupParameter">The order in key group parameter.</param>
         /// <param name="foreignKeyTableParam">The foreign key table param.</param>
         /// <param name="foreignKeyColumnParam">The foreign key column param.</param>
-        public ForeignKeyAttribute(int keyGroupParameter, int orderInKeyGroupParameter, string foreignKeyTableParam, string foreignKeyColumnParam)
+        /// <param name="deleteCascadeParam">true, if the related data shall be deleted too</param>
+        public ForeignKeyAttribute(int keyGroupParameter, int orderInKeyGroupParameter, string foreignKeyTableParam, string foreignKeyColumnParam, DeleteCascade deleteCascadeParam = DeleteCascade.No)
             : base(keyGroupParameter, orderInKeyGroupParameter)
         {
             foreignKeyType = null;
@@ -68,6 +81,7 @@ namespace AdFactum.Data
 
             foreignKeyProperty = null;
             foreignKeyColumn = foreignKeyColumnParam;
+            deleteCascade = deleteCascadeParam;
         }
 
 
@@ -76,14 +90,16 @@ namespace AdFactum.Data
         /// </summary>
         /// <param name="foreignKeyTypeParam">The foreign key type param.</param>
         /// <param name="foreignKeyPropertyParam">The foreign key property param.</param>
-        public ForeignKeyAttribute(Type foreignKeyTypeParam, string foreignKeyPropertyParam)
-            :base(0,0)
+        /// <param name="deleteCascadeParam">true, if the related data shall be deleted too</param>
+        public ForeignKeyAttribute(Type foreignKeyTypeParam, string foreignKeyPropertyParam, DeleteCascade deleteCascadeParam = DeleteCascade.No)
+            : base(0,0)
         {
             foreignKeyType = foreignKeyTypeParam;
             foreignKeyTable = string.Empty;
             foreignKeyColumn = string.Empty;
 
             foreignKeyProperty = foreignKeyPropertyParam;
+            deleteCascade = deleteCascadeParam;
         }
 
         /// <summary>
@@ -92,8 +108,9 @@ namespace AdFactum.Data
         /// <param name="keyGroupParameter">The key group parameter.</param>
         /// <param name="foreignKeyTypeParam">The foreign key type param.</param>
         /// <param name="foreignKeyPropertyParam">The foreign key property param.</param>
-        public ForeignKeyAttribute(int keyGroupParameter, Type foreignKeyTypeParam, string foreignKeyPropertyParam)
-            : this(keyGroupParameter, 0, foreignKeyTypeParam, foreignKeyPropertyParam)
+        /// <param name="deleteCascadeParam">true, if the related data shall be deleted too</param>
+        public ForeignKeyAttribute(int keyGroupParameter, Type foreignKeyTypeParam, string foreignKeyPropertyParam, DeleteCascade deleteCascadeParam = DeleteCascade.No)
+            : this(keyGroupParameter, 0, foreignKeyTypeParam, foreignKeyPropertyParam, deleteCascadeParam)
         {
         }
 
@@ -104,7 +121,8 @@ namespace AdFactum.Data
         /// <param name="orderInKeyGroupParameter">The order in key group parameter.</param>
         /// <param name="foreignKeyTypeParam">The foreign key type param.</param>
         /// <param name="foreignKeyPropertyParam">The foreign key property param.</param>
-        public ForeignKeyAttribute(int keyGroupParameter, int orderInKeyGroupParameter, Type foreignKeyTypeParam, string foreignKeyPropertyParam)
+        /// <param name="deleteCascadeParam">true, if the related data shall be deleted too</param>
+        public ForeignKeyAttribute(int keyGroupParameter, int orderInKeyGroupParameter, Type foreignKeyTypeParam, string foreignKeyPropertyParam, DeleteCascade deleteCascadeParam = DeleteCascade.No)
             : base(keyGroupParameter, orderInKeyGroupParameter)
         {
             foreignKeyType = foreignKeyTypeParam;
@@ -112,8 +130,15 @@ namespace AdFactum.Data
             foreignKeyColumn = string.Empty;
 
             foreignKeyProperty = foreignKeyPropertyParam;
+            deleteCascade = deleteCascadeParam;
         }
 
+
+        /// <summary>
+        /// Gets the local columns.
+        /// </summary>
+        /// <returns></returns>
+        public DeleteCascade DeleteCascade => deleteCascade;
 
         /// <summary>
         /// Gets the local columns.

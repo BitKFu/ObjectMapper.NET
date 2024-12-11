@@ -71,6 +71,11 @@ namespace AdFactum.Data.Internal
         /// Foreign Table
         /// </summary>
         public string ForeignTable;
+
+        /// <summary>
+        /// Delete Cascade
+        /// </summary>
+        public DeleteCascade DeleteCascade;
     }
 
     /// <summary>
@@ -388,8 +393,9 @@ namespace AdFactum.Data.Internal
                                         Number = foreignKeyAttribute.KeyGroup,
                                         Ordering = foreignKeyAttribute.Position,
                                         ForeignTable = foreignKeyAttribute.ForeignKeyTable,
-                                        ForeignColumn = foreignKeyAttribute.ForeignKeyColumn
-                                    };
+                                        ForeignColumn = foreignKeyAttribute.ForeignKeyColumn,
+                                        DeleteCascade = foreignKeyAttribute.DeleteCascade
+                    };
                     ForeignKeyGroups.Add(group);
                     continue;
                 }

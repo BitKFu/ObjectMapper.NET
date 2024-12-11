@@ -378,7 +378,8 @@ namespace AdFactum.Data.Internal
                                             defaultGroup.ForeignTable,
                                             defaultGroup.ForeignColumn,
                                             Table.GetTableInstance(field.ParentType).DefaultName,
-                                            constraint, EntityRelation.OrmType.Association
+                                            constraint, 
+                                            defaultGroup.DeleteCascade == DeleteCascade.Yes ? EntityRelation.OrmType.AggregatedCascade : EntityRelation.OrmType.Association
                             );
                         relations.Add(relation);
                     }
@@ -413,11 +414,14 @@ namespace AdFactum.Data.Internal
                 var foreignColumns = new StringBuilder();
                 string foreignTable = string.Empty;
                 bool first = true;
+                var deleteCascade = DeleteCascade.No;
+
                 foreach (DictionaryEntry entry in sortedConstraint)
                 {
                     if (!first) constraint.Append(", ");
                     if (!first) foreignColumns.Append(", ");
                     var group = (ForeignKeyGroup)entry.Value;
+                    deleteCascade = group.DeleteCascade;
 
                     constraint.Append(group.Column);
                     foreignColumns.Append(group.ForeignColumn);
@@ -430,7 +434,8 @@ namespace AdFactum.Data.Internal
                                     foreignTable,
                                     foreignColumns.ToString(),
                                     tableName,
-                                    constraint.ToString(), EntityRelation.OrmType.Association
+                                    constraint.ToString(),
+                                    deleteCascade == DeleteCascade.Yes ? EntityRelation.OrmType.AggregatedCascade : EntityRelation.OrmType.Association
                     );
                 relations.Add(relation);
             }
