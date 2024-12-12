@@ -5,6 +5,7 @@ using AdFactum.Data.Projection.Attributes;
 using AdFactum.Data.Queries;
 using AdFactum.Data.Util;
 using NUnit.Framework;
+using NUnit.Framework.Legacy;
 using ObjectMapper.NUnits.BusinessEntities;
 using ObjectMapper.NUnits.Core;
 
@@ -56,18 +57,18 @@ namespace ObjectMapper.NUnits.Common.Tests
                 InsertTimeEntriesForTest();
 
                 var aggregate = mapper.Load(typeof(TimeEntryAggregation), null as ICondition) as TimeEntryAggregation;
-                Assert.IsNotNull(aggregate);
-                Assert.AreEqual(new DateTime(2008, 01, 01), aggregate.FirstDate);
+                ClassicAssert.IsNotNull(aggregate);
+                ClassicAssert.AreEqual(new DateTime(2008, 01, 01), aggregate.FirstDate);
 
                 var result = 
                     new List<TimeEntryAggregation>(
                         new ListAdapter<TimeEntryAggregation>(
                     mapper.FlatSelect(typeof(TimeEntryAggregation))));
 
-                Assert.AreEqual(1, result.Count, "One timeentry expected.");
+                ClassicAssert.AreEqual(1, result.Count, "One timeentry expected.");
                 
                 TimeEntryAggregation firstEntry = result[0];
-                Assert.AreEqual(new DateTime(2008, 01, 01), firstEntry.FirstDate);
+                ClassicAssert.AreEqual(new DateTime(2008, 01, 01), firstEntry.FirstDate);
             }
         }
 
@@ -89,10 +90,10 @@ namespace ObjectMapper.NUnits.Common.Tests
                         new ListAdapter<TimeEntryGrouping>(
                     mapper.FlatSelect(typeof(TimeEntryGrouping))));
 
-                Assert.AreEqual(2, result.Count, "Two timeentries expected.");
+                ClassicAssert.AreEqual(2, result.Count, "Two timeentries expected.");
 
-                Assert.AreEqual(new DateTime(2008, 01, 01), result[0].FirstDate);
-                Assert.AreEqual(new DateTime(2008, 01, 01), result[1].FirstDate);
+                ClassicAssert.AreEqual(new DateTime(2008, 01, 01), result[0].FirstDate);
+                ClassicAssert.AreEqual(new DateTime(2008, 01, 01), result[1].FirstDate);
 
                 /*
                  * Paging  - first entry
@@ -101,8 +102,8 @@ namespace ObjectMapper.NUnits.Common.Tests
                         new ListAdapter<TimeEntryGrouping>(
                     mapper.FlatPaging(typeof(TimeEntryGrouping), null, 1,1)));
 
-                Assert.AreEqual(1, result.Count, "One timeentry expected.");
-                Assert.AreEqual(new DateTime(2008, 01, 01), result[0].FirstDate);
+                ClassicAssert.AreEqual(1, result.Count, "One timeentry expected.");
+                ClassicAssert.AreEqual(new DateTime(2008, 01, 01), result[0].FirstDate);
             }
         }
 
@@ -127,10 +128,10 @@ namespace ObjectMapper.NUnits.Common.Tests
                         new ListAdapter<TimeEntryGrouping>(
                     mapper.FlatSelect(typeof(TimeEntryGrouping), havingCondition)));
 
-                Assert.AreEqual(2, result.Count, "Two timeentries expected.");
+                ClassicAssert.AreEqual(2, result.Count, "Two timeentries expected.");
 
-                Assert.AreEqual(new DateTime(2008, 01, 01), result[0].FirstDate);
-                Assert.AreEqual(new DateTime(2008, 01, 01), result[1].FirstDate);
+                ClassicAssert.AreEqual(new DateTime(2008, 01, 01), result[0].FirstDate);
+                ClassicAssert.AreEqual(new DateTime(2008, 01, 01), result[1].FirstDate);
             }
         }
 

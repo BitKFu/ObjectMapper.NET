@@ -175,10 +175,10 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Npgsql">
-      <Version>5.0.4</Version>
+      <Version>8.0.6</Version>
     </PackageReference>
     <PackageReference Include="NUnit">
-      <Version>3.13.1</Version>
+      <Version>4.2.2</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>

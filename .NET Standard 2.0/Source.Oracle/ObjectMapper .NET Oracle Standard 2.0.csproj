@@ -11,8 +11,8 @@
     <PackageId>ObjectMapper.NET_Oracle_Standard20</PackageId>
     <Authors>Gerhard Stephan</Authors>
     <Company>TimePunch KG</Company>
-    <Version>4.9.7.0</Version>
-    <AssemblyVersion>4.9.7.0</AssemblyVersion>
+    <Version>4.9.8.0</Version>
+    <AssemblyVersion>4.9.8.0</AssemblyVersion>
     <PackageProjectUrl>https://github.com/BitKFu/ObjectMapper.NET</PackageProjectUrl>
     <PackageLicenseExpression>MS-PL</PackageLicenseExpression>
     <RepositoryUrl>https://github.com/BitKFu/ObjectMapper.NET</RepositoryUrl>
@@ -49,7 +49,8 @@
   </ItemGroup>
 
   <ItemGroup>
-	<PackageReference Include="Oracle.ManagedDataAccess.Core" Version="2.19.100" />
+	<PackageReference Include="Oracle.ManagedDataAccess.Core" Version="2.19.250" />
+	<PackageReference Include="System.Text.Json" Version="9.0.0" />
   </ItemGroup>
 
   <ItemGroup>

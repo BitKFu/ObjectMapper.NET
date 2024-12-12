@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using AdFactum.Data.Util;
 using NUnit.Framework;
+using NUnit.Framework.Legacy;
 using ObjectMapper.NUnits.BusinessEntities;
 using ObjectMapper.NUnits.Core;
 
@@ -17,8 +18,8 @@ namespace ObjectMapper.NUnits.Common.Tests
             using (var mapper = OBM.CreateMapper(Connection))
             {
                 var loadedCompany = mapper.Load(typeof(Company), company.Id) as Company;
-                Assert.IsNotNull(loadedCompany);
-                Assert.AreEqual(fullFeaturedCompany.Employees.Count, loadedCompany.Employees.Count, "Count of Employees must equal.");
+                ClassicAssert.IsNotNull(loadedCompany);
+                ClassicAssert.AreEqual(fullFeaturedCompany.Employees.Count, loadedCompany.Employees.Count, "Count of Employees must equal.");
             }
         }
 
@@ -36,7 +37,7 @@ namespace ObjectMapper.NUnits.Common.Tests
 
                 // Reload to check changes
                 loadedCompany = (Company) mapper.Load(typeof(Company), company.Id);
-                Assert.IsTrue(loadedCompany.Employees.Any(emp=>emp.LastName=="Bubenhausen"));
+                ClassicAssert.IsTrue(loadedCompany.Employees.Any(emp=>emp.LastName=="Bubenhausen"));
             }
         }
 
@@ -54,7 +55,7 @@ namespace ObjectMapper.NUnits.Common.Tests
 
                 // Reload to check changes
                 loadedCompany = (Company)mapper.Load(typeof(Company), company.Id);
-                Assert.IsFalse(loadedCompany.Employees.Any(emp => emp.LastName == "Kuckuck"));
+                ClassicAssert.IsFalse(loadedCompany.Employees.Any(emp => emp.LastName == "Kuckuck"));
             }
         }
     }

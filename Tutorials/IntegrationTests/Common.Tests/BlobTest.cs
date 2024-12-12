@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using AdFactum.Data.Util;
 using NUnit.Framework;
+using NUnit.Framework.Legacy;
 using ObjectMapper.NUnits.BusinessEntities;
 using ObjectMapper.NUnits.Core;
 
@@ -67,12 +68,12 @@ namespace ObjectMapper.NUnits.Common.Tests
                  * Load
                  */
                 var loaded = (BinaryByteBlob)mapper.Load(typeof(BinaryByteBlob), blob.Id);
-                Assert.AreEqual(blob.Blob.Length, loaded.Blob.Length, "Could not load blob.");
+                ClassicAssert.AreEqual(blob.Blob.Length, loaded.Blob.Length, "Could not load blob.");
 
                 var binaries = mapper.Query<BinaryByteBlob>();
                 var binarySql = from binary in binaries where binary.Id == blob.Id select binary;
                 loaded = binarySql.First();
-                Assert.AreEqual(blob.Blob.Length, loaded.Blob.Length, "Could not load blob.");
+                ClassicAssert.AreEqual(blob.Blob.Length, loaded.Blob.Length, "Could not load blob.");
             }
         }
 
@@ -98,7 +99,7 @@ namespace ObjectMapper.NUnits.Common.Tests
                  * Load
                  */
                 var loaded = (MemoryStreamBlob)mapper.Load(typeof(MemoryStreamBlob), blob.Id);
-                Assert.AreEqual(blob.Stream.Length, loaded.Stream.Length, "Could not load blob.");
+                ClassicAssert.AreEqual(blob.Stream.Length, loaded.Stream.Length, "Could not load blob.");
             }
         }
 
@@ -125,12 +126,12 @@ namespace ObjectMapper.NUnits.Common.Tests
                  * Load
                  */
                 var loaded = (CharacterBlob)mapper.Load(typeof(CharacterBlob), blob.Id);
-                Assert.AreEqual(blob.Content, loaded.Content, "Could not load blob.");
+                ClassicAssert.AreEqual(blob.Content, loaded.Content, "Could not load blob.");
 
                 var characterBlob = mapper.Query<CharacterBlob>();
                 var loaded2 = (from dbBlob in characterBlob where dbBlob.Id == blob.Id select dbBlob).Single();
 
-                Assert.AreEqual(loaded.Id, loaded2.Id);
+                ClassicAssert.AreEqual(loaded.Id, loaded2.Id);
             }
         }
 

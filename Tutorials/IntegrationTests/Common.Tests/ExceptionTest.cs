@@ -7,6 +7,7 @@ using AdFactum.Data.Interfaces;
 using AdFactum.Data.Queries;
 using AdFactum.Data.Util;
 using NUnit.Framework;
+using NUnit.Framework.Legacy;
 using ObjectMapper.NUnits.BusinessEntities;
 using ObjectMapper.NUnits.Core;
 using ObjectMapper.NUnits.Xml.Tests;
@@ -41,7 +42,7 @@ namespace ObjectMapper.NUnits.Common.Tests
                 // Second save, tend to fail
                 nested = OBM.BeginTransaction(mapper);
                 mapper.Save(buying);
-                Assert.Throws<DirtyObjectException>(() => OBM.Commit(mapper, nested));
+                ClassicAssert.Throws<DirtyObjectException>(() => OBM.Commit(mapper, nested));
             }
         }
 
@@ -61,7 +62,7 @@ namespace ObjectMapper.NUnits.Common.Tests
                 OBM.Commit(mapper, nested);
 
                 // The Load throws the MissingSetterException, because the value can't be set to the object.
-                Assert.Throws<MissingSetterException>(() => ObjectDumper.Write(mapper.Load(typeof (MissingSetter), missingSetter.Id)));
+                ClassicAssert.Throws<MissingSetterException>(() => ObjectDumper.Write(mapper.Load(typeof (MissingSetter), missingSetter.Id)));
             }
         }
 
@@ -76,7 +77,7 @@ namespace ObjectMapper.NUnits.Common.Tests
             using (AdFactum.Data.ObjectMapper mapper = OBM.CreateMapper(Connection))
             {
                 // A NoOpenTransactionException will be thrown, because no transaction has been opened.
-                Assert.Throws<NoOpenTransactionException>(() =>  mapper.Save(buying));
+                ClassicAssert.Throws<NoOpenTransactionException>(() =>  mapper.Save(buying));
             }
         }
 
@@ -92,7 +93,7 @@ namespace ObjectMapper.NUnits.Common.Tests
                 noPrimaryKey.Buying = new Buying(2, "Tissues");
 
                 // Select sub object to produce a NoPrimaryKeyException
-                Assert.Throws<NoPrimaryKeyFoundException>(() => mapper.Select(typeof(Buying), new Join(noPrimaryKey, "Buying", typeof(Buying))));
+                ClassicAssert.Throws<NoPrimaryKeyFoundException>(() => mapper.Select(typeof(Buying), new Join(noPrimaryKey, "Buying", typeof(Buying))));
             }
         }
 
@@ -105,7 +106,7 @@ namespace ObjectMapper.NUnits.Common.Tests
         {
             // Select sub object to produce a NoPrimaryKeyException
             IRepository repository;
-            Assert.Throws<PersisterDoesNotSupportRepositoryException>(() => repository = XmlTest.XmlMapper.Repository);
+            ClassicAssert.Throws<PersisterDoesNotSupportRepositoryException>(() => repository = XmlTest.XmlMapper.Repository);
         }
 
         /// <summary>
@@ -114,7 +115,7 @@ namespace ObjectMapper.NUnits.Common.Tests
         [Test]
         public void TestTransactionAlreadyOpenException()
         {
-            Assert.Throws<TransactionAlreadyOpenException>(() =>
+            ClassicAssert.Throws<TransactionAlreadyOpenException>(() =>
             {
                 using (AdFactum.Data.ObjectMapper mapper = OBM.CreateMapper(Connection))
                 {
@@ -151,7 +152,7 @@ namespace ObjectMapper.NUnits.Common.Tests
                 wrongType = mapper.Load(typeof (WrongType), wrongType.Id) as WrongType;
 
                 // The second try throws the exeption, because a shallow of the copy is cached and the method CreateNewObject will be called.
-                Assert.Throws<WrongTypeException>(() =>
+                ClassicAssert.Throws<WrongTypeException>(() =>
                 {
                     wrongType = mapper.Load(typeof(WrongType), wrongType.Id) as WrongType;
                 });

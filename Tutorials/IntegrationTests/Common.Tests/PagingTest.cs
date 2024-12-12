@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using AdFactum.Data.Queries;
 using AdFactum.Data.Util;
 using NUnit.Framework;
+using NUnit.Framework.Legacy;
 using ObjectMapper.NUnits.BusinessEntities;
 using ObjectMapper.NUnits.Core;
 
@@ -76,26 +77,26 @@ namespace ObjectMapper.NUnits.Common.Tests
                  */
                 List<Product> site01 = new List<Product>(new ListAdapter<Product>(
                     mapper.FlatPaging(typeof(Product), null, order, 1, 10)));
-                Assert.AreEqual(10, site01.Count, "10 records expected");
+                ClassicAssert.AreEqual(10, site01.Count, "10 records expected");
 
                 List<Product> site02 = new List<Product>(new ListAdapter<Product>(
                     mapper.FlatPaging(typeof(Product), null, order, 10, 19)));
-                Assert.AreEqual(10, site02.Count, "10 records expected");
+                ClassicAssert.AreEqual(10, site02.Count, "10 records expected");
 
-                Assert.AreEqual(site01[9].Id, site02[0].Id, "The second list must begin with the last element of the first paging frame.");
+                ClassicAssert.AreEqual(site01[9].Id, site02[0].Id, "The second list must begin with the last element of the first paging frame.");
 
                 /*
                  * Flat Distinct Paging
                  */
                 site01 = new List<Product>(new ListAdapter<Product>(
                     mapper.FlatDistinctPaging(typeof(Product), null, order, 1, 10)));
-                Assert.AreEqual(10, site01.Count, "10 records expected");
+                ClassicAssert.AreEqual(10, site01.Count, "10 records expected");
 
                 site02 = new List<Product>(new ListAdapter<Product>(
                     mapper.FlatDistinctPaging(typeof(Product), null, order, 10, 19)));
-                Assert.AreEqual(10, site02.Count, "10 records expected");
+                ClassicAssert.AreEqual(10, site02.Count, "10 records expected");
 
-                Assert.AreEqual(site01[9].Id , site02[0].Id, "The second list must begin with the last element of the first paging frame.");
+                ClassicAssert.AreEqual(site01[9].Id , site02[0].Id, "The second list must begin with the last element of the first paging frame.");
             }
         }
 
@@ -112,8 +113,8 @@ namespace ObjectMapper.NUnits.Common.Tests
             }
 
             // Assert
-            Assert.IsNotNull(actual);
-            Assert.AreEqual(5, actual.Count);
+            ClassicAssert.IsNotNull(actual);
+            ClassicAssert.AreEqual(5, actual.Count);
         }
 
         [Test]
@@ -136,9 +137,9 @@ namespace ObjectMapper.NUnits.Common.Tests
             }
 
             // Assert
-            Assert.IsNotNull(actual);
-            Assert.AreEqual(5, actual.Count);
-            Assert.IsTrue(hintLogger.LastSqlStatement.Contains("ORDERED"));
+            ClassicAssert.IsNotNull(actual);
+            ClassicAssert.AreEqual(5, actual.Count);
+            ClassicAssert.IsTrue(hintLogger.LastSqlStatement.Contains("ORDERED"));
         }
 
         [Test]
@@ -161,9 +162,9 @@ namespace ObjectMapper.NUnits.Common.Tests
             }
 
             // Assert
-            Assert.IsNotNull(actual);
-            Assert.AreEqual(5, actual.Count);
-            Assert.IsTrue(hintLogger.LastSqlStatement.Contains("ORDERED"));
+            ClassicAssert.IsNotNull(actual);
+            ClassicAssert.AreEqual(5, actual.Count);
+            ClassicAssert.IsTrue(hintLogger.LastSqlStatement.Contains("ORDERED"));
         }
 
         private class HintLogger : ConsoleTracer

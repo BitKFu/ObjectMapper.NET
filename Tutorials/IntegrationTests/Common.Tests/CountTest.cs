@@ -8,6 +8,7 @@ using ObjectMapper.NUnits.BusinessEntities;
 using ObjectMapper.NUnits.Core;
 using AdFactum.Data.Queries;
 using AdFactum.Data;
+using NUnit.Framework.Legacy;
 
 namespace ObjectMapper.NUnits.Common.Tests
 {
@@ -60,7 +61,7 @@ namespace ObjectMapper.NUnits.Common.Tests
             }
 
             // Assert
-            Assert.AreEqual(2, actual);
+            ClassicAssert.AreEqual(2, actual);
         }
 
         [Test]
@@ -83,8 +84,8 @@ namespace ObjectMapper.NUnits.Common.Tests
             }
 
             // Assert
-            Assert.AreEqual(2, actual);
-            Assert.IsTrue(hintLogger.LastSqlStatement.Contains("ORDERED"));
+            ClassicAssert.AreEqual(2, actual);
+            ClassicAssert.IsTrue(hintLogger.LastSqlStatement.Contains("ORDERED"));
         }
 
         [Test]
@@ -107,8 +108,8 @@ namespace ObjectMapper.NUnits.Common.Tests
             }
 
             // Assert
-            Assert.AreEqual(2, actual);
-            Assert.IsTrue(hintLogger.LastSqlStatement.Contains("ORDERED"));
+            ClassicAssert.AreEqual(2, actual);
+            ClassicAssert.IsTrue(hintLogger.LastSqlStatement.Contains("ORDERED"));
         }
 
         private class HintLogger : ConsoleTracer

@@ -5,6 +5,7 @@ using AdFactum.Data;
 using AdFactum.Data.Queries;
 using AdFactum.Data.Util;
 using NUnit.Framework;
+using NUnit.Framework.Legacy;
 using ObjectMapper.NUnits.BusinessEntities;
 using ObjectMapper.NUnits.Core;
 
@@ -38,7 +39,7 @@ namespace ObjectMapper.NUnits.Common.Tests
                         new ListAdapter<BackLinkedEmployee>(mapper.Select(typeof(BackLinkedEmployee))));
                 foreach (BackLinkedEmployee employee in employees)
                 {
-                    Assert.AreEqual(company.LegalName, employee.CompanyName, "Legal name could not be loaded.");
+                    ClassicAssert.AreEqual(company.LegalName, employee.CompanyName, "Legal name could not be loaded.");
                     Console.WriteLine(
                         string.Concat(employee.FirstName, " ", employee.LastName, " ", employee.CompanyName));
                 }
@@ -114,10 +115,10 @@ namespace ObjectMapper.NUnits.Common.Tests
                     globalJoins["@VALIDATION_DATE"] = searchDate;
 
                     DeliveryItem loaded = mapper.FlatLoad(typeof(DeliveryItem), item.Id, globalJoins) as DeliveryItem;
-                    Assert.IsNotNull(loaded, "The loaded object must not be null.");
-                    Assert.AreEqual(item.Id, loaded.Id, "The id of the loaded item must equal the expected one.");
-                    Assert.AreEqual(loaded.ProductName01, loaded.ProductName02);
-                    Assert.IsTrue(loaded.ProductName01.Length > 0, "The productname must not be empty.");
+                    ClassicAssert.IsNotNull(loaded, "The loaded object must not be null.");
+                    ClassicAssert.AreEqual(item.Id, loaded.Id, "The id of the loaded item must equal the expected one.");
+                    ClassicAssert.AreEqual(loaded.ProductName01, loaded.ProductName02);
+                    ClassicAssert.IsTrue(loaded.ProductName01.Length > 0, "The productname must not be empty.");
 
                     /*
                      * Output

@@ -5,6 +5,7 @@ using System.Linq;
 using AdFactum.Data.Queries;
 using AdFactum.Data.Util;
 using NUnit.Framework;
+using NUnit.Framework.Legacy;
 using ObjectMapper.NUnits.BusinessEntities;
 using ObjectMapper.NUnits.Core;
 
@@ -38,8 +39,8 @@ namespace ObjectMapper.NUnits.Common.Tests
                                             select node2).SingleOrDefault();
 
                 // Assert Parent Id
-                Assert.IsNotNull(parent);
-                Assert.AreEqual(parent.Id, loadedParent.Id);
+                ClassicAssert.IsNotNull(parent);
+                ClassicAssert.AreEqual(parent.Id, loadedParent.Id);
             }
         }
 
@@ -151,7 +152,7 @@ namespace ObjectMapper.NUnits.Common.Tests
                  * Load Tree
                  */
                 ITreeNode loaded = (ITreeNode) mapper.Load(type, root.Id);
-                Assert.AreEqual(root.ChildNodes.Count, loaded.ChildNodes.Count, "Child count is mismatch");
+                ClassicAssert.AreEqual(root.ChildNodes.Count, loaded.ChildNodes.Count, "Child count is mismatch");
             }
         }
 
@@ -203,14 +204,14 @@ namespace ObjectMapper.NUnits.Common.Tests
                 List<ITreeNode> childNodes01 = new List<ITreeNode>(new ListAdapter<ITreeNode>(
                     mapper.GetNestedCollection(type,"ChildNodes", root.Id,HierarchyLevel.FlatObject)));
 
-                Assert.AreEqual(root.ChildNodes.Count, childNodes01.Count, "Load childs with GetNestedCollection failed");
+                ClassicAssert.AreEqual(root.ChildNodes.Count, childNodes01.Count, "Load childs with GetNestedCollection failed");
                 /*
                  * Load the childs, using the parent property
                  */
                 List<ITreeNode> childNodes02 = new List<ITreeNode>(new ListAdapter<ITreeNode>(
                                     mapper.FlatSelect(type, new AndCondition(type, "ParentNode", root.Id))));
 
-                Assert.AreEqual(root.ChildNodes.Count, childNodes02.Count, "Load childs by Parent Property failed");
+                ClassicAssert.AreEqual(root.ChildNodes.Count, childNodes02.Count, "Load childs by Parent Property failed");
 
                 return root;
             }

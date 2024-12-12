@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using AdFactum.Data.Util;
 using NUnit.Framework;
+using NUnit.Framework.Legacy;
 using ObjectMapper.NUnits.BusinessEntities;
 using ObjectMapper.NUnits.Core;
 
@@ -31,8 +32,8 @@ namespace ObjectMapper.NUnits.Common.Tests
                  */
                 IPerson result = mapper.GetNestedObject(typeof(PhoneBookEntry), "Person", entry.Id, HierarchyLevel.FlatObject) as IPerson;
 
-                Assert.IsNotNull(result, "Persone of phone book entry 1 could not be loaded.");
-                Assert.AreEqual(entry.Person.Id, result.Id, "Ids of result 1 aren't equal.");
+                ClassicAssert.IsNotNull(result, "Persone of phone book entry 1 could not be loaded.");
+                ClassicAssert.AreEqual(entry.Person.Id, result.Id, "Ids of result 1 aren't equal.");
             }   
         }
 
@@ -77,7 +78,7 @@ namespace ObjectMapper.NUnits.Common.Tests
                  * Load stored entry
                  */
                 ffc = mapper.Load(typeof (FullFeaturedCompany), ffc.Id) as FullFeaturedCompany;
-                Assert.IsNotNull(ffc, "FullFeaturedCompany could not be loaded.");
+                ClassicAssert.IsNotNull(ffc, "FullFeaturedCompany could not be loaded.");
             }
         }
     }

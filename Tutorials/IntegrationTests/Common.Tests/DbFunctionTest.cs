@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using AdFactum.Data.Util;
 using NUnit.Framework;
+using NUnit.Framework.Legacy;
 using ObjectMapper.NUnits.BusinessEntities;
 using ObjectMapper.NUnits.Core;
 
@@ -53,9 +54,9 @@ namespace ObjectMapper.NUnits.Common.Tests
                  */
                 read = (DatabaseFunction) mapper.FlatLoad(typeof(DatabaseFunction), function.Id);
 
-                Assert.IsTrue(read.LastRead > DateTime.MinValue, "Read Function did not work.");
-                Assert.IsTrue(read.LastUpdated > DateTime.MinValue, "Update Function did not work.");
-                Assert.IsTrue(read.Creation > DateTime.MinValue, "Create Function did not work.");
+                ClassicAssert.IsTrue(read.LastRead > DateTime.MinValue, "Read Function did not work.");
+                ClassicAssert.IsTrue(read.LastUpdated > DateTime.MinValue, "Update Function did not work.");
+                ClassicAssert.IsTrue(read.Creation > DateTime.MinValue, "Create Function did not work.");
             }
         }
 

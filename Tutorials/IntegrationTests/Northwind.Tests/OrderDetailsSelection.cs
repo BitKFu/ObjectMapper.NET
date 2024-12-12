@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using NUnit.Framework;
 using AdFactum.Data.Util;
+using NUnit.Framework.Legacy;
 using ObjectMapper.NUnits.Northwind.Entities;
 
 namespace ObjectMapper.NUnits.Northwind.Tests
@@ -79,7 +80,7 @@ namespace ObjectMapper.NUnits.Northwind.Tests
 
                 ObjectDumper.Write(dataForOrder2);
 
-                Assert.AreEqual(dataForOrder1.Count(), dataForOrder2.Count());
+                ClassicAssert.AreEqual(dataForOrder1.Count(), dataForOrder2.Count());
             }
         }
     }

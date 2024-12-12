@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using AdFactum.Data.Util;
 using NUnit.Framework;
+using NUnit.Framework.Legacy;
 using ObjectMapper.NUnits.BusinessEntities;
 using ObjectMapper.NUnits.Core;
 
@@ -43,8 +44,8 @@ namespace ObjectMapper.NUnits.Common.Tests
 
                 // Load list
                 loadedList = mapper.Load(typeof(BirthdayList), birthdays.Id) as BirthdayList;
-                Assert.IsNotNull(loadedList, "List could not be loaded.");
-                Assert.AreEqual(birthdays.Contacts.Count, loadedList.Contacts.Count, "Not all contacts could be loaded.");
+                ClassicAssert.IsNotNull(loadedList, "List could not be loaded.");
+                ClassicAssert.AreEqual(birthdays.Contacts.Count, loadedList.Contacts.Count, "Not all contacts could be loaded.");
 
                 foreach (KeyValuePair<string, IPerson> pair in loadedList.Contacts)
                     Console.WriteLine(string.Concat(pair.Key, " ", pair.Value.FirstName, " ", pair.Value.LastName));
@@ -65,16 +66,16 @@ namespace ObjectMapper.NUnits.Common.Tests
 
                 // Load list
                 loadedList = mapper.Load(typeof(BirthdayList), loadedList.Id) as BirthdayList;
-                Assert.IsNotNull(loadedList, "List could not be loaded.");
-                Assert.AreEqual(birthdays.Contacts.Count, loadedList.Contacts.Count, "Not all contacts could be loaded.");
+                ClassicAssert.IsNotNull(loadedList, "List could not be loaded.");
+                ClassicAssert.AreEqual(birthdays.Contacts.Count, loadedList.Contacts.Count, "Not all contacts could be loaded.");
 
                 foreach (KeyValuePair<string, IPerson> pair in loadedList.Contacts)
                     Console.WriteLine(string.Concat(pair.Key, " ", pair.Value.FirstName, " ", pair.Value.LastName));
 
                 // Check if the sorted id's are correct
-                Assert.AreEqual(c1.Id, loadedList.Contacts[keyC3].Id, "Wrong object Id is not found");
-                Assert.AreEqual(c2.Id, loadedList.Contacts[keyC2].Id, "Wrong object Id is not found");
-                Assert.AreEqual(c3.Id, loadedList.Contacts[keyC1].Id, "Wrong object Id is not found");
+                ClassicAssert.AreEqual(c1.Id, loadedList.Contacts[keyC3].Id, "Wrong object Id is not found");
+                ClassicAssert.AreEqual(c2.Id, loadedList.Contacts[keyC2].Id, "Wrong object Id is not found");
+                ClassicAssert.AreEqual(c3.Id, loadedList.Contacts[keyC1].Id, "Wrong object Id is not found");
 
             }
         }

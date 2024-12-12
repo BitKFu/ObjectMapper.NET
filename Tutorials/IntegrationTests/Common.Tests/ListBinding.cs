@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using AdFactum.Data.Util;
 using NUnit.Framework;
+using NUnit.Framework.Legacy;
 using ObjectMapper.NUnits.BusinessEntities;
 using ObjectMapper.NUnits.Core;
 
@@ -55,8 +56,8 @@ namespace ObjectMapper.NUnits.Common.Tests
                  */
                 Company_IList_Contacts result;
                 result = mapper.Load(typeof(Company_IList_Contacts), company01.Id) as Company_IList_Contacts;
-                Assert.IsNotNull(result, "Company could not be loaded.");
-                Assert.IsTrue(result.Contacts.Count == 4, "Not all contacts could be loaded.");
+                ClassicAssert.IsNotNull(result, "Company could not be loaded.");
+                ClassicAssert.IsTrue(result.Contacts.Count == 4, "Not all contacts could be loaded.");
             }
         }
 
@@ -105,8 +106,8 @@ namespace ObjectMapper.NUnits.Common.Tests
                  */
                 Company_GeneralLink_Contacts result;
                 result = mapper.Load(typeof(Company_GeneralLink_Contacts), company01.Id) as Company_GeneralLink_Contacts;
-                Assert.IsNotNull(result, "Company could not be loaded.");
-                Assert.IsTrue(result.Contacts.Count == 4, "Not all contacts could be loaded.");
+                ClassicAssert.IsNotNull(result, "Company could not be loaded.");
+                ClassicAssert.IsTrue(result.Contacts.Count == 4, "Not all contacts could be loaded.");
             }
         }
 
@@ -142,8 +143,8 @@ namespace ObjectMapper.NUnits.Common.Tests
                  */
                 Company_GenericList_Contacts result;
                 result = mapper.Load(typeof(Company_GenericList_Contacts), company01.Id) as Company_GenericList_Contacts;
-                Assert.IsNotNull(result, "Company could not be loaded.");
-                Assert.AreEqual(2, result.Contacts.Count, "Not all contacts could be loaded.");
+                ClassicAssert.IsNotNull(result, "Company could not be loaded.");
+                ClassicAssert.AreEqual(2, result.Contacts.Count, "Not all contacts could be loaded.");
             }
         }
 
@@ -179,8 +180,8 @@ namespace ObjectMapper.NUnits.Common.Tests
                  */
                 Company_BoundIList_Contacts result;
                 result = mapper.Load(typeof(Company_BoundIList_Contacts), company01.Id) as Company_BoundIList_Contacts;
-                Assert.IsNotNull(result, "Company could not be loaded.");
-                Assert.AreEqual(2, result.Contacts.Count, "Not all contacts could be loaded.");
+                ClassicAssert.IsNotNull(result, "Company could not be loaded.");
+                ClassicAssert.AreEqual(2, result.Contacts.Count, "Not all contacts could be loaded.");
             }
         }
 

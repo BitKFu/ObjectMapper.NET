@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using AdFactum.Data.Exceptions;
 using AdFactum.Data.Util;
 using NUnit.Framework;
+using NUnit.Framework.Legacy;
 using ObjectMapper.NUnits.BusinessEntities;
 using ObjectMapper.NUnits.Core;
 
@@ -43,7 +44,7 @@ namespace ObjectMapper.NUnits.Common.Tests
                 try
                 {
                     OBM.Commit(mapper, nested);
-                    Assert.Fail("Our combined unique key did not fire an exception.");
+                    ClassicAssert.Fail("Our combined unique key did not fire an exception.");
                 }
                 catch (SqlCoreException sqlCoreException)
                 {

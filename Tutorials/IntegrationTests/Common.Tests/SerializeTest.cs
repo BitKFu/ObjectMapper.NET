@@ -6,6 +6,7 @@ using AdFactum.Data;
 using AdFactum.Data.Internal;
 using AdFactum.Data.Util;
 using NUnit.Framework;
+using NUnit.Framework.Legacy;
 using ObjectMapper.NUnits.BusinessEntities;
 using ObjectMapper.NUnits.BusinessEntities.Core;
 using IgnoreAttribute=AdFactum.Data.IgnoreAttribute;
@@ -30,7 +31,7 @@ namespace ObjectMapper.NUnits.Common.Tests
                 serializer.Serialize(output, type.Value);
                 output.Seek(0, SeekOrigin.Begin);
 
-                Assert.IsNotNull(serializer.Deserialize(output), "Object could de-serialized.");
+                ClassicAssert.IsNotNull(serializer.Deserialize(output), "Object could de-serialized.");
             }
         }
 

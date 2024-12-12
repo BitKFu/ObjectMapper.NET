@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using AdFactum.Data.Queries;
 using AdFactum.Data.Util;
 using NUnit.Framework;
+using NUnit.Framework.Legacy;
 using ObjectMapper.NUnits.BusinessEntities;
 using ObjectMapper.NUnits.Core;
 
@@ -43,13 +44,13 @@ namespace ObjectMapper.NUnits.Common.Tests
                                   new AndCondition(typeof (Friend), "LastName", QueryOperator.Like_NoCaseSensitive,
                                                    "Mu*"));
 
-                Assert.AreEqual(2, search.Count, "Not all contacts could be loaded.");
+                ClassicAssert.AreEqual(2, search.Count, "Not all contacts could be loaded.");
 
                 search = mapper.Select(typeof(Friend),
                                        new AndCondition(typeof (Friend), "LastName", QueryOperator.Like_NoCaseSensitive,
                                                         "*mann"));
 
-                Assert.AreEqual(2, search.Count, "Not all contacts could be loaded.");
+                ClassicAssert.AreEqual(2, search.Count, "Not all contacts could be loaded.");
             }
         }
     }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using AdFactum.Data.Util;
 using NUnit.Framework;
+using NUnit.Framework.Legacy;
 using ObjectMapper.NUnits.BusinessEntities;
 using ObjectMapper.NUnits.Core;
 
@@ -32,10 +33,10 @@ namespace ObjectMapper.NUnits.Common.Tests
                  OBM.Commit(mapper, nested);
 
                  var loaded = mapper.Load(typeof(UnicodeTestEntity), ute.Id) as UnicodeTestEntity;
-                 Assert.IsNotNull(loaded, "Could not load test entity");
-                 Assert.AreEqual(ute.UnicodeChar, loaded.UnicodeChar, "Failed to compare unicode char");
-                 Assert.AreEqual(ute.UnicodeString, loaded.UnicodeString, "Failed to compare unicode string");
-                 Assert.AreEqual(ute.UnicodeMemo, loaded.UnicodeMemo, "Failed to compare unicode memo");
+                 ClassicAssert.IsNotNull(loaded, "Could not load test entity");
+                 ClassicAssert.AreEqual(ute.UnicodeChar, loaded.UnicodeChar, "Failed to compare unicode char");
+                 ClassicAssert.AreEqual(ute.UnicodeString, loaded.UnicodeString, "Failed to compare unicode string");
+                 ClassicAssert.AreEqual(ute.UnicodeMemo, loaded.UnicodeMemo, "Failed to compare unicode memo");
              }
         }
     }

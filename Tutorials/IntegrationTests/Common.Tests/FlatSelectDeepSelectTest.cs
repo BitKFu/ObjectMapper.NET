@@ -4,6 +4,7 @@ using System.Linq;
 using AdFactum.Data.Util;
 using AdFactum.Data.Linq;
 using NUnit.Framework;
+using NUnit.Framework.Legacy;
 using ObjectMapper.NUnits.BusinessEntities;
 using ObjectMapper.NUnits.Core;
 
@@ -37,31 +38,31 @@ namespace ObjectMapper.NUnits.Common.Tests
                 /*
                  * Try to get the nested person
                  */
-                Assert.IsNotNull(mapper.GetNestedObject(typeof(PhoneBookEntry), "Person", entry.Id),
+                ClassicAssert.IsNotNull(mapper.GetNestedObject(typeof(PhoneBookEntry), "Person", entry.Id),
                                  "Could not load nested object");
 
                 /*
                  * Try to load them flat
                  */
                 var flatLoaded = (PhoneBookEntry)mapper.FlatLoad(typeof(PhoneBookEntry), entry.Id);
-                Assert.IsNotNull(flatLoaded, "Object could not be loaded.");
-                Assert.IsNull(flatLoaded.Person, "Person must be null, because we did a flat load.");
+                ClassicAssert.IsNotNull(flatLoaded, "Object could not be loaded.");
+                ClassicAssert.IsNull(flatLoaded.Person, "Person must be null, because we did a flat load.");
 
                 var flatLoaded2 = (from row in mapper.Query<PhoneBookEntry>() where row.Id == entry.Id select row).Single();
-                Assert.IsNotNull(flatLoaded2, "Object could not be loaded.");
-                Assert.IsNull(flatLoaded2.Person, "Person must be null, because we did a flat load.");
+                ClassicAssert.IsNotNull(flatLoaded2, "Object could not be loaded.");
+                ClassicAssert.IsNull(flatLoaded2.Person, "Person must be null, because we did a flat load.");
 
                 /*
                  * Try to load them full
                  */
                 var fullLoaded = (PhoneBookEntry) mapper.Load(typeof (PhoneBookEntry), entry.Id);
-                Assert.IsNotNull(fullLoaded, "Object could not be loaded.");
-                Assert.IsNotNull(fullLoaded.Person, "Person must not be null, because we did a full load.");
+                ClassicAssert.IsNotNull(fullLoaded, "Object could not be loaded.");
+                ClassicAssert.IsNotNull(fullLoaded.Person, "Person must not be null, because we did a full load.");
 
                 var fullLoaded2 = (from row in mapper.Query<PhoneBookEntry>() where row.Id == entry.Id select row).Level(HierarchyLevel.AllDependencies).Single();
 
-                Assert.IsNotNull(fullLoaded2, "Object could not be loaded.");
-                Assert.IsNotNull(fullLoaded2.Person, "Person must not be null, because we did a full load.");
+                ClassicAssert.IsNotNull(fullLoaded2, "Object could not be loaded.");
+                ClassicAssert.IsNotNull(fullLoaded2.Person, "Person must not be null, because we did a full load.");
 
             }
         }

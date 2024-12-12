@@ -1,6 +1,7 @@
 using System.Linq;
 using NUnit.Framework;
 using AdFactum.Data.Util;
+using NUnit.Framework.Legacy;
 
 namespace ObjectMapper.NUnits.Northwind.Tests
 {
@@ -22,7 +23,7 @@ namespace ObjectMapper.NUnits.Northwind.Tests
                 var mexicans = from customer in customers where customer.City.StartsWith("México") select customer;
 
                 ObjectDumper.Write(mexicans);
-                Assert.Greater(mexicans.Count(), 0, "At least 1 entry has been expected.");
+                ClassicAssert.Greater(mexicans.Count(), 0, "At least 1 entry has been expected.");
             }
         }
 
@@ -41,7 +42,7 @@ namespace ObjectMapper.NUnits.Northwind.Tests
                                select customer;
 
                 ObjectDumper.Write(mexicans);
-                Assert.Greater(mexicans.Count(), 0, "At least 1 entry has been expected.");
+                ClassicAssert.Greater(mexicans.Count(), 0, "At least 1 entry has been expected.");
             }
         }
 
@@ -60,7 +61,7 @@ namespace ObjectMapper.NUnits.Northwind.Tests
                                select customer;
 
                 ObjectDumper.Write(regions);
-                Assert.Greater(regions.Count(), 0, "At least 1 entry has been expected.");
+                ClassicAssert.Greater(regions.Count(), 0, "At least 1 entry has been expected.");
             }
         }
 
@@ -78,7 +79,7 @@ namespace ObjectMapper.NUnits.Northwind.Tests
                               select new { Company1 = customer.CompanyName };
 
                 ObjectDumper.Write(regions);
-                Assert.Greater(regions.Count(), 0, "At least 1 entry has been expected.");
+                ClassicAssert.Greater(regions.Count(), 0, "At least 1 entry has been expected.");
             }
         }
 
@@ -95,7 +96,7 @@ namespace ObjectMapper.NUnits.Northwind.Tests
                               select customer.CompanyName;
 
                 ObjectDumper.Write(regions);
-                Assert.Greater(regions.Count(), 0, "At least 1 entry has been expected.");
+                ClassicAssert.Greater(regions.Count(), 0, "At least 1 entry has been expected.");
             }
         }
 
@@ -111,8 +112,8 @@ namespace ObjectMapper.NUnits.Northwind.Tests
             {
                 var customers = mapper.Query<Customer>();
                 var firstCustomer = (from customer in customers select customer).First();
-                
-                Assert.IsNotNull(firstCustomer, "One Customer expected");
+
+                ClassicAssert.IsNotNull(firstCustomer, "One Customer expected");
                 ObjectDumper.Write(firstCustomer);
             }
         }
@@ -129,7 +130,7 @@ namespace ObjectMapper.NUnits.Northwind.Tests
                 var customers = mapper.Query<Customer>();
                 var firstCustomer = (from customer in customers select customer).Single();
 
-                Assert.IsNotNull(firstCustomer, "One Customer expected");
+                ClassicAssert.IsNotNull(firstCustomer, "One Customer expected");
                 ObjectDumper.Write(firstCustomer);
             }
         }
@@ -147,7 +148,7 @@ namespace ObjectMapper.NUnits.Northwind.Tests
                 var first3Customer = (from customer in customers select customer).Take(3);
 
                 ObjectDumper.Write(first3Customer);
-                Assert.AreEqual(3, first3Customer.Count(), "3 entries expected");
+                ClassicAssert.AreEqual(3, first3Customer.Count(), "3 entries expected");
             }
         }
 
@@ -164,7 +165,7 @@ namespace ObjectMapper.NUnits.Northwind.Tests
                 var skip3Customers = (from customer in customers select customer).Skip(3);
 
                 ObjectDumper.Write(skip3Customers);
-                Assert.Greater(skip3Customers.Count(), 0, "At least 1 entry has been expected.");
+                ClassicAssert.Greater(skip3Customers.Count(), 0, "At least 1 entry has been expected.");
             }
         }
 
@@ -180,7 +181,7 @@ namespace ObjectMapper.NUnits.Northwind.Tests
                 var pageCustomers = (from customer in customers select customer).Skip(10).Take(5);
 
                 ObjectDumper.Write(pageCustomers);
-                Assert.AreEqual(5, pageCustomers.Count(), "5 entries expected");
+                ClassicAssert.AreEqual(5, pageCustomers.Count(), "5 entries expected");
             }
         }
 
@@ -197,7 +198,7 @@ namespace ObjectMapper.NUnits.Northwind.Tests
 
                 ObjectDumper.Write(mexicans.Count());
                 ObjectDumper.Write(mexicans);
-                Assert.Greater(mexicans.Count(),0, "At least 1 entry has been expected.");
+                ClassicAssert.Greater(mexicans.Count(),0, "At least 1 entry has been expected.");
             }
         }
     }

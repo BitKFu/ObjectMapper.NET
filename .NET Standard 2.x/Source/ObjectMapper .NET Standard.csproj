@@ -7,8 +7,8 @@
     <PackageId>ObjectMapper.NET</PackageId>
     <Authors>Gerhard Stephan</Authors>
     <Company>TimePunch KG</Company>
-    <Version>4.9.7.0</Version>
-    <AssemblyVersion>4.9.7.0</AssemblyVersion>
+    <Version>4.9.8.0</Version>
+    <AssemblyVersion>4.9.8.0</AssemblyVersion>
     <AssemblyName>ObjectMapper</AssemblyName>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>ObjectMapper.snk</AssemblyOriginatorKeyFile>
@@ -28,6 +28,7 @@
 
   <ItemGroup>
     <PackageReference Include="EnterpriseLibrary.TransientFaultHandling.Data.NetCore" Version="6.0.1312" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.9.0" />
   </ItemGroup>
 
 </Project>

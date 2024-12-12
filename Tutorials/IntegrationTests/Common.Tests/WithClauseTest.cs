@@ -4,6 +4,7 @@ using AdFactum.Data;
 using AdFactum.Data.Queries;
 using AdFactum.Data.Util;
 using NUnit.Framework;
+using NUnit.Framework.Legacy;
 using ObjectMapper.NUnits.BusinessEntities;
 using ObjectMapper.NUnits.Core;
 
@@ -82,7 +83,7 @@ namespace ObjectMapper.NUnits.Common.Tests
                  * Count the activities
                  */
                 int result = mapper.Count(typeof(Activity), selection);
-                Assert.AreEqual(2, result, "Only 1 result is expected");
+                ClassicAssert.AreEqual(2, result, "Only 1 result is expected");
             }
 
         }
@@ -144,14 +145,14 @@ namespace ObjectMapper.NUnits.Common.Tests
                  * Count the activities
                  */
                 int result = mapper.Count(typeof (Activity), selection);
-                Assert.AreEqual(1, result, "Only 1 result is expected");
+                ClassicAssert.AreEqual(1, result, "Only 1 result is expected");
 
                 /*
                  * Load the activity
                  */
                 Activity loaded = mapper.FlatLoad(typeof(Activity), selection) as Activity;
-                Assert.IsNotNull(loaded, "Could not load activity");
-                Assert.AreEqual(a1.Id, loaded.Id, "Found unexpected object");
+                ClassicAssert.IsNotNull(loaded, "Could not load activity");
+                ClassicAssert.AreEqual(a1.Id, loaded.Id, "Found unexpected object");
             }
         }
     }

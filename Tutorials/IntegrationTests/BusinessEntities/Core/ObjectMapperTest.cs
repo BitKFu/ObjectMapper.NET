@@ -7,6 +7,7 @@ using System.Linq;
 using AdFactum.Data;
 using AdFactum.Data.Repository;
 using AdFactum.Data.Util;
+using NUnit.Framework.Legacy;
 using ObjectMapper.NUnits.BusinessEntities;
 
 namespace ObjectMapper.NUnits.Core
@@ -56,7 +57,7 @@ namespace ObjectMapper.NUnits.Core
              * read Configuration file
              */
             string databaseTypeSettings = ConfigurationManager.AppSettings["DatabaseType"];
-            NUnit.Framework.Assert.IsNotNull(databaseTypeSettings, "No Database Type has been selected.");
+            ClassicAssert.IsNotNull(databaseTypeSettings, "No Database Type has been selected.");
             
             if (databaseTypeSettings != string.Empty)
                 whatToTest = (DatabaseType) Enum.Parse(typeof(DatabaseType),databaseTypeSettings);

@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Text;
 using AdFactum.Data;
 using NUnit.Framework;
+using NUnit.Framework.Legacy;
 using ObjectMapper.NUnits.BusinessEntities.Core;
 
 namespace ObjectMapper.NUnits.BusinessEntities
@@ -110,12 +111,12 @@ namespace ObjectMapper.NUnits.BusinessEntities
         /// <param name="mustEqual">The must equal.</param>
         public void AssertCheck (NullValue mustEqual)
         {
-            Assert.AreEqual(NullString, mustEqual.NullString, "Null string differs");
-            Assert.AreEqual(NullGuid, mustEqual.NullGuid, "Null Guid differs");
-            Assert.AreEqual(NullTime.ToString(), mustEqual.NullTime.ToString(), "Null time differs");
-            Assert.AreEqual(nullInt, mustEqual.NullInt, "Null Int differs");
-            Assert.AreEqual(NullGuid2, mustEqual.NullGuid2, "Null Guid2 differs");
-            Assert.AreEqual(NullTime2.ToString(), mustEqual.NullTime2.ToString(), "Null time2 differs");
+            ClassicAssert.AreEqual(NullString, mustEqual.NullString, "Null string differs");
+            ClassicAssert.AreEqual(NullGuid, mustEqual.NullGuid, "Null Guid differs");
+            ClassicAssert.AreEqual(NullTime.ToString(), mustEqual.NullTime.ToString(), "Null time differs");
+            ClassicAssert.AreEqual(nullInt, mustEqual.NullInt, "Null Int differs");
+            ClassicAssert.AreEqual(NullGuid2, mustEqual.NullGuid2, "Null Guid2 differs");
+            ClassicAssert.AreEqual(NullTime2.ToString(), mustEqual.NullTime2.ToString(), "Null time2 differs");
         }
 
         /// <summary>

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using AdFactum.Data.Util;
 using NUnit.Framework;
+using NUnit.Framework.Legacy;
 using ObjectMapper.NUnits.BusinessEntities;
 using ObjectMapper.NUnits.Core;
 
@@ -75,10 +76,10 @@ namespace ObjectMapper.NUnits.Common.Tests
                 */
                 CrazyPK loaded = (CrazyPK)mapper.Load(typeof(CrazyPK), crazyPK.Id);
 
-                Assert.IsNotNull(loaded, "Crazy object could not be loaded.");
-                Assert.IsNotNull(loaded.CrazyChild, "Crazy child could not be loaded.");
-                Assert.IsNotNull(loaded.CrazyList, "Crazy list could not be loaded.");
-                Assert.AreEqual(crazyPK.CrazyList.Count, loaded.CrazyList.Count, "Could not load all list objects.");
+                ClassicAssert.IsNotNull(loaded, "Crazy object could not be loaded.");
+                ClassicAssert.IsNotNull(loaded.CrazyChild, "Crazy child could not be loaded.");
+                ClassicAssert.IsNotNull(loaded.CrazyList, "Crazy list could not be loaded.");
+                ClassicAssert.AreEqual(crazyPK.CrazyList.Count, loaded.CrazyList.Count, "Could not load all list objects.");
             }
         }
     }

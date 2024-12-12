@@ -3,6 +3,7 @@ using AdFactum.Data;
 using AdFactum.Data.Util;
 using AdFactum.Data.Xml;
 using NUnit.Framework;
+using NUnit.Framework.Legacy;
 using ObjectMapper.NUnits.BusinessEntities;
 using ObjectMapper.NUnits.Xml.Entities;
 
@@ -86,16 +87,16 @@ namespace ObjectMapper.NUnits.Xml.Tests
 
             ObjectDumper.Write(loaded);
 
-            Assert.IsNotNull(loaded, "Loaded is null");
-            Assert.AreEqual(parent.Id, loaded.Id, "ID does not equal");
-            Assert.AreEqual(parent.Child1.Id, loaded.Child1.Id, "Child 1 does not equal");
-            Assert.AreEqual(parent.Child2.Id, loaded.Child2.Id, "Child 2 does not equal");
-            Assert.IsTrue(loaded.ChildList.Contains(loaded.Child1));
-            Assert.IsTrue(loaded.ChildList.Contains(loaded.Child2));
-            Assert.IsTrue(loaded.ChildDictionary.ContainsValue(loaded.Child1));
-            Assert.IsTrue(loaded.ChildDictionary.ContainsValue(loaded.Child2));
-            Assert.IsTrue(loaded.ChildDictionary.ContainsKey("A"));
-            Assert.IsTrue(loaded.ChildDictionary.ContainsKey("B"));
+            ClassicAssert.IsNotNull(loaded, "Loaded is null");
+            ClassicAssert.AreEqual(parent.Id, loaded.Id, "ID does not equal");
+            ClassicAssert.AreEqual(parent.Child1.Id, loaded.Child1.Id, "Child 1 does not equal");
+            ClassicAssert.AreEqual(parent.Child2.Id, loaded.Child2.Id, "Child 2 does not equal");
+            ClassicAssert.IsTrue(loaded.ChildList.Contains(loaded.Child1));
+            ClassicAssert.IsTrue(loaded.ChildList.Contains(loaded.Child2));
+            ClassicAssert.IsTrue(loaded.ChildDictionary.ContainsValue(loaded.Child1));
+            ClassicAssert.IsTrue(loaded.ChildDictionary.ContainsValue(loaded.Child2));
+            ClassicAssert.IsTrue(loaded.ChildDictionary.ContainsKey("A"));
+            ClassicAssert.IsTrue(loaded.ChildDictionary.ContainsKey("B"));
         }
     }
 }

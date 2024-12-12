@@ -5,6 +5,7 @@ using System.Text;
 using AdFactum.Data.Linq;
 using AdFactum.Data.Util;
 using NUnit.Framework;
+using NUnit.Framework.Legacy;
 using ObjectMapper.NUnits.BusinessEntities;
 using ObjectMapper.NUnits.Core;
 
@@ -45,7 +46,7 @@ namespace ObjectMapper.NUnits.Common.Tests
                               select company
                              ).Count();
 
-                Assert.AreEqual(1, result);
+                ClassicAssert.AreEqual(1, result);
             }
         }
     }

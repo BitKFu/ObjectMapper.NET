@@ -5,6 +5,7 @@ using AdFactum.Data;
 using AdFactum.Data.Queries;
 using AdFactum.Data.Util;
 using NUnit.Framework;
+using NUnit.Framework.Legacy;
 using ObjectMapper.NUnits.BusinessEntities;
 using ObjectMapper.NUnits.Core;
 
@@ -42,7 +43,7 @@ namespace ObjectMapper.NUnits.Common.Tests
                 var names = new List<FriendName>(new ListAdapter<FriendName>(mapper.Select(typeof(FriendName),
                     new InCondition(typeof(Friend), "LastName", "Hans-Peter", "Salbei", "Habicht"))));
                 ObjectDumper.Write(names);
-                Assert.AreEqual(3, names.Count);
+                ClassicAssert.AreEqual(3, names.Count);
 
             }
         }
@@ -81,13 +82,13 @@ namespace ObjectMapper.NUnits.Common.Tests
                             new CollectionJoin(typeof(FullFeaturedCompany), "Employees", typeof(Employee)))));
 
                 ObjectDumper.Write(names);
-                Assert.AreEqual(6, names.Count);
+                ClassicAssert.AreEqual(6, names.Count);
 
                 /*
                  * Count that advanced projection
                  */
                 int counter = mapper.Count(typeof(FullFeaturedEmployee), new CollectionJoin(typeof(FullFeaturedCompany), "Employees", typeof(Employee)));
-                Assert.AreEqual(6, counter);
+                ClassicAssert.AreEqual(6, counter);
             }
         }
 
@@ -119,7 +120,7 @@ namespace ObjectMapper.NUnits.Common.Tests
                                                   new TableReplacement(typeof(Friend), "SELECT * FROM #SR#" + mapper.Persister.TypeMapper.Quote("Contacts")));
 
                 // Load contacts to friends table
-                Assert.AreEqual(3, friends.Count);
+                ClassicAssert.AreEqual(3, friends.Count);
             }
         }
 
@@ -180,8 +181,8 @@ namespace ObjectMapper.NUnits.Common.Tests
                         (FullFeaturedCompany)mapper.Load(typeof(FullFeaturedCompany), companyCondition);
 
                     // Assert
-                    Assert.IsNotNull(loaded, "Could not load company");
-                    Assert.AreEqual(company.Id, loaded.Id, "Company equals not expected company");
+                    ClassicAssert.IsNotNull(loaded, "Could not load company");
+                    ClassicAssert.AreEqual(company.Id, loaded.Id, "Company equals not expected company");
                 }
             }
             finally

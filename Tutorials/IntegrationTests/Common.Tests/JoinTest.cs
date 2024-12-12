@@ -6,6 +6,7 @@ using AdFactum.Data.Linq;
 using AdFactum.Data.Queries;
 using AdFactum.Data.Util;
 using NUnit.Framework;
+using NUnit.Framework.Legacy;
 using ObjectMapper.NUnits.BusinessEntities;
 using ObjectMapper.NUnits.Core;
 
@@ -50,13 +51,13 @@ namespace ObjectMapper.NUnits.Common.Tests
                  * Join company c1 object with owner object
                  */
                 var loaded = (FullFeaturedCompany) mapper.FlatLoad(typeof (FullFeaturedCompany), new CollectionJoin(c1, "Employees", emp));
-                Assert.AreEqual(c1.Id, loaded.Id, "Could not load company");
+                ClassicAssert.AreEqual(c1.Id, loaded.Id, "Could not load company");
 
                 /*
                  * Join typeof(Company) with owner object
                  */
                 IList selection = mapper.FlatSelect(typeof (FullFeaturedCompany), new CollectionJoin(typeof (FullFeaturedCompany), "Employees", emp));
-                Assert.AreEqual(2, selection.Count, "Could not find the 2 expected companies.");
+                ClassicAssert.AreEqual(2, selection.Count, "Could not find the 2 expected companies.");
 
                 /*
                  * Join typeof(Company) with typeof(Employee)
@@ -64,7 +65,7 @@ namespace ObjectMapper.NUnits.Common.Tests
                 selection = mapper.FlatSelect(typeof (FullFeaturedCompany),
                                               new CollectionJoin(typeof (FullFeaturedCompany), "Employees",
                                                                  typeof (Employee)));
-                Assert.AreEqual(3, selection.Count, "Could not find the 3 expected companies.");
+                ClassicAssert.AreEqual(3, selection.Count, "Could not find the 3 expected companies.");
             }
         }
 
@@ -105,7 +106,7 @@ namespace ObjectMapper.NUnits.Common.Tests
                                   from employee in mapper.Query<LinkBridge<FullFeaturedCompany, Employee>>("FFCOMPANY_EMPLOYEES")
                                   where ffCompany == employee.Parent && ffCompany == c1
                                   select ffCompany).Single();
-                Assert.AreEqual(c1.Id, linqLoaded.Id, "Could not load company");
+                ClassicAssert.AreEqual(c1.Id, linqLoaded.Id, "Could not load company");
             }
         }
 
@@ -142,21 +143,21 @@ namespace ObjectMapper.NUnits.Common.Tests
                  */
                 var loaded = (FullFeaturedCompany) mapper.FlatLoad(typeof (FullFeaturedCompany),
                                                                                    new Join(c1, "Owner", emp));
-                Assert.AreEqual(c1.Id, loaded.Id, "Could not load company");
+                ClassicAssert.AreEqual(c1.Id, loaded.Id, "Could not load company");
 
                 /*
                  * Join typeof(Company) with owner object
                  */
                 var selection = mapper.FlatSelect(typeof (FullFeaturedCompany),
                                                     new Join(typeof (FullFeaturedCompany), "Owner", emp));
-                Assert.AreEqual(2, selection.Count, "Could not find the 2 expected companies.");
+                ClassicAssert.AreEqual(2, selection.Count, "Could not find the 2 expected companies.");
 
                 /*
                  * Join typeof(Company) with typeof(Employee)
                  */
                 selection = mapper.FlatSelect(typeof (FullFeaturedCompany),
                                               new Join(typeof (FullFeaturedCompany), "Owner", typeof (Employee)));
-                Assert.AreEqual(3, selection.Count, "Could not find the 3 expected companies.");
+                ClassicAssert.AreEqual(3, selection.Count, "Could not find the 3 expected companies.");
             }
         }
     }

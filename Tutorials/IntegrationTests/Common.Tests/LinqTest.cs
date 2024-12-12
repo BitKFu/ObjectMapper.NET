@@ -6,6 +6,7 @@ using System.Text;
 using AdFactum.Data.Linq;
 using AdFactum.Data.Util;
 using NUnit.Framework;
+using NUnit.Framework.Legacy;
 using ObjectMapper.NUnits.BusinessEntities;
 using ObjectMapper.NUnits.Core;
 
@@ -58,7 +59,7 @@ namespace ObjectMapper.NUnits.Common.Tests
                 var c3 = contacts.AsQueryable();
 
                 var trippleIt = c1.Concat(c2).Concat(c3).Count();
-                Assert.AreEqual(3, trippleIt);
+                ClassicAssert.AreEqual(3, trippleIt);
             }
         }
 
@@ -78,28 +79,28 @@ namespace ObjectMapper.NUnits.Common.Tests
                 var tableContact = mapper.Query<Contact>();
                 var contacts = from contact in tableContact where contact.FirstName == "Fritz" select contact;
                 ObjectDumper.Write(contacts);
-                Assert.AreEqual(1, contacts.ToList().Count);
+                ClassicAssert.AreEqual(1, contacts.ToList().Count);
 
                 /*
                  * Select objects with AND
                  */
                 var contactsAnd = from contact in tableContact where contact.FirstName == "Fritz" && contact.LastName == "Bauer" select contact;
                 ObjectDumper.Write(contactsAnd);
-                Assert.AreEqual(1, contactsAnd.ToList().Count);
+                ClassicAssert.AreEqual(1, contactsAnd.ToList().Count);
 
                 /*
                  * Select objects with OR
                  */
                 var contactsOr = from contact in tableContact where contact.FirstName == "Fritz" || contact.LastName == "Habicht" select contact;
                 ObjectDumper.Write(contactsOr);
-                Assert.AreEqual(2, contactsOr.ToList().Count);
+                ClassicAssert.AreEqual(2, contactsOr.ToList().Count);
 
                 /*
                  * Select objects with OR OR OR
                  */
                 var contactsOrOr = from contact in tableContact where contact.FirstName == "Fritz" || contact.LastName == "Habicht" || contact.LastName == "Schubert" select contact;
                 ObjectDumper.Write(contactsOrOr);
-                Assert.AreEqual(3, contactsOrOr.ToList().Count);
+                ClassicAssert.AreEqual(3, contactsOrOr.ToList().Count);
             }
         }
 

@@ -7,6 +7,7 @@ using AdFactum.Data.Linq;
 using AdFactum.Data.Queries;
 using AdFactum.Data.Util;
 using NUnit.Framework;
+using NUnit.Framework.Legacy;
 using ObjectMapper.NUnits.BusinessEntities;
 using ObjectMapper.NUnits.Core;
 
@@ -47,7 +48,7 @@ namespace ObjectMapper.NUnits.Common.Tests
                 /*
                  * We selected two contacts
                  */
-                Assert.AreEqual(2, hechtFamily.Count, "We expected two objects.");
+                ClassicAssert.AreEqual(2, hechtFamily.Count, "We expected two objects.");
             }
         }
 
@@ -95,8 +96,8 @@ namespace ObjectMapper.NUnits.Common.Tests
 
                 var loaded =
                     (FullFeaturedCompany)mapper.Load(typeof(FullFeaturedCompany), companyCondition);
-                Assert.IsNotNull(loaded, "Could not load company");
-                Assert.AreEqual(company.Id, loaded.Id, "Company equals not expected company");
+                ClassicAssert.IsNotNull(loaded, "Could not load company");
+                ClassicAssert.AreEqual(company.Id, loaded.Id, "Company equals not expected company");
             }
         }
 
@@ -159,8 +160,8 @@ namespace ObjectMapper.NUnits.Common.Tests
                                     where hans.Union(john).Contains(fcompany)
                                     select fcompany).First();
 
-                Assert.IsNotNull(unionCompany, "Could not load company");
-                Assert.AreEqual(company.Id, unionCompany.Id, "Company equals not expected company");
+                ClassicAssert.IsNotNull(unionCompany, "Could not load company");
+                ClassicAssert.AreEqual(company.Id, unionCompany.Id, "Company equals not expected company");
                 ObjectDumper.Write(unionCompany);
             }
         }

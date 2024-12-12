@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using AdFactum.Data.Util;
 using NUnit.Framework;
+using NUnit.Framework.Legacy;
 using ObjectMapper.NUnits.Northwind.Entities;
 
 namespace ObjectMapper.NUnits.Northwind.Tests
@@ -25,12 +26,12 @@ namespace ObjectMapper.NUnits.Northwind.Tests
             using (var mapper = OBM.CreateMapper(Connection))
             {
                 var order = mapper.FlatLoad(typeof (Order), 10248) as Order;
-                Assert.IsNotNull(order);
-                Assert.IsNull(order.Details, "Details must be null, because we only flat loaded it.");
+                ClassicAssert.IsNotNull(order);
+                ClassicAssert.IsNull(order.Details, "Details must be null, because we only flat loaded it.");
 
                 order = mapper.Load(typeof (Order), 10248, HierarchyLevel.AllDependencies) as Order;
-                Assert.IsNotNull(order);
-                Assert.IsNotNull(order.Details, "Details must not be null, because we only flat loaded it.");
+                ClassicAssert.IsNotNull(order);
+                ClassicAssert.IsNotNull(order.Details, "Details must not be null, because we only flat loaded it.");
             }    
         }
     }

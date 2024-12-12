@@ -11,8 +11,8 @@
     <PackageId>ObjectMapper.NET_Postgres_Standard20</PackageId>
     <Authors>Gerhard Stephan</Authors>
     <Company>TimePunch KG</Company>
-    <Version>4.9.7.0</Version>
-    <AssemblyVersion>4.9.7.0</AssemblyVersion>
+    <Version>4.9.8.0</Version>
+    <AssemblyVersion>4.9.8.0</AssemblyVersion>
     <PackageProjectUrl>https://github.com/BitKFu/ObjectMapper.NET</PackageProjectUrl>
     <PackageLicenseExpression>MS-PL</PackageLicenseExpression>
     <RepositoryUrl>https://github.com/BitKFu/ObjectMapper.NET</RepositoryUrl>
@@ -42,7 +42,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Source\ObjectMapper .NET Standard 2.0.csproj" />
-    <PackageReference Include="Npgsql" Version="5.0.4" />
+    <PackageReference Include="Npgsql" Version="8.0.6" />
+    <PackageReference Include="System.Text.Json" Version="9.0.0" />
   </ItemGroup>
 
 </Project>

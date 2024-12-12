@@ -7,8 +7,8 @@
     <RootNamespace>AdFactum.Data</RootNamespace>
     <AssemblyName>ObjectMapper</AssemblyName>
     <PackageId>ObjectMapper.NET_net472</PackageId>
-    <Version>4.9.7.0</Version>
-    <AssemblyVersion>4.9.7.0</AssemblyVersion>
+    <Version>4.9.8.0</Version>
+    <AssemblyVersion>4.9.8.0</AssemblyVersion>
     <Authors>Gerhard Stephan</Authors>
     <Company>TimePunch KG</Company>
     <SignAssembly>true</SignAssembly>
@@ -268,15 +268,15 @@
   <ItemGroup>
     <PackageReference Include="EnterpriseLibrary.TransientFaultHandling" Version="6.0.1304" />
     <PackageReference Include="EnterpriseLibrary.TransientFaultHandling.Data" Version="6.0.1304.1" />
-    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="5.0.0" />
-    <PackageReference Include="System.Buffers" Version="4.5.1" />
-    <PackageReference Include="System.Memory" Version="4.5.4" />
-    <PackageReference Include="System.Numerics.Vectors" Version="4.5.0" />
-    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="5.0.0" />
-    <PackageReference Include="System.Text.Encodings.Web" Version="5.0.1" />
-    <PackageReference Include="System.Text.Json" Version="5.0.2" />
-    <PackageReference Include="System.Threading.Channels" Version="5.0.0" />
-    <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.5.4" />
+    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="9.0.0" />
+    <PackageReference Include="System.Buffers" Version="4.6.0" />
+    <PackageReference Include="System.Memory" Version="4.6.0" />
+    <PackageReference Include="System.Numerics.Vectors" Version="4.6.0" />
+    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.1.0" />
+    <PackageReference Include="System.Text.Encodings.Web" Version="9.0.0" />
+    <PackageReference Include="System.Text.Json" Version="9.0.0" />
+    <PackageReference Include="System.Threading.Channels" Version="9.0.0" />
+    <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.6.0" />
   </ItemGroup>
   <ItemGroup>
     <Compile Update="ObjectMapper.cs">
