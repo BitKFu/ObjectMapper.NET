@@ -1320,7 +1320,18 @@ namespace AdFactum.Data.Internal
             catch(Exception ex)
             {
                 // Log the error, but do not throw it
-                ErrorMessage(ex); 
+                ErrorMessage(ex);
+
+                try
+                {
+                    Transaction?.Dispose();
+                    Transaction = null;
+                }
+                catch (Exception ex2)
+                {
+                    // Log the error, but do not throw it
+                    ErrorMessage(ex2);
+                }
             }
             finally
             {
