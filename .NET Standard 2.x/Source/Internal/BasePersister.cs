@@ -1310,10 +1310,22 @@ namespace AdFactum.Data.Internal
         /// </summary>
         public virtual void Rollback()
         {
-            if (SqlTracer != null) SqlTracer.Rollback();
-            Transaction.Rollback();
-            Transaction.Dispose();
-            Transaction = null;
+            try
+            {
+                if (SqlTracer != null) SqlTracer.Rollback();
+                Transaction.Rollback();
+                Transaction.Dispose();
+                Transaction = null;
+            }
+            catch(Exception ex)
+            {
+                // Log the error, but do not throw it
+                ErrorMessage(ex); 
+            }
+            finally
+            {
+                Transaction = null;
+            }
         }
 
         #endregion
