@@ -83,7 +83,7 @@ namespace AdFactum.Data.SqlServer
 			 * Strings that are greater than 8000 characters are handled as TEXT fields
 			 */
             if (type.Equals(typeof(string)) && length>8000)
-                return (field.CustomProperty.MetaInfo.IsUnicode) ? "NTEXT" : "TEXT";
+                return (field.CustomProperty.MetaInfo.IsUnicode) ? "NVARCHAR(MAX)" : "VARCHAR(MAX)";
 
             string result = GetStringForDDL(field, type, length);
 

@@ -581,6 +581,7 @@ namespace AdFactum.Data.Internal
                     return;
                 }
 
+                // Insert new field
                 field = new Field(
                     new FieldDescription(columnName, ObjectType, typeof (Field), property.PropertyType,
                                          propertyCustomInfo, false), fieldObject);
@@ -788,6 +789,10 @@ namespace AdFactum.Data.Internal
                         postUpdate);
                 }
             }
+
+            // LastUpdate field should not cause the object to be marked as modified, if only this field is changed
+            if (Properties.FieldProperties.TryGetValue(DBConst.LastUpdateField, out var lastUpdateField))
+                lastUpdateField.IsModified = false;
         }
 
 
