@@ -791,7 +791,7 @@ namespace AdFactum.Data.Internal
             }
 
             // LastUpdate field should not cause the object to be marked as modified, if only this field is changed
-            if (Properties.FieldProperties.TryGetValue(DBConst.LastUpdateField, out var lastUpdateField))
+            if (pVo is IMarkedValueObject && Properties.FieldProperties.TryGetValue(DBConst.LastUpdateField, out var lastUpdateField))
                 lastUpdateField.IsModified = false;
         }
 
