@@ -22,6 +22,7 @@ namespace AdFactum.Data.SqlServer
         private const string CONNECTION_STRING = "Persist Security Info=False;Integrated Security=False;Initial Catalog={0};Data Source={1};User Id={2};Password={3};";
         private const string CONNECTION_STRING_TRUSTED = "Persist Security Info=False;Integrated Security=SSPI;Initial Catalog={0};Data Source={1};";
 
+
         public SqlPersister()
         {
             TypeMapper = new SqlTypeMapper();
@@ -316,6 +317,9 @@ namespace AdFactum.Data.SqlServer
                 Transaction = (SqlTransaction) Transaction
             };
 
+            if (CommandTimeout != null)
+                command.CommandTimeout = CommandTimeout.Value;
+
             return command;
         }
 
@@ -328,8 +332,12 @@ namespace AdFactum.Data.SqlServer
             var command = new SqlCommand
             {
                 Connection = (SqlConnection) Connection, 
-                Transaction = (SqlTransaction) Transaction
+                Transaction = (SqlTransaction) Transaction,
             };
+
+            if (CommandTimeout != null) 
+                command.CommandTimeout = CommandTimeout.Value;
+
             return command;
         }
 

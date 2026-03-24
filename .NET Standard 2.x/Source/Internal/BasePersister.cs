@@ -14,10 +14,7 @@ using AdFactum.Data.Exceptions;
 using AdFactum.Data.Fields;
 using AdFactum.Data.Interfaces;
 using AdFactum.Data.Linq.Expressions;
-using AdFactum.Data.Linq.Language;
-using AdFactum.Data.Linq.Translation;
 using AdFactum.Data.Queries;
-using AdFactum.Data.Repository;
 using AdFactum.Data.Util;
 
 namespace AdFactum.Data.Internal
@@ -86,6 +83,11 @@ namespace AdFactum.Data.Internal
         /// 	<c>true</c> if [export foreign key constraints]; otherwise, <c>false</c>.
         /// </value>
         public bool ExportForeignKeyConstraints { get; set; }
+
+        /// <summary>
+        /// Gets or sets the command timeout in seconds. If null, the default timeout of the underlying ADO.NET provider will be used.
+        /// </summary>
+        public int? CommandTimeout { get; set; }
 
         #region ILinqPersister Members
 

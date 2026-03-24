@@ -5,7 +5,6 @@ using System.Data;
 using AdFactum.Data.Interfaces;
 using AdFactum.Data.Internal;
 using AdFactum.Data.Queries;
-using AdFactum.Data.Repository;
 
 namespace AdFactum.Data
 {
@@ -168,5 +167,8 @@ namespace AdFactum.Data
 
         /// <summary> Gets the Integrity Information Class </summary>
         IIntegrity Integrity { get; }
-	}
+
+        /// <summary> Gets or sets the command timeout in seconds. If null, the default timeout of the underlying ADO.NET provider will be used. </summary>
+        int? CommandTimeout { get; set; }
+    }
 }

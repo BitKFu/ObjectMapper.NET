@@ -1313,5 +1313,7 @@ namespace AdFactum.Data.Xml
         {
             get { throw new NotSupportedException(); }
         }
+
+        public int? CommandTimeout { get; set; }
     }
 }

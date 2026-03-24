@@ -12,7 +12,6 @@ using AdFactum.Data.Internal;
 using AdFactum.Data.Linq;
 using AdFactum.Data.Repository;
 using AdFactum.Data.Util;
-using AdFactum.Data.Linq;
 
 namespace AdFactum.Data
 {

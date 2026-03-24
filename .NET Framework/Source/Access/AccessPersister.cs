@@ -357,6 +357,9 @@ namespace AdFactum.Data.Access
             var command = new OleDbCommand(sql, (OleDbConnection) Connection)
                               {Transaction = (OleDbTransaction) Transaction};
 
+            if (CommandTimeout != null)
+                command.CommandTimeout = CommandTimeout.Value;
+
             return command;
         }
 
@@ -371,6 +374,9 @@ namespace AdFactum.Data.Access
                                   Connection = (OleDbConnection) Connection,
                                   Transaction = (OleDbTransaction) Transaction
                               };
+
+            if (CommandTimeout != null)
+                command.CommandTimeout = CommandTimeout.Value;
 
             return command;
         }

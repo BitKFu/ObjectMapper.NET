@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using AdFactum.Data.Internal;
@@ -109,5 +108,11 @@ namespace AdFactum.Data
         /// <param name="command">Command</param>
         /// <returns></returns>
         string CreateSql(IDbCommand command);
-	}
+
+ 
+        /// <summary>
+        /// Gets or sets the command timeout in seconds. If null, the default timeout of the underlying ADO.NET provider will be used.
+        /// </summary>
+        int? CommandTimeout { get; set; }
+    }
 }

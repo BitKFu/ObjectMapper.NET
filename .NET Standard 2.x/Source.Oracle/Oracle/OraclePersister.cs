@@ -351,17 +351,26 @@ namespace AdFactum.Data.Oracle
 		/// <returns></returns>
 		public override IDbCommand CreateCommand(string sql)
 		{
-			return new OracleCommand(sql, Connection as OracleConnection);
-		}
+			var command = new OracleCommand(sql, Connection as OracleConnection);
 
-		/// <summary>
-		/// Creates the command.
-		/// </summary>
-		/// <returns></returns>
+            if (CommandTimeout != null)
+                command.CommandTimeout = CommandTimeout.Value;
+
+            return command;
+        }
+
+        /// <summary>
+        /// Creates the command.
+        /// </summary>
+        /// <returns></returns>
         public override IDbCommand CreateCommand()
 		{
 			var command = new OracleCommand {Connection = Connection as OracleConnection};
-		    return command;
+            
+            if (CommandTimeout != null)
+                command.CommandTimeout = CommandTimeout.Value;
+
+            return command;
 		}
 
         /// <summary>

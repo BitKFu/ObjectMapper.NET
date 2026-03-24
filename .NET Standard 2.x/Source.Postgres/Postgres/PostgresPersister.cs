@@ -133,7 +133,12 @@ namespace AdFactum.Data.Postgres
         /// <returns></returns>
         public override IDbCommand CreateCommand(string sql)
         {
-            return new NpgsqlCommand(sql, (NpgsqlConnection) Connection, (NpgsqlTransaction) Transaction);
+            var command = new NpgsqlCommand(sql, (NpgsqlConnection) Connection, (NpgsqlTransaction) Transaction);
+
+            if (CommandTimeout != null)
+                command.CommandTimeout = CommandTimeout.Value;
+
+            return command;  
         }
 
         /// <summary>
@@ -234,6 +239,10 @@ namespace AdFactum.Data.Postgres
                                   Connection = (NpgsqlConnection) Connection,
                                   Transaction = (NpgsqlTransaction) Transaction 
                               };
+
+            if (CommandTimeout != null)
+                command.CommandTimeout = CommandTimeout.Value;
+
             return command;
         }
 

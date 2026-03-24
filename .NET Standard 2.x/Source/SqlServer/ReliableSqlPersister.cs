@@ -66,6 +66,9 @@ namespace AdFactum.Data.SqlServer
                 Transaction = (SqlTransaction)Transaction
             };
 
+            if (CommandTimeout != null)
+                command.CommandTimeout = CommandTimeout.Value;
+
             return command;
         }
 
@@ -81,6 +84,10 @@ namespace AdFactum.Data.SqlServer
                 Connection = sqlConnection,
                 Transaction = (SqlTransaction)Transaction
             };
+
+            if (CommandTimeout != null)
+                command.CommandTimeout = CommandTimeout.Value;
+
             return command;
         }
 

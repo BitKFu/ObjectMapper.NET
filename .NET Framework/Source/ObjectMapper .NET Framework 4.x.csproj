@@ -7,8 +7,8 @@
     <RootNamespace>AdFactum.Data</RootNamespace>
     <AssemblyName>ObjectMapper</AssemblyName>
     <PackageId>ObjectMapper.NET_net472</PackageId>
-    <Version>5.0.0.0</Version>
-    <AssemblyVersion>5.0.0.0</AssemblyVersion>
+    <Version>5.0.1.0</Version>
+    <AssemblyVersion>5.0.1.0</AssemblyVersion>
     <Authors>Gerhard Stephan</Authors>
     <Company>TimePunch KG</Company>
     <SignAssembly>true</SignAssembly>
@@ -130,7 +130,6 @@
     <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Grouping.cs" Link="Linq\Grouping.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source\Linq\ILinqQuery.cs" Link="Linq\ILinqQuery.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Language\LinqMethodInspector.cs" Link="Linq\Language\LinqMethodInspector.cs" />
-    <Compile Include="..\..\.NET Standard 2.x\Source.Oracle\Linq\Language\OracleExpressionWriter.cs" Link="Linq\Language\OracleExpressionWriter.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Language\SqlExpressionWriter.cs" Link="Linq\Language\SqlExpressionWriter.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source\Linq\LinkBridge.cs" Link="Linq\LinkBridge.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Query.cs" Link="Linq\Query.cs" />
@@ -148,8 +147,6 @@
     <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Translation\ExpressionTypeFinder.cs" Link="Linq\Translation\ExpressionTypeFinder.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Translation\FromExpressionFinder.cs" Link="Linq\Translation\FromExpressionFinder.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Translation\GroupingBinder.cs" Link="Linq\Translation\GroupingBinder.cs" />
-    <Compile Include="..\..\.NET Standard 2.x\Source.Oracle\Linq\Translation\OracleOrderByRewriter.cs" Link="Linq\Translation\OracleOrderByRewriter.cs" />
-    <Compile Include="..\..\.NET Standard 2.x\Source.Oracle\Linq\Translation\OracleTakeToRowNumberRewriter.cs" Link="Linq\Translation\OracleTakeToRowNumberRewriter.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Translation\OrderByRewriter.cs" Link="Linq\Translation\OrderByRewriter.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Translation\OriginPropertyFinder.cs" Link="Linq\Translation\OriginPropertyFinder.cs" />
     <Compile Include="..\..\.NET Standard 2.x\Source\Linq\Translation\ParameterBinder.cs" Link="Linq\Translation\ParameterBinder.cs" />
