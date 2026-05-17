@@ -3,11 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Data;
-using System.Data.SqlClient;
 using AdFactum.Data.Interfaces;
 using AdFactum.Data.Internal;
 using AdFactum.Data.Queries;
 using AdFactum.Data.Util;
+using Microsoft.Data.SqlClient;
 
 namespace AdFactum.Data.SqlServer
 {
@@ -19,14 +19,19 @@ namespace AdFactum.Data.SqlServer
         /// <summary>
         /// Connection String to a Microsoft SQL Server
         /// </summary>
-        private const string CONNECTION_STRING = "Persist Security Info=False;Integrated Security=False;Initial Catalog={0};Data Source={1};User Id={2};Password={3};";
-        private const string CONNECTION_STRING_TRUSTED = "Persist Security Info=False;Integrated Security=SSPI;Initial Catalog={0};Data Source={1};";
+        private const string CONNECTION_STRING = "Persist Security Info=False;Integrated Security=False;Initial Catalog={0};Data Source={1};User Id={2};Password={3};TrustServerCertificate={4};";
+        private const string CONNECTION_STRING_TRUSTED = "Persist Security Info=False;Integrated Security=SSPI;Initial Catalog={0};Data Source={1};TrustServerCertificate={2};";
 
 
         public SqlPersister()
         {
             TypeMapper = new SqlTypeMapper();
         }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the server certificate should be trusted.
+        /// </summary>
+        public bool TrustServerCertificate { get; set; } = true;
 
         /// <summary>
         /// Returns the Schema Writer
@@ -262,7 +267,7 @@ namespace AdFactum.Data.SqlServer
         /// <param name="additionalConnectionParameters">Additional connection parameters</param>
         public virtual void Connect(string database, string server, string additionalConnectionParameters)
         {
-            String connectionString = String.Format(CONNECTION_STRING_TRUSTED, database, server) + additionalConnectionParameters;
+            String connectionString = String.Format(CONNECTION_STRING_TRUSTED, database, server, TrustServerCertificate) + additionalConnectionParameters;
             Connect(connectionString);
         }
 
@@ -301,7 +306,7 @@ namespace AdFactum.Data.SqlServer
         /// <param name="additionalConnectionParameters">Additional connection parameters</param>
         public virtual void Connect(string database, string server, string user, string password, string additionalConnectionParameters)
         {
-            var connectionString = String.Format(CONNECTION_STRING, database, server, user, password) + additionalConnectionParameters;
+            var connectionString = String.Format(CONNECTION_STRING, database, server, user, password, TrustServerCertificate) + additionalConnectionParameters;
             Connect(connectionString);
         }
 
@@ -366,7 +371,10 @@ namespace AdFactum.Data.SqlServer
                     return current;
             }
 
-            var parameter = new SqlParameter("@p" + numberOfParameter.ToString("00"), dbType) {Value = convertedValue};
+            IDbDataParameter parameter = new SqlParameter("@p" + numberOfParameter.ToString("00"), dbType)
+            {
+                Value = convertedValue ?? DBNull.Value
+            };
             parameters.Add(parameter);
             numberOfParameter++;
 
@@ -382,7 +390,9 @@ namespace AdFactum.Data.SqlServer
                 parameterName = string.Concat("@", parameterName);
 
             IDbDataParameter parameter = new SqlParameter(parameterName, (SqlDbType)TypeMapper.GetEnumForDatabase(type, metaInfo))
-            {Value = TypeMapper.ConvertValueToDbType(value)};
+            {
+                Value = TypeMapper.ConvertValueToDbType(value ?? DBNull.Value)
+            };
 
             return parameter;
         }

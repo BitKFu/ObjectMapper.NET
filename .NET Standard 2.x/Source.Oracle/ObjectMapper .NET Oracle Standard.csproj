@@ -11,8 +11,8 @@
     <PackageId>ObjectMapper.NET_Oracle</PackageId>
     <Authors>Gerhard Stephan</Authors>
     <Company>TimePunch KG</Company>
-    <Version>5.0.2.0</Version>
-    <AssemblyVersion>5.0.2.0</AssemblyVersion>
+    <Version>6.0.3.0</Version>
+    <AssemblyVersion>6.0.3.0</AssemblyVersion>
     <PackageProjectUrl>https://github.com/BitKFu/ObjectMapper.NET</PackageProjectUrl>
     <PackageLicenseExpression>MS-PL</PackageLicenseExpression>
     <RepositoryUrl>https://github.com/BitKFu/ObjectMapper.NET</RepositoryUrl>
@@ -27,7 +27,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.Data.SqlClient" Version="4.9.1" />
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="5.2.2" />
     <PackageReference Include="System.Text.Json" Version="10.0.8" />
   </ItemGroup>
 

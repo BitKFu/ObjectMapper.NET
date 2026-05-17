@@ -1,7 +1,7 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.OleDb;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 using System.IO;
 using AdFactum.Data;
 using AdFactum.Data.Access;

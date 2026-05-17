@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Data;
 using System.Data.Common;
-using System.Data.SqlClient;
 using AdFactum.Data.Exceptions;
-using Microsoft.Practices.EnterpriseLibrary.TransientFaultHandling;
+using Microsoft.Data.SqlClient;
 
 namespace AdFactum.Data.SqlServer
 {
@@ -12,31 +11,31 @@ namespace AdFactum.Data.SqlServer
     /// </summary>
     public class ReliableSqlPersister : SqlPersister
     {
-        private static readonly RetryPolicy<SqlDatabaseTransientErrorDetectionStrategy> defaultConnectionRetryPolicy =
-            new RetryPolicy<SqlDatabaseTransientErrorDetectionStrategy>(
-            new ExponentialBackoff(name: "default sql connection", retryCount: 3,
-                minBackoff: TimeSpan.FromMilliseconds(100),
-                maxBackoff: TimeSpan.FromSeconds(30),
-                deltaBackoff: TimeSpan.FromSeconds(1),
-            firstFastRetry: true));
+        private static readonly SqlRetryLogicOption defaultConnectionRetryPolicy = new SqlRetryLogicOption
+        {
+            NumberOfTries = 4,
+            MinTimeInterval = TimeSpan.FromMilliseconds(100),
+            MaxTimeInterval = TimeSpan.FromSeconds(30),
+            DeltaTime = TimeSpan.FromSeconds(1),
+        };
 
-        private static readonly RetryPolicy<SqlDatabaseTransientErrorDetectionStrategy> defaultCommandRetryPolicy =
-            new RetryPolicy<SqlDatabaseTransientErrorDetectionStrategy>(
-            new ExponentialBackoff(name: "default sql command", retryCount: 3,
-                minBackoff: TimeSpan.FromMilliseconds(100),
-                maxBackoff: TimeSpan.FromSeconds(30),
-                deltaBackoff: TimeSpan.FromSeconds(1),
-                firstFastRetry: true));
-
-        /// <summary>
-        /// Gets or sets the retry policy for the connection
-        /// </summary>
-        public RetryPolicy ConnectionRetryPolicy { get; set; } = defaultConnectionRetryPolicy;
+        private static readonly SqlRetryLogicOption defaultCommandRetryPolicy = new SqlRetryLogicOption
+        {
+            NumberOfTries = 4,
+            MinTimeInterval = TimeSpan.FromMilliseconds(100),
+            MaxTimeInterval = TimeSpan.FromSeconds(30),
+            DeltaTime = TimeSpan.FromSeconds(1),
+        };
 
         /// <summary>
-        /// Gets or sets the retry policy for the command
+        /// Gets or sets the retry policy for the connection.
         /// </summary>
-        public RetryPolicy CommandRetryPolicy { get; set; } = defaultCommandRetryPolicy;
+        public SqlRetryLogicOption ConnectionRetryPolicy { get; set; } = defaultConnectionRetryPolicy;
+
+        /// <summary>
+        /// Gets or sets the retry policy for the command.
+        /// </summary>
+        public SqlRetryLogicOption CommandRetryPolicy { get; set; } = defaultCommandRetryPolicy;
 
         /// <summary>
         /// Connects to a Microsoft SQL Server using an Connection String
@@ -45,8 +44,8 @@ namespace AdFactum.Data.SqlServer
         public override void Connect(string connectionString)
         {
             Connection = new ReliableSqlConnection(connectionString,
-                ConnectionRetryPolicy ?? RetryManager.Instance.GetDefaultSqlConnectionRetryPolicy(),
-                CommandRetryPolicy ?? RetryManager.Instance.GetDefaultSqlCommandRetryPolicy());
+                ConnectionRetryPolicy ?? defaultConnectionRetryPolicy,
+                CommandRetryPolicy ?? defaultCommandRetryPolicy);
             ((ReliableSqlConnection)Connection).Open();
 
             if (SqlTracer != null)
@@ -66,6 +65,8 @@ namespace AdFactum.Data.SqlServer
                 Transaction = (SqlTransaction)Transaction
             };
 
+            ((ReliableSqlConnection)Connection).ConfigureCommand(command);
+
             if (CommandTimeout != null)
                 command.CommandTimeout = CommandTimeout.Value;
 
@@ -84,6 +85,8 @@ namespace AdFactum.Data.SqlServer
                 Connection = sqlConnection,
                 Transaction = (SqlTransaction)Transaction
             };
+
+            ((ReliableSqlConnection)Connection).ConfigureCommand(command);
 
             if (CommandTimeout != null)
                 command.CommandTimeout = CommandTimeout.Value;
@@ -106,15 +109,9 @@ namespace AdFactum.Data.SqlServer
             sqlCommand.CommandText = ReplaceStatics(sqlCommand.CommandText);
             try
             {
-                return nonQuery 
-
-                    ? (object) sqlCommand.ExecuteNonQueryWithRetry(
-                        CommandRetryPolicy ?? RetryManager.Instance.GetDefaultSqlCommandRetryPolicy(),
-                        ConnectionRetryPolicy ?? RetryManager.Instance.GetDefaultSqlConnectionRetryPolicy()) 
-
-                    : sqlCommand.ExecuteReaderWithRetry(
-                        CommandRetryPolicy ?? RetryManager.Instance.GetDefaultSqlCommandRetryPolicy(),
-                        ConnectionRetryPolicy ?? RetryManager.Instance.GetDefaultSqlConnectionRetryPolicy());
+                return nonQuery
+                    ? (object)sqlCommand.ExecuteNonQuery()
+                    : sqlCommand.ExecuteReader();
             }
             catch (DbException exc)
             {
