@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.1</TargetFramework>
+    <TargetFrameworks>netstandard2.1;netstandard2.0</TargetFrameworks>
     <RootNamespace>AdFactum.Data</RootNamespace>
     <AssemblyName>ObjectMapper.Postgres</AssemblyName>
     <SignAssembly>true</SignAssembly>
@@ -11,8 +11,8 @@
     <PackageId>ObjectMapper.NET_Postgres</PackageId>
     <Authors>Gerhard Stephan</Authors>
     <Company>TimePunch KG</Company>
-    <Version>5.0.1.0</Version>
-    <AssemblyVersion>5.0.1.0</AssemblyVersion>
+    <Version>5.0.2.0</Version>
+    <AssemblyVersion>5.0.2.0</AssemblyVersion>
     <PackageProjectUrl>https://github.com/BitKFu/ObjectMapper.NET</PackageProjectUrl>
     <PackageLicenseExpression>MS-PL</PackageLicenseExpression>
     <RepositoryUrl>https://github.com/BitKFu/ObjectMapper.NET</RepositoryUrl>
@@ -28,9 +28,16 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Source\ObjectMapper .NET Standard.csproj" />
-    <PackageReference Include="Npgsql" Version="8.0.9" />
     <PackageReference Include="System.Data.SqlClient" Version="4.9.1" />
     <PackageReference Include="System.Text.Json" Version="10.0.8" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)'=='netstandard2.1'">
+    <PackageReference Include="Npgsql" Version="8.0.9" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)'=='netstandard2.0'">
+    <PackageReference Include="Npgsql" Version="8.0.6" />
   </ItemGroup>
 
 </Project>

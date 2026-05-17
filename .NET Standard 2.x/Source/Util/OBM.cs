@@ -16,6 +16,7 @@ namespace AdFactum.Data.Util
         {
             connectionMapping.Add(DatabaseType.SqlServer, OpenSqlConnection);
             connectionMapping.Add(DatabaseType.Xml, OpenXmlConnection);
+            connectionMapping.Add(DatabaseType.ReliableSqlServer, OpenReliableSqlConnection);
         }
 
         /// <summary>
@@ -86,6 +87,25 @@ namespace AdFactum.Data.Util
         private static IPersister OpenSqlConnection(DatabaseConnection connection, ISqlTracer tracer)
         {
             var sqlDb = new SqlPersister { SqlTracer = tracer };
+
+            if (connection.DatabaseName != "")
+            {
+                if (connection.TrustedConnection)
+                    sqlDb.Connect(connection.DatabaseName, connection.ServerName);
+                else
+                    sqlDb.Connect(connection.DatabaseName, connection.ServerName, connection.UserName, connection.Password);
+            }
+            return sqlDb;
+        }
+
+        /// <summary>
+        /// Opens an Sql Database Connection 
+        /// </summary>
+        /// <param name="connection">Database connection</param>
+        /// <param name="tracer">Trace object</param>
+        private static IPersister OpenReliableSqlConnection(DatabaseConnection connection, ISqlTracer tracer)
+        {
+            var sqlDb = new ReliableSqlPersister { SqlTracer = tracer };
 
             if (connection.DatabaseName != "")
             {
