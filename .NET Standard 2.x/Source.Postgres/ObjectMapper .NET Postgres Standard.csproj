@@ -28,9 +28,9 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Source\ObjectMapper .NET Standard.csproj" />
-    <PackageReference Include="Npgsql" Version="8.0.6" />
-    <PackageReference Include="System.Data.SqlClient" Version="4.9.0" />
-    <PackageReference Include="System.Text.Json" Version="9.0.0" />
+    <PackageReference Include="Npgsql" Version="8.0.9" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.9.1" />
+    <PackageReference Include="System.Text.Json" Version="10.0.8" />
   </ItemGroup>
 
 </Project>

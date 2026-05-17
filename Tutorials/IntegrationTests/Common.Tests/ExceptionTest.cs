@@ -7,7 +7,6 @@ using AdFactum.Data.Interfaces;
 using AdFactum.Data.Queries;
 using AdFactum.Data.Util;
 using NUnit.Framework;
-using NUnit.Framework.Legacy;
 using ObjectMapper.NUnits.BusinessEntities;
 using ObjectMapper.NUnits.Core;
 using ObjectMapper.NUnits.Xml.Tests;
@@ -42,7 +41,8 @@ namespace ObjectMapper.NUnits.Common.Tests
                 // Second save, tend to fail
                 nested = OBM.BeginTransaction(mapper);
                 mapper.Save(buying);
-                ClassicAssert.Throws<DirtyObjectException>(() => OBM.Commit(mapper, nested));
+                Action action = () => OBM.Commit(mapper, nested);
+                Assert.Throws<DirtyObjectException>(action);
             }
         }
 
@@ -62,7 +62,8 @@ namespace ObjectMapper.NUnits.Common.Tests
                 OBM.Commit(mapper, nested);
 
                 // The Load throws the MissingSetterException, because the value can't be set to the object.
-                ClassicAssert.Throws<MissingSetterException>(() => ObjectDumper.Write(mapper.Load(typeof (MissingSetter), missingSetter.Id)));
+                Action action = () => ObjectDumper.Write(mapper.Load(typeof (MissingSetter), missingSetter.Id));
+                Assert.Throws<MissingSetterException>(action);
             }
         }
 
@@ -77,7 +78,8 @@ namespace ObjectMapper.NUnits.Common.Tests
             using (AdFactum.Data.ObjectMapper mapper = OBM.CreateMapper(Connection))
             {
                 // A NoOpenTransactionException will be thrown, because no transaction has been opened.
-                ClassicAssert.Throws<NoOpenTransactionException>(() =>  mapper.Save(buying));
+                Action action = () => mapper.Save(buying);
+                Assert.Throws<NoOpenTransactionException>(action);
             }
         }
 
@@ -93,7 +95,8 @@ namespace ObjectMapper.NUnits.Common.Tests
                 noPrimaryKey.Buying = new Buying(2, "Tissues");
 
                 // Select sub object to produce a NoPrimaryKeyException
-                ClassicAssert.Throws<NoPrimaryKeyFoundException>(() => mapper.Select(typeof(Buying), new Join(noPrimaryKey, "Buying", typeof(Buying))));
+                Action action = () => mapper.Select(typeof(Buying), new Join(noPrimaryKey, "Buying", typeof(Buying)));
+                Assert.Throws<NoPrimaryKeyFoundException>(action);
             }
         }
 
@@ -106,7 +109,8 @@ namespace ObjectMapper.NUnits.Common.Tests
         {
             // Select sub object to produce a NoPrimaryKeyException
             IRepository repository;
-            ClassicAssert.Throws<PersisterDoesNotSupportRepositoryException>(() => repository = XmlTest.XmlMapper.Repository);
+            Action action = () => repository = XmlTest.XmlMapper.Repository;
+            Assert.Throws<PersisterDoesNotSupportRepositoryException>(action);
         }
 
         /// <summary>
@@ -115,7 +119,7 @@ namespace ObjectMapper.NUnits.Common.Tests
         [Test]
         public void TestTransactionAlreadyOpenException()
         {
-            ClassicAssert.Throws<TransactionAlreadyOpenException>(() =>
+            Action action = () =>
             {
                 using (AdFactum.Data.ObjectMapper mapper = OBM.CreateMapper(Connection))
                 {
@@ -130,7 +134,9 @@ namespace ObjectMapper.NUnits.Common.Tests
                         throw;
                     }
                 }
-            });
+            };
+
+            Assert.Throws<TransactionAlreadyOpenException>(action);
         }
 
         /// <summary>
@@ -152,10 +158,12 @@ namespace ObjectMapper.NUnits.Common.Tests
                 wrongType = mapper.Load(typeof (WrongType), wrongType.Id) as WrongType;
 
                 // The second try throws the exeption, because a shallow of the copy is cached and the method CreateNewObject will be called.
-                ClassicAssert.Throws<WrongTypeException>(() =>
+                Action action = () =>
                 {
                     wrongType = mapper.Load(typeof(WrongType), wrongType.Id) as WrongType;
-                });
+                };
+
+                Assert.Throws<WrongTypeException>(action);
 
                 ObjectDumper.Write(wrongType);
             }
