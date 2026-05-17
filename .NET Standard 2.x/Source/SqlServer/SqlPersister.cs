@@ -19,8 +19,8 @@ namespace AdFactum.Data.SqlServer
         /// <summary>
         /// Connection String to a Microsoft SQL Server
         /// </summary>
-        private const string CONNECTION_STRING = "Persist Security Info=False;Integrated Security=False;Initial Catalog={0};Data Source={1};User Id={2};Password={3};TrustServerCertificate={4};";
-        private const string CONNECTION_STRING_TRUSTED = "Persist Security Info=False;Integrated Security=SSPI;Initial Catalog={0};Data Source={1};TrustServerCertificate={2};";
+        private const string CONNECTION_STRING = "Persist Security Info={0};Integrated Security=False;Initial Catalog={1};Data Source={2};User Id={3};Password={4};TrustServerCertificate={5};";
+        private const string CONNECTION_STRING_TRUSTED = "Persist Security Info={0};Integrated Security=SSPI;Initial Catalog={1};Data Source={2};TrustServerCertificate={3};";
 
 
         public SqlPersister()
@@ -32,6 +32,11 @@ namespace AdFactum.Data.SqlServer
         /// Gets or sets a value indicating whether the server certificate should be trusted.
         /// </summary>
         public bool TrustServerCertificate { get; set; } = true;
+
+        /// <summary>
+        /// Gets or sets a value indicating whether security-sensitive information should be persisted in the connection string.
+        /// </summary>
+        public bool PersistSecurityInfo { get; set; }
 
         /// <summary>
         /// Returns the Schema Writer
@@ -267,7 +272,7 @@ namespace AdFactum.Data.SqlServer
         /// <param name="additionalConnectionParameters">Additional connection parameters</param>
         public virtual void Connect(string database, string server, string additionalConnectionParameters)
         {
-            String connectionString = String.Format(CONNECTION_STRING_TRUSTED, database, server, TrustServerCertificate) + additionalConnectionParameters;
+            String connectionString = String.Format(CONNECTION_STRING_TRUSTED, PersistSecurityInfo, database, server, TrustServerCertificate) + additionalConnectionParameters;
             Connect(connectionString);
         }
 
@@ -306,7 +311,7 @@ namespace AdFactum.Data.SqlServer
         /// <param name="additionalConnectionParameters">Additional connection parameters</param>
         public virtual void Connect(string database, string server, string user, string password, string additionalConnectionParameters)
         {
-            var connectionString = String.Format(CONNECTION_STRING, database, server, user, password, TrustServerCertificate) + additionalConnectionParameters;
+            var connectionString = String.Format(CONNECTION_STRING, PersistSecurityInfo, database, server, user, password, TrustServerCertificate) + additionalConnectionParameters;
             Connect(connectionString);
         }
 
