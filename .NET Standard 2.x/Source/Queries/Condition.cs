@@ -182,23 +182,15 @@ namespace AdFactum.Data.Queries
 		}
 
 
-		/// <summary>
-		/// Field 
-		/// </summary>
-		private readonly Field field;
-
-		/// <summary>
+        /// <summary>
 		/// Getter for the field
 		/// </summary>
-		public Field Field
-		{
-			get { return field; }
-		}
+		public Field Field { get; }
 
         /// <summary> Gets the parameter. </summary>
 	    public string FieldName
 	    {
-            get { return field != null ? field.Name : string.Empty; }
+            get { return Field != null ? Field.Name : string.Empty; }
 	    }
 
 		/// <summary>
@@ -239,10 +231,10 @@ namespace AdFactum.Data.Queries
 		/// <param name="pField">The field parameter defines the value that has to be compared.</param>
 		public Condition(Field pField)
 		{
-			field = pField;
+			Field = pField;
 			type = ConditionOperator.AND;
 			compareOperator = QueryOperator.Equals;
-            tableName = Table.GetTableInstance(field.FieldDescription).DefaultName;
+            tableName = Table.GetTableInstance(Field.FieldDescription).DefaultName;
 
 			AdjustCondition ();
 		}
@@ -256,9 +248,9 @@ namespace AdFactum.Data.Queries
 		public Condition(ConditionOperator pType, Field pField)
 		{
 			type = pType;
-			field = pField;
+			Field = pField;
 			compareOperator = QueryOperator.Equals;
-            tableName = Table.GetTableInstance(field.FieldDescription).DefaultName;
+            tableName = Table.GetTableInstance(Field.FieldDescription).DefaultName;
 
 			AdjustCondition ();
 		}
@@ -272,9 +264,9 @@ namespace AdFactum.Data.Queries
 		public Condition(ConditionOperator pType, QueryOperator pCompareOperator, Field pField)
 		{
 			type = pType;
-			field = pField;
+			Field = pField;
 			compareOperator = pCompareOperator;
-            tableName = Table.GetTableInstance(field.FieldDescription).DefaultName;
+            tableName = Table.GetTableInstance(Field.FieldDescription).DefaultName;
 
 			AdjustCondition ();
 		}
@@ -293,7 +285,7 @@ namespace AdFactum.Data.Queries
 		public Condition(ConditionOperator pType, QueryOperator pCompareOperator, Field pField, Field pRightField)
 		{
 			type = pType;
-			field = pField;
+			Field = pField;
 			rightSideField = pRightField;
 			compareOperator = pCompareOperator;
 
@@ -315,7 +307,7 @@ namespace AdFactum.Data.Queries
 		/// <param name="pField">The field parameter defines the value that has to be compared.</param>
 		public Condition(string pTableName, Field pField)
 		{
-			field = pField;
+			Field = pField;
 			type = ConditionOperator.AND;
 			compareOperator = QueryOperator.Equals;
 			tableName = pTableName;
@@ -333,7 +325,7 @@ namespace AdFactum.Data.Queries
 		public Condition(string pTableName, ConditionOperator pType, Field pField)
 		{
 			type = pType;
-			field = pField;
+			Field = pField;
 			compareOperator = QueryOperator.Equals;
 			tableName = pTableName;
 
@@ -350,7 +342,7 @@ namespace AdFactum.Data.Queries
 		public Condition(string pTableName, ConditionOperator pType, QueryOperator pCompareOperator, Field pField)
 		{
 			type = pType;
-			field = pField;
+			Field = pField;
 			compareOperator = pCompareOperator;
 			tableName = pTableName;
 
@@ -578,11 +570,11 @@ namespace AdFactum.Data.Queries
         /// <returns></returns>
         public virtual string GetContextDependentConditionString (ProjectionClass projection)
         {
-            if (field == null) 
+            if (Field == null) 
                 return ConditionString;
 
             MemberProjectionTupel mpt;
-            projection.MemberProjections.TryGetValue(field.FieldDescription.CustomProperty.Key, out mpt);
+            projection.MemberProjections.TryGetValue(Field.FieldDescription.CustomProperty.Key, out mpt);
 
             return GetConditionString(mpt != null ? mpt.WhereColumn : ColumName);
         }
@@ -594,11 +586,11 @@ namespace AdFactum.Data.Queries
         /// <returns></returns>
         public virtual ConditionClause GetContextDependentConditionClause (ProjectionClass projection)
         {
-            if (field == null || ConditionClause != ConditionClause.WhereClause)
+            if (Field == null || ConditionClause != ConditionClause.WhereClause)
                 return ConditionClause;
 
             MemberProjectionTupel mpt;
-            projection.MemberProjections.TryGetValue(field.FieldDescription.CustomProperty.Key, out mpt);
+            projection.MemberProjections.TryGetValue(Field.FieldDescription.CustomProperty.Key, out mpt);
 
             return mpt == null || (mpt.MemberAggregation == null && mpt.MemberGrouping == null)
                        ? ConditionClause.WhereClause
@@ -690,7 +682,7 @@ namespace AdFactum.Data.Queries
         {
             conditionClause = Field.FieldDescription.CustomProperty.MetaInfo.IsProjected ? ConditionClause.HavingClause : ConditionClause.WhereClause;
 
-			if (!IsRightSideFieldDefined && (field != null) && (field.Value == null))
+			if (!IsRightSideFieldDefined && (Field != null) && (Field.Value == null))
 			{
 				switch (CompareOperator)
 				{
